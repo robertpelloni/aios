@@ -19,3 +19,9 @@
 [submodule "references/Super-MCP"]
 	path = references/Super-MCP
 	url = https://github.com/nspr-io/Super-MCP
+[submodule "submodules/claude-mem"]
+	path = submodules/claude-mem
+	url = https://github.com/robertpelloni/claude-mem
+[submodule "references/opencode"]
+	path = references/opencode
+	url = https://github.com/opencode-ai/opencode

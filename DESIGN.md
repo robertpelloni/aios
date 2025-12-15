@@ -36,7 +36,16 @@ Inspired by `ToolRAG` and `Lazy MCP`.
     - **In Memory/DB:** We store extremely detailed descriptions for accurate semantic matching.
     - **In Context:** When describing the tool to the LLM (after loading), we use a concise, optimized description to save tokens.
 
-### 3. Progressive Disclosure & Lazy Loading
+### 3. Integrated Memory System (`claude-mem`)
+We are integrating `claude-mem` directly into the Hub as a core plugin/library (located in `submodules/claude-mem`), rather than creating separate ports for every client.
+- **Hook Bridging:** The Hub's `HookManager` intercepts events from all connected clients (OpenCode, Gemini, VSCode) and forwards them to the memory engine:
+    - `SessionStart` -> Inject "Memory Index" into the conversation context.
+    - `PostToolUse` -> Trigger "Observation Capture" to store tool outputs in the vector DB.
+    - `SessionEnd` -> Generate and store session summaries.
+- **Tool Exposure:** The `mem-search` tool is exposed via the Hub's MCP interface, allowing any client (even those without native memory support) to recall past information.
+- **Benefit:** A unified, persistent memory graph shared across all developer tools.
+
+### 4. Progressive Disclosure & Lazy Loading
 Inspired by `claude-lazy-loading` and `Switchboard`.
 - **Default State:** The LLM sees only `search_tools`, `load_tool`, and `run_code`.
 - **On Demand:** When the LLM identifies a need (e.g., "I need to check GitHub"), it searches/loads the specific tool set.

@@ -76,3 +76,6 @@
 [submodule "references/mcp-tool-chainer"]
 	path = references/mcp-tool-chainer
 	url = https://github.com/robertpelloni/mcp-tool-chainer
+[submodule "references/prompt-eng-tutorial"]
+	path = references/prompt-eng-tutorial
+	url = https://github.com/anthropics/prompt-eng-interactive-tutorial

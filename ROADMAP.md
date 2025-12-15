@@ -85,3 +85,12 @@ This document compiles the design decisions, planned features, and submodule int
 *   **Data Sources:** Integrate `notebooklm-mcp`.
 *   **Registry:** Integrate `mcpm.sh` for dynamic tool installation.
 *   **Skills:** Convert `superpowers` repository into platform-agnostic skills.
+
+## 9. Prompt Engineering Suite
+**Status:** Planned
+**Reference:** `references/prompt-eng-tutorial`
+*   **Objective:** Integrate Anthropic's official tools for crafting and evaluating prompts.
+*   **Planned Features:**
+    *   [ ] **Prompt Improver:** "Magic Wand" to rewrite prompts using XML tags and best practices.
+    *   [ ] **Eval Tool:** UI to run test cases against prompt templates.
+    *   [ ] **Tutorial Mode:** Interactive guide ported from the official repo.

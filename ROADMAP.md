@@ -110,3 +110,12 @@ This document compiles the design decisions, planned features, and submodule int
     *   [ ] **Computer Use:** Integrate Gemini-specific computer use extensions.
     *   [ ] **ADK Support:** Implement Google's Agent Development Kit interfaces.
     *   [ ] **A2A Protocol:** Support Agent-to-Agent communication standards.
+
+## 11. Agent Standards & Context Management
+**Status:** Planned
+**Reference:** `docs/AGENT_STANDARDS_STRATEGY.md`
+*   **Objective:** Standardize agent behavior and context files across platforms.
+*   **Planned Features:**
+    *   [ ] **AGENTS.md Manager:** Universal source of truth for agent instructions.
+    *   [ ] **Context Sync:** Auto-generate `CLAUDE.md`, `.cursorrules`, `GEMINI.md` from the master spec.
+    *   [ ] **Multi-Platform SDK:** Port Claude's Agent SDK concepts (Plugins, Subagents, Skills) to a platform-agnostic layer.

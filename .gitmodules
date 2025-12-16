@@ -85,3 +85,6 @@
 [submodule "references/agents-md"]
 	path = references/agents-md
 	url = https://github.com/agentsmd/agents.md
+[submodule "references/claude-code-infrastructure-showcase"]
+	path = references/claude-code-infrastructure-showcase
+	url = https://github.com/diet103/claude-code-infrastructure-showcase

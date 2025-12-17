@@ -87,3 +87,18 @@ This section focuses on managing complex workflows involving multiple agents and
 **Repos:** `references/agents/claude-code-subagents-collection`, `references/agents/codex-subagents-mcp`, `references/agents/Agent-MCP`
 - **Role:** Content Library.
 - **Action:** Import these subagent definitions into the Hub's `agents/` registry.
+
+## 12. Agent Protocols (A2A & ACP)
+**Repos:** `references/protocols/A2A`, `references/protocols/a2a-js`, `references/protocols/a2a-python`
+- **Role:** Standard.
+- **Integration:** Implement the Agent-to-Agent (A2A) protocol to allow the Hub to communicate with external agents in a standardized way.
+
+## 13. Copilot Frameworks
+**Repo:** `references/frameworks/CopilotKit`
+- **Role:** Reference/Library.
+- **Integration:** Use `CopilotKit` to embed AI "Copilots" into the Hub's dashboard UI.
+
+## 14. Testing & Quality Engineering
+**Repo:** `references/testing/agentic-qe`
+- **Role:** Capability.
+- **Integration:** Integrate "Agentic QE" patterns to allow the Hub to self-test its generated code and agents.

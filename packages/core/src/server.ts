@@ -11,6 +11,8 @@ import { McpManager } from './managers/McpManager.js';
 import { ConfigGenerator } from './utils/ConfigGenerator.js';
 import { HookExecutor } from './utils/HookExecutor.js';
 import { McpInterface } from './interfaces/McpInterface.js';
+import { ClientManager } from './managers/ClientManager.js';
+import { CodeExecutionManager } from './managers/CodeExecutionManager.js';
 import { HookEvent } from './types.js';
 
 export class CoreService {
@@ -25,12 +27,19 @@ export class CoreService {
   private mcpManager: McpManager;
   private configGenerator: ConfigGenerator;
   private mcpInterface: McpInterface;
+  private clientManager: ClientManager;
+  private codeExecutionManager: CodeExecutionManager;
 
   constructor(
     private rootDir: string
   ) {
     this.io = new SocketIOServer(this.app.server, {
       cors: { origin: "*" }
+    });
+
+    // Enable CORS for API routes too
+    this.app.register(import('@fastify/cors'), {
+        origin: '*'
     });
 
     this.hookManager = new HookManager(path.join(rootDir, 'hooks'));
@@ -41,6 +50,8 @@ export class CoreService {
     this.mcpManager = new McpManager(path.join(rootDir, 'mcp-servers'));
     this.configGenerator = new ConfigGenerator(path.join(rootDir, 'mcp-servers'));
     this.mcpInterface = new McpInterface();
+    this.clientManager = new ClientManager();
+    this.codeExecutionManager = new CodeExecutionManager();
     
     this.setupRoutes();
     this.setupSocket();
@@ -48,6 +59,40 @@ export class CoreService {
 
   private setupRoutes() {
     this.app.get('/health', async () => ({ status: 'ok' }));
+
+    this.app.get('/api/clients', async () => {
+        return { clients: this.clientManager.getClients() };
+    });
+
+    this.app.post('/api/clients/configure', async (request: any, reply) => {
+        const { clientName } = request.body;
+        // In a real scenario, we'd determine the script path dynamically
+        // Use process.argv[1] or similar to point to the current entry point
+        const scriptPath = path.resolve(process.argv[1]);
+
+        try {
+            const result = await this.clientManager.configureClient(clientName, {
+                scriptPath,
+                env: { MCP_STDIO_ENABLED: 'true' }
+            });
+            return result;
+        } catch (err: any) {
+            return reply.code(500).send({ error: err.message });
+        }
+    });
+
+    this.app.post('/api/code/run', async (request: any, reply) => {
+        const { code } = request.body;
+        try {
+            const result = await this.codeExecutionManager.execute(code, async (name, args) => {
+                console.log(`Tool call request: ${name}`, args);
+                return "Tool execution not yet implemented via API";
+            });
+            return { result };
+        } catch (err: any) {
+            return reply.code(500).send({ error: err.message });
+        }
+    });
     
     this.app.get('/api/state', async () => ({
         agents: this.agentManager.getAgents(),
@@ -145,8 +190,10 @@ export class CoreService {
     await this.contextManager.start();
     
     // Start MCP Interface (Stdio) - Optional based on env?
-    // For now we start it always, but be careful with logs.
-    // this.mcpInterface.start();
+    if (process.env.MCP_STDIO_ENABLED === 'true') {
+        console.error('[Core] Starting MCP Stdio Interface...');
+        this.mcpInterface.start();
+    }
 
     try {
       await this.app.listen({ port, host: '0.0.0.0' });

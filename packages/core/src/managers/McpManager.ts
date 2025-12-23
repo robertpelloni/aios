@@ -18,6 +18,7 @@ export class McpManager extends EventEmitter {
     async startServerSimple(name: string, config: any) {
         const cmd = config.command || 'node';
         const args = config.args || [];
+        const env = config.env || process.env;
 
         // Resolve paths relative to repo root if they look like file paths
         const finalArgs = args.map((arg: any) => {
@@ -33,6 +34,7 @@ export class McpManager extends EventEmitter {
         const transport = new StdioClientTransport({
             command: cmd,
             args: finalArgs,
+            env: env,
             stderr: 'inherit'
         });
 
@@ -71,23 +73,6 @@ export class McpManager extends EventEmitter {
             console.error(`Failed to connect to MCP server ${name}:`, e);
             this.servers.set(name, { status: 'stopped', process: null, client: null });
         }
-        console.log(`Spawning ${cmd} ${finalArgs.join(' ')}`);
-
-        const child = spawn(cmd, finalArgs, {
-            stdio: ['ignore', 'inherit', 'inherit'], // inherit stdout/err so we can see it in logs
-            detached: false
-        });
-
-        this.servers.set(name, {
-            status: 'running',
-            process: child
-        });
-
-        child.on('exit', (code) => {
-            console.log(`Server ${name} exited with code ${code}`);
-            this.servers.set(name, { status: 'stopped', process: null });
-            this.emit('updated', this.getAllServers());
-        });
 
         this.emit('updated', this.getAllServers());
     }
@@ -101,9 +86,6 @@ export class McpManager extends EventEmitter {
                 console.error(`Error stopping server ${name}:`, e);
             }
             this.servers.set(name, { ...server, status: 'stopped', process: null, client: null });
-        if (server && server.process) {
-            server.process.kill();
-            this.servers.set(name, { ...server, status: 'stopped', process: null });
             this.emit('updated', this.getAllServers());
         }
     }

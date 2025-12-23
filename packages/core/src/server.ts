@@ -221,6 +221,8 @@ export class CoreService {
     try {
       await this.app.listen({ port, host: '0.0.0.0' });
       console.log(`Core Service running on port ${port}`);
+
+
     } catch (err) {
       this.app.log.error(err);
       process.exit(1);

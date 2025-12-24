@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Key, Server, Bot, Plug, Activity, Settings } from 'lucide-react';
+import { LayoutDashboard, Key, Server, Bot, Plug, Activity, Settings, MessageSquare, FileText } from 'lucide-react';
 
 export const Layout = () => {
   return (
@@ -13,7 +13,7 @@ export const Layout = () => {
           </h1>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           <NavLink to="/" className={({ isActive }) => `flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}`}>
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
@@ -34,6 +34,16 @@ export const Layout = () => {
             <span>Agents & Skills</span>
           </NavLink>
 
+          <NavLink to="/prompts" className={({ isActive }) => `flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}`}>
+            <MessageSquare size={20} />
+            <span>Prompts</span>
+          </NavLink>
+
+          <NavLink to="/context" className={({ isActive }) => `flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}`}>
+            <FileText size={20} />
+            <span>Context</span>
+          </NavLink>
+
           <NavLink to="/hooks" className={({ isActive }) => `flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}`}>
             <Plug size={20} />
             <span>Hooks</span>
@@ -46,7 +56,7 @@ export const Layout = () => {
         </nav>
 
         <div className="p-4 border-t border-gray-700">
-          <div className="text-xs text-gray-500">v0.2.0-beta</div>
+          <div className="text-xs text-gray-500">v0.4.0-beta</div>
         </div>
       </aside>
 

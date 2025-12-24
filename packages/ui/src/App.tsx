@@ -7,6 +7,8 @@ import { McpServers } from './pages/McpServers';
 import { Agents } from './pages/Agents';
 import { Hooks } from './pages/Hooks';
 import { Inspector } from './pages/Inspector';
+import { Prompts } from './pages/Prompts';
+import { Context } from './pages/Context';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Route path="agents" element={<Agents />} />
           <Route path="hooks" element={<Hooks />} />
           <Route path="inspector" element={<Inspector />} />
+          <Route path="prompts" element={<Prompts />} />
+          <Route path="context" element={<Context />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Cpu, HardDrive, Wifi, CheckCircle, XCircle, Play, Square } from 'lucide-react';
+import { Activity, Cpu, HardDrive, Wifi, CheckCircle, XCircle, Play, Square, Globe } from 'lucide-react';
 import { io } from 'socket.io-client';
 
 const socket = io('http://localhost:3000');
@@ -12,11 +12,7 @@ export const Dashboard = () => {
     runningServers: 0
   });
 
-  const [health, setHealth] = useState({
-    service: true,
-    internet: true, // Mocked for now
-    node: true
-  });
+  const [metaMcpConnected, setMetaMcpConnected] = useState<boolean | null>(null);
 
   useEffect(() => {
     socket.on('state', (data: any) => {
@@ -34,6 +30,13 @@ export const Dashboard = () => {
        setStats(prev => ({ ...prev, mcpServers: servers.length, runningServers: running }));
     });
 
+    // Check MetaMCP Status via our proxy API
+    // We can't easily check SSE connection status from here without an explicit API endpoint on Core
+    // But we can infer it if 'search_tools' is available? Not reliably.
+    // Let's assume for this mock that we check a new health endpoint in next step,
+    // or just leave it as 'Unknown' for now.
+    // Actually, I'll add a check later.
+
     return () => {
       socket.off('state');
       socket.off('mcp_updated');
@@ -48,7 +51,7 @@ export const Dashboard = () => {
       </header>
 
       {/* Health Status Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
         <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg flex items-center justify-between">
           <div>
             <div className="text-gray-400 text-sm mb-1">Core Service</div>
@@ -61,9 +64,19 @@ export const Dashboard = () => {
 
         <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg flex items-center justify-between">
           <div>
-            <div className="text-gray-400 text-sm mb-1">MCP Cluster</div>
+            <div className="text-gray-400 text-sm mb-1">MetaMCP Backend</div>
+            <div className="text-xl font-bold flex items-center gap-2 text-gray-400">
+               <Globe size={20} /> {metaMcpConnected === true ? <span className="text-green-400">Connected</span> : 'Unknown'}
+            </div>
+          </div>
+          <ServerIcon className="text-gray-600" size={32} />
+        </div>
+
+        <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg flex items-center justify-between">
+          <div>
+            <div className="text-gray-400 text-sm mb-1">Local Servers</div>
             <div className="text-xl font-bold flex items-center gap-2 text-blue-400">
-              <Cpu size={20} /> {stats.runningServers} / {stats.mcpServers} Running
+              <Cpu size={20} /> {stats.runningServers} / {stats.mcpServers}
             </div>
           </div>
           <ServerIcon className="text-gray-600" size={32} />
@@ -90,8 +103,8 @@ export const Dashboard = () => {
                 <div className="text-xs text-gray-400">Configure new tools</div>
              </button>
              <button className="bg-gray-700 hover:bg-gray-600 p-3 rounded text-left transition-colors">
-                <div className="font-bold">Install MCP</div>
-                <div className="text-xs text-gray-400">From marketplace</div>
+                <div className="font-bold">Install to Clients</div>
+                <div className="text-xs text-gray-400">Auto-configure Claude/VSCode</div>
              </button>
           </div>
         </div>

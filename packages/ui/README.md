@@ -20,20 +20,27 @@ pnpm build
 
 This dashboard is built with Next.js and can be easily deployed to Vercel:
 
-### Option 1: Deploy from Vercel Dashboard
+### Deploy from Vercel Dashboard (Recommended)
 
-1. Go to [vercel.com](https://vercel.com)
-2. Import the repository
-3. Set the **Root Directory** to `packages/ui`
-4. Vercel will automatically detect Next.js and configure the build settings
-5. Deploy!
+1. Go to [vercel.com](https://vercel.com) and sign in
+2. Click "Add New Project" and import your repository
+3. Configure the project:
+   - **Framework Preset**: Next.js (auto-detected)
+   - **Root Directory**: `packages/ui`
+   - **Build Command**: `pnpm build` (auto-detected)
+   - **Output Directory**: `.next` (auto-detected)
+4. Click "Deploy"
 
-### Option 2: Deploy with Vercel CLI
+Vercel automatically handles the monorepo structure and pnpm workspaces.
+
+### Deploy with Vercel CLI
 
 ```bash
 cd packages/ui
 npx vercel
 ```
+
+Follow the prompts to configure your deployment.
 
 ### Environment Variables
 

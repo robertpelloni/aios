@@ -19,6 +19,8 @@ import { SecretManager } from './managers/SecretManager.js';
 import { HubServer } from './hub/HubServer.js';
 import { HookEvent } from './types.js';
 import { AgentExecutor } from './agents/AgentExecutor.js';
+import { MemoryManager } from './managers/MemoryManager.js';
+import { SchedulerManager } from './managers/SchedulerManager.js';
 
 export class CoreService {
   private app = Fastify({ logger: true });
@@ -40,6 +42,8 @@ export class CoreService {
   private secretManager: SecretManager;
   private hubServer: HubServer;
   private agentExecutor: AgentExecutor;
+  private memoryManager: MemoryManager;
+  private schedulerManager: SchedulerManager;
 
   constructor(
     private rootDir: string
@@ -66,6 +70,7 @@ export class CoreService {
     this.logManager = new LogManager();
     this.secretManager = new SecretManager(rootDir);
     this.proxyManager = new McpProxyManager(this.mcpManager, this.logManager);
+    this.memoryManager = new MemoryManager(path.join(rootDir, 'data'));
 
     // Inject managers into HubServer
     this.hubServer = new HubServer(
@@ -78,7 +83,9 @@ export class CoreService {
 
     this.mcpInterface = new McpInterface(this.hubServer);
     this.agentExecutor = new AgentExecutor(this.proxyManager);
-    
+
+    this.schedulerManager = new SchedulerManager(rootDir, this.agentExecutor, this.proxyManager);
+
     this.setupRoutes();
     this.setupSocket();
   }
@@ -138,7 +145,8 @@ export class CoreService {
         prompts: this.promptManager.getPrompts(),
         context: this.contextManager.getContextFiles(),
         mcpServers: this.mcpManager.getAllServers(),
-        commands: this.commandManager.getCommands()
+        commands: this.commandManager.getCommands(),
+        scheduledTasks: this.schedulerManager.getTasks()
     }));
 
     this.app.get('/api/config/mcp/:format', async (request: any, reply) => {
@@ -224,7 +232,8 @@ export class CoreService {
         prompts: this.promptManager.getPrompts(),
         context: this.contextManager.getContextFiles(),
         mcpServers: this.mcpManager.getAllServers(),
-        commands: this.commandManager.getCommands()
+        commands: this.commandManager.getCommands(),
+        scheduledTasks: this.schedulerManager.getTasks()
       });
 
       socket.on('hook_event', (event: HookEvent) => {
@@ -268,6 +277,7 @@ export class CoreService {
     await this.contextManager.start();
     await this.commandManager.start();
     await this.proxyManager.start();
+    this.schedulerManager.start();
 
     // Start MCP Interface (Stdio) - Optional based on env?
     if (process.env.MCP_STDIO_ENABLED === 'true') {
@@ -275,20 +285,15 @@ export class CoreService {
         this.mcpInterface.start();
     }
 
-    // Start claude-mem integration
-    try {
-        const wrapperPath = path.join(this.rootDir, 'packages/core/scripts/stdio-wrapper.js');
-        const scriptPath = path.join(this.rootDir, 'submodules/claude-mem/plugin/scripts/mcp-server.cjs');
-
-        console.error('[Core] Starting claude-mem...');
-        await this.mcpManager.startServerSimple('claude-mem', {
-            command: 'node',
-            args: [wrapperPath, 'node', scriptPath],
-            env: { ...process.env, CLAUDE_MEM_LOG_LEVEL: 'ERROR' }
+    // Register Native Memory Tools
+    this.memoryManager.getToolDefinitions().forEach(tool => {
+        this.proxyManager.registerInternalTool(tool, async (args: any) => {
+             if (tool.name === 'remember') return this.memoryManager.remember(args);
+             if (tool.name === 'search_memory') return this.memoryManager.search(args);
+             if (tool.name === 'recall_recent') return this.memoryManager.recall(args);
+             return "Unknown tool";
         });
-    } catch (error) {
-        console.error('[Core] Failed to start claude-mem:', error);
-    }
+    });
 
     try {
       await this.app.listen({ port, host: '0.0.0.0' });

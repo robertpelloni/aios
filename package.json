@@ -3,11 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "pnpm --filter @super-ai/core start",
+    "start": "concurrently \"pnpm --filter @super-ai/core dev\" \"pnpm --filter @super-ai/ui dev\"",
     "dev": "pnpm --filter @super-ai/core dev",
     "build": "pnpm --filter \"./packages/*\" build"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "typescript": "^5.3.3"
   }
 }

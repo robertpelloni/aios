@@ -178,3 +178,6 @@
 [submodule "submodules/metamcp"]
 	path = submodules/metamcp
 	url = https://github.com/robertpelloni/metamcp
+[submodule "submodules/jules-app"]
+	path = submodules/jules-app
+	url = https://github.com/robertpelloni/jules-app

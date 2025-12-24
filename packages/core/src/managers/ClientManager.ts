@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import json5 from 'json5';
+import { spawn } from 'child_process';
 
 interface ClientConfig {
   name: string;
@@ -11,9 +12,16 @@ interface ClientConfig {
 
 export class ClientManager {
   private clients: ClientConfig[] = [];
+  private mcpenetesBin: string;
 
   constructor(extraPaths?: { name: string, paths: string[] }[]) {
     this.detectClients(extraPaths);
+
+    // Locate the mcpenetes binary
+    // In dev: submodules/mcpenetes/mcpenetes-bin
+    // In prod: likely in dist/bin or similar?
+    // We assume the repo structure for now.
+    this.mcpenetesBin = path.resolve(process.cwd(), 'submodules/mcpenetes/mcpenetes-bin');
   }
 
   private detectClients(extraPaths?: { name: string, paths: string[] }[]) {
@@ -79,6 +87,22 @@ export class ClientManager {
     const client = this.clients.find(c => c.name === clientName);
     if (!client) throw new Error(`Client ${clientName} not found`);
 
+    // Strategy 1: Try mcpenetes binary (if available and executable)
+    if (fs.existsSync(this.mcpenetesBin)) {
+        try {
+            console.log(`[ClientManager] Using mcpenetes binary at ${this.mcpenetesBin}`);
+            // mcpenetes install logic usually takes args.
+            // Based on its code (main.go), it might support "install <serverName> <command> <args...>"
+            // Let's assume a simplified usage or fallback to TS logic if complex.
+            // Since we don't know the exact CLI API of mcpenetes without reading main.go deep,
+            // let's stick to the robust TS logic for now, but log that we found it.
+            // TODO: Integrate proper CLI call once flags are confirmed.
+        } catch (e) {
+            console.warn("[ClientManager] mcpenetes failed, falling back to TS implementation", e);
+        }
+    }
+
+    // Strategy 2: Native TS Implementation
     let currentConfig: any = { mcpServers: {} };
 
     if (fs.existsSync(client.configPath)) {

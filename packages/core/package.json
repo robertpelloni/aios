@@ -6,21 +6,24 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsc --watch"
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",
     "@modelcontextprotocol/sdk": "^1.25.1",
     "chokidar": "^3.5.3",
+    "eventsource": "^4.1.0",
     "fastify": "^5.6.2",
     "fuse.js": "^7.1.0",
     "isolated-vm": "^6.0.2",
     "json5": "^2.2.3",
+    "node-schedule": "^2.1.1",
     "socket.io": "^4.7.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "@types/node-schedule": "^2.1.8",
     "@types/ws": "^8.5.10",
     "tsx": "^4.21.0",
     "typescript": "^5.3.3"

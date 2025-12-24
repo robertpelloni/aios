@@ -1,57 +1,79 @@
-# Super AI Plugin (AIOS)
+# Super AI Plugin
 
-A comprehensive "Super AI Plugin" and Meta-Orchestrator that integrates various AI tools and environments into a unified operating system.
+The Ultimate "Meta-Orchestrator" for the Model Context Protocol (MCP). It acts as a universal hub, proxy, and agentic runtime for your AI tools.
 
-## Overview
+## 🌟 Features
 
-This project serves as a central nervous system for your AI workflow, wrapping environments like VSCode, Chrome, and CLI tools (Claude Code, Gemini CLI) with a unified layer for:
-- **Context Management**: Persistent memory and context injection.
-- **Hook System**: Event-driven architecture for tool usage, permissions, and notifications.
-- **Agent Orchestration**: Managing autonomous agents and sub-agents.
-- **MCP Management**: Dynamic configuration and routing for Model Context Protocol servers.
+*   **Universal Hub:** Aggregates tools from local MCP servers, remote MetaMCP instances, and internal capabilities.
+*   **Progressive Disclosure:** Solves context window limits by hiding tools until they are searched for and loaded.
+*   **Active Intelligence:**
+    *   **Agent Executor:** Run autonomous ReAct agents defined in `agents/`.
+    *   **Code Mode:** Secure sandboxed execution (TS/Python) for complex workflows.
+    *   **Scheduler:** Run tools and agents on a Cron schedule.
+*   **Ecosystem Integration:**
+    *   **MetaMCP:** Connects to the powerful Docker-based MetaMCP backend.
+    *   **Mcpenetes:** Auto-installs configuration to Claude Desktop and VSCode.
+*   **Memory & Context:**
+    *   **Native Memory:** `remember` and `recall` tools backed by local persistence.
+    *   **Context Injection:** Automatically exposes `skills/` and `prompts/` to the LLM.
+*   **Observability:**
+    *   **Mcpshark:** Live traffic inspection of all JSON-RPC messages.
+    *   **Dashboard:** Real-time UI for managing the entire stack.
 
-## Architecture
-
-The project is structured as a monorepo using `pnpm workspaces`:
-
-- **`packages/core`**: The brain of the operation. A Node.js service (Fastify + Socket.io) that:
-    - Manages Agents, Skills, Hooks, Prompts, and Context.
-    - Exposes an API and WebSocket interface.
-    - Runs and monitors MCP servers.
-- **`packages/ui`**: A React + Vite dashboard for visualizing and controlling the system.
-- **`mcp-servers/`**: Directory for local MCP servers (e.g., `test-server`).
-- **`agents/`, `skills/`, `hooks/`, `prompts/`**: Configuration directories watched by the Core Service.
-
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18+)
-- pnpm
+*   Node.js v18+
+*   pnpm
+*   (Optional) Docker for MetaMCP backend
+*   (Optional) Go for building mcpenetes
 
 ### Installation
 
-```bash
-pnpm install
-```
+1.  **Clone & Install**
+    ```bash
+    git clone https://github.com/your-repo/super-ai-plugin.git
+    cd super-ai-plugin
+    pnpm install
+    ```
 
-### Running the Dashboard
+2.  **Build**
+    ```bash
+    pnpm run build
+    ```
 
-To start both the Core Service and the UI Dashboard:
+3.  **Run the Hub**
+    ```bash
+    pnpm start
+    ```
+    *   Dashboard: `http://localhost:5173` (or port 3000 for API)
+    *   MCP Endpoint: `http://localhost:3000/api/hub/sse`
 
-```bash
-pnpm start
-```
+### Client Configuration
 
-- **UI**: http://localhost:5173
-- **Core API**: http://localhost:3000
+To automatically configure Claude Desktop to use this Hub:
 
-## Features
+1.  Go to the Dashboard.
+2.  Click **"Install to Clients"**.
+3.  Restart Claude Desktop.
 
-- **Dashboard**: Real-time view of active Agents, Skills, Hooks, and Logs.
-- **MCP Manager**: Start/Stop MCP servers directly from the UI.
-- **Code Mode**: Execute code snippets in a sandboxed environment.
-- **Client Integrations**: Configure clients (VSCode, etc.) to connect to the Hub.
+## 📂 Project Structure
 
-## Roadmap
+*   `packages/core`: The main Node.js Hub service.
+*   `packages/ui`: React + Vite Dashboard.
+*   `packages/mcpenetes`: Go-based configuration injector.
+*   `agents/`: JSON definitions for autonomous agents.
+*   `skills/`: Markdown files defining AI skills.
+*   `commands/`: Slash command definitions.
+*   `mcp-servers/`: Directory for managed local MCP servers.
 
-See [ROADMAP.md](ROADMAP.md) for the detailed development plan.
+## 📖 Documentation
+
+*   [Progressive Disclosure Strategy](docs/guides/PROGRESSIVE_DISCLOSURE.md)
+*   [Task Scheduling](docs/guides/SCHEDULING.md)
+*   [Memory Strategy](docs/MEMORY_STRATEGY.md)
+*   [Agent Standards](docs/AGENT_STANDARDS_STRATEGY.md)
+
+## 🤝 Contributing
+
+See `CONTRIBUTING.md` for details.

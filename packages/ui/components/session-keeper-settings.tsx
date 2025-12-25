@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useJules } from '@/lib/jules/provider';
 import { SessionKeeperConfig } from '@/types/jules';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -27,6 +26,7 @@ import { Separator } from '@/components/ui/separator';
 import { Brain, Sparkles, Trash2, Settings, Loader2, Download, Users, Plus } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 // Default configuration (Duplicated to allow standalone usage)
 const DEFAULT_CONFIG: SessionKeeperConfig = {
@@ -48,7 +48,6 @@ const DEFAULT_CONFIG: SessionKeeperConfig = {
   supervisorApiKey: '',
   supervisorModel: '',
   contextMessageCount: 20,
-  supervisorMode: 'single',
   debateEnabled: false,
   debateParticipants: []
 };
@@ -58,21 +57,14 @@ interface SessionKeeperSettingsProps {
   onConfigChange: (config: SessionKeeperConfig) => void;
   sessions: { id: string; title: string }[];
   onClearMemory: (sessionId: string) => void;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  trigger?: React.ReactNode;
 }
 
 export function SessionKeeperSettings({
   config: propConfig,
   onConfigChange: propOnChange,
   sessions: propSessions,
-  onClearMemory: propOnClearMemory,
-  open: propOpen,
-  onOpenChange: propOnOpenChange,
-  trigger
+  onClearMemory: propOnClearMemory
 }: Partial<SessionKeeperSettingsProps>) {
-  const { apiKey: mainApiKey } = useJules();
   const [isOpen, setIsOpen] = useState(false);
   const [localConfig, setLocalConfig] = useState<SessionKeeperConfig>(DEFAULT_CONFIG);
   const [selectedSessionId, setSelectedSessionId] = useState<string>('global');
@@ -82,10 +74,6 @@ export function SessionKeeperSettings({
   // Use props if available (controlled), otherwise local (uncontrolled)
   const config = propConfig || localConfig;
   const sessions = propSessions || []; // Fallback to empty if not provided in standalone mode
-  
-  // Handle controlled open state
-  const isDialogOpen = propOpen !== undefined ? propOpen : isOpen;
-  const handleOpenChange = propOnOpenChange || setIsOpen;
 
   // Sync from storage if standalone
   useEffect(() => {
@@ -124,7 +112,7 @@ export function SessionKeeperSettings({
   };
 
   // New Participant State
-  const [newPart, setNewPart] = useState({ provider: 'openai', model: 'gpt-4o', apiKey: '', role: 'Advisor' });
+  const [newPart, setNewPart] = useState({ provider: 'openai', model: '', apiKey: '', role: 'Advisor' });
 
   const updateMessages = (sessionId: string, newMessages: string[]) => {
     if (sessionId === 'global') {
@@ -200,16 +188,20 @@ export function SessionKeeperSettings({
     : (config.customMessages?.[selectedSessionId] || []);
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
-      {trigger !== null && (
-        <DialogTrigger asChild>
-          {trigger || (
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10" title="Auto-Pilot Settings">
-              <Settings className="h-4 w-4" />
-            </Button>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "h-8 w-8 hover:bg-white/10 transition-colors",
+            config.isEnabled ? "text-green-400 hover:text-green-300" : "text-white/60 hover:text-white"
           )}
-        </DialogTrigger>
-      )}
+          title={config.isEnabled ? "Auto-Pilot Active" : "Auto-Pilot Settings"}
+        >
+          <Settings className={cn("h-4 w-4", config.isEnabled && "animate-spin [animation-duration:3s]")} />
+        </Button>
+      </DialogTrigger>
       <DialogContent className="max-w-2xl bg-zinc-950 border-white/10 text-white max-h-[85vh] flex flex-col p-0">
         <DialogHeader className="px-6 py-4 border-b border-white/10">
           <DialogTitle className="text-lg font-bold tracking-wide">Auto-Pilot Configuration</DialogTitle>
@@ -272,29 +264,13 @@ export function SessionKeeperSettings({
 
               {config.smartPilotEnabled && (
                 <div className="grid gap-4 pt-2">
-                  <div className="space-y-2">
-                    <Label className="text-xs text-white/60">Mode</Label>
-                    <Select
-                      value={config.supervisorMode || (config.debateEnabled ? 'debate' : 'single')}
-                      onValueChange={(v: any) => handleConfigChange({ ...config, supervisorMode: v, debateEnabled: v !== 'single' })}
-                    >
-                      <SelectTrigger className="h-8 text-xs bg-black/50 border-white/10"><SelectValue /></SelectTrigger>
-                      <SelectContent className="bg-zinc-900 border-white/10 text-white">
-                        <SelectItem value="single">Single Supervisor</SelectItem>
-                        <SelectItem value="debate">Debate (Consensus)</SelectItem>
-                        <SelectItem value="conference">Smart Conference (Round Table)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {config.supervisorMode === 'single' || !config.supervisorMode ? (
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label className="text-xs text-white/60">Provider</Label>
                       <Select
                         value={config.supervisorProvider}
-                        onValueChange={(v: any) => {
-                          handleConfigChange({ ...config, supervisorProvider: v, supervisorModel: '' });
+                        onValueChange={(v: string) => {
+                          handleConfigChange({ ...config, supervisorProvider: v as SessionKeeperConfig['supervisorProvider'], supervisorModel: '' });
                           setAvailableModels([]);
                         }}
                       >
@@ -309,31 +285,16 @@ export function SessionKeeperSettings({
                     </div>
                     <div className="space-y-2">
                       <Label className="text-xs text-white/60">API Key</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          className="h-8 text-xs bg-black/50 border-white/10 font-mono flex-1"
-                          type="password"
-                          placeholder={`Enter ${config.supervisorProvider} API Key`}
-                          value={config.supervisorApiKey}
-                          onChange={(e) => handleConfigChange({ ...config, supervisorApiKey: e.target.value })}
-                        />
-                        {mainApiKey && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 border-white/10 hover:bg-white/5 text-white/60 text-[10px]"
-                            onClick={() => handleConfigChange({ ...config, supervisorApiKey: mainApiKey })}
-                            title="Use Main Session API Key"
-                          >
-                            Use Main Key
-                          </Button>
-                        )}
-                      </div>
+                      <Input
+                        className="h-8 text-xs bg-black/50 border-white/10 font-mono"
+                        type="password"
+                        placeholder={`Enter ${config.supervisorProvider} API Key`}
+                        value={config.supervisorApiKey}
+                        onChange={(e) => handleConfigChange({ ...config, supervisorApiKey: e.target.value })}
+                      />
                     </div>
                   </div>
-                  ) : null}
 
-                  {(config.supervisorMode === 'single' || !config.supervisorMode) && (
                   <div className="space-y-2">
                     <Label className="text-xs text-white/60">Model</Label>
                     <div className="flex gap-2">
@@ -369,81 +330,6 @@ export function SessionKeeperSettings({
                       </Button>
                     </div>
                   </div>
-                  )}
-
-                  {/* Conference / Debate Participants */}
-                  {(config.supervisorMode === 'debate' || config.supervisorMode === 'conference') && (
-                      <div className="space-y-3 border border-white/10 p-3 rounded bg-white/5">
-                          <div className="flex items-center justify-between">
-                              <Label className="text-xs font-bold text-white/80">
-                                  {config.supervisorMode === 'debate' ? 'Council Members' : 'Conference Participants'}
-                              </Label>
-                              <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={addParticipant}>
-                                  <Plus className="h-4 w-4" />
-                              </Button>
-                          </div>
-                          
-                          <div className="space-y-2">
-                              {(config.debateParticipants || []).map((p, i) => (
-                                  <div key={p.id || i} className="flex flex-col gap-2 p-2 bg-black/30 rounded border border-white/5">
-                                      <div className="flex gap-2">
-                                          <Select value={p.provider} onValueChange={(v) => {
-                                              const newParts = [...(config.debateParticipants || [])];
-                                              newParts[i] = { ...p, provider: v };
-                                              handleConfigChange({ ...config, debateParticipants: newParts });
-                                          }}>
-                                              <SelectTrigger className="h-6 text-[10px] w-24"><SelectValue /></SelectTrigger>
-                                              <SelectContent>
-                                                  <SelectItem value="openai">OpenAI</SelectItem>
-                                                  <SelectItem value="anthropic">Anthropic</SelectItem>
-                                                  <SelectItem value="gemini">Gemini</SelectItem>
-                                              </SelectContent>
-                                          </Select>
-                                          <Input 
-                                              className="h-6 text-[10px] flex-1" 
-                                              placeholder="Model (e.g. gpt-4o)" 
-                                              value={p.model}
-                                              onChange={(e) => {
-                                                  const newParts = [...(config.debateParticipants || [])];
-                                                  newParts[i] = { ...p, model: e.target.value };
-                                                  handleConfigChange({ ...config, debateParticipants: newParts });
-                                              }}
-                                          />
-                                          <Button variant="ghost" size="icon" className="h-6 w-6 text-red-400" onClick={() => removeParticipant(i)}>
-                                              <Trash2 className="h-3 w-3" />
-                                          </Button>
-                                      </div>
-                                      <div className="flex gap-2">
-                                          <Input 
-                                              className="h-6 text-[10px] flex-1" 
-                                              placeholder="Role (e.g. Security Expert)" 
-                                              value={p.role}
-                                              onChange={(e) => {
-                                                  const newParts = [...(config.debateParticipants || [])];
-                                                  newParts[i] = { ...p, role: e.target.value };
-                                                  handleConfigChange({ ...config, debateParticipants: newParts });
-                                              }}
-                                          />
-                                          <Input 
-                                              className="h-6 text-[10px] flex-1 font-mono" 
-                                              type="password"
-                                              placeholder="API Key" 
-                                              value={p.apiKey}
-                                              onChange={(e) => {
-                                                  const newParts = [...(config.debateParticipants || [])];
-                                                  newParts[i] = { ...p, apiKey: e.target.value };
-                                                  handleConfigChange({ ...config, debateParticipants: newParts });
-                                              }}
-                                          />
-                                      </div>
-                                  </div>
-                              ))}
-                              {(config.debateParticipants || []).length === 0 && (
-                                  <div className="text-[10px] text-white/30 text-center py-2">No participants added</div>
-                              )}
-                          </div>
-                      </div>
-                  )}
 
                   <div className="space-y-2">
                     <Label className="text-xs text-white/60">Context History (Messages)</Label>
@@ -484,6 +370,97 @@ export function SessionKeeperSettings({
                      </div>
                   </div>
                 </div>
+              )}
+            </div>
+
+            {/* Multi-Agent Debate Settings */}
+            <div className="flex flex-col gap-4 border border-blue-500/20 p-4 rounded-lg bg-blue-500/5">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="debate-mode" className="flex flex-col gap-1">
+                  <span className="font-semibold text-sm flex items-center gap-2 text-blue-400">
+                    <Users className="h-4 w-4" />
+                    Multi-Agent Debate
+                  </span>
+                  <span className="font-normal text-xs text-white/40">
+                    Convene a council of models to debate the plan
+                  </span>
+                </Label>
+                <Switch
+                  id="debate-mode"
+                  checked={config.debateEnabled}
+                  onCheckedChange={(c) => handleConfigChange({ ...config, debateEnabled: c })}
+                />
+              </div>
+
+              {config.debateEnabled && (
+                  <div className="space-y-4 pt-2">
+                      {/* List existing participants */}
+                      {(config.debateParticipants || []).length > 0 && (
+                        <div className="grid gap-2">
+                            {config.debateParticipants!.map((p, index) => (
+                                <div key={p.id} className="flex gap-2 items-center p-2 border border-white/10 rounded bg-black/20">
+                                    <Badge variant="outline" className="w-20 shrink-0 justify-center border-blue-500/30 text-blue-400">{p.provider}</Badge>
+                                    <div className="flex-1 text-xs overflow-hidden">
+                                        <div className="font-bold truncate text-white/90">{p.role}</div>
+                                        <div className="text-white/40 truncate font-mono text-[10px]">{p.model}</div>
+                                    </div>
+                                    <Button size="icon" variant="ghost" className="h-6 w-6 text-red-400 hover:bg-red-500/10" onClick={() => removeParticipant(index)}>
+                                        <Trash2 className="h-3 w-3" />
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                      )}
+
+                      {/* Add New Participant Form */}
+                      <div className="border-t border-white/10 pt-3 space-y-3">
+                          <Label className="text-xs text-white/60 uppercase tracking-wider font-bold">Add Council Member</Label>
+                          <div className="grid grid-cols-2 gap-2">
+                              <Select
+                                value={newPart.provider}
+                                onValueChange={(v) => setNewPart({ ...newPart, provider: v })}
+                              >
+                                <SelectTrigger className="h-7 text-xs bg-black/50 border-white/10"><SelectValue /></SelectTrigger>
+                                <SelectContent className="bg-zinc-900 border-white/10 text-white">
+                                  <SelectItem value="openai">OpenAI</SelectItem>
+                                  <SelectItem value="anthropic">Anthropic</SelectItem>
+                                  <SelectItem value="gemini">Gemini</SelectItem>
+                                  <SelectItem value="qwen">Qwen</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <Input
+                                className="h-7 text-xs bg-black/50 border-white/10"
+                                placeholder="Role (e.g. Security)"
+                                value={newPart.role}
+                                onChange={(e) => setNewPart({ ...newPart, role: e.target.value })}
+                              />
+                          </div>
+                          <Input
+                            className="h-7 text-xs bg-black/50 border-white/10 font-mono"
+                            type="password"
+                            placeholder="API Key"
+                            value={newPart.apiKey}
+                            onChange={(e) => setNewPart({ ...newPart, apiKey: e.target.value })}
+                          />
+                          <div className="flex gap-2">
+                              <Input
+                                className="h-7 text-xs bg-black/50 border-white/10 flex-1"
+                                placeholder="Model (e.g. gpt-4o)"
+                                value={newPart.model}
+                                onChange={(e) => setNewPart({ ...newPart, model: e.target.value })}
+                              />
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                className="h-7 text-xs"
+                                onClick={addParticipant}
+                                disabled={!newPart.apiKey || !newPart.model}
+                              >
+                                <Plus className="h-3 w-3 mr-1" /> Add
+                              </Button>
+                          </div>
+                      </div>
+                  </div>
               )}
             </div>
 

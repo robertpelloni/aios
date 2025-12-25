@@ -42,7 +42,7 @@ This document compiles the design decisions, planned features, and submodule int
 *   **Objective:** Provide a shared, persistent memory across all clients with seamless handoff.
 *   **Planned Features:**
     *   [ ] **Library Integration:** Adapt `claude-mem` core logic into `packages/core/src/lib/memory`.
-    *   [ ] **Session Handoff:** Implement "Save/Resume" logic (file-based snapshots) inspired by `vibeship-mind`.
+    *   [x] **Session Handoff:** Implement "Save/Resume" logic (file-based snapshots) inspired by `vibeship-mind`.
     *   [ ] **Semantic Search:** Integrate `txtai` concepts for knowledge retrieval.
     *   [ ] **Hook Bridging:**
         *   `SessionStart`: Inject "Memory Index" and "Last Snapshot".

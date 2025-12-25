@@ -12,6 +12,7 @@ interface MemoryItem {
 export class MemoryManager {
     private memories: MemoryItem[] = [];
     private dataFile: string;
+    private snapshotDir: string;
     private fuse: Fuse<MemoryItem>;
 
     constructor(dataDir: string) {
@@ -23,6 +24,11 @@ export class MemoryManager {
             }
         }
         this.dataFile = path.join(dataDir, 'memory.json');
+        this.snapshotDir = path.join(dataDir, 'snapshots');
+        
+        if (!fs.existsSync(this.snapshotDir)) {
+            fs.mkdirSync(this.snapshotDir, { recursive: true });
+        }
 
         this.fuse = new Fuse([], {
             keys: ['content', 'tags'],
@@ -76,6 +82,35 @@ export class MemoryManager {
         return this.memories.slice(-limit);
     }
 
+    async createSnapshot(args: { sessionId: string, context: any }) {
+        const snapshotPath = path.join(this.snapshotDir, `${args.sessionId}_${Date.now()}.json`);
+        try {
+            fs.writeFileSync(snapshotPath, JSON.stringify(args.context, null, 2));
+            return `Snapshot created at ${snapshotPath}`;
+        } catch (e) {
+            throw new Error(`Failed to create snapshot: ${e}`);
+        }
+    }
+
+    async listSnapshots(args: { sessionId?: string }) {
+        try {
+            const files = fs.readdirSync(this.snapshotDir);
+            return files
+                .filter(f => !args.sessionId || f.startsWith(args.sessionId))
+                .map(f => ({ filename: f, path: path.join(this.snapshotDir, f) }));
+        } catch (e) {
+            return [];
+        }
+    }
+
+    async restoreSnapshot(args: { filename: string }) {
+        const snapshotPath = path.join(this.snapshotDir, args.filename);
+        if (!fs.existsSync(snapshotPath)) {
+            throw new Error(`Snapshot not found: ${args.filename}`);
+        }
+        return JSON.parse(fs.readFileSync(snapshotPath, 'utf-8'));
+    }
+
     getToolDefinitions() {
         return [
             {
@@ -109,6 +144,39 @@ export class MemoryManager {
                     properties: {
                         limit: { type: "number" }
                     }
+                }
+            },
+            {
+                name: "create_snapshot",
+                description: "Save the current session context to a snapshot file.",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        sessionId: { type: "string" },
+                        context: { type: "object" }
+                    },
+                    required: ["sessionId", "context"]
+                }
+            },
+            {
+                name: "list_snapshots",
+                description: "List available session snapshots.",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        sessionId: { type: "string" }
+                    }
+                }
+            },
+            {
+                name: "restore_snapshot",
+                description: "Restore context from a snapshot file.",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        filename: { type: "string" }
+                    },
+                    required: ["filename"]
                 }
             }
         ];

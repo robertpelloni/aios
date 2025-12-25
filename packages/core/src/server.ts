@@ -324,6 +324,9 @@ export class CoreService {
              if (tool.name === 'remember') return this.memoryManager.remember(args);
              if (tool.name === 'search_memory') return this.memoryManager.search(args);
              if (tool.name === 'recall_recent') return this.memoryManager.recall(args);
+             if (tool.name === 'create_snapshot') return this.memoryManager.createSnapshot(args);
+             if (tool.name === 'list_snapshots') return this.memoryManager.listSnapshots(args);
+             if (tool.name === 'restore_snapshot') return this.memoryManager.restoreSnapshot(args);
              return "Unknown tool";
         });
     });

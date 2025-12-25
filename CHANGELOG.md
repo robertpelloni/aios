@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.7] - 2025-12-25
+
+### Added
+- **Memory Snapshots**: Implemented `create_snapshot`, `restore_snapshot`, and `list_snapshots` tools in `MemoryManager` to enable session handoff and persistence.
+
 ## [0.0.6] - 2025-12-25
 
 ### Added

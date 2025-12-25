@@ -5,18 +5,29 @@ import { SecretManager } from './SecretManager.js';
 import { MemoryProvider, MemoryItem, MemoryResult } from '../interfaces/MemoryProvider.js';
 import { FileMemoryProvider } from './providers/FileMemoryProvider.js';
 import { Mem0Provider } from './providers/Mem0Provider.js';
+import { ContextCompactor } from './ContextCompactor.js';
+import { AgentExecutor } from '../agents/AgentExecutor.js';
 
 export class MemoryManager {
     private providers: Map<string, MemoryProvider> = new Map();
     private defaultProviderId: string = 'default-file';
     private snapshotDir: string;
     private openai?: OpenAI;
+    private compactor?: ContextCompactor;
 
-    constructor(dataDir: string, private secretManager?: SecretManager) {
+    constructor(
+        dataDir: string, 
+        private secretManager?: SecretManager,
+        agentExecutor?: AgentExecutor
+    ) {
         this.snapshotDir = path.join(dataDir, 'snapshots');
         
         if (!fs.existsSync(this.snapshotDir)) {
             fs.mkdirSync(this.snapshotDir, { recursive: true });
+        }
+
+        if (agentExecutor) {
+            this.compactor = new ContextCompactor(agentExecutor);
         }
 
         // Initialize Default Provider
@@ -25,6 +36,54 @@ export class MemoryManager {
 
         this.initOpenAI();
         this.detectExternalProviders();
+    }
+
+    // ... (existing methods)
+
+    async ingestInteraction(tool: string, args: any, result: any) {
+        if (!this.compactor) return;
+
+        // Filter out trivial interactions
+        if (tool === 'search_memory' || tool === 'remember') return;
+
+        const content = `Tool: ${tool}\nArgs: ${JSON.stringify(args)}\nResult: ${JSON.stringify(result)}`;
+        
+        try {
+            const compacted = await this.compactor.compact(content, 'tool_output');
+            
+            // Store extracted facts/decisions
+            if (compacted.facts.length > 0) {
+                await this.remember({ 
+                    content: `[Auto-Fact] ${compacted.facts.join('; ')}`, 
+                    tags: ['auto-generated', 'fact', tool] 
+                });
+            }
+            if (compacted.decisions.length > 0) {
+                await this.remember({ 
+                    content: `[Auto-Decision] ${compacted.decisions.join('; ')}`, 
+                    tags: ['auto-generated', 'decision', tool] 
+                });
+            }
+        } catch (e) {
+            console.error('[Memory] Failed to ingest interaction:', e);
+        }
+    }
+
+    async ingestSession(source: string, content: string) {
+        if (!this.compactor) return "Context Compactor not available";
+
+        const compacted = await this.compactor.compact(content, 'conversation');
+        
+        const summaryId = await this.remember({
+            content: `[Session Summary - ${source}] ${compacted.summary}`,
+            tags: ['session-summary', source]
+        });
+
+        return {
+            summaryId,
+            facts: compacted.facts.length,
+            decisions: compacted.decisions.length
+        };
     }
 
     private async detectExternalProviders() {
@@ -250,6 +309,18 @@ export class MemoryManager {
                         filename: { type: "string" }
                     },
                     required: ["filename"]
+                }
+            },
+            {
+                name: "ingest_content",
+                description: "Ingest and summarize content from an external source (e.g., chat transcript, documentation).",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        source: { type: "string", description: "Source identifier (e.g., 'VSCode Session', 'Jules')" },
+                        content: { type: "string", description: "The raw text content to ingest." }
+                    },
+                    required: ["source", "content"]
                 }
             }
         ];

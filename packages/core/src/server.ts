@@ -126,6 +126,11 @@ export class CoreService {
 
     this.mcpInterface = new McpInterface(this.hubServer);
     this.agentExecutor = new AgentExecutor(this.proxyManager, this.secretManager, this.logManager);
+    
+    // Re-initialize MemoryManager with AgentExecutor for Context Compaction
+    this.memoryManager = new MemoryManager(path.join(rootDir, 'data'), this.secretManager, this.agentExecutor);
+    this.proxyManager.setMemoryManager(this.memoryManager);
+    
     this.schedulerManager = new SchedulerManager(rootDir, this.agentExecutor, this.proxyManager);
 
     this.commandManager.on('updated', (commands) => {
@@ -159,6 +164,37 @@ export class CoreService {
     registerMcpRoutes(this.app, this);
     registerAgentRoutes(this.app, this);
     registerRegistryRoutes(this.app, this);
+
+    // Memory Routes
+    this.app.get('/api/memory/providers', async () => {
+        return { providers: this.memoryManager.getProviders() };
+    });
+
+    this.app.get('/api/memory/search', async (request: any, reply) => {
+        const { q, provider } = request.query;
+        if (!q) {
+            return reply.code(400).send({ error: 'Missing query parameter q' });
+        }
+        try {
+            const results = await this.memoryManager.search({ query: q, providerId: provider });
+            return { results };
+        } catch (e: any) {
+            return reply.code(500).send({ error: e.message });
+        }
+    });
+
+    this.app.post('/api/memory', async (request: any, reply) => {
+        const { content, tags, provider } = request.body;
+        if (!content) {
+            return reply.code(400).send({ error: 'Missing content' });
+        }
+        try {
+            const id = await this.memoryManager.remember({ content, tags, providerId: provider });
+            return { status: 'created', id };
+        } catch (e: any) {
+            return reply.code(500).send({ error: e.message });
+        }
+    });
 
     this.app.setNotFoundHandler((req, res) => {
         if (!req.raw.url?.startsWith('/api')) {
@@ -396,6 +432,7 @@ export class CoreService {
              if (tool.name === 'list_snapshots') return this.memoryManager.listSnapshots(args);
              if (tool.name === 'restore_snapshot') return this.memoryManager.restoreSnapshot(args);
              if (tool.name === 'embed_memories') return this.memoryManager.backfillEmbeddings();
+             if (tool.name === 'ingest_content') return this.memoryManager.ingestSession(args.source, args.content);
              return "Unknown tool";
         });
     });

@@ -2,11 +2,13 @@ import { McpManager } from './McpManager.js';
 import { LogManager } from './LogManager.js';
 import { MetaMcpClient } from '../clients/MetaMcpClient.js';
 import { ToolSearchService } from '../services/ToolSearchService.js';
+import { MemoryManager } from './MemoryManager.js';
 
 export class McpProxyManager {
     private metaClient: MetaMcpClient;
     private searchService: ToolSearchService;
     private internalTools: Map<string, { def: any, handler: (args: any) => Promise<any> }> = new Map();
+    private memoryManager?: MemoryManager;
 
     // Session Management for Progressive Disclosure
     // Map<SessionID, Set<ToolName>>
@@ -19,6 +21,10 @@ export class McpProxyManager {
     ) {
         this.metaClient = new MetaMcpClient();
         this.searchService = new ToolSearchService();
+    }
+
+    setMemoryManager(memoryManager: MemoryManager) {
+        this.memoryManager = memoryManager;
     }
 
     registerInternalTool(def: any, handler: (args: any) => Promise<any>) {
@@ -164,6 +170,12 @@ export class McpProxyManager {
                 const result = await this.internalTools.get(name)!.handler(args);
                 const response = { content: [{ type: "text", text: typeof result === 'string' ? result : JSON.stringify(result, null, 2) }] };
                 this.logManager.log({ type: 'response', tool: name, server: 'internal', result: response });
+                
+                // Hook for Memory
+                if (this.memoryManager) {
+                    this.memoryManager.ingestInteraction(name, args, response).catch(e => console.error(e));
+                }
+
                 return response;
             } catch (e: any) {
                 const err = { isError: true, content: [{ type: "text", text: e.message }] };
@@ -184,6 +196,12 @@ export class McpProxyManager {
                             this.logManager.log({ type: 'request', tool: name, server: s.name, args });
                             const result = await client.callTool({ name, arguments: args });
                             this.logManager.log({ type: 'response', tool: name, server: s.name, result });
+                            
+                            // Hook for Memory
+                            if (this.memoryManager) {
+                                this.memoryManager.ingestInteraction(name, args, result).catch(e => console.error(e));
+                            }
+
                             return result;
                         }
                     } catch (e) { /* ignore */ }
@@ -196,6 +214,12 @@ export class McpProxyManager {
             this.logManager.log({ type: 'request', tool: name, server: 'metamcp', args });
             const result = await this.metaClient.callTool(name, args);
             this.logManager.log({ type: 'response', tool: name, server: 'metamcp', result });
+            
+            // Hook for Memory
+            if (this.memoryManager) {
+                this.memoryManager.ingestInteraction(name, args, result).catch(e => console.error(e));
+            }
+
             return result;
         } catch (e) {
              // ignore
@@ -204,3 +228,4 @@ export class McpProxyManager {
         throw new Error(`Tool ${name} not found in any active server.`);
     }
 }
+

@@ -23,6 +23,7 @@ The Ultimate "Meta-Orchestrator" for the Model Context Protocol (MCP). It acts a
 *   **Observability:**
     *   **Mcpshark:** Live traffic inspection of all JSON-RPC messages with Replay capability.
     *   **Dashboard:** Real-time UI for managing the entire stack.
+    *   **Jules Control Tower:** Integrated dashboard for managing Jules sessions, Autopilot, and Supervisor.
 
 ## 🚀 Getting Started
 

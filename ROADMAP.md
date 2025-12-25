@@ -166,3 +166,4 @@ This document compiles the design decisions, planned features, and submodule int
 - [x] **Code Mode:** Secure sandboxed execution.
 - [x] **Mcpenetes Integration:** Auto-configuration of clients.
 - [x] **MetaMCP Integration:** Proxying to Docker-based backend.
+- [x] **Jules Integration:** Integrated Jules Control Tower, Session Management, and Broadcast capabilities.

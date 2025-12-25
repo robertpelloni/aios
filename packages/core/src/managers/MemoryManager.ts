@@ -1,12 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 import Fuse from 'fuse.js';
+import OpenAI from 'openai';
+import { SecretManager } from './SecretManager.js';
 
 interface MemoryItem {
     id: string;
     content: string;
     tags: string[];
     timestamp: number;
+    embedding?: number[];
 }
 
 export class MemoryManager {
@@ -14,8 +17,9 @@ export class MemoryManager {
     private dataFile: string;
     private snapshotDir: string;
     private fuse: Fuse<MemoryItem>;
+    private openai?: OpenAI;
 
-    constructor(dataDir: string) {
+    constructor(dataDir: string, private secretManager?: SecretManager) {
         if (!fs.existsSync(dataDir)) {
             try {
                 fs.mkdirSync(dataDir, { recursive: true });
@@ -36,6 +40,17 @@ export class MemoryManager {
         });
 
         this.load();
+        this.initOpenAI();
+    }
+
+    private initOpenAI() {
+        if (this.secretManager) {
+            const apiKey = this.secretManager.getSecret('OPENAI_API_KEY') || process.env.OPENAI_API_KEY;
+            if (apiKey) {
+                this.openai = new OpenAI({ apiKey });
+                console.log('[Memory] Semantic search enabled (OpenAI)');
+            }
+        }
     }
 
     private load() {
@@ -59,22 +74,96 @@ export class MemoryManager {
         }
     }
 
+    private async generateEmbedding(text: string): Promise<number[] | undefined> {
+        if (!this.openai) return undefined;
+        try {
+            const response = await this.openai.embeddings.create({
+                model: "text-embedding-3-small",
+                input: text,
+            });
+            return response.data[0].embedding;
+        } catch (e) {
+            console.error('[Memory] Failed to generate embedding:', e);
+            return undefined;
+        }
+    }
+
+    private cosineSimilarity(vecA: number[], vecB: number[]): number {
+        let dotProduct = 0;
+        let normA = 0;
+        let normB = 0;
+        for (let i = 0; i < vecA.length; i++) {
+            dotProduct += vecA[i] * vecB[i];
+            normA += vecA[i] * vecA[i];
+            normB += vecB[i] * vecB[i];
+        }
+        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
+
     async remember(args: { content: string, tags?: string[] }) {
+        const embedding = await this.generateEmbedding(args.content);
+        
         const item: MemoryItem = {
             id: Math.random().toString(36).substring(7),
             content: args.content,
             tags: args.tags || [],
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            embedding
         };
         this.memories.push(item);
         this.fuse.setCollection(this.memories);
         this.save();
-        return `Memory stored with ID: ${item.id}`;
+        return `Memory stored with ID: ${item.id} ${embedding ? '(Embedded)' : ''}`;
     }
 
     async search(args: { query: string }) {
         const results = this.fuse.search(args.query);
         return results.map(r => r.item);
+    }
+
+    async searchSemantic(args: { query: string, limit?: number }) {
+        if (!this.openai) {
+            return "Semantic search unavailable (Missing OpenAI API Key)";
+        }
+        
+        const queryEmbedding = await this.generateEmbedding(args.query);
+        if (!queryEmbedding) return "Failed to generate query embedding";
+
+        const limit = args.limit || 5;
+        
+        return this.memories
+            .filter(m => m.embedding)
+            .map(m => ({
+                item: m,
+                score: this.cosineSimilarity(queryEmbedding, m.embedding!)
+            }))
+            .sort((a, b) => b.score - a.score)
+            .slice(0, limit)
+            .map(r => ({ ...r.item, similarity: r.score }));
+    }
+
+    async backfillEmbeddings() {
+        if (!this.openai) return "OpenAI not initialized";
+        let count = 0;
+        console.log(`[Memory] Starting embedding backfill for ${this.memories.length} items...`);
+        
+        for (const memory of this.memories) {
+            if (!memory.embedding) {
+                const embedding = await this.generateEmbedding(memory.content);
+                if (embedding) {
+                    memory.embedding = embedding;
+                    count++;
+                    // Rate limit protection (simple)
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+            }
+        }
+        
+        if (count > 0) {
+            this.save();
+            this.fuse.setCollection(this.memories);
+        }
+        return `Backfilled embeddings for ${count} memories`;
     }
 
     async recall(args: { limit?: number }) {
@@ -137,6 +226,18 @@ export class MemoryManager {
                 }
             },
             {
+                name: "semantic_search",
+                description: "Search stored memories using semantic similarity (requires OpenAI API Key).",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        query: { type: "string" },
+                        limit: { type: "number" }
+                    },
+                    required: ["query"]
+                }
+            },
+            {
                 name: "recall_recent",
                 description: "Retrieve the most recent memories.",
                 inputSchema: {
@@ -177,6 +278,14 @@ export class MemoryManager {
                         filename: { type: "string" }
                     },
                     required: ["filename"]
+                }
+            },
+            {
+                name: "embed_memories",
+                description: "Generate embeddings for all memories that lack them (requires OpenAI API Key).",
+                inputSchema: {
+                    type: "object",
+                    properties: {}
                 }
             }
         ];

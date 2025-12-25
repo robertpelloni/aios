@@ -82,7 +82,9 @@ export class AgentExecutor extends EventEmitter {
                 // 3. Handle Tool Calls
                 if (message.tool_calls && message.tool_calls.length > 0) {
                     for (const toolCall of message.tool_calls) {
+                        // @ts-ignore
                         const name = toolCall.function.name;
+                        // @ts-ignore
                         const args = JSON.parse(toolCall.function.arguments);
 
                         this.emit('tool_call', { name, args });

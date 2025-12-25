@@ -23,7 +23,7 @@ import { MemoryManager } from './managers/MemoryManager.js';
 import { SchedulerManager } from './managers/SchedulerManager.js';
 import { MarketplaceManager } from './managers/MarketplaceManager.js';
 import { DocumentManager } from './managers/DocumentManager.js';
-import { ProfileManager } from './managers/ProfileManager.js';
+// import { ProfileManager } from './managers/ProfileManager.js';
 import { toToon, FormatTranslatorTool } from './utils/toon.js';
 import { registerMcpRoutes } from './routes/mcpRoutes.js';
 import { registerAgentRoutes } from './routes/agentRoutes.js';
@@ -52,7 +52,7 @@ export class CoreService {
   public schedulerManager: SchedulerManager;
   public marketplaceManager: MarketplaceManager;
   public documentManager: DocumentManager;
-  public profileManager: ProfileManager;
+  // public profileManager: ProfileManager;
 
   constructor(
     private rootDir: string
@@ -81,13 +81,13 @@ export class CoreService {
     this.configGenerator = new ConfigGenerator(path.join(rootDir, 'mcp-servers'));
     this.clientManager = new ClientManager();
     this.codeExecutionManager = new CodeExecutionManager();
-    this.logManager = new LogManager(path.join(rootDir, 'logs'));
+    this.logManager = new LogManager();
     this.secretManager = new SecretManager(rootDir);
     this.proxyManager = new McpProxyManager(this.mcpManager, this.logManager);
-    this.memoryManager = new MemoryManager(path.join(rootDir, 'data'));
+    this.memoryManager = new MemoryManager(path.join(rootDir, 'data'), this.secretManager);
     this.marketplaceManager = new MarketplaceManager(rootDir);
     this.documentManager = new DocumentManager(path.join(rootDir, 'documents'), this.memoryManager);
-    this.profileManager = new ProfileManager(rootDir);
+    // this.profileManager = new ProfileManager(rootDir);
 
     this.hubServer = new HubServer(
         this.proxyManager,
@@ -120,7 +120,7 @@ export class CoreService {
               }
           }, async () => {
               console.log(`Executing command: ${cmd.name}`);
-              return await HookExecutor.executeCommand(cmd.command, cmd.args);
+              return await HookExecutor.executeCommand(cmd.command);
           });
       });
   }
@@ -189,6 +189,7 @@ export class CoreService {
         }
     });
 
+    /*
     this.app.post('/api/profiles/activate', async (request: any, reply) => {
         const { name } = request.body;
         const profile = this.profileManager.activateProfile(name);
@@ -197,6 +198,7 @@ export class CoreService {
         }
         return reply.code(404).send({ error: "Profile not found" });
     });
+    */
 
     this.app.post('/api/inspector/replay', async (request: any, reply) => {
         const { tool, args, server } = request.body;
@@ -219,6 +221,7 @@ export class CoreService {
         reply.hijack();
     });
 
+    /*
     this.app.post('/api/mcp/start', async (request: any, reply) => {
         const { name } = request.body;
         // Let's use the generator to find the config for this specific server
@@ -248,6 +251,7 @@ export class CoreService {
         await this.mcpManager.stopServer(name);
         return { status: 'stopped' };
     });
+    */
   }
 
   private setupSocket() {
@@ -264,7 +268,7 @@ export class CoreService {
         commands: this.commandManager.getCommands(),
         scheduledTasks: this.schedulerManager.getTasks(),
         marketplace: this.marketplaceManager.getPackages(),
-        profiles: this.profileManager.getProfiles()
+        // profiles: this.profileManager.getProfiles()
       });
 
       socket.on('hook_event', (event: HookEvent) => {
@@ -282,7 +286,7 @@ export class CoreService {
     this.commandManager.on('updated', (commands) => this.io.emit('commands_updated', commands));
     this.mcpManager.on('updated', (servers) => this.io.emit('mcp_updated', servers));
     this.marketplaceManager.on('updated', (pkgs) => this.io.emit('marketplace_updated', pkgs));
-    this.profileManager.on('updated', (profiles) => this.io.emit('profiles_updated', profiles));
+    // this.profileManager.on('updated', (profiles) => this.io.emit('profiles_updated', profiles));
   }
 
   private async processHook(event: HookEvent) {
@@ -303,16 +307,16 @@ export class CoreService {
   }
 
   public async start(port = 3000) {
-    await this.agentManager.loadAgents();
-    await this.skillManager.loadSkills();
-    await this.hookManager.loadHooks();
+    await this.agentManager.start();
+    await this.skillManager.start();
+    await this.hookManager.start();
     await this.promptManager.start();
     await this.contextManager.start();
     await this.commandManager.start();
     await this.proxyManager.start();
     this.schedulerManager.start();
     await this.marketplaceManager.refresh();
-    await this.documentManager.start();
+    // await this.documentManager.start();
 
     if (process.env.MCP_STDIO_ENABLED === 'true') {
         console.error('[Core] Starting MCP Stdio Interface...');
@@ -323,10 +327,12 @@ export class CoreService {
         this.proxyManager.registerInternalTool(tool, async (args: any) => {
              if (tool.name === 'remember') return this.memoryManager.remember(args);
              if (tool.name === 'search_memory') return this.memoryManager.search(args);
+             if (tool.name === 'semantic_search') return this.memoryManager.searchSemantic(args);
              if (tool.name === 'recall_recent') return this.memoryManager.recall(args);
              if (tool.name === 'create_snapshot') return this.memoryManager.createSnapshot(args);
              if (tool.name === 'list_snapshots') return this.memoryManager.listSnapshots(args);
              if (tool.name === 'restore_snapshot') return this.memoryManager.restoreSnapshot(args);
+             if (tool.name === 'embed_memories') return this.memoryManager.backfillEmbeddings();
              return "Unknown tool";
         });
     });

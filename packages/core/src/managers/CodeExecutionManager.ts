@@ -99,7 +99,7 @@ export class CodeExecutionManager {
             `;
 
             const script = await session.context.isolate.compileScript(wrappedCode);
-            const result = await scriptObj.run(context, { timeout: 5000, promise: true });
+            const result = await script.run(context, { timeout: 5000, promise: true });
 
             return JSON.stringify(result);
 

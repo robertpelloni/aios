@@ -61,7 +61,10 @@ export class DocumentManager extends EventEmitter {
             }
 
             // Chunk and store
-            await this.memoryManager.remember(`document:${path.basename(filepath)}`, content, ['document', ext]);
+            await this.memoryManager.remember({
+                content: `[File: ${path.basename(filepath)}]\n${content}`,
+                tags: ['document', ext]
+            });
             console.log(`[DocumentManager] Ingested ${path.basename(filepath)}`);
             this.emit('ingested', { file: path.basename(filepath) });
 

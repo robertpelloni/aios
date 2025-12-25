@@ -56,7 +56,7 @@ export function AppLayout() {
 
   // Sync session selection with URL query param
   useEffect(() => {
-    const sessionId = searchParams.get('sessionId');
+    const sessionId = searchParams?.get('sessionId');
     if (sessionId && client) {
       if (selectedSession?.id !== sessionId) {
         // Load session details
@@ -107,7 +107,7 @@ export function AppLayout() {
     setView('sessions');
     setMobileMenuOpen(false);
     // Update URL without refreshing
-    const newParams = new URLSearchParams(searchParams.toString());
+    const newParams = new URLSearchParams(searchParams?.toString() || '');
     newParams.set('sessionId', session.id);
     router.push(`/?${newParams.toString()}`);
   };

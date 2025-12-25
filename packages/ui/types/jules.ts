@@ -28,6 +28,7 @@ export interface Session {
   lastActivityAt?: string;
   branch?: string;
   outputs?: SessionOutput[];
+  summary?: string;
 }
 
 export interface Activity {

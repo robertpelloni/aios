@@ -2,13 +2,15 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Key, Server, Bot, Plug, Activity, MessageSquare, FileText, ShoppingBag } from 'lucide-react';
+import { LayoutDashboard, Key, Server, Bot, Plug, Activity, MessageSquare, FileText, ShoppingBag, Database, FolderTree } from 'lucide-react';
 
 export const Sidebar = () => {
   const pathname = usePathname();
 
   const navItems = [
     { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/project', label: 'Project', icon: FolderTree },
+    { href: '/memory', label: 'Memory', icon: Database },
     { href: '/marketplace', label: 'Marketplace', icon: ShoppingBag },
     { href: '/secrets', label: 'API Keys', icon: Key },
     { href: '/mcp', label: 'MCP Servers', icon: Server },

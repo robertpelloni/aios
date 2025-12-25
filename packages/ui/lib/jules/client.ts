@@ -357,6 +357,12 @@ export class JulesClient {
     });
   }
 
+  async updateSession(id: string, data: Partial<Session>): Promise<Session> {
+    // TODO: Implement actual API call when available
+    console.warn('updateSession not implemented in API client', id, data);
+    return this.getSession(id);
+  }
+
   async approvePlan(sessionId: string): Promise<void> {
     // Matches Python SDK: self.client.post(f"{session_id}:approvePlan")
     await this.request<void>(`/sessions/${sessionId}:approvePlan`, {

@@ -26,6 +26,8 @@ import { DocumentManager } from './managers/DocumentManager.js';
 import { ProfileManager } from './managers/ProfileManager.js';
 import { HandoffManager } from './managers/HandoffManager.js';
 import { HealthService } from './services/HealthService.js';
+import { SystemDoctor } from './services/SystemDoctor.js';
+import { BrowserManager } from './managers/BrowserManager.js';
 import { toToon, FormatTranslatorTool } from './utils/toon.js';
 
 export class CoreService {
@@ -55,6 +57,8 @@ export class CoreService {
   private profileManager: ProfileManager;
   private handoffManager: HandoffManager;
   private healthService: HealthService;
+  private systemDoctor: SystemDoctor;
+  private browserManager: BrowserManager;
 
   constructor(
     private rootDir: string
@@ -93,6 +97,8 @@ export class CoreService {
     this.profileManager = new ProfileManager(rootDir);
     this.handoffManager = new HandoffManager(rootDir, this.memoryManager);
     this.healthService = new HealthService(this.mcpManager);
+    this.systemDoctor = new SystemDoctor();
+    this.browserManager = new BrowserManager();
 
     this.hubServer = new HubServer(
         this.proxyManager,
@@ -136,6 +142,7 @@ export class CoreService {
 
   private setupRoutes() {
     this.app.get('/health', async () => this.healthService.getSystemStatus());
+    this.app.get('/api/doctor', async () => this.systemDoctor.checkAll());
 
     this.app.get('/api/clients', async () => ({ clients: this.clientManager.getClients() }));
 
@@ -302,6 +309,10 @@ export class CoreService {
       const clientType = (socket.handshake.query.clientType as string) || 'unknown';
       this.healthService.registerClient(socket.id, clientType);
 
+      if (clientType === 'browser') {
+          this.browserManager.registerClient(socket);
+      }
+
       socket.emit('state', {
         agents: this.agentManager.getAgents(),
         skills: this.skillManager.getSkills(),
@@ -383,6 +394,14 @@ export class CoreService {
     this.proxyManager.registerInternalTool(FormatTranslatorTool, async (args: any) => {
         const json = typeof args.data === 'string' ? JSON.parse(args.data) : args.data;
         return toToon(json);
+    });
+
+    this.browserManager.getToolDefinitions().forEach(tool => {
+        this.proxyManager.registerInternalTool(tool, async (args: any) => {
+             if (tool.name === 'read_active_tab') return this.browserManager.readActiveTab();
+             if (tool.name === 'browser_navigate') return this.browserManager.navigate(args.url);
+             return "Unknown tool";
+        });
     });
 
     // Register Handoff Tool

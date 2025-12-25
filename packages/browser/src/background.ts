@@ -27,3 +27,17 @@ socket.on('browser:navigate', (data) => {
         chrome.tabs.create({ url: data.url });
     }
 });
+
+// Handle 'read_page' requests from Hub
+socket.on('browser:read_page', async (data, callback) => {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tab && tab.id) {
+        chrome.tabs.sendMessage(tab.id, { action: 'getPageContent' }, (response) => {
+            if (callback) callback(response);
+            // Also emit back to server as event if callback not supported by socket version
+            socket.emit('browser:page_content', { ...response, requestId: data.requestId });
+        });
+    } else {
+        if (callback) callback({ error: 'No active tab' });
+    }
+});

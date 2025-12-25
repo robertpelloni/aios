@@ -5,6 +5,7 @@ module.exports = {
   mode: 'production',
   entry: {
     background: './src/background.ts',
+    content: './src/content.ts'
   },
   output: {
     path: path.resolve(__dirname, 'dist'),

@@ -2,6 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
 import { MemoryManager } from './MemoryManager.js';
+// We use a require here because pdf-parse might not be fully ESM compatible in this env
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const pdf = require('pdf-parse');
 
 /**
  * Manages document ingestion (PDF, txt, md) from a watched directory.
@@ -51,17 +55,37 @@ export class DocumentManager extends EventEmitter {
             if (ext === '.txt' || ext === '.md' || ext === '.json') {
                 content = fs.readFileSync(filepath, 'utf-8');
             } else if (ext === '.pdf') {
-                content = `[PDF Content Placeholder for ${path.basename(filepath)}]`;
+                const dataBuffer = fs.readFileSync(filepath);
+                const data = await pdf(dataBuffer);
+                content = data.text;
             } else {
                 return;
             }
 
-            await this.memoryManager.remember(`document:${path.basename(filepath)}`, content, ['document', ext]);
-            console.log(`[DocumentManager] Ingested ${path.basename(filepath)}`);
+            // Simple Chunking Strategy (by paragraphs or char limit)
+            const chunks = this.chunkText(content, 1000); // 1000 char chunks
+
+            for (let i = 0; i < chunks.length; i++) {
+                await this.memoryManager.remember(
+                    `document:${path.basename(filepath)}:chunk:${i}`,
+                    chunks[i],
+                    ['document', ext, path.basename(filepath)]
+                );
+            }
+
+            console.log(`[DocumentManager] Ingested ${path.basename(filepath)} (${chunks.length} chunks)`);
             this.emit('ingested', { file: path.basename(filepath) });
 
         } catch (error) {
             console.error(`[DocumentManager] Error processing ${filepath}:`, error);
         }
+    }
+
+    private chunkText(text: string, size: number): string[] {
+        const chunks = [];
+        for (let i = 0; i < text.length; i += size) {
+            chunks.push(text.substring(i, i + size));
+        }
+        return chunks;
     }
 }

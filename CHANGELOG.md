@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.4] - 2024-05-23
+
+### Updated
+- **Submodules**: Updated all submodules including `jules-app`, `OpenHands`, `beads`, `vibeship-mind`, and `agentic-qe`.
+- **Jules App**: Synced latest `SessionList` and `BroadcastDialog` components.
+
 ## [0.0.3] - 2024-05-23
 
 ### Updated

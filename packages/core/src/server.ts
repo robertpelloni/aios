@@ -24,6 +24,7 @@ import { SchedulerManager } from './managers/SchedulerManager.js';
 import { MarketplaceManager } from './managers/MarketplaceManager.js';
 import { DocumentManager } from './managers/DocumentManager.js';
 import { ProfileManager } from './managers/ProfileManager.js';
+import { ProjectManager } from './managers/ProjectManager.js';
 import { ContextGenerator } from './utils/ContextGenerator.js';
 import { toToon, FormatTranslatorTool } from './utils/toon.js';
 import fs from 'fs';
@@ -55,6 +56,7 @@ export class CoreService {
   public marketplaceManager: MarketplaceManager;
   public documentManager: DocumentManager;
   public profileManager: ProfileManager;
+  public projectManager: ProjectManager;
 
   constructor(
     private rootDir: string
@@ -90,6 +92,7 @@ export class CoreService {
     this.marketplaceManager = new MarketplaceManager(rootDir);
     this.documentManager = new DocumentManager(path.join(rootDir, 'documents'), this.memoryManager);
     this.profileManager = new ProfileManager(rootDir);
+    this.projectManager = new ProjectManager(rootDir);
 
     this.hubServer = new HubServer(
         this.proxyManager,
@@ -213,6 +216,13 @@ export class CoreService {
     this.app.get('/api/logs', async (request: any, reply) => {
         const limit = request.query.limit ? parseInt(request.query.limit) : 100;
         return await this.logManager.getLogs({ limit });
+    });
+
+    this.app.get('/api/project/structure', async () => {
+        return {
+            structure: this.projectManager.getStructure(),
+            submodules: await this.projectManager.getSubmodules()
+        };
     });
 
     this.app.get('/api/hub/sse', async (request: any, reply) => {

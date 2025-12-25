@@ -31,15 +31,18 @@ The "Super AI Plugin" (AIOS) has reached version 0.0.8. The core infrastructure 
 - **Details:**
     - Implemented `AgentRegistry` and `AgentMessageBroker`.
     - Added `send_message`, `check_mailbox`, and `list_agents` tools.
-    - **Next Steps:** Implement autonomous agent loops that utilize these tools.
+    - **Autonomous Agents:** Implemented `AutonomousAgent` loop and `AutonomousAgentManager`.
+    - **UI:** Added "Start/Stop Auto" controls to the Agents page.
+    - **Subagents:** Implemented `delegate_task` tool for spawning sub-agents.
+    - **Next Steps:** Browser Connectivity.
 
 ## Recent Activity
 - **Release v0.0.8**: Consolidated all feature branches and updated documentation.
 - **Documentation**: Standardized `docs/LLM_INSTRUCTIONS.md` as the universal prompt.
-- **Advanced Orchestration**: Implemented foundational A2A protocols.
+- **Advanced Orchestration**: Implemented foundational A2A protocols, Autonomous Agent Loop, and Subagent Delegation.
 
 ## Immediate Next Steps
 
-1.  **Autonomous Agents:** Build the "Agent Loop" to allow agents to run autonomously and check their mailboxes.
-2.  **Browser Connectivity:** Connect the Hub to the browser via extension.
-3.  **Client Integration:** Auto-configure VSCode/Claude to use the Hub.
+1.  **Browser Connectivity:** Connect the Hub to the browser via extension.
+2.  **Client Integration:** Auto-configure VSCode/Claude to use the Hub.
+3.  **Memory System:** Deepen the memory integration with vector search.

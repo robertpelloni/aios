@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bot, Play, Terminal } from 'lucide-react';
+import { Bot, Play, Terminal, Power, Square } from 'lucide-react';
 import { io } from 'socket.io-client';
 
 const socket = io('http://localhost:3000');
@@ -10,10 +10,12 @@ const API_BASE = 'http://localhost:3000';
 export default function Agents() {
   const [agents, setAgents] = useState<any[]>([]);
   const [running, setRunning] = useState<string | null>(null);
+  const [autonomousAgents, setAutonomousAgents] = useState<string[]>([]);
   const [output, setOutput] = useState<string>('');
   const [task, setTask] = useState('');
 
   useEffect(() => {
+    fetchRunningAgents();
     socket.on('state', (data: any) => {
       if (data.agents) setAgents(data.agents);
     });
@@ -23,6 +25,28 @@ export default function Agents() {
       socket.off('agents_updated');
     };
   }, []);
+
+  const fetchRunningAgents = async () => {
+      try {
+          const res = await fetch(`${API_BASE}/api/agents/running`);
+          const data = await res.json();
+          setAutonomousAgents(data.agents || []);
+      } catch (e) {
+          console.error("Failed to fetch running agents", e);
+      }
+  };
+
+  const toggleAutonomous = async (agentId: string) => {
+      const isRunning = autonomousAgents.includes(agentId);
+      const endpoint = isRunning ? 'stop' : 'start';
+      
+      try {
+          await fetch(`${API_BASE}/api/agents/${agentId}/${endpoint}`, { method: 'POST' });
+          await fetchRunningAgents();
+      } catch (e: any) {
+          setOutput(prev => prev + `[Error] ${e.message}\n`);
+      }
+  };
 
   const runAgent = async (agentName: string) => {
     setRunning(agentName);
@@ -66,7 +90,18 @@ export default function Agents() {
                     disabled={!!running}
                     className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs py-1.5 rounded flex items-center justify-center gap-1"
                   >
-                    <Play size={12} /> Run
+                    <Play size={12} /> Run Once
+                  </button>
+                  <button
+                    onClick={() => toggleAutonomous(agent.id)}
+                    className={`flex-1 text-white text-xs py-1.5 rounded flex items-center justify-center gap-1 ${
+                        autonomousAgents.includes(agent.id) 
+                        ? 'bg-red-600 hover:bg-red-700' 
+                        : 'bg-purple-600 hover:bg-purple-700'
+                    }`}
+                  >
+                    {autonomousAgents.includes(agent.id) ? <Square size={12} /> : <Power size={12} />}
+                    {autonomousAgents.includes(agent.id) ? 'Stop Auto' : 'Start Auto'}
                   </button>
                 </div>
               </div>

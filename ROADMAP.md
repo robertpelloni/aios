@@ -62,14 +62,14 @@ This document compiles the design decisions, planned features, and submodule int
     *   [ ] **TOON Support:** Implement Token-Oriented Object Notation for compressed outputs.
 
 ## 5. Autonomous Agents & UI
-**Status:** Research Needed
+**Status:** In Progress
 **Reference:** `references/mux`, `references/smolagents`
 
 *   **Objective:** Provide an interface for long-running, autonomous tasks.
 *   **Planned Features:**
-    *   [ ] **Agent Loop:** Implement an autonomous loop (Plan -> Act -> Observe) using `smolagents` or `mux` logic.
-    *   [ ] **UI Integration:** Embed the Agent control interface into the `packages/ui` dashboard.
-    *   [ ] **Subagent Delegation:** Allow the main agent to spin up sub-agents for specific tasks.
+    *   [x] **Agent Loop:** Implement an autonomous loop (Plan -> Act -> Observe) using `smolagents` or `mux` logic.
+    *   [x] **UI Integration:** Embed the Agent control interface into the `packages/ui` dashboard.
+    *   [x] **Subagent Delegation:** Allow the main agent to spin up sub-agents for specific tasks.
 
 ## 6. Browser Connectivity
 **Status:** Research Needed

@@ -56,9 +56,10 @@ import { SessionKeeperLogPanel } from "./session-keeper-log-panel";
 import { SessionKeeperSettings } from "./session-keeper-settings";
 import { SessionKeeperManager } from "./session-keeper-manager";
 import { useSessionKeeperStore } from "@/lib/stores/session-keeper";
+import { SystemDashboard } from "./system-dashboard";
 
 interface AppLayoutProps {
-  initialView?: "sessions" | "analytics" | "templates" | "kanban";
+  initialView?: "sessions" | "analytics" | "templates" | "kanban" | "system";
 }
 
 export function AppLayout({ initialView }: AppLayoutProps) {
@@ -69,16 +70,16 @@ export function AppLayout({ initialView }: AppLayoutProps) {
   const { isAvailable: terminalAvailable } = useTerminalAvailable();
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [view, setView] = useState<
-    "sessions" | "analytics" | "templates" | "kanban"
+    "sessions" | "analytics" | "templates" | "kanban" | "system"
   >(() => {
     if (initialView) return initialView;
     if (typeof window !== "undefined") {
       const savedView = localStorage.getItem("jules-current-view");
       if (
         savedView &&
-        ["sessions", "analytics", "templates", "kanban"].includes(savedView)
+        ["sessions", "analytics", "templates", "kanban", "system"].includes(savedView)
       ) {
-        return savedView as "sessions" | "analytics" | "templates" | "kanban";
+        return savedView as "sessions" | "analytics" | "templates" | "kanban" | "system";
       }
     }
     return "sessions";
@@ -340,6 +341,19 @@ export function AppLayout({ initialView }: AppLayoutProps) {
               </span>
             </Button>
 
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`h-8 px-3 hover:bg-white/5 ${view === "system" ? "text-white" : "text-white/60"}`}
+              onClick={() => setView("system")}
+              aria-pressed={view === "system"}
+            >
+              <Server className="h-3.5 w-3.5 sm:mr-1.5" />
+              <span className="text-[10px] font-mono uppercase tracking-wider hidden sm:inline">
+                System
+              </span>
+            </Button>
+
             {/* Logs Toggle */}
             <Button
               variant="ghost"
@@ -502,6 +516,8 @@ export function AppLayout({ initialView }: AppLayoutProps) {
                   <AnalyticsDashboard />
                 ) : view === 'templates' ? (
                   <TemplatesPage onStartSession={handleStartSessionFromTemplate} />
+                ) : view === 'system' ? (
+                  <SystemDashboard />
                 ) : selectedSession ? (
                   <ActivityFeed
                     key={selectedSession.id}

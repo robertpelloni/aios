@@ -1,4 +1,5 @@
 packages:
-  - "packages/*"
-  - "mcp-servers/*"
-  - "submodules/mcpenetes"
+  - 'packages/*'
+  - 'mcp-servers/*'
+  - 'packages/adapters/*'
+  - 'submodules/mcpenetes'

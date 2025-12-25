@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { ModelGateway } from '../gateway/ModelGateway.js';
 
 interface VectorDocument {
@@ -9,8 +11,31 @@ interface VectorDocument {
 
 export class VectorStore {
     private documents: VectorDocument[] = [];
+    private filePath: string;
 
-    constructor(private gateway: ModelGateway) {}
+    constructor(private gateway: ModelGateway, dataDir: string) {
+        this.filePath = path.join(dataDir, 'vectors.json');
+        this.load();
+    }
+
+    private load() {
+        if (fs.existsSync(this.filePath)) {
+            try {
+                this.documents = JSON.parse(fs.readFileSync(this.filePath, 'utf-8'));
+                console.log(`[VectorStore] Loaded ${this.documents.length} vectors`);
+            } catch (e) {
+                console.error('[VectorStore] Failed to load vectors', e);
+            }
+        }
+    }
+
+    private save() {
+        try {
+            fs.writeFileSync(this.filePath, JSON.stringify(this.documents));
+        } catch (e) {
+            console.error('[VectorStore] Failed to save vectors', e);
+        }
+    }
 
     async add(id: string, text: string, metadata: any = {}) {
         try {
@@ -21,6 +46,7 @@ export class VectorStore {
             this.documents = this.documents.filter(d => d.id !== id);
 
             this.documents.push({ id, text, vector, metadata });
+            this.save();
         } catch (e) {
             console.warn('[VectorStore] Failed to embed:', e);
         }
@@ -36,7 +62,7 @@ export class VectorStore {
                 score: this.cosineSimilarity(queryVector, doc.vector)
             }));
 
-            // Sort descending
+            // Sort descending by similarity
             results.sort((a, b) => b.score - a.score);
 
             return results.slice(0, limit).map(r => ({

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import Fuse from 'fuse.js';
+import { VectorStore } from '../services/VectorStore.js';
 
 interface MemoryItem {
     id: string;
@@ -14,7 +15,7 @@ export class MemoryManager {
     private dataFile: string;
     private fuse: Fuse<MemoryItem>;
 
-    constructor(dataDir: string) {
+    constructor(dataDir: string, private vectorStore?: VectorStore) {
         if (!fs.existsSync(dataDir)) {
             try {
                 fs.mkdirSync(dataDir, { recursive: true });
@@ -63,12 +64,37 @@ export class MemoryManager {
         this.memories.push(item);
         this.fuse.setCollection(this.memories);
         this.save();
+
+        if (this.vectorStore) {
+            // Async embed to not block
+            this.vectorStore.add(item.id, item.content, {
+                type: 'memory',
+                tags: item.tags,
+                timestamp: item.timestamp
+            }).catch(e => console.error('[Memory] Vector index failed:', e));
+        }
+
         return `Memory stored with ID: ${item.id}`;
     }
 
     async search(args: { query: string }) {
-        const results = this.fuse.search(args.query);
-        return results.map(r => r.item);
+        const results = new Map<string, any>();
+
+        // 1. Semantic Search (Vector)
+        if (this.vectorStore) {
+            const semanticMatches = await this.vectorStore.search(args.query, 5);
+            semanticMatches.forEach(m => results.set(m.text, m)); // Dedupe by text content
+        }
+
+        // 2. Fuzzy Search (Keyword)
+        const fuzzyMatches = this.fuse.search(args.query);
+        fuzzyMatches.forEach(m => {
+            if (!results.has(m.item.content)) {
+                results.set(m.item.content, m.item);
+            }
+        });
+
+        return Array.from(results.values());
     }
 
     async recall(args: { limit?: number }) {
@@ -92,7 +118,7 @@ export class MemoryManager {
             },
             {
                 name: "search_memory",
-                description: "Search stored memories by content or tags.",
+                description: "Search stored memories by content or tags (Hybrid Semantic + Fuzzy).",
                 inputSchema: {
                     type: "object",
                     properties: {

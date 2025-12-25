@@ -12,6 +12,8 @@ import { Context } from './pages/Context';
 import { Marketplace } from './pages/Marketplace';
 import { Handoffs } from './pages/Handoffs';
 import { Settings } from './pages/Settings';
+import { Tools } from './pages/Tools';
+import { Billing, Cloud, Jules } from './pages/Placeholders';
 
 function App() {
   return (
@@ -29,6 +31,10 @@ function App() {
           <Route path="context" element={<Context />} />
           <Route path="handoffs" element={<Handoffs />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="tools" element={<Tools />} />
+          <Route path="billing" element={<Billing />} />
+          <Route path="cloud" element={<Cloud />} />
+          <Route path="jules" element={<Jules />} />
         </Route>
       </Routes>
     </BrowserRouter>

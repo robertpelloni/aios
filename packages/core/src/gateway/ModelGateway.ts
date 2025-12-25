@@ -14,9 +14,23 @@ export interface CompletionResponse {
 
 export type ModelProvider = 'openai' | 'anthropic' | 'ollama';
 
+export interface UsageStats {
+    tokensIn: number;
+    tokensOut: number;
+    cost: number;
+    requests: number;
+}
+
 export class ModelGateway {
     private provider: ModelProvider = 'openai';
     private model: string = 'gpt-4o'; // Default
+
+    public stats: UsageStats = {
+        tokensIn: 0,
+        tokensOut: 0,
+        cost: 0,
+        requests: 0
+    };
 
     constructor(private secretManager: SecretManager) {}
 
@@ -26,9 +40,25 @@ export class ModelGateway {
         console.log(`[ModelGateway] Switched to ${provider}:${model}`);
     }
 
+    private trackUsage(inputLen: number, outputLen: number, model: string) {
+        // Rough estimation: 1 token ~= 4 chars
+        const tokensIn = Math.ceil(inputLen / 4);
+        const tokensOut = Math.ceil(outputLen / 4);
+
+        this.stats.tokensIn += tokensIn;
+        this.stats.tokensOut += tokensOut;
+        this.stats.requests++;
+
+        // Rough Cost Estimation (based on GPT-4o tiers)
+        // Input: $5.00 / 1M tokens
+        // Output: $15.00 / 1M tokens
+        const costIn = (tokensIn / 1_000_000) * 5.00;
+        const costOut = (tokensOut / 1_000_000) * 15.00;
+
+        this.stats.cost += (costIn + costOut);
+    }
+
     async getEmbedding(text: string): Promise<number[] | null> {
-        // Only OpenAI supports embeddings natively in this gateway for now
-        // Ollama supports it via /api/embeddings, could implement later
         if (this.provider === 'openai' || this.secretManager.getSecret('OPENAI_API_KEY')) {
             try {
                 const apiKey = this.secretManager.getSecret('OPENAI_API_KEY');
@@ -41,6 +71,12 @@ export class ModelGateway {
                     model: 'text-embedding-3-small',
                     input: text,
                 });
+
+                // Track embedding cost ($0.02 / 1M tokens)
+                const tokens = Math.ceil(text.length / 4);
+                this.stats.tokensIn += tokens;
+                this.stats.cost += (tokens / 1_000_000) * 0.02;
+
                 return response.data[0].embedding;
             } catch (e) {
                 console.warn('[ModelGateway] Embedding failed:', e);
@@ -51,14 +87,25 @@ export class ModelGateway {
     }
 
     async complete(request: CompletionRequest): Promise<CompletionResponse> {
+        let response: CompletionResponse;
+
+        // Calculate input size roughly for tracking
+        const inputStr = JSON.stringify(request.messages) + (request.system || '');
+
         if (this.provider === 'openai') {
-            return this.callOpenAI(request);
+            response = await this.callOpenAI(request);
         } else if (this.provider === 'anthropic') {
-            return this.callAnthropic(request);
+            response = await this.callAnthropic(request);
         } else if (this.provider === 'ollama') {
-            return this.callOllama(request);
+            response = await this.callOllama(request);
+        } else {
+            throw new Error(`Unknown provider: ${this.provider}`);
         }
-        throw new Error(`Unknown provider: ${this.provider}`);
+
+        // Track usage
+        this.trackUsage(inputStr.length, response.content.length, this.model);
+
+        return response;
     }
 
     private async callOpenAI(req: CompletionRequest): Promise<CompletionResponse> {
@@ -90,7 +137,6 @@ export class ModelGateway {
          const apiKey = this.secretManager.getSecret('ANTHROPIC_API_KEY');
          if (!apiKey) throw new Error("ANTHROPIC_API_KEY not found");
 
-         // Use native fetch to avoid @anthropic-ai/sdk dependency weight/limit
          const response = await fetch('https://api.anthropic.com/v1/messages', {
              method: 'POST',
              headers: {
@@ -105,11 +151,7 @@ export class ModelGateway {
                  messages: req.messages.map(m => ({
                      role: m.role,
                      content: m.content
-                 })),
-                 // Note: Tool use mapping for Anthropic is complex (XML/Tool Blocks),
-                 // omitting full tool schema translation for this REST implementation
-                 // to keep it lightweight. Ideally use SDK if tools needed.
-                 // This basic implementation supports chat/prompt modes.
+                 }))
              })
          });
 
@@ -125,7 +167,6 @@ export class ModelGateway {
     }
 
     private async callOllama(req: CompletionRequest): Promise<CompletionResponse> {
-        // Simple fetch implementation for local Ollama
         const response = await fetch('http://localhost:11434/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -135,8 +176,7 @@ export class ModelGateway {
                     ...(req.system ? [{ role: 'system', content: req.system }] : []),
                     ...req.messages
                 ],
-                stream: false,
-                // Ollama tool support is experimental/variable, keeping it simple for now
+                stream: false
             })
         });
 

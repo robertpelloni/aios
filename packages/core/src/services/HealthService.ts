@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import { McpManager } from '../managers/McpManager.js';
+import { ModelGateway, UsageStats } from '../gateway/ModelGateway.js';
 
 interface ClientInfo {
     id: string;
@@ -10,7 +11,10 @@ interface ClientInfo {
 export class HealthService extends EventEmitter {
     private connectedClients: Map<string, ClientInfo> = new Map();
 
-    constructor(private mcpManager: McpManager) {
+    constructor(
+        private mcpManager: McpManager,
+        private modelGateway: ModelGateway
+    ) {
         super();
     }
 
@@ -53,7 +57,8 @@ export class HealthService extends EventEmitter {
             mcp: {
                 total: mcps.length,
                 running: mcps.filter(s => s.status === 'running').length
-            }
+            },
+            usage: this.modelGateway.stats
         };
     }
 }

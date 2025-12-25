@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Cpu, CheckCircle, Globe } from 'lucide-react';
+import { Activity, Cpu, CheckCircle, Globe, DollarSign } from 'lucide-react';
 import { io } from 'socket.io-client';
 import { SystemStatus } from '../components/SystemStatus';
 
@@ -93,6 +93,11 @@ export const Dashboard = () => {
             <div className="text-xl font-bold flex items-center gap-2 text-purple-400">
               <BotIcon size={20} /> {stats.agents} Agents
             </div>
+             {systemHealth?.usage && (
+                 <div className="text-xs text-green-400 mt-1 flex items-center gap-1">
+                    <DollarSign size={10} /> ${systemHealth.usage.cost.toFixed(2)} used
+                 </div>
+             )}
           </div>
           <BotIcon className="text-gray-600" size={32} />
         </div>

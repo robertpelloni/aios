@@ -47,17 +47,6 @@ export function Billing() {
     );
 }
 
-export function Tools() {
-    return (
-        <div className="p-8">
-            <h2 className="text-2xl font-bold mb-6 text-blue-400">Tools & Ecosystem</h2>
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                <p className="text-gray-400">Tool detection coming soon (parsing submodule index).</p>
-            </div>
-        </div>
-    );
-}
-
 export function Cloud() {
     return (
         <div className="p-8">
@@ -88,7 +77,6 @@ export function Jules() {
             </div>
             <div className="flex-1 bg-black flex items-center justify-center">
                  <p className="text-gray-500">Jules App integration placeholder. (Requires running Next.js server)</p>
-                 {/* In real implementation, this would be an iframe to the running jules-app */}
             </div>
         </div>
     );

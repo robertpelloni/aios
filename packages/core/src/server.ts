@@ -100,18 +100,20 @@ export class CoreService {
     this.codeExecutionManager = new CodeExecutionManager();
     this.logManager = new LogManager(path.join(rootDir, 'logs'));
     this.secretManager = new SecretManager(rootDir);
-    this.memoryManager = new MemoryManager(path.join(rootDir, 'data'));
     this.marketplaceManager = new MarketplaceManager(rootDir);
-    this.documentManager = new DocumentManager(path.join(rootDir, 'documents'), this.memoryManager);
     this.profileManager = new ProfileManager(rootDir);
-    this.handoffManager = new HandoffManager(rootDir, this.memoryManager);
     this.sessionManager = new SessionManager(rootDir);
-    this.healthService = new HealthService(this.mcpManager);
     this.systemDoctor = new SystemDoctor();
     this.browserManager = new BrowserManager();
     this.modelGateway = new ModelGateway(this.secretManager);
+    this.vectorStore = new VectorStore(this.modelGateway, path.join(rootDir, 'data'));
+    this.memoryManager = new MemoryManager(path.join(rootDir, 'data'), this.vectorStore);
+
+    this.documentManager = new DocumentManager(path.join(rootDir, 'documents'), this.memoryManager);
+    this.handoffManager = new HandoffManager(rootDir, this.memoryManager);
     this.trafficObserver = new TrafficObserver(this.modelGateway, this.memoryManager);
-    this.vectorStore = new VectorStore(this.modelGateway);
+
+    this.healthService = new HealthService(this.mcpManager, this.modelGateway);
 
     this.proxyManager = new McpProxyManager(this.mcpManager, this.logManager, this.vectorStore);
 
@@ -330,6 +332,27 @@ export class CoreService {
         await this.hubServer.handleMessage(sessionId, request.body, reply.raw);
         reply.hijack();
     });
+
+    // --- Profile Routes ---
+    this.app.get('/api/profiles', async () => {
+        return {
+            profiles: this.profileManager.getProfiles(),
+            active: this.profileManager.getActiveProfile()
+        };
+    });
+
+    this.app.post('/api/profiles', async (request: any, reply) => {
+        const { name, description, config } = request.body;
+        if (!name) return reply.code(400).send({ error: "Name required" });
+        this.profileManager.createProfile(name, { description, config });
+        return { status: 'created' };
+    });
+
+    this.app.post('/api/profiles/switch', async (request: any, reply) => {
+        const { name } = request.body;
+        this.profileManager.setActiveProfile(name);
+        return { status: 'switched', active: name };
+    });
   }
 
   private setupSocket() {
@@ -519,7 +542,7 @@ export class CoreService {
     
     try {
       await this.app.listen({ port, host: '0.0.0.0' });
-      console.log(`Core Service running on port ${port}`);
+      console.log(`[Core] Server listening on port ${port}`);
     } catch (err) {
       this.app.log.error(err);
       process.exit(1);

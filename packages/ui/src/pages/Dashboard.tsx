@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Cpu, HardDrive, Wifi, CheckCircle, XCircle, Play, Square, Globe } from 'lucide-react';
+import { Activity, Cpu, CheckCircle, Globe } from 'lucide-react';
 import { io } from 'socket.io-client';
+import { SystemStatus } from '../components/SystemStatus';
 
 const socket = io('http://localhost:3000');
 
@@ -12,6 +13,7 @@ export const Dashboard = () => {
     runningServers: 0
   });
 
+  const [systemHealth, setSystemHealth] = useState<any>(null);
   const [metaMcpConnected, setMetaMcpConnected] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -23,6 +25,9 @@ export const Dashboard = () => {
         mcpServers: data.mcpServers.length,
         runningServers: running
       });
+      if (data.health) {
+          setSystemHealth(data.health);
+      }
     });
 
     socket.on('mcp_updated', (servers: any[]) => {
@@ -30,16 +35,14 @@ export const Dashboard = () => {
        setStats(prev => ({ ...prev, mcpServers: servers.length, runningServers: running }));
     });
 
-    // Check MetaMCP Status via our proxy API
-    // We can't easily check SSE connection status from here without an explicit API endpoint on Core
-    // But we can infer it if 'search_tools' is available? Not reliably.
-    // Let's assume for this mock that we check a new health endpoint in next step,
-    // or just leave it as 'Unknown' for now.
-    // Actually, I'll add a check later.
+    socket.on('health_updated', (health: any) => {
+        setSystemHealth(health);
+    });
 
     return () => {
       socket.off('state');
       socket.off('mcp_updated');
+      socket.off('health_updated');
     };
   }, []);
 
@@ -49,6 +52,8 @@ export const Dashboard = () => {
         <h1 className="text-4xl font-bold mb-2">System Overview</h1>
         <p className="text-gray-400">Real-time monitoring of your Super AI Plugin ecosystem.</p>
       </header>
+
+      <SystemStatus status={systemHealth} />
 
       {/* Health Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">

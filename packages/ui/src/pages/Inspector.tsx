@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Play, Edit } from 'lucide-react';
+import { Activity, Play } from 'lucide-react';
 import { io } from 'socket.io-client';
 
 const socket = io('http://localhost:3000');
@@ -7,65 +7,35 @@ const API_BASE = 'http://localhost:3000';
 
 export const Inspector = () => {
   const [logs, setLogs] = useState<any[]>([]);
-  const [editingLog, setEditingLog] = useState<any | null>(null);
-  const [editPayload, setEditPayload] = useState<string>('');
 
   useEffect(() => {
     socket.on('traffic_log', (log: any) => {
-      setLogs(prev => [log, ...prev].slice(0, 100));
+      setLogs(prev => [log, ...prev].slice(0, 100)); // Keep last 100
     });
     return () => {
       socket.off('traffic_log');
     };
   }, []);
 
-  const openEdit = (log: any) => {
-      setEditingLog(log);
-      setEditPayload(JSON.stringify({ tool: log.tool, args: log.args, server: log.server }, null, 2));
-  };
+  const replay = async (log: any) => {
+      if (log.type !== 'request') return;
+      if (!confirm('Replay this tool call?')) return;
 
-  const replay = async () => {
-      if (!editingLog) return;
       try {
-          const payload = JSON.parse(editPayload);
           await fetch(`${API_BASE}/api/inspector/replay`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
+              body: JSON.stringify({ tool: log.tool, args: log.args, server: log.server })
           });
           alert('Replay sent');
-          setEditingLog(null);
       } catch (e: any) {
           alert('Replay failed: ' + e.message);
       }
   };
 
   return (
-    <div className="max-w-6xl mx-auto relative">
+    <div className="max-w-6xl mx-auto">
       <h1 className="text-3xl font-bold mb-8">Traffic Inspector</h1>
-
-      {/* Edit Modal */}
-      {editingLog && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 w-[600px] shadow-2xl">
-                  <h3 className="text-xl font-bold mb-4">Edit & Replay</h3>
-                  <div className="mb-4">
-                      <label className="block text-sm text-gray-400 mb-1">Payload (JSON)</label>
-                      <textarea
-                          className="w-full h-64 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm"
-                          value={editPayload}
-                          onChange={e => setEditPayload(e.target.value)}
-                      />
-                  </div>
-                  <div className="flex justify-end gap-3">
-                      <button onClick={() => setEditingLog(null)} className="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
-                      <button onClick={replay} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2">
-                          <Play size={16} /> Replay
-                      </button>
-                  </div>
-              </div>
-          </div>
-      )}
 
       <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden shadow-lg">
          <div className="p-4 border-b border-gray-700 bg-gray-750 font-medium text-gray-400 grid grid-cols-12 gap-4">
@@ -106,8 +76,8 @@ export const Inspector = () => {
                          </div>
                          <div className="col-span-1 text-right">
                              {log.type === 'request' && (
-                                 <button onClick={() => openEdit(log)} className="text-gray-400 hover:text-white p-1 hover:bg-gray-700 rounded transition-colors" title="Edit & Replay">
-                                     <Edit size={14} />
+                                 <button onClick={() => replay(log)} className="text-gray-400 hover:text-white" title="Replay">
+                                     <Play size={14} />
                                  </button>
                              )}
                          </div>

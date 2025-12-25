@@ -1,0 +1,38 @@
+{
+  "name": "super-ai-vscode",
+  "displayName": "Super AI Plugin",
+  "description": "VSCode Client for Super AI Plugin Hub",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "super-ai.connect",
+        "title": "Super AI: Connect to Hub"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -b",
+    "watch": "tsc -b -w"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.0"
+  }
+}

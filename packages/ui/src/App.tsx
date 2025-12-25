@@ -10,6 +10,7 @@ import { Inspector } from './pages/Inspector';
 import { Prompts } from './pages/Prompts';
 import { Context } from './pages/Context';
 import { Marketplace } from './pages/Marketplace';
+import { Handoffs } from './pages/Handoffs';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="inspector" element={<Inspector />} />
           <Route path="prompts" element={<Prompts />} />
           <Route path="context" element={<Context />} />
+          <Route path="handoffs" element={<Handoffs />} />
         </Route>
       </Routes>
     </BrowserRouter>

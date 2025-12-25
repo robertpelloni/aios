@@ -24,35 +24,37 @@ import { SchedulerManager } from './managers/SchedulerManager.js';
 import { MarketplaceManager } from './managers/MarketplaceManager.js';
 import { DocumentManager } from './managers/DocumentManager.js';
 import { ProfileManager } from './managers/ProfileManager.js';
+import { HandoffManager } from './managers/HandoffManager.js';
+import { HealthService } from './services/HealthService.js';
 import { toToon, FormatTranslatorTool } from './utils/toon.js';
-import { registerMcpRoutes } from './routes/mcpRoutes.js';
-import { registerAgentRoutes } from './routes/agentRoutes.js';
 
 export class CoreService {
-  public app = Fastify({ logger: true });
-  public io: SocketIOServer;
+  private app = Fastify({ logger: true });
+  private io: SocketIOServer;
   
-  public hookManager: HookManager;
-  public agentManager: AgentManager;
-  public skillManager: SkillManager;
-  public promptManager: PromptManager;
-  public contextManager: ContextManager;
-  public commandManager: CommandManager;
-  public mcpManager: McpManager;
-  public configGenerator: ConfigGenerator;
-  public mcpInterface: McpInterface;
-  public clientManager: ClientManager;
-  public codeExecutionManager: CodeExecutionManager;
-  public proxyManager: McpProxyManager;
-  public logManager: LogManager;
-  public secretManager: SecretManager;
-  public hubServer: HubServer;
-  public agentExecutor: AgentExecutor;
-  public memoryManager: MemoryManager;
-  public schedulerManager: SchedulerManager;
-  public marketplaceManager: MarketplaceManager;
-  public documentManager: DocumentManager;
-  public profileManager: ProfileManager;
+  private hookManager: HookManager;
+  private agentManager: AgentManager;
+  private skillManager: SkillManager;
+  private promptManager: PromptManager;
+  private contextManager: ContextManager;
+  private commandManager: CommandManager;
+  private mcpManager: McpManager;
+  private configGenerator: ConfigGenerator;
+  private mcpInterface: McpInterface;
+  private clientManager: ClientManager;
+  private codeExecutionManager: CodeExecutionManager;
+  private proxyManager: McpProxyManager;
+  private logManager: LogManager;
+  private secretManager: SecretManager;
+  private hubServer: HubServer;
+  private agentExecutor: AgentExecutor;
+  private memoryManager: MemoryManager;
+  private schedulerManager: SchedulerManager;
+  private marketplaceManager: MarketplaceManager;
+  private documentManager: DocumentManager;
+  private profileManager: ProfileManager;
+  private handoffManager: HandoffManager;
+  private healthService: HealthService;
 
   constructor(
     private rootDir: string
@@ -61,6 +63,7 @@ export class CoreService {
       cors: { origin: "*" }
     });
 
+    // Enable CORS for API routes
     this.app.register(import('@fastify/cors'), {
         origin: '*'
     });
@@ -88,6 +91,8 @@ export class CoreService {
     this.marketplaceManager = new MarketplaceManager(rootDir);
     this.documentManager = new DocumentManager(path.join(rootDir, 'documents'), this.memoryManager);
     this.profileManager = new ProfileManager(rootDir);
+    this.handoffManager = new HandoffManager(rootDir, this.memoryManager);
+    this.healthService = new HealthService(this.mcpManager);
 
     this.hubServer = new HubServer(
         this.proxyManager,
@@ -103,6 +108,10 @@ export class CoreService {
 
     this.commandManager.on('updated', (commands) => {
         this.registerCommandsAsTools(commands);
+    });
+
+    this.healthService.on('clientsUpdated', (clients) => {
+        this.io.emit('health_updated', this.healthService.getSystemStatus());
     });
 
     this.setupRoutes();
@@ -126,11 +135,28 @@ export class CoreService {
   }
 
   private setupRoutes() {
-    this.app.get('/health', async () => ({ status: 'ok' }));
+    this.app.get('/health', async () => this.healthService.getSystemStatus());
 
-    // Register Modular Routes
-    registerMcpRoutes(this.app, this);
-    registerAgentRoutes(this.app, this);
+    this.app.get('/api/clients', async () => ({ clients: this.clientManager.getClients() }));
+
+    // Handoff Routes
+    this.app.post('/api/handoff', async (req: any) => {
+        const { description, context } = req.body;
+        const id = await this.handoffManager.createHandoff(description, context);
+        return { id };
+    });
+
+    this.app.get('/api/handoff', async () => ({ handoffs: this.handoffManager.getHandoffs() }));
+
+    this.app.post('/api/inspector/replay', async (request: any, reply) => {
+        const { tool, args } = request.body;
+        try {
+            const result = await this.proxyManager.callTool(tool, args);
+            return { result };
+        } catch (e: any) {
+            return reply.code(500).send({ error: e.message });
+        }
+    });
 
     this.app.setNotFoundHandler((req, res) => {
         if (!req.raw.url?.startsWith('/api')) {
@@ -140,7 +166,6 @@ export class CoreService {
         }
     });
 
-    // Remaining Routes (can be refactored further later)
     this.app.post('/api/clients/configure', async (request: any, reply) => {
         const { clientName } = request.body;
         const scriptPath = path.resolve(process.argv[1]);
@@ -153,6 +178,77 @@ export class CoreService {
         } catch (err: any) {
             return reply.code(500).send({ error: err.message });
         }
+    });
+
+    this.app.post('/api/code/run', async (request: any, reply) => {
+        const { code } = request.body;
+        try {
+            const result = await this.codeExecutionManager.execute(code, async (name, args) => {
+                return await this.proxyManager.callTool(name, args);
+            });
+            return { result };
+        } catch (err: any) {
+            return reply.code(500).send({ error: err.message });
+        }
+    });
+
+    this.app.post('/api/agents/run', async (request: any, reply) => {
+        const { agentName, task } = request.body;
+        const agents = this.agentManager.getAgents();
+        const agent = agents.find(a => a.name === agentName);
+        if (!agent) return reply.code(404).send({ error: "Agent not found" });
+
+        const result = await this.agentExecutor.run(agent, task);
+        return { result };
+    });
+
+    this.app.get('/api/state', async () => ({
+        agents: this.agentManager.getAgents(),
+        skills: this.skillManager.getSkills(),
+        hooks: this.hookManager.getHooks(),
+        prompts: this.promptManager.getPrompts(),
+        context: this.contextManager.getContextFiles(),
+        mcpServers: this.mcpManager.getAllServers(),
+        commands: this.commandManager.getCommands(),
+        scheduledTasks: this.schedulerManager.getTasks(),
+        marketplace: this.marketplaceManager.getPackages(),
+        profiles: this.profileManager.getProfiles()
+    }));
+
+    this.app.get('/api/config/mcp/:format', async (request: any, reply) => {
+        const { format } = request.params as any;
+        if (['json', 'toml', 'xml'].includes(format)) {
+            return this.configGenerator.generateConfig(format as any);
+        }
+        reply.code(400).send({ error: 'Invalid format' });
+    });
+
+    this.app.post('/api/mcp/start', async (request: any, reply) => {
+        const { name } = request.body;
+        const allConfigStr = await this.configGenerator.generateConfig('json');
+        const allConfig = JSON.parse(allConfigStr);
+        const serverConfig = allConfig.mcpServers[name];
+
+        if (!serverConfig) {
+            return reply.code(404).send({ error: 'Server configuration not found' });
+        }
+
+        try {
+            const secrets = this.secretManager.getEnvVars();
+            const env = { ...process.env, ...serverConfig.env, ...secrets };
+            serverConfig.env = env;
+
+            await this.mcpManager.startServerSimple(name, serverConfig);
+            return { status: 'started' };
+        } catch (err: any) {
+            return reply.code(500).send({ error: err.message });
+        }
+    });
+
+    this.app.post('/api/mcp/stop', async (request: any, reply) => {
+        const { name } = request.body;
+        await this.mcpManager.stopServer(name);
+        return { status: 'stopped' };
     });
 
     this.app.get('/api/secrets', async () => {
@@ -189,25 +285,6 @@ export class CoreService {
         }
     });
 
-    this.app.post('/api/profiles/activate', async (request: any, reply) => {
-        const { name } = request.body;
-        const profile = this.profileManager.activateProfile(name);
-        if (profile) {
-            return { status: 'activated', profile };
-        }
-        return reply.code(404).send({ error: "Profile not found" });
-    });
-
-    this.app.post('/api/inspector/replay', async (request: any, reply) => {
-        const { tool, args, server } = request.body;
-        try {
-            const result = await this.proxyManager.callTool(tool, args);
-            return { result };
-        } catch (e: any) {
-            return reply.code(500).send({ error: e.message });
-        }
-    });
-
     this.app.get('/api/hub/sse', async (request: any, reply) => {
         await this.hubServer.handleSSE(request.raw, reply.raw);
         reply.hijack();
@@ -222,7 +299,8 @@ export class CoreService {
 
   private setupSocket() {
     this.io.on('connection', (socket: Socket) => {
-      console.log('Client connected', socket.id);
+      const clientType = (socket.handshake.query.clientType as string) || 'unknown';
+      this.healthService.registerClient(socket.id, clientType);
 
       socket.emit('state', {
         agents: this.agentManager.getAgents(),
@@ -234,7 +312,12 @@ export class CoreService {
         commands: this.commandManager.getCommands(),
         scheduledTasks: this.schedulerManager.getTasks(),
         marketplace: this.marketplaceManager.getPackages(),
-        profiles: this.profileManager.getProfiles()
+        profiles: this.profileManager.getProfiles(),
+        health: this.healthService.getSystemStatus()
+      });
+
+      socket.on('disconnect', () => {
+          this.healthService.unregisterClient(socket.id);
       });
 
       socket.on('hook_event', (event: HookEvent) => {
@@ -252,7 +335,7 @@ export class CoreService {
     this.commandManager.on('updated', (commands) => this.io.emit('commands_updated', commands));
     this.mcpManager.on('updated', (servers) => this.io.emit('mcp_updated', servers));
     this.marketplaceManager.on('updated', (pkgs) => this.io.emit('marketplace_updated', pkgs));
-    this.profileManager.on('updated', (profiles) => this.io.emit('profiles_updated', profiles));
+    this.profileManager.on('profileChanged', (p) => this.io.emit('profile_changed', p));
   }
 
   private async processHook(event: HookEvent) {
@@ -282,7 +365,6 @@ export class CoreService {
     await this.proxyManager.start();
     this.schedulerManager.start();
     await this.marketplaceManager.refresh();
-    await this.documentManager.start();
 
     if (process.env.MCP_STDIO_ENABLED === 'true') {
         console.error('[Core] Starting MCP Stdio Interface...');
@@ -303,27 +385,29 @@ export class CoreService {
         return toToon(json);
     });
 
+    // Register Handoff Tool
+    this.proxyManager.registerInternalTool({
+        name: "save_handoff",
+        description: "Save current context for another agent or session.",
+        inputSchema: {
+            type: "object",
+            properties: {
+                description: { type: "string" },
+                note: { type: "string" }
+            },
+            required: ["description"]
+        }
+    }, async (args: any) => {
+        const id = await this.handoffManager.createHandoff(args.description, { note: args.note });
+        return `Handoff created with ID: ${id}`;
+    });
+
     this.proxyManager.registerInternalTool({
         name: "install_package",
         description: "Install an Agent or Skill from the Marketplace.",
         inputSchema: { type: "object", properties: { name: { type: "string" } }, required: ["name"] }
     }, async (args: any) => {
         return await this.marketplaceManager.installPackage(args.name);
-    });
-
-    this.proxyManager.registerInternalTool({
-        name: "improve_prompt",
-        description: "Rewrite a prompt using the configured LLM to follow best practices.",
-        inputSchema: { type: "object", properties: { prompt: { type: "string" } }, required: ["prompt"] }
-    }, async (args: any) => {
-        const improverAgent = {
-            name: "PromptImprover",
-            description: "Expert prompt engineer.",
-            instructions: "You are an expert prompt engineer. Rewrite the user's prompt to be clear, specific, and optimized for LLMs. Output ONLY the improved prompt.",
-            model: "gpt-4-turbo"
-        };
-        const result = await this.agentExecutor.run(improverAgent, args.prompt);
-        return result;
     });
     
     try {

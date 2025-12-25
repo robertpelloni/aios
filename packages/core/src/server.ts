@@ -22,31 +22,37 @@ import { AgentExecutor } from './agents/AgentExecutor.js';
 import { MemoryManager } from './managers/MemoryManager.js';
 import { SchedulerManager } from './managers/SchedulerManager.js';
 import { MarketplaceManager } from './managers/MarketplaceManager.js';
+import { DocumentManager } from './managers/DocumentManager.js';
+import { ProfileManager } from './managers/ProfileManager.js';
 import { toToon, FormatTranslatorTool } from './utils/toon.js';
+import { registerMcpRoutes } from './routes/mcpRoutes.js';
+import { registerAgentRoutes } from './routes/agentRoutes.js';
 
 export class CoreService {
-  private app = Fastify({ logger: true });
-  private io: SocketIOServer;
+  public app = Fastify({ logger: true });
+  public io: SocketIOServer;
   
-  private hookManager: HookManager;
-  private agentManager: AgentManager;
-  private skillManager: SkillManager;
-  private promptManager: PromptManager;
-  private contextManager: ContextManager;
-  private commandManager: CommandManager;
-  private mcpManager: McpManager;
-  private configGenerator: ConfigGenerator;
-  private mcpInterface: McpInterface;
-  private clientManager: ClientManager;
-  private codeExecutionManager: CodeExecutionManager;
-  private proxyManager: McpProxyManager;
-  private logManager: LogManager;
-  private secretManager: SecretManager;
-  private hubServer: HubServer;
-  private agentExecutor: AgentExecutor;
-  private memoryManager: MemoryManager;
-  private schedulerManager: SchedulerManager;
-  private marketplaceManager: MarketplaceManager;
+  public hookManager: HookManager;
+  public agentManager: AgentManager;
+  public skillManager: SkillManager;
+  public promptManager: PromptManager;
+  public contextManager: ContextManager;
+  public commandManager: CommandManager;
+  public mcpManager: McpManager;
+  public configGenerator: ConfigGenerator;
+  public mcpInterface: McpInterface;
+  public clientManager: ClientManager;
+  public codeExecutionManager: CodeExecutionManager;
+  public proxyManager: McpProxyManager;
+  public logManager: LogManager;
+  public secretManager: SecretManager;
+  public hubServer: HubServer;
+  public agentExecutor: AgentExecutor;
+  public memoryManager: MemoryManager;
+  public schedulerManager: SchedulerManager;
+  public marketplaceManager: MarketplaceManager;
+  public documentManager: DocumentManager;
+  public profileManager: ProfileManager;
 
   constructor(
     private rootDir: string
@@ -55,26 +61,18 @@ export class CoreService {
       cors: { origin: "*" }
     });
 
-    // Enable CORS for API routes too
     this.app.register(import('@fastify/cors'), {
         origin: '*'
     });
 
-    // Serve Static UI
-    // We assume the UI is built to packages/ui/dist
-    // rootDir is packages/core
-    // so we need to go up to packages/ui/dist
-    // BUT rootDir might be passed as process.cwd() which is usually repo root in dev
-    // Let's rely on relative path from this file's location or the process.cwd() passed in
     const uiDist = path.resolve(rootDir, '../ui/dist');
-
     this.app.register(import('@fastify/static'), {
         root: uiDist,
         prefix: '/'
     });
 
     this.hookManager = new HookManager(path.join(rootDir, 'hooks'));
-    this.agentManager = new AgentManager(rootDir); // Passed rootDir to support AGENTS.md
+    this.agentManager = new AgentManager(rootDir);
     this.skillManager = new SkillManager(path.join(rootDir, 'skills'));
     this.promptManager = new PromptManager(path.join(rootDir, 'prompts'));
     this.contextManager = new ContextManager(path.join(rootDir, 'context'));
@@ -88,8 +86,9 @@ export class CoreService {
     this.proxyManager = new McpProxyManager(this.mcpManager, this.logManager);
     this.memoryManager = new MemoryManager(path.join(rootDir, 'data'));
     this.marketplaceManager = new MarketplaceManager(rootDir);
+    this.documentManager = new DocumentManager(path.join(rootDir, 'documents'), this.memoryManager);
+    this.profileManager = new ProfileManager(rootDir);
 
-    // Inject managers into HubServer
     this.hubServer = new HubServer(
         this.proxyManager,
         this.codeExecutionManager,
@@ -100,10 +99,8 @@ export class CoreService {
 
     this.mcpInterface = new McpInterface(this.hubServer);
     this.agentExecutor = new AgentExecutor(this.proxyManager, this.secretManager);
-
     this.schedulerManager = new SchedulerManager(rootDir, this.agentExecutor, this.proxyManager);
 
-    // Register CommandManager listener to update tools dynamically
     this.commandManager.on('updated', (commands) => {
         this.registerCommandsAsTools(commands);
     });
@@ -131,28 +128,11 @@ export class CoreService {
   private setupRoutes() {
     this.app.get('/health', async () => ({ status: 'ok' }));
 
-    this.app.get('/api/clients', async () => {
-        return { clients: this.clientManager.getClients() };
-    });
-
-    this.app.post('/api/inspector/replay', async (request: any, reply) => {
-        const { tool, args, server } = request.body;
-        // We only replay the request, so we call the tool again
-        try {
-            // Note: server param is informational, we let proxy find it again
-            const result = await this.proxyManager.callTool(tool, args);
-            return { result };
-        } catch (e: any) {
-            return reply.code(500).send({ error: e.message });
-        }
-    });
-
-    // ... (rest of API routes same as before) ...
-    // Note: I will copy them back in the real implementation to ensure completeness
-    // For brevity in this thought block I am truncating, but the tool call will include full content.
+    // Register Modular Routes
+    registerMcpRoutes(this.app, this);
+    registerAgentRoutes(this.app, this);
 
     this.app.setNotFoundHandler((req, res) => {
-        // SPA Fallback
         if (!req.raw.url?.startsWith('/api')) {
              res.sendFile('index.html');
         } else {
@@ -160,7 +140,7 @@ export class CoreService {
         }
     });
 
-    // API Routes (re-pasting previous routes for safety)
+    // Remaining Routes (can be refactored further later)
     this.app.post('/api/clients/configure', async (request: any, reply) => {
         const { clientName } = request.body;
         const scriptPath = path.resolve(process.argv[1]);
@@ -173,76 +153,6 @@ export class CoreService {
         } catch (err: any) {
             return reply.code(500).send({ error: err.message });
         }
-    });
-
-    this.app.post('/api/code/run', async (request: any, reply) => {
-        const { code } = request.body;
-        try {
-            const result = await this.codeExecutionManager.execute(code, async (name, args) => {
-                return await this.proxyManager.callTool(name, args);
-            });
-            return { result };
-        } catch (err: any) {
-            return reply.code(500).send({ error: err.message });
-        }
-    });
-
-    this.app.post('/api/agents/run', async (request: any, reply) => {
-        const { agentName, task } = request.body;
-        const agents = this.agentManager.getAgents();
-        const agent = agents.find(a => a.name === agentName);
-        if (!agent) return reply.code(404).send({ error: "Agent not found" });
-
-        const result = await this.agentExecutor.run(agent, task);
-        return { result };
-    });
-    
-    this.app.get('/api/state', async () => ({
-        agents: this.agentManager.getAgents(),
-        skills: this.skillManager.getSkills(),
-        hooks: this.hookManager.getHooks(),
-        prompts: this.promptManager.getPrompts(),
-        context: this.contextManager.getContextFiles(),
-        mcpServers: this.mcpManager.getAllServers(),
-        commands: this.commandManager.getCommands(),
-        scheduledTasks: this.schedulerManager.getTasks(),
-        marketplace: this.marketplaceManager.getPackages()
-    }));
-
-    this.app.get('/api/config/mcp/:format', async (request: any, reply) => {
-        const { format } = request.params as any;
-        if (['json', 'toml', 'xml'].includes(format)) {
-            return this.configGenerator.generateConfig(format as any);
-        }
-        reply.code(400).send({ error: 'Invalid format' });
-    });
-
-    this.app.post('/api/mcp/start', async (request: any, reply) => {
-        const { name } = request.body;
-        const allConfigStr = await this.configGenerator.generateConfig('json');
-        const allConfig = JSON.parse(allConfigStr);
-        const serverConfig = allConfig.mcpServers[name];
-
-        if (!serverConfig) {
-            return reply.code(404).send({ error: 'Server configuration not found' });
-        }
-
-        try {
-            const secrets = this.secretManager.getEnvVars();
-            const env = { ...process.env, ...serverConfig.env, ...secrets };
-            serverConfig.env = env;
-
-            await this.mcpManager.startServerSimple(name, serverConfig);
-            return { status: 'started' };
-        } catch (err: any) {
-            return reply.code(500).send({ error: err.message });
-        }
-    });
-
-    this.app.post('/api/mcp/stop', async (request: any, reply) => {
-        const { name } = request.body;
-        await this.mcpManager.stopServer(name);
-        return { status: 'stopped' };
     });
 
     this.app.get('/api/secrets', async () => {
@@ -279,6 +189,25 @@ export class CoreService {
         }
     });
 
+    this.app.post('/api/profiles/activate', async (request: any, reply) => {
+        const { name } = request.body;
+        const profile = this.profileManager.activateProfile(name);
+        if (profile) {
+            return { status: 'activated', profile };
+        }
+        return reply.code(404).send({ error: "Profile not found" });
+    });
+
+    this.app.post('/api/inspector/replay', async (request: any, reply) => {
+        const { tool, args, server } = request.body;
+        try {
+            const result = await this.proxyManager.callTool(tool, args);
+            return { result };
+        } catch (e: any) {
+            return reply.code(500).send({ error: e.message });
+        }
+    });
+
     this.app.get('/api/hub/sse', async (request: any, reply) => {
         await this.hubServer.handleSSE(request.raw, reply.raw);
         reply.hijack();
@@ -304,7 +233,8 @@ export class CoreService {
         mcpServers: this.mcpManager.getAllServers(),
         commands: this.commandManager.getCommands(),
         scheduledTasks: this.schedulerManager.getTasks(),
-        marketplace: this.marketplaceManager.getPackages()
+        marketplace: this.marketplaceManager.getPackages(),
+        profiles: this.profileManager.getProfiles()
       });
 
       socket.on('hook_event', (event: HookEvent) => {
@@ -322,6 +252,7 @@ export class CoreService {
     this.commandManager.on('updated', (commands) => this.io.emit('commands_updated', commands));
     this.mcpManager.on('updated', (servers) => this.io.emit('mcp_updated', servers));
     this.marketplaceManager.on('updated', (pkgs) => this.io.emit('marketplace_updated', pkgs));
+    this.profileManager.on('updated', (profiles) => this.io.emit('profiles_updated', profiles));
   }
 
   private async processHook(event: HookEvent) {
@@ -351,6 +282,7 @@ export class CoreService {
     await this.proxyManager.start();
     this.schedulerManager.start();
     await this.marketplaceManager.refresh();
+    await this.documentManager.start();
 
     if (process.env.MCP_STDIO_ENABLED === 'true') {
         console.error('[Core] Starting MCP Stdio Interface...');
@@ -377,6 +309,21 @@ export class CoreService {
         inputSchema: { type: "object", properties: { name: { type: "string" } }, required: ["name"] }
     }, async (args: any) => {
         return await this.marketplaceManager.installPackage(args.name);
+    });
+
+    this.proxyManager.registerInternalTool({
+        name: "improve_prompt",
+        description: "Rewrite a prompt using the configured LLM to follow best practices.",
+        inputSchema: { type: "object", properties: { prompt: { type: "string" } }, required: ["prompt"] }
+    }, async (args: any) => {
+        const improverAgent = {
+            name: "PromptImprover",
+            description: "Expert prompt engineer.",
+            instructions: "You are an expert prompt engineer. Rewrite the user's prompt to be clear, specific, and optimized for LLMs. Output ONLY the improved prompt.",
+            model: "gpt-4-turbo"
+        };
+        const result = await this.agentExecutor.run(improverAgent, args.prompt);
+        return result;
     });
     
     try {

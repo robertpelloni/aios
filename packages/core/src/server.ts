@@ -27,6 +27,7 @@ import { ProfileManager } from './managers/ProfileManager.js';
 import { ProjectManager } from './managers/ProjectManager.js';
 import { AgentMessageBroker } from './managers/AgentMessageBroker.js';
 import { AutonomousAgentManager } from './managers/AutonomousAgentManager.js';
+import { BrowserManager } from './managers/BrowserManager.js';
 import { ContextGenerator } from './utils/ContextGenerator.js';
 import { toToon, FormatTranslatorTool } from './utils/toon.js';
 import fs from 'fs';
@@ -63,6 +64,7 @@ export class CoreService {
   public projectManager: ProjectManager;
   public messageBroker: AgentMessageBroker;
   public autonomousAgentManager: AutonomousAgentManager;
+  public browserManager: BrowserManager;
 
   constructor(
     private rootDir: string
@@ -107,6 +109,7 @@ export class CoreService {
         this.logManager,
         this.secretManager
     );
+    this.browserManager = new BrowserManager();
 
     this.hubServer = new HubServer(
         this.proxyManager,
@@ -326,6 +329,10 @@ export class CoreService {
         console.log('Received hook event:', event);
         this.processHook(event);
       });
+
+      socket.on('register_browser', (data: any) => {
+          this.browserManager.registerBrowser(socket);
+      });
     });
 
     this.logManager.on('log', (log) => this.io.emit('traffic_log', log));
@@ -542,6 +549,29 @@ export class CoreService {
         } catch (e: any) {
             return `Error delegating task: ${e.message}`;
         }
+    });
+
+    // Browser Tools
+    this.proxyManager.registerInternalTool({
+        name: "browser_navigate",
+        description: "Navigate the connected browser to a URL.",
+        inputSchema: {
+            type: "object",
+            properties: {
+                url: { type: "string" }
+            },
+            required: ["url"]
+        }
+    }, async (args: any) => {
+        return await this.browserManager.navigate(args.url);
+    });
+
+    this.proxyManager.registerInternalTool({
+        name: "browser_get_content",
+        description: "Get the text content of the active tab in the connected browser.",
+        inputSchema: { type: "object", properties: {}, required: [] }
+    }, async (args: any) => {
+        return await this.browserManager.getActiveTabContent();
     });
     
     try {

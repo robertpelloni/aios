@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - **Jules App**: Updated `jules-app` submodule to latest version.
 - **UI Components**: Synced `BroadcastDialog` and `SessionList` with upstream changes.
 - **Settings**: Fixed issue where clicking the gear icon did nothing.
+- **System Dashboard**: Added a new dashboard page to view submodule status and project structure.
 
 ## [0.0.2] - 2024-05-23
 

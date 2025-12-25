@@ -66,10 +66,19 @@ export async function GET() {
       { path: 'skills/', description: 'Skill Definitions, markdown files defining specific capabilities for the LLM.' },
     ];
 
+    const packageJsonPath = path.join(rootDir, 'package.json');
+    let rootVersion = 'Unknown';
+    try {
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+      rootVersion = packageJson.version;
+    } catch (e) {
+      console.error('Failed to read package.json', e);
+    }
+
     return NextResponse.json({
       submodules: submodules.filter(Boolean),
       structure,
-      rootVersion: require(path.join(rootDir, 'package.json')).version
+      rootVersion
     });
 
   } catch (error) {

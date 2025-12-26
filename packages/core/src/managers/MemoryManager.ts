@@ -5,9 +5,11 @@ import { SecretManager } from './SecretManager.js';
 import { MemoryProvider, MemoryItem, MemoryResult } from '../interfaces/MemoryProvider.js';
 import { FileMemoryProvider } from './providers/FileMemoryProvider.js';
 import { Mem0Provider } from './providers/Mem0Provider.js';
+import { BrowserStorageProvider } from './providers/BrowserStorageProvider.js';
 import { ContextCompactor } from './ContextCompactor.js';
 import { JulesIngestor } from '../ingestors/JulesIngestor.js';
 import { AgentExecutor } from '../agents/AgentExecutor.js';
+import { BrowserManager } from './BrowserManager.js';
 
 import { AgentMessage } from '../interfaces/AgentInterfaces.js';
 
@@ -18,6 +20,7 @@ export class MemoryManager {
     private openai?: OpenAI;
     private compactor?: ContextCompactor;
     private julesIngestor?: JulesIngestor;
+    private browserProvider?: BrowserStorageProvider;
 
     constructor(
         dataDir: string, 
@@ -148,6 +151,11 @@ export class MemoryManager {
         } catch (e) {
             console.error(`[Memory] Failed to register provider ${provider.name}:`, e);
         }
+    }
+
+    public setBrowserManager(browserManager: BrowserManager) {
+        this.browserProvider = new BrowserStorageProvider(browserManager);
+        this.registerProvider(this.browserProvider);
     }
 
     private initOpenAI() {

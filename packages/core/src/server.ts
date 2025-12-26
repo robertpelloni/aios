@@ -129,7 +129,9 @@ export class CoreService {
     
     // Re-initialize MemoryManager with AgentExecutor for Context Compaction
     this.memoryManager = new MemoryManager(path.join(rootDir, 'data'), this.secretManager, this.agentExecutor);
+    this.memoryManager.setBrowserManager(this.browserManager);
     this.proxyManager.setMemoryManager(this.memoryManager);
+    this.messageBroker.setMemoryManager(this.memoryManager);
     
     this.schedulerManager = new SchedulerManager(rootDir, this.agentExecutor, this.proxyManager);
 
@@ -655,6 +657,34 @@ export class CoreService {
         inputSchema: { type: "object", properties: {}, required: [] }
     }, async (args: any) => {
         return await this.browserManager.getActiveTabContent();
+    });
+
+    this.proxyManager.registerInternalTool({
+        name: "browser_search_history",
+        description: "Search the connected browser's history.",
+        inputSchema: {
+            type: "object",
+            properties: {
+                query: { type: "string" },
+                limit: { type: "number" }
+            },
+            required: ["query"]
+        }
+    }, async (args: any) => {
+        return await this.browserManager.searchHistory(args.query, args.limit);
+    });
+
+    this.proxyManager.registerInternalTool({
+        name: "browser_get_bookmarks",
+        description: "Search or list bookmarks from the connected browser.",
+        inputSchema: {
+            type: "object",
+            properties: {
+                query: { type: "string" }
+            }
+        }
+    }, async (args: any) => {
+        return await this.browserManager.getBookmarks(args.query);
     });
 
     this.proxyManager.registerInternalTool({

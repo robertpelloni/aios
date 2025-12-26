@@ -15,7 +15,7 @@ export interface MemoryResult extends MemoryItem {
 export interface MemoryProvider {
     id: string;
     name: string;
-    type: 'vector' | 'graph' | 'key-value' | 'file';
+    type: 'vector' | 'graph' | 'key-value' | 'file' | 'external';
     capabilities: ('read' | 'write' | 'search' | 'delete')[];
     
     connect(): Promise<void>;

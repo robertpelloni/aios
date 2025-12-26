@@ -46,6 +46,14 @@ export class BrowserManager extends EventEmitter {
         return this.sendCommand('get_active_tab_content', {});
     }
 
+    public async searchHistory(query: string, limit: number = 10): Promise<any[]> {
+        return this.sendCommand('search_history', { query, limit });
+    }
+
+    public async getBookmarks(query?: string): Promise<any[]> {
+        return this.sendCommand('get_bookmarks', { query });
+    }
+
     private sendCommand(command: string, args: any): Promise<any> {
         if (!this.browserSocket) {
             throw new Error("No browser connected. Please install the AIOS Browser Extension.");

@@ -1,46 +1,46 @@
 import vm from 'vm';
+import { DockerService } from '../services/DockerService.js';
 
 export class CodeExecutionManager {
-    constructor() {
-    }
+    constructor(private dockerService?: DockerService) {}
 
-    async execute(code: string, toolCallback: (name: string, args: any) => Promise<any>): Promise<string> {
-        // Create a sandboxed context
+    async execute(code: string, toolCallback: (name: string, args: any) => Promise<any>, runtime: 'node' | 'python' = 'node') {
+        if (runtime === 'python') {
+            if (!this.dockerService) {
+                throw new Error("DockerService not initialized. Cannot run Python.");
+            }
+            return await this.dockerService.executePython(code);
+        }
+
+        // Node.js Execution (vm)
         const context = {
             console: {
-                log: (...args: any[]) => console.log('[Sandbox]', ...args)
+                log: (...args: any[]) => console.log('[Sandbox]', ...args),
+                error: (...args: any[]) => console.error('[Sandbox]', ...args)
             },
             call_tool: async (name: string, args: any) => {
-                 console.log(`[Sandbox] Calling tool: ${name}`);
-                 return await toolCallback(name, args);
+                return await toolCallback(name, args);
             }
         };
 
         vm.createContext(context);
 
-        // Wrap code in async IIFE
+        // Wrap code in async IIFE to allow await
         const wrappedCode = `
             (async () => {
-                ${code}
+                try {
+                    ${code}
+                } catch (e) {
+                    return e.message;
+                }
             })();
         `;
 
         try {
-            // vm.runInContext returns the result of the last expression
-            // which is the promise from the IIFE
-            // Added timeout for security
-            const resultPromise = vm.runInContext(wrappedCode, context, { timeout: 5000 });
-
-            let result;
-            if (resultPromise && typeof resultPromise.then === 'function') {
-                result = await resultPromise;
-            } else {
-                result = resultPromise;
-            }
-
-            return JSON.stringify(result);
-        } catch (err: any) {
-            return `Error: ${err.message}`;
+            const result = await vm.runInContext(wrappedCode, context, { timeout: 5000 });
+            return result;
+        } catch (e: any) {
+            return `Execution Error: ${e.message}`;
         }
     }
 }

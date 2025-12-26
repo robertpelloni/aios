@@ -1,27 +1,12 @@
 # Changelog
 
-## [1.0.0] - 2024-05-23
+## [1.2.0] - 2024-05-24
 
-### 🚀 Major Features
-*   **Super AI Hub:** A centralized Meta-Orchestrator for MCP servers, tools, and agents.
-*   **Multi-Platform Support:**
-    *   VSCode Extension Skeleton
-    *   Chrome Browser Extension (Context Injection)
-    *   CLI Adapters (`gemini`, `claude`)
-*   **Autonomous Intelligence:**
-    *   `AgentExecutor` with recursive sub-agent capabilities.
-    *   `MemoryManager` with Semantic (Vector) and Fuzzy search.
-    *   `TrafficObserver` for passive fact extraction.
-*   **Power Tools:**
-    *   `run_code` (Sandboxed Execution)
-    *   `run_pipeline` (Multi-step workflows)
-    *   `improve_prompt` (Prompt Engineering)
-    *   `inject_context` (Browser Automation)
+### 🚀 New Features
+*   **Docker Sandbox:** `run_code` now supports executing Python scripts in secure, ephemeral Docker containers (via `DockerService`).
+*   **Self-Healing Tools:** If a tool call fails, the Hub automatically analyzes the error and schema, attempts to fix the arguments, and retries the call.
+*   **Vector Persistence:** Semantic memory (vectors) are now saved to disk (`vectors.json`).
 
-### 🛠 Architecture
-*   **Monorepo:** Established `pnpm` workspace structure.
-*   **Config:** Auto-configuration for clients via `mcpenetes` logic.
-*   **Ecosystem:** Integration of 50+ reference repositories.
-
-### 📝 Documentation
-*   Comprehensive `ROADMAP.md`, `DESIGN.md`, and Strategy documents.
+### 🛠 Improvements
+*   **Usage Tracking:** Added cost/token estimation to the Dashboard.
+*   **Memory:** Upgraded `MemoryManager` to use hybrid search (Vector + Fuzzy).

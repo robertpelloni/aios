@@ -1,6 +1,6 @@
 {
   "name": "super-ai-browser",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "scripts": {
     "build": "webpack --config webpack.config.js"
   },

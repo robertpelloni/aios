@@ -4,11 +4,13 @@ import { MetaMcpClient } from '../clients/MetaMcpClient.js';
 import { ToolSearchService } from '../services/ToolSearchService.js';
 import { VectorStore } from '../services/VectorStore.js';
 import { EventEmitter } from 'events';
+import { ModelGateway } from '../gateway/ModelGateway.js';
 
 export class McpProxyManager extends EventEmitter {
     private metaClient: MetaMcpClient;
     private searchService: ToolSearchService;
     private internalTools: Map<string, { def: any, handler: (args: any) => Promise<any> }> = new Map();
+    private modelGateway?: ModelGateway;
 
     // Session Management for Progressive Disclosure
     private sessionVisibleTools: Map<string, Set<string>> = new Map();
@@ -17,11 +19,13 @@ export class McpProxyManager extends EventEmitter {
     constructor(
         private mcpManager: McpManager,
         private logManager: LogManager,
-        private vectorStore?: VectorStore
+        private vectorStore?: VectorStore,
+        modelGateway?: ModelGateway
     ) {
         super();
         this.metaClient = new MetaMcpClient();
         this.searchService = new ToolSearchService();
+        this.modelGateway = modelGateway;
     }
 
     registerInternalTool(def: any, handler: (args: any) => Promise<any>) {
@@ -126,7 +130,44 @@ export class McpProxyManager extends EventEmitter {
         return [...metaTools, ...internalDefs, ...loadedTools];
     }
 
+    private async retryWithSelfHealing(name: string, args: any, error: string): Promise<any | null> {
+        if (!this.modelGateway) return null;
+
+        console.log(`[Self-Healing] Analyzing error for ${name}...`);
+
+        try {
+            const toolDef = (await this.fetchAllToolsInternal()).find(t => t.name === name);
+            const prompt = `
+            The tool '${name}' failed with error: "${error}".
+            Arguments used: ${JSON.stringify(args)}
+            Tool Schema: ${JSON.stringify(toolDef?.inputSchema || {})}
+
+            Fix the arguments to match the schema and correct the error.
+            Return ONLY a valid JSON object of the new arguments.
+            `;
+
+            const response = await this.modelGateway.complete({
+                messages: [{ role: 'user', content: prompt }]
+            });
+
+            // Extract JSON
+            const jsonStr = response.content.replace(/```json/g, '').replace(/```/g, '').trim();
+            const newArgs = JSON.parse(jsonStr);
+
+            console.log(`[Self-Healing] Retrying with:`, newArgs);
+            return await this.callToolInternal(name, newArgs, undefined, false); // Pass false to prevent infinite recursion
+
+        } catch (e) {
+            console.warn(`[Self-Healing] Failed:`, e);
+            return null;
+        }
+    }
+
     async callTool(name: string, args: any, sessionId?: string) {
+        return this.callToolInternal(name, args, sessionId, true);
+    }
+
+    private async callToolInternal(name: string, args: any, sessionId?: string, retry: boolean = true) {
         // Emit Pre-Tool Event
         this.emit('pre_tool_call', { name, args, sessionId });
 
@@ -218,8 +259,17 @@ export class McpProxyManager extends EventEmitter {
                 }
             }
         } catch (e: any) {
-            response = { isError: true, content: [{ type: "text", text: e.message }] };
             this.logManager.log({ type: 'error', tool: name, server: serverName, error: e.message });
+
+            // Self-Healing Logic
+            if (retry && this.modelGateway) {
+                const healedResponse = await this.retryWithSelfHealing(name, args, e.message);
+                if (healedResponse) {
+                    return healedResponse;
+                }
+            }
+
+            response = { isError: true, content: [{ type: "text", text: e.message }] };
         }
 
         if (!response) {

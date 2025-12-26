@@ -52,3 +52,28 @@ socket.on('browser:inject_text', async (data, callback) => {
         if (callback) callback({ error: 'No active tab' });
     }
 });
+
+// --- Active Context Loop ---
+async function pushActiveTab() {
+    if (!socket.connected) return;
+    try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tab && tab.id && tab.url && !tab.url.startsWith('chrome://')) {
+            chrome.tabs.sendMessage(tab.id, { action: 'getPageContent' }, (response) => {
+                if (response) {
+                    socket.emit('browser:active_tab_update', response);
+                }
+            });
+        }
+    } catch (e) {
+        // Ignore errors (e.g., content script not ready)
+    }
+}
+
+// Listen for tab changes
+chrome.tabs.onActivated.addListener(() => pushActiveTab());
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'complete') {
+        pushActiveTab();
+    }
+});

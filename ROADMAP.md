@@ -13,9 +13,9 @@ For a granular list of every planned feature and submodule integration from the 
 *   **Planned Features:**
     *   [x] **Server Skeleton:** Fastify + Socket.io (Done).
     *   [x] **Manager Pattern:** `HookManager`, `AgentManager`, `McpManager`, `HookExecutor` (Done).
-    *   [ ] **Router/Aggregator Logic:**
-        *   Implement intelligent routing of tool calls to downstream MCP servers (Reference: `metamcp`, `magg`).
-        *   Implement "Progressive Disclosure" (Lazy Loading) to keep context light (Reference: `lazy-mcp`, `Switchboard`).
+    *   [x] **Router/Aggregator Logic:**
+        *   [x] Implement intelligent routing of tool calls to downstream MCP servers (Reference: `metamcp`, `magg`).
+        *   [ ] Implement "Progressive Disclosure" (Lazy Loading) to keep context light (Reference: `lazy-mcp`, `Switchboard`).
     *   [ ] **Traffic Inspection ("Mcpshark"):**
         *   Build a UI to inspect MCP traffic in real-time (Reference: `mcpshark`, `metamcp` inspector).
         *   Implement persistent logging to `pgvector` database.
@@ -51,14 +51,14 @@ For a granular list of every planned feature and submodule integration from the 
     *   [ ] **Sync/Transfer:** Tools to move memories between systems.
 
 ## 4. Code Mode & Sandboxing
-**Status:** Planned
+**Status:** 🚧 In Progress
 **Reference:** `references/pctx`, `references/mcp-server-code-execution-mode`
 
 *   **Objective:** Allow the LLM to execute scripts to chain tools efficiently (98% token reduction).
 *   **Planned Features:**
     *   [ ] **`run_code` Tool:** Implement a tool that accepts TS/Python code.
-    *   [ ] **Sandbox Engine:** Integrate `isolated-vm` (Node.js) or Docker (Python) to run the code safely.
-    *   [ ] **Tool Bridge:** Inject a client into the sandbox so the script can call other MCP tools.
+    *   [x] **Sandbox Engine:** Integrate `isolated-vm` (Node.js) or Docker (Python) to run the code safely.
+    *   [x] **Tool Bridge:** Inject a client into the sandbox so the script can call other MCP tools.
     *   [ ] **TOON Support:** Implement Token-Oriented Object Notation for compressed outputs.
 
 ## 5. Autonomous Agents & UI

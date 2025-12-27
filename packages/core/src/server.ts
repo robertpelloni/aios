@@ -708,6 +708,28 @@ export class CoreService {
     });
     
     this.proxyManager.registerInternalTool({
+        name: "run_code",
+        description: "Execute JavaScript code in a secure sandbox. The code can call other tools using `await call_tool('tool_name', args)`.",
+        inputSchema: {
+            type: "object",
+            properties: {
+                code: { type: "string", description: "The JavaScript code to execute." },
+                sessionId: { type: "string", description: "Optional session ID to persist state." }
+            },
+            required: ["code"]
+        }
+    }, async (args: any) => {
+        // Define the callback that the sandbox will use to call tools
+        const toolCallback = async (name: string, toolArgs: any) => {
+            console.log(`[Sandbox] Requesting tool: ${name}`);
+            // We use the proxyManager to call the tool, ensuring permissions/routing
+            return await this.proxyManager.callTool(name, toolArgs, args.sessionId);
+        };
+
+        return await this.codeExecutionManager.execute(args.code, toolCallback, args.sessionId);
+    });
+
+    this.proxyManager.registerInternalTool({
         name: "configure_client",
         description: "Auto-configure a client (VSCode, Claude, Cursor) to use the AIOS Hub.",
         inputSchema: {

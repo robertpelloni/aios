@@ -743,7 +743,7 @@ export class CoreService {
         inputSchema: {
             type: "object",
             properties: {
-                clientName: { type: "string", enum: ["VSCode", "Claude Desktop", "Cursor"] }
+                clientName: { type: "string", enum: ["VSCode", "Claude Desktop", "Cursor", "Claude Code"] }
             },
             required: ["clientName"]
         }
@@ -755,6 +755,14 @@ export class CoreService {
             scriptPath,
             env: process.env
         });
+    });
+
+    this.proxyManager.registerInternalTool({
+        name: "install_cli",
+        description: "Install the 'aios' CLI command to your shell profile.",
+        inputSchema: { type: "object", properties: {}, required: [] }
+    }, async (args: any) => {
+        return await this.clientManager.installCLI();
     });
     
     try {

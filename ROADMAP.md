@@ -15,7 +15,7 @@ For a granular list of every planned feature and submodule integration from the 
     *   [x] **Manager Pattern:** `HookManager`, `AgentManager`, `McpManager`, `HookExecutor` (Done).
     *   [x] **Router/Aggregator Logic:**
         *   [x] Implement intelligent routing of tool calls to downstream MCP servers (Reference: `metamcp`, `magg`).
-        *   [ ] Implement "Progressive Disclosure" (Lazy Loading) to keep context light (Reference: `lazy-mcp`, `Switchboard`).
+        *   [x] Implement "Progressive Disclosure" (Lazy Loading) to keep context light (Reference: `lazy-mcp`, `Switchboard`).
     *   [ ] **Traffic Inspection ("Mcpshark"):**
         *   Build a UI to inspect MCP traffic in real-time (Reference: `mcpshark`, `metamcp` inspector).
         *   Implement persistent logging to `pgvector` database.
@@ -24,9 +24,9 @@ For a granular list of every planned feature and submodule integration from the 
         *   **Attribution:** Track "what came from where" (source file, tool output, user input).
         *   **Breakdown:** Visualize context composition (e.g., "30% Code, 20% Memory, 50% Conversation").
         *   **Inspector:** Allow users to view the exact context window being sent to the model.
-    *   [ ] **Context Mining:**
-        *   **Auto-Audit:** Trigger an "Analyst Mode" at session end to find abandoned threads and connections.
-        *   **Layering:** Inject metadata (System, Dev, User, Session) in strict order.
+    *   [x] **Context Mining:**
+        *   [x] **Auto-Audit:** Trigger an "Analyst Mode" at session end to find abandoned threads and connections.
+        *   [ ] **Layering:** Inject metadata (System, Dev, User, Session) in strict order.
 
 ## 2. Universal Client Integration
 **Status:** ✅ Implemented (v0.0.9)
@@ -56,7 +56,7 @@ For a granular list of every planned feature and submodule integration from the 
 
 *   **Objective:** Allow the LLM to execute scripts to chain tools efficiently (98% token reduction).
 *   **Planned Features:**
-    *   [ ] **`run_code` Tool:** Implement a tool that accepts TS/Python code.
+    *   [x] **`run_code` Tool:** Implement a tool that accepts TS/Python code.
     *   [x] **Sandbox Engine:** Integrate `isolated-vm` (Node.js) or Docker (Python) to run the code safely.
     *   [x] **Tool Bridge:** Inject a client into the sandbox so the script can call other MCP tools.
     *   [ ] **TOON Support:** Implement Token-Oriented Object Notation for compressed outputs.

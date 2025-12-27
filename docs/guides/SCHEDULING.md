@@ -1,6 +1,6 @@
 # Task Scheduling
 
-The Super AI Plugin includes a `SchedulerManager` that allows you to run MCP Tools or Agents on a recurring schedule (Cron).
+The AIOS includes a `SchedulerManager` that allows you to run MCP Tools or Agents on a recurring schedule (Cron).
 
 ## Configuration
 

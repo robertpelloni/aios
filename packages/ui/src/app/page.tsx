@@ -78,7 +78,7 @@ export default function Dashboard() {
     <div className="max-w-6xl mx-auto space-y-8">
       <header>
         <h1 className="text-4xl font-bold mb-2">System Overview</h1>
-        <p className="text-gray-400">Real-time monitoring of your Super AI Plugin ecosystem.</p>
+        <p className="text-gray-400">Real-time monitoring of your AIOS ecosystem.</p>
       </header>
 
       {/* Component Status Indicators */}

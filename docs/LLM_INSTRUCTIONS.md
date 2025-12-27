@@ -1,9 +1,9 @@
 # Universal LLM Instructions & Project Standards
 
-This document serves as the single source of truth for all AI agents (Claude, Gemini, GPT, Copilot, etc.) working on the **AIOS (Super AI Plugin)** project.
+This document serves as the single source of truth for all AI agents (Claude, Gemini, GPT, Copilot, etc.) working on the **AIOS** project.
 
 ## 1. Project Identity & Mission
-**Project Name:** AIOS (Super AI Plugin)
+**Project Name:** AIOS
 **Mission:** To create a universal, platform-agnostic "Hub" that connects any LLM (Claude, Gemini, OpenAI) to any tool (MCP, Local, Remote) with persistent memory, autonomous agents, and a unified dashboard.
 
 ## 2. Core Architecture

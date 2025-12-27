@@ -3,7 +3,7 @@ import { Sidebar } from '@/components/Sidebar';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Super AI Plugin',
+  title: 'AIOS',
   description: 'The Ultimate Meta-Orchestrator for the Model Context Protocol',
 };
 

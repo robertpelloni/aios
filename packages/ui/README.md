@@ -1,6 +1,6 @@
-# Super AI Plugin - Dashboard UI
+# AIOS - Dashboard UI
 
-Next.js-based dashboard for the Super AI Plugin.
+Next.js-based dashboard for the AIOS.
 
 ## Development
 

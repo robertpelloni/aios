@@ -5,11 +5,11 @@ import chalk from 'chalk';
 import ora from 'ora';
 
 const program = new Command();
-const API_URL = process.env.SUPER_AI_HUB_URL || 'http://localhost:3000';
+const API_URL = process.env.AIOS_HUB_URL || 'http://localhost:3000';
 
 program
-  .name('super-ai')
-  .description('CLI for Super AI Plugin Hub')
+  .name('aios')
+  .description('CLI for AIOS Hub')
   .version('0.1.0');
 
 program.command('status')

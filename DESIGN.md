@@ -1,7 +1,7 @@
-# Super AI Plugin Design Document
+# AIOS Design Document
 
 ## Vision
-The **Super AI Plugin** is a **Meta-Orchestrator** and an **Open Source AI OS layer**. It wraps the developer's environment (VSCode, Chrome, CLI) and provides the "glue" that proprietary tools usually keep hidden.
+The **AIOS** is a **Meta-Orchestrator** and an **Open Source AI OS layer**. It wraps the developer's environment (VSCode, Chrome, CLI) and provides the "glue" that proprietary tools usually keep hidden.
 
 It acts as a central nervous system that orchestrates:
 - **Multi-CLI Tools:** Claude Code, Gemini CLI, OpenCode, etc.
@@ -90,10 +90,10 @@ The development is guided by a strict roadmap found in [`ROADMAP.md`](./ROADMAP.
 The project leverages a vast ecosystem of submodules for specific capabilities. Please refer to [`docs/ECOSYSTEM_INTEGRATION.md`](./docs/ECOSYSTEM_INTEGRATION.md) for the detailed strategy on how `MCP-SuperAssistant`, `mux`, `smolagents`, and others are integrated into the architecture.
 
 ## Universal Client Integration
-To fulfill the vision of a "Super AI Plugin", the Hub must seamlessly integrate with the user's existing ecosystem. We will implement a **Client Manager** (inspired by `mcpenetes`) that:
+To fulfill the vision of a "AIOS", the Hub must seamlessly integrate with the user's existing ecosystem. We will implement a **Client Manager** (inspired by `mcpenetes`) that:
 1.  **Auto-Detects Clients:** Scans standard paths (documented in `docs/CLIENT_CONFIGS.md`) to find installed tools (VSCode, Cursor, Claude Desktop, etc.).
-2.  **Config Injection:** Automatically edits the `mcp-servers.json` or equivalent config file of detected clients to add the **Super AI Plugin** as an upstream MCP server.
-    - *Note:* This allows the user to install the Super Plugin once, and instantly have all their tools (VSCode, Chrome, CLI) connected to the Hub.
+2.  **Config Injection:** Automatically edits the `mcp-servers.json` or equivalent config file of detected clients to add the **AIOS** as an upstream MCP server.
+    - *Note:* This allows the user to install the AIOS once, and instantly have all their tools (VSCode, Chrome, CLI) connected to the Hub.
 3.  **Conflict Resolution:** Merges existing configurations with the Hub's proxy configuration.
 
 ## Roadmap

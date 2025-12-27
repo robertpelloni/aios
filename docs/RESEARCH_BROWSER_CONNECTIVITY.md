@@ -51,7 +51,7 @@
 
 ## Recommendation
 **Adopt Approach 1 (MCP-SuperAssistant Extension Bridge).**
-- It aligns with the "Super AI Plugin" vision of integrating with the user's environment.
+- It aligns with the "AIOS" vision of integrating with the user's environment.
 - It allows for a seamless UX (Agent sees what User sees).
 - We can fork/adapt `MCP-SuperAssistant` to connect specifically to our Hub's Socket.io server.
 

@@ -1,12 +1,12 @@
 # Ecosystem Integration Strategy
 
-This document outlines the strategy for integrating the extensive list of submodules added to the project. These repositories serve as references, foundations, or direct library integrations to power the "Super AI Plugin".
+This document outlines the strategy for integrating the extensive list of submodules added to the project. These repositories serve as references, foundations, or direct library integrations to power the "AIOS".
 
 ## 1. Browser Extension & Connectivity
 **Repo:** `references/MCP-SuperAssistant`
 - **Role:** Foundation.
 - **Integration:** This codebase will serve as the reference implementation for the project's Browser Extension interface and the WebSocket/StreamingHTTP server.
-- **Goal:** Enable the "Super AI Plugin" to interact directly with web pages and browser events.
+- **Goal:** Enable the "AIOS" to interact directly with web pages and browser events.
 
 ## 2. Data Sources & Voice
 **Repos:** `references/notebooklm-mcp`, `references/voicemode`

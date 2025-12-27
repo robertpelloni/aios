@@ -65,4 +65,4 @@ All notable changes to this project will be documented in this file.
 - **Submodules**: Updated `jules-app`, `OpenHands`, and `beads` submodules.
 
 ## [0.0.1] - Initial Release
-- Initial release of Super AI Plugin.
+- Initial release of AIOS.

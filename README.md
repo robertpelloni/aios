@@ -1,4 +1,4 @@
-# Super AI Plugin
+# AIOS
 
 The Ultimate "Meta-Orchestrator" for the Model Context Protocol (MCP). It acts as a universal hub, proxy, and agentic runtime for your AI tools.
 
@@ -37,8 +37,8 @@ The Ultimate "Meta-Orchestrator" for the Model Context Protocol (MCP). It acts a
 
 1.  **Clone & Install**
     ```bash
-    git clone https://github.com/your-repo/super-ai-plugin.git
-    cd super-ai-plugin
+    git clone https://github.com/your-repo/aios.git
+    cd aios
     pnpm install
     ```
 

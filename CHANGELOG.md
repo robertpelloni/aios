@@ -1,12 +1,12 @@
 # Changelog
 
-## [1.2.0] - 2024-05-24
+All notable changes to this project will be documented in this file.
 
-### 🚀 New Features
-*   **Docker Sandbox:** `run_code` now supports executing Python scripts in secure, ephemeral Docker containers (via `DockerService`).
-*   **Self-Healing Tools:** If a tool call fails, the Hub automatically analyzes the error and schema, attempts to fix the arguments, and retries the call.
-*   **Vector Persistence:** Semantic memory (vectors) are now saved to disk (`vectors.json`).
+## [0.1.0-skeleton] - 2024-05-23
 
-### 🛠 Improvements
-*   **Usage Tracking:** Added cost/token estimation to the Dashboard.
-*   **Memory:** Upgraded `MemoryManager` to use hybrid search (Vector + Fuzzy).
+### Added
+-   Initial monorepo structure (Core, UI).
+-   Core Service with Fastify & Socket.io.
+-   Managers for Agents, Skills, Hooks, Prompts.
+-   MCP Server management (stdio).
+-   Documentation (ROADMAP, STRUCTURE, AGENTS).

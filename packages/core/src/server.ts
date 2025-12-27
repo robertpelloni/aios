@@ -37,6 +37,7 @@ import { createPromptImprover } from './tools/PromptImprover.js';
 import { toToon, FormatTranslatorTool } from './utils/toon.js';
 import { ModelGateway } from './gateway/ModelGateway.js';
 import { ContextGenerator } from './utils/ContextGenerator.js';
+import { SubmoduleManager } from './managers/SubmoduleManager.js';
 import fs from 'fs';
 
 export class CoreService {
@@ -74,6 +75,7 @@ export class CoreService {
   private modelGateway: ModelGateway;
   private systemPromptManager: SystemPromptManager;
   private contextGenerator: ContextGenerator;
+  private submoduleManager: SubmoduleManager;
 
   constructor(
     private rootDir: string
@@ -135,6 +137,7 @@ export class CoreService {
     this.mcpInterface = new McpInterface(this.hubServer);
     this.agentExecutor = new AgentExecutor(this.proxyManager, this.secretManager, this.sessionManager, this.systemPromptManager);
     this.schedulerManager = new SchedulerManager(rootDir, this.agentExecutor, this.proxyManager);
+    this.submoduleManager = new SubmoduleManager();
 
     this.commandManager.on('updated', (commands) => {
         this.registerCommandsAsTools(commands);
@@ -176,6 +179,15 @@ export class CoreService {
   private setupRoutes() {
     this.app.get('/health', async () => this.healthService.getSystemStatus());
     this.app.get('/api/doctor', async () => this.systemDoctor.checkAll());
+
+    this.app.get('/api/system', async () => {
+        const versionPath = path.join(this.rootDir, '../..', 'VERSION');
+        const version = fs.existsSync(versionPath) ? fs.readFileSync(versionPath, 'utf-8').trim() : 'unknown';
+        return {
+            version,
+            submodules: this.submoduleManager.getSubmodules()
+        };
+    });
 
     this.app.get('/api/clients', async () => ({ clients: this.clientManager.getClients() }));
 
@@ -340,8 +352,8 @@ export class CoreService {
     });
 
     // System Prompt API
-    this.app.get('/api/system', async () => ({ content: this.systemPromptManager.getPrompt() }));
-    this.app.post('/api/system', async (req: any) => {
+    this.app.get('/api/system/prompt', async () => ({ content: this.systemPromptManager.getPrompt() }));
+    this.app.post('/api/system/prompt', async (req: any) => {
         this.systemPromptManager.save(req.body.content);
         return { status: 'saved' };
     });
@@ -380,26 +392,7 @@ export class CoreService {
 
     // --- Submodules Route ---
     this.app.get('/api/submodules', async () => {
-        try {
-            const gitmodulesPath = path.join(this.rootDir, '.gitmodules');
-            if (fs.existsSync(gitmodulesPath)) {
-                const content = fs.readFileSync(gitmodulesPath, 'utf-8');
-                const submodules = [];
-                const regex = /\[submodule "([^"]+)"\]\s+path = ([^\s]+)\s+url = ([^\s]+)/g;
-                let match;
-                while ((match = regex.exec(content)) !== null) {
-                    submodules.push({
-                        name: match[1].split('/').pop(),
-                        path: match[2],
-                        url: match[3]
-                    });
-                }
-                return { submodules };
-            }
-            return { submodules: [] };
-        } catch (e: any) {
-            return { submodules: [], error: e.message };
-        }
+        return { submodules: this.submoduleManager.getSubmodules() };
     });
   }
 

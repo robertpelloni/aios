@@ -1,4 +1,4 @@
-import { MemoryProvider, MemoryItem, MemoryResult } from '../../interfaces/MemoryProvider.js';
+import { MemoryProvider, Memory, MemoryResult } from '../../interfaces/MemoryProvider.js';
 import { BrowserManager } from '../BrowserManager.js';
 
 export class BrowserStorageProvider implements MemoryProvider {
@@ -9,30 +9,31 @@ export class BrowserStorageProvider implements MemoryProvider {
 
     constructor(private browserManager: BrowserManager) {}
 
-    async connect(): Promise<void> {
+    async init(): Promise<void> {
         // Connection is managed by BrowserManager socket
         if (!this.browserManager.isConnected()) {
             console.warn('[BrowserStorageProvider] Browser not connected yet.');
         }
     }
 
-    async disconnect(): Promise<void> {
-        // Nothing to do
-    }
-
-    async insert(item: MemoryItem): Promise<string> {
+    async store(memory: Memory): Promise<string> {
         // Browser history is read-only for now
-        console.warn('[BrowserStorageProvider] Insert not supported (Read-Only)');
+        console.warn('[BrowserStorageProvider] Store not supported (Read-Only)');
         return "";
     }
 
-    async search(query: string): Promise<MemoryResult[]> {
+    async retrieve(id: string): Promise<Memory | null> {
+        // Not directly supported by ID yet without search
+        return null;
+    }
+
+    async search(query: string, limit: number = 5): Promise<MemoryResult[]> {
         if (!this.browserManager.isConnected()) {
             return [];
         }
 
         try {
-            const history = await this.browserManager.searchHistory(query, 5);
+            const history = await this.browserManager.searchHistory(query, limit);
             const bookmarks = await this.browserManager.getBookmarks(query);
 
             const results: MemoryResult[] = [];
@@ -73,10 +74,6 @@ export class BrowserStorageProvider implements MemoryProvider {
     }
 
     async delete(id: string): Promise<void> {
-        // Not supported
-    }
-
-    async clear(): Promise<void> {
         // Not supported
     }
 }

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Database, RefreshCw, HardDrive, Cloud } from 'lucide-react';
+import { Search, Database, RefreshCw, HardDrive, Cloud, Brain, Server } from 'lucide-react';
 import { toast } from "sonner";
 import {
   Dialog,
@@ -30,6 +30,7 @@ interface MemoryItem {
   tags: string[];
   timestamp: number;
   sourceProvider: string;
+  similarity?: number;
 }
 
 export default function MemoryPage() {
@@ -176,7 +177,10 @@ export default function MemoryPage() {
             {providers.map(p => (
                 <div key={p.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex items-center">
-                        {p.type === 'file' ? <HardDrive className="mr-2 h-4 w-4 text-blue-500" /> : <Cloud className="mr-2 h-4 w-4 text-purple-500" />}
+                        {p.type === 'file' ? <HardDrive className="mr-2 h-4 w-4 text-blue-500" /> : 
+                         p.type === 'vector' ? <Database className="mr-2 h-4 w-4 text-green-500" /> :
+                         p.type === 'external' ? <Cloud className="mr-2 h-4 w-4 text-purple-500" /> :
+                         <Brain className="mr-2 h-4 w-4 text-orange-500" />}
                         <div>
                             <div className="font-medium">{p.name}</div>
                             <div className="text-xs text-muted-foreground capitalize">{p.type}</div>
@@ -249,13 +253,15 @@ export default function MemoryPage() {
                                 <div className="space-y-3">
                                     {memories.map(m => (
                                         <div key={m.id} className="p-3 border rounded-lg hover:bg-accent/50 transition-colors">
-                                            <div className="text-sm">{m.content}</div>
+                                            <div className="text-sm whitespace-pre-wrap">{m.content}</div>
                                             <div className="flex items-center justify-between mt-2">
-                                                <div className="flex gap-1">
+                                                <div className="flex gap-1 flex-wrap">
                                                     {m.tags.map(t => <Badge key={t} variant="outline" className="text-xs">{t}</Badge>)}
                                                 </div>
-                                                <div className="text-xs text-muted-foreground">
-                                                    {new Date(m.timestamp).toLocaleDateString()} • {m.sourceProvider}
+                                                <div className="text-xs text-muted-foreground flex gap-2">
+                                                    {m.similarity && <span>Score: {(m.similarity * 100).toFixed(0)}%</span>}
+                                                    <span>{new Date(m.timestamp).toLocaleDateString()}</span>
+                                                    <span className="capitalize">{m.sourceProvider}</span>
                                                 </div>
                                             </div>
                                         </div>

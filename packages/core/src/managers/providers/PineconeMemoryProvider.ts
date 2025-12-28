@@ -1,5 +1,5 @@
 import { Pinecone, PineconeRecord, RecordMetadata } from '@pinecone-database/pinecone';
-import { MemoryProvider, MemoryItem, MemoryResult } from '../../interfaces/MemoryProvider.js';
+import { MemoryProvider, Memory, MemoryResult } from '../../interfaces/MemoryProvider.js';
 
 export class PineconeMemoryProvider implements MemoryProvider {
     public id = 'pinecone';
@@ -16,7 +16,7 @@ export class PineconeMemoryProvider implements MemoryProvider {
         this.indexName = indexName;
     }
 
-    async connect(): Promise<void> {
+    async init(): Promise<void> {
         try {
             this.client = new Pinecone({
                 apiKey: this.apiKey
@@ -31,31 +31,47 @@ export class PineconeMemoryProvider implements MemoryProvider {
         }
     }
 
-    async disconnect(): Promise<void> {
-        this.client = null;
-    }
-
-    async insert(item: MemoryItem): Promise<string> {
+    async store(memory: Memory): Promise<string> {
         if (!this.client) throw new Error('Pinecone client not connected');
-        if (!item.embedding) throw new Error('Cannot insert item without embedding into Pinecone');
+        if (!memory.embedding) throw new Error('Cannot insert item without embedding into Pinecone');
 
         const index = this.client.index(this.indexName);
         
         const metadata: RecordMetadata = {
-            content: item.content,
-            tags: item.tags.join(','), // Pinecone metadata values must be strings, numbers, booleans, or arrays of strings
-            timestamp: item.timestamp,
-            ...item.metadata
+            content: memory.content,
+            tags: memory.tags.join(','), // Pinecone metadata values must be strings, numbers, booleans, or arrays of strings
+            timestamp: memory.timestamp,
+            ...memory.metadata
         };
 
         const record: PineconeRecord = {
-            id: item.id,
-            values: item.embedding,
+            id: memory.id,
+            values: memory.embedding,
             metadata
         };
 
         await index.upsert([record]);
-        return item.id;
+        return memory.id;
+    }
+
+    async retrieve(id: string): Promise<Memory | null> {
+         // Pinecone fetch is possible but usually we search. 
+         // Implementation for direct fetch:
+         if (!this.client) return null;
+         const index = this.client.index(this.indexName);
+         const response = await index.fetch([id]);
+         if (response.records && response.records[id]) {
+             const record = response.records[id];
+             return {
+                 id: record.id,
+                 content: (record.metadata?.content as string) || '',
+                 tags: (record.metadata?.tags as string)?.split(',') || [],
+                 timestamp: (record.metadata?.timestamp as number) || 0,
+                 embedding: record.values,
+                 metadata: record.metadata
+             };
+         }
+         return null;
     }
 
     async search(query: string, limit: number = 5, embedding?: number[]): Promise<MemoryResult[]> {

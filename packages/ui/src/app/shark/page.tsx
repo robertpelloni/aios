@@ -1,22 +1,10 @@
-'use client';
-
 export default function SharkPage() {
   return (
-    <div className=\
-h-full
-w-full
-flex
-flex-col\>
-      <iframe 
-        src=\http://localhost:9853\ 
-        className=\flex-1
-w-full
-h-full
-border-none\
-        title=\MCP
-Shark
-Dashboard\
-      />
+    <div className='p-8'>
+      <h1 className='text-2xl font-bold mb-4'>Shark</h1>
+      <p className='text-gray-400'>
+        This is the Shark page.
+      </p>
     </div>
   );
 }

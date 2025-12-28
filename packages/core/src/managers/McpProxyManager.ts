@@ -184,6 +184,7 @@ export class McpProxyManager {
     }
 
     async callTool(name: string, args: any, sessionId?: string) {
+        const startTime = Date.now();
         // Security Policy Check
         if (['dangerous_tool'].includes(name)) {
             throw new Error("Tool blocked by policy.");
@@ -264,7 +265,8 @@ export class McpProxyManager {
                 result = await client.callTool({ name, arguments: args });
             }
 
-            this.logManager.log({ type: 'response', tool: name, server: targetServer, result });
+            const duration = Date.now() - startTime;
+            this.logManager.log({ type: 'response', tool: name, server: targetServer, result, duration });
             
             // Hook for Memory
             if (this.memoryManager) {
@@ -274,8 +276,9 @@ export class McpProxyManager {
             return result;
 
         } catch (e: any) {
+            const duration = Date.now() - startTime;
             const err = { isError: true, content: [{ type: "text", text: e.message }] };
-            this.logManager.log({ type: 'error', tool: name, server: targetServer, error: e.message });
+            this.logManager.log({ type: 'error', tool: name, server: targetServer, error: e.message, duration });
             return err;
         }
     }

@@ -5,6 +5,7 @@ import OpenAI from 'openai';
 import { SecretManager } from '../managers/SecretManager.js';
 import { LogManager } from '../managers/LogManager.js';
 import { ContextAnalyzer } from '../utils/ContextAnalyzer.js';
+import { ContextManager } from '../managers/ContextManager.js';
 
 export class AgentExecutor extends EventEmitter {
     private openai: OpenAI | null = null;
@@ -12,7 +13,8 @@ export class AgentExecutor extends EventEmitter {
     constructor(
         private proxyManager: McpProxyManager,
         private secretManager?: SecretManager,
-        private logManager?: LogManager
+        private logManager?: LogManager,
+        private contextManager?: ContextManager
     ) {
         super();
         this.initializeOpenAI();
@@ -39,8 +41,34 @@ export class AgentExecutor extends EventEmitter {
             return "Error: No OpenAI API Key found.";
         }
 
+        // Build System Prompt with Layering (System -> Dev -> User -> Session)
+        let systemPrompt = `You are ${agent.name}. ${agent.description}\n\n`;
+        
+        // 1. System Layer (Base Instructions)
+        systemPrompt += `## System Instructions\n${agent.instructions}\n\n`;
+
+        // 2. Dev Layer (Project Context)
+        if (this.contextManager) {
+            const contextFiles = this.contextManager.getContextFiles();
+            if (contextFiles.length > 0) {
+                systemPrompt += `## Project Context\n`;
+                for (const file of contextFiles) {
+                    systemPrompt += `### ${file.name}\n${file.content}\n\n`;
+                }
+            }
+        }
+
+        // 3. User Layer (Passed in context or profile - placeholder)
+        if (context.userPreferences) {
+            systemPrompt += `## User Preferences\n${context.userPreferences}\n\n`;
+        }
+
+        // 4. Session Layer (Task)
+        systemPrompt += `## Current Task\n${task}\n\n`;
+        systemPrompt += `You have access to tools. Use them to answer the user request.`;
+
         const messages: any[] = [
-            { role: 'system', content: `You are ${agent.name}. ${agent.description}\n\nInstructions:\n${agent.instructions}\n\nYou have access to tools. Use them to answer the user request.` },
+            { role: 'system', content: systemPrompt },
             { role: 'user', content: task }
         ];
 

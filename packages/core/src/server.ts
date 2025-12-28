@@ -128,7 +128,7 @@ export class CoreService {
     );
 
     this.mcpInterface = new McpInterface(this.hubServer);
-    this.agentExecutor = new AgentExecutor(this.proxyManager, this.secretManager, this.logManager);
+    this.agentExecutor = new AgentExecutor(this.proxyManager, this.secretManager, this.logManager, this.contextManager);
     
     // Re-initialize MemoryManager with AgentExecutor for Context Compaction
     this.memoryManager = new MemoryManager(path.join(rootDir, 'data'), this.secretManager, this.agentExecutor);

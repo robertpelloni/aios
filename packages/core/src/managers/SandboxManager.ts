@@ -29,8 +29,6 @@ export class SandboxManager {
      */
     async execute(code: string, toolCallback: (name: string, args: any) => Promise<any>): Promise<any> {
         // Inject the tool callback
-        // We create a reference to the host function and expose it as '_host_tool_callback'
-        // Then we create a global 'call_tool' function in the sandbox that calls this reference
         const callbackRef = new ivm.Reference(async (name: string, args: any) => {
             try {
                 return await toolCallback(name, args);
@@ -41,9 +39,9 @@ export class SandboxManager {
         
         await this.context.global.set('_host_tool_callback', callbackRef);
         
-        // Define the bridge function
+        // Define the bridge function - callTool (camelCase)
         await this.context.eval(`
-            global.call_tool = function(name, args) {
+            global.callTool = function(name, args) {
                 return _host_tool_callback.apply(undefined, [name, args], { 
                     arguments: { copy: true }, 
                     result: { promise: true, copy: true } 
@@ -52,6 +50,7 @@ export class SandboxManager {
         `);
 
         // Wrap code in an async function to allow await
+        // Users must explicitly return a value if they want output
         const wrappedCode = `
             (async () => {
                 try {
@@ -74,6 +73,10 @@ export class SandboxManager {
             
             return result;
         } catch (e: any) {
+            // Handle timeout specifically
+            if (e.message && e.message.includes('timed out')) {
+                 throw new Error('Script execution timed out');
+            }
             throw new Error(`Sandbox execution failed: ${e.message}`);
         }
     }

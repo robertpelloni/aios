@@ -10,7 +10,7 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 console.log(`[Core] Starting AIOS Hub from ${ROOT_DIR}`);
 
 const service = new CoreService(ROOT_DIR);
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3002;
 
 service.start(PORT).catch(err => {
     console.error('Failed to start server:', err);

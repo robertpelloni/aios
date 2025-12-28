@@ -8,8 +8,11 @@ export async function GET() {
     // If running from packages/ui, go up two levels
     // If running from root, stay there
     let rootDir = process.cwd();
+    // Obscure the path slightly to prevent bundlers from trying to include the entire monorepo
+    // This is a runtime-only operation using fs
+    const upLevel = '..';
     if (path.basename(rootDir) === 'ui' && path.basename(path.dirname(rootDir)) === 'packages') {
-        rootDir = path.join(rootDir, '../..');
+        rootDir = path.resolve(rootDir, upLevel, upLevel);
     }
 
     const submodulesDir = path.join(rootDir, 'submodules');

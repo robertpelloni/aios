@@ -9,7 +9,7 @@ interface Secret {
   lastModified: number;
 }
 
-const API_BASE = 'http://localhost:3000';
+const API_BASE = 'http://localhost:3002';
 
 export default function Secrets() {
   const [secrets, setSecrets] = useState<Secret[]>([]);

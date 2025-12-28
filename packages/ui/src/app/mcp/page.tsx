@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Play, Square, Terminal } from 'lucide-react';
 
-const API_BASE = 'http://localhost:3000';
+const API_BASE = 'http://localhost:3002';
 
 export default function McpServers() {
   const [servers, setServers] = useState<any[]>([]);

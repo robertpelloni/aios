@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const CORE_API_URL = process.env.CORE_API_URL || 'http://localhost:3000';
+const CORE_API_URL = process.env.CORE_API_URL || 'http://localhost:3002';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

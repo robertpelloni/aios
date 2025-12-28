@@ -6,7 +6,7 @@ global.fetch = jest.fn();
 
 describe('Jules API Proxy', () => {
   const mockApiKey = 'test-api-key';
-  const baseUrl = 'http://localhost:3000/api/jules';
+  const baseUrl = 'http://localhost:3002/api/jules';
 
   beforeEach(() => {
     jest.clearAllMocks();

@@ -425,7 +425,7 @@ export class CoreService {
       }
   }
 
-  public async start(port = 3000) {
+  public async start(port = 3002) {
     await this.agentManager.start();
     await this.skillManager.start();
     await this.hookManager.start();

@@ -28,7 +28,7 @@ function findAvailablePort(startPort) {
   });
 }
 
-findAvailablePort(3000).then((port) => {
+findAvailablePort(3001).then((port) => {
   // when using middleware `hostname` and `port` must be provided below
   const app = next({ dev, hostname, port });
   const handle = app.getRequestHandler();

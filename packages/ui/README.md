@@ -46,7 +46,7 @@ Follow the prompts to configure your deployment.
 
 If you need to configure the API backend URL for production, add:
 
-- `NEXT_PUBLIC_API_URL`: URL of the backend API (defaults to http://localhost:3000)
+- `NEXT_PUBLIC_API_URL`: URL of the backend API (defaults to http://localhost:3002)
 
 ## Architecture
 
@@ -54,7 +54,7 @@ If you need to configure the API backend URL for production, add:
 - **Styling**: Tailwind CSS
 - **Icons**: Lucide React
 - **Real-time**: Socket.io Client
-- **Backend**: Connects to the Core API on port 3000
+- **Backend**: Connects to the Core API on port 3002
 
 ## Pages
 

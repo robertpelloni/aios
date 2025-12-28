@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Key, Server, Bot, Plug, Activity, MessageSquare, FileText, ShoppingBag, Database, FolderTree } from 'lucide-react';
+import { LayoutDashboard, Key, Server, Bot, Plug, Activity, MessageSquare, FileText, ShoppingBag, Database, FolderTree, Box } from 'lucide-react';
 
 export const Sidebar = () => {
   const pathname = usePathname();
@@ -14,6 +14,7 @@ export const Sidebar = () => {
     { href: '/marketplace', label: 'Marketplace', icon: ShoppingBag },
     { href: '/secrets', label: 'API Keys', icon: Key },
     { href: '/mcp', label: 'MCP Servers', icon: Server },
+    { href: '/mcpenetes', label: 'MCPenetes', icon: Box },
     { href: '/agents', label: 'Agents & Skills', icon: Bot },
     { href: '/prompts', label: 'Prompts', icon: MessageSquare },
     { href: '/context', label: 'Context', icon: FileText },
@@ -41,7 +42,7 @@ export const Sidebar = () => {
                 isActive 
                   ? 'bg-blue-600 text-white' 
                   : 'text-gray-400 hover:bg-gray-700 hover:text-white'
-              }`}
+              }}
             >
               <Icon size={20} />
               <span>{label}</span>
@@ -56,4 +57,3 @@ export const Sidebar = () => {
     </aside>
   );
 };
-

@@ -20,10 +20,10 @@ For a granular list of every planned feature and submodule integration from the 
         *   [x] Build a UI to inspect MCP traffic in real-time (Reference: `mcpshark`, `metamcp` inspector).
         *   [x] Implement persistent logging to `pgvector` database. (Using `better-sqlite3`).
         *   [x] **Cost & Usage Tracking:** Calculate and display token usage and estimated cost per session/agent.
-    *   [ ] **Context Visualization:**
+    *   [x] **Context Visualization:**
         *   **Attribution:** Track "what came from where" (source file, tool output, user input).
         *   [x] **Breakdown:** Visualize context composition (e.g., "30% Code, 20% Memory, 50% Conversation").
-        *   **Inspector:** Allow users to view the exact context window being sent to the model.
+        *   [x] **Inspector:** Allow users to view the exact context window being sent to the model.
     *   [x] **Context Mining:**
         *   [x] **Auto-Audit:** Trigger an "Analyst Mode" at session end to find abandoned threads and connections.
         *   [x] **Layering:** Inject metadata (System, Dev, User, Session) in strict order.
@@ -51,7 +51,7 @@ For a granular list of every planned feature and submodule integration from the 
     *   [ ] **Sync/Transfer:** Tools to move memories between systems.
 
 ## 4. Code Mode & Sandboxing
-**Status:** 🚧 In Progress
+**Status:** ✅ Implemented
 **Reference:** `references/pctx`, `references/mcp-server-code-execution-mode`
 
 *   **Objective:** Allow the LLM to execute scripts to chain tools efficiently (98% token reduction).

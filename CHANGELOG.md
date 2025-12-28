@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.4] - 2025-12-28
+
+### Added
+- **Features**: Real-time Context API connected to Agent Executor.
+- **Security**: Implemented `isolated-vm` sandbox for safe code execution.
+
+### Fixed
+- **Infrastructure**: Moved Core server to port 3002 to resolve conflicts.
+- **UI**: Fixed build issues and updated API configuration.
+
 ## [0.2.3] - 2025-12-28
 
 ### Maintenance

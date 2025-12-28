@@ -46,4 +46,17 @@ export async function memoryRoutes(server: FastifyInstance, memoryManager: Memor
       const result = await memoryManager.createSnapshot({ sessionId, context });
       return { success: true, message: result };
   });
+
+  // Restore snapshot
+  server.post('/memory/snapshots/restore', async (request, reply) => {
+      const { filename } = request.body as { filename: string };
+      if (!filename) return reply.code(400).send({ error: 'Missing filename' });
+
+      try {
+        const result = await memoryManager.restoreSnapshot({ filename });
+        return { success: true, data: result };
+      } catch (error: any) {
+        return reply.code(500).send({ error: error.message });
+      }
+  });
 }

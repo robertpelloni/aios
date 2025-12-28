@@ -58,6 +58,24 @@ export default function MemoryPage() {
     }
   };
 
+  const handleRestoreSnapshot = async (filename: string) => {
+    try {
+        const res = await fetch('/api/memory/snapshots/restore', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename })
+        });
+        if (res.ok) {
+            alert('Snapshot restored successfully!');
+        } else {
+            alert('Failed to restore snapshot');
+        }
+    } catch (error) {
+        console.error("Failed to restore snapshot", error);
+        alert('Error restoring snapshot');
+    }
+  };
+
   const handleSearch = async () => {
     setLoading(true);
     try {
@@ -233,7 +251,7 @@ export default function MemoryPage() {
                                                 </div>
                                                 <div className="flex justify-end gap-2">
                                                     <Button size="sm" variant="outline">View</Button>
-                                                    <Button size="sm">Restore</Button>
+                                                    <Button size="sm" onClick={() => handleRestoreSnapshot(s.filename)}>Restore</Button>
                                                 </div>
                                             </div>
                                         ))}

@@ -52,6 +52,20 @@ The Chrome Extension source (Manifest V3).
 ### `packages/types`
 Shared TypeScript type definitions used across packages to ensure type safety.
 
+### `packages/cli`
+The `super-ai` command-line interface. Wraps `start`, `status`, and `run` commands.
+
+### `packages/adapters`
+Contains CLI wrappers for external tools:
+-   `@super-ai/claude-adapter`: Wraps `claude` binary.
+-   `@super-ai/gemini-adapter`: Wraps `gemini` binary.
+
+### `packages/vscode`
+The VSCode Extension source.
+
+### `packages/browser`
+The Chrome Extension source (Manifest V3).
+
 ## Configuration
 
 -   `pnpm-workspace.yaml`: Defines the workspace structure.

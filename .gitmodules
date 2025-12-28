@@ -169,9 +169,6 @@
 [submodule "references/orchestration/claude-orchestration"]
 	path = references/orchestration/claude-orchestration
 	url = https://github.com/mbruhler/claude-orchestration
-[submodule "references/testing/agentic-qe"]
-	path = references/testing/agentic-qe
-	url = https://github.com/proffesor-for-testing/agentic-qe
 [submodule "submodules/metamcp"]
 	path = submodules/metamcp
 	url = https://github.com/robertpelloni/metamcp

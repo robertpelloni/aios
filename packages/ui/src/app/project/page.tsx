@@ -9,7 +9,7 @@ export default function ProjectDashboard() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/project/structure')
+    fetch('/api/project/structure')
       .then(res => res.json())
       .then(setData)
       .catch(console.error);

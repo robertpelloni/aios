@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import { Bot, Play, Terminal, Power, Square } from 'lucide-react';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:3000');
-const API_BASE = 'http://localhost:3000';
+const socket = io();
+const API_BASE = '';
 
 export default function Agents() {
   const [agents, setAgents] = useState<any[]>([]);

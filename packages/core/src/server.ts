@@ -37,6 +37,7 @@ import crypto from 'crypto';
 import { registerMcpRoutes } from './routes/mcpRoutes.js';
 import { registerAgentRoutes } from './routes/agentRoutes.js';
 import { registerRegistryRoutes } from './routes/registryRoutes.js';
+import { memoryRoutes } from './routes/memoryRoutes.js';
 
 export class CoreService {
   public app;
@@ -185,37 +186,11 @@ export class CoreService {
     registerMcpRoutes(this.app, this);
     registerAgentRoutes(this.app, this);
     registerRegistryRoutes(this.app, this);
+    // Register memory routes using the imported function
+    this.app.register(async (instance) => {
+        await memoryRoutes(instance, this.memoryManager);
+    }, { prefix: '/api' });
 
-    // Memory Routes
-    this.app.get('/api/memory/providers', async () => {
-        return { providers: this.memoryManager.getProviders() };
-    });
-
-    this.app.get('/api/memory/search', async (request: any, reply) => {
-        const { q, provider } = request.query;
-        if (!q) {
-            return reply.code(400).send({ error: 'Missing query parameter q' });
-        }
-        try {
-            const results = await this.memoryManager.search({ query: q, providerId: provider });
-            return { results };
-        } catch (e: any) {
-            return reply.code(500).send({ error: e.message });
-        }
-    });
-
-    this.app.post('/api/memory', async (request: any, reply) => {
-        const { content, tags, provider } = request.body;
-        if (!content) {
-            return reply.code(400).send({ error: 'Missing content' });
-        }
-        try {
-            const id = await this.memoryManager.remember({ content, tags, providerId: provider });
-            return { status: 'created', id };
-        } catch (e: any) {
-            return reply.code(500).send({ error: e.message });
-        }
-    });
 
     this.app.post('/api/memory/export', async (request: any, reply) => {
         const { filePath } = request.body;
@@ -239,7 +214,7 @@ export class CoreService {
         }
     });
 
-    this.app.post('/api/memory/sync/jules', async (request: any, reply) => {
+    this.app.post('/api/memory/sync/jules', async (_request: any, reply) => {
         try {
             const result = await this.memoryManager.syncJulesSessions();
             return { result };
@@ -248,7 +223,7 @@ export class CoreService {
         }
     });
 
-    this.app.post('/api/memory/ingest/browser', async (request: any, reply) => {
+    this.app.post('/api/memory/ingest/browser', async (_request: any, reply) => {
         try {
             const content = await this.browserManager.getActiveTabContent();
             const result = await this.memoryManager.ingestSession("Browser Page", content);
@@ -325,7 +300,7 @@ export class CoreService {
     });
 
     this.app.post('/api/inspector/replay', async (request: any, reply) => {
-        const { tool, args, server } = request.body;
+        const { tool, args, _server } = request.body;
         try {
             const result = await this.proxyManager.callTool(tool, args);
             return { result };
@@ -334,7 +309,7 @@ export class CoreService {
         }
     });
 
-    this.app.get('/api/logs', async (request: any, reply) => {
+    this.app.get('/api/logs', async (request: any, _reply) => {
         const limit = request.query.limit ? parseInt(request.query.limit) : 100;
         const summary = request.query.summary === 'true';
         return await this.logManager.getLogs({ limit, summary });
@@ -386,37 +361,6 @@ export class CoreService {
         reply.hijack();
     });
 
-    /*
-    this.app.post('/api/mcp/start', async (request: any, reply) => {
-        const { name } = request.body;
-        // Let's use the generator to find the config for this specific server
-        const allConfigStr = await this.configGenerator.generateConfig('json');
-        const allConfig = JSON.parse(allConfigStr);
-        const serverConfig = allConfig.mcpServers[name];
-
-        if (!serverConfig) {
-            return reply.code(404).send({ error: 'Server configuration not found' });
-        }
-
-        try {
-            // Inject Secrets
-            const secrets = this.secretManager.getEnvVars();
-            const env = { ...process.env, ...serverConfig.env, ...secrets };
-            serverConfig.env = env;
-
-            await this.mcpManager.startServerSimple(name, serverConfig);
-            return { status: 'started' };
-        } catch (err: any) {
-            return reply.code(500).send({ error: err.message });
-        }
-    });
-
-    this.app.post('/api/mcp/stop', async (request: any, reply) => {
-        const { name } = request.body;
-        await this.mcpManager.stopServer(name);
-        return { status: 'stopped' };
-    });
-    */
   }
 
   private setupSocket() {
@@ -441,7 +385,7 @@ export class CoreService {
         this.processHook(event);
       });
 
-      socket.on('register_browser', (data: any) => {
+      socket.on('register_browser', (_data: any) => {
           this.browserManager.registerBrowser(socket);
       });
     });
@@ -816,8 +760,3 @@ export class CoreService {
     }
   }
 }
-
-
-
-
-

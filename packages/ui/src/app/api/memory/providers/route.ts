@@ -1,31 +1,16 @@
 import { NextResponse } from 'next/server';
 
-// Mock data until we connect to the real Core API
-const MOCK_PROVIDERS = [
-  { 
-    id: 'default-file', 
-    name: 'Local File Storage', 
-    type: 'file', 
-    capabilities: ['read', 'write', 'search'],
-    status: 'connected'
-  },
-  { 
-    id: 'mem0', 
-    name: 'Mem0 (Cloud)', 
-    type: 'vector', 
-    capabilities: ['read', 'write', 'search'],
-    status: 'configured'
-  },
-  { 
-    id: 'pinecone', 
-    name: 'Pinecone Vector DB', 
-    type: 'vector', 
-    capabilities: ['read', 'search'],
-    status: 'disconnected'
-  }
-];
+const CORE_API_URL = process.env.CORE_API_URL || 'http://localhost:3000';
 
 export async function GET() {
-  // TODO: Fetch from actual Core Hub API
-  return NextResponse.json(MOCK_PROVIDERS);
+  try {
+    const res = await fetch(`${CORE_API_URL}/api/memory/providers`);
+    if (!res.ok) {
+        throw new Error(`Core API error: ${res.statusText}`);
+    }
+    const data = await res.json();
+    return NextResponse.json(data);
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }

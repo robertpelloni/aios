@@ -33,24 +33,23 @@ export default function MemoryPage() {
   }, []);
 
   const fetchProviders = async () => {
-    // Mock for now, replace with actual API call
-    // const res = await fetch('/api/memory/providers');
-    // const data = await res.json();
-    setProviders([
-        { id: 'default-file', name: 'Local File Storage', type: 'file', capabilities: ['read', 'write', 'search'] },
-        { id: 'mem0', name: 'Mem0 (Cloud)', type: 'vector', capabilities: ['read', 'write'] }
-    ]);
+    try {
+        const res = await fetch('/api/memory/providers');
+        const data = await res.json();
+        setProviders(data);
+    } catch (error) {
+        console.error("Failed to fetch providers", error);
+    }
   };
 
   const handleSearch = async () => {
     setLoading(true);
     try {
-        // Mock search
-        // const res = await fetch(`/api/memory/search?query=${searchQuery}`);
-        setMemories([
-            { id: '1', content: 'User prefers TypeScript over Python.', tags: ['preference'], timestamp: Date.now(), sourceProvider: 'default-file' },
-            { id: '2', content: 'Project uses pnpm workspaces.', tags: ['fact'], timestamp: Date.now(), sourceProvider: 'default-file' }
-        ]);
+        const res = await fetch(`/api/memory/search?query=${encodeURIComponent(searchQuery)}`);
+        const data = await res.json();
+        setMemories(data);
+    } catch (error) {
+        console.error("Failed to search memories", error);
     } finally {
         setLoading(false);
     }

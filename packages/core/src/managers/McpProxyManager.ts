@@ -184,7 +184,6 @@ export class McpProxyManager {
     }
 
     async callTool(name: string, args: any, sessionId?: string) {
-        const startTime = Date.now();
         // Security Policy Check
         if (['dangerous_tool'].includes(name)) {
             throw new Error("Tool blocked by policy.");
@@ -243,7 +242,17 @@ export class McpProxyManager {
         
         const targetServer = this.toolRegistry.get(name)!;
 
-        this.logManager.log({ type: 'request', tool: name, server: targetServer, args });
+        // Calculate Input Tokens (Approx)
+        const inputStr = JSON.stringify(args || {});
+        const inputTokens = Math.ceil(inputStr.length / 4);
+
+        this.logManager.log({ 
+            type: 'request', 
+            tool: name, 
+            server: targetServer, 
+            args,
+            tokens: inputTokens
+        });
 
         try {
             let result;
@@ -265,8 +274,22 @@ export class McpProxyManager {
                 result = await client.callTool({ name, arguments: args });
             }
 
-            const duration = Date.now() - startTime;
-            this.logManager.log({ type: 'response', tool: name, server: targetServer, result, duration });
+            // Calculate Output Tokens & Cost
+            const outputStr = JSON.stringify(result || {});
+            const outputTokens = Math.ceil(outputStr.length / 4);
+            const totalTokens = inputTokens + outputTokens;
+            
+            // Estimate cost (assuming generic model pricing for now)
+            const cost = this.logManager.calculateCost('gpt-3.5-turbo', inputTokens, outputTokens);
+
+            this.logManager.log({ 
+                type: 'response', 
+                tool: name, 
+                server: targetServer, 
+                result,
+                tokens: totalTokens,
+                cost: cost
+            });
             
             // Hook for Memory
             if (this.memoryManager) {
@@ -276,9 +299,18 @@ export class McpProxyManager {
             return result;
 
         } catch (e: any) {
-            const duration = Date.now() - startTime;
             const err = { isError: true, content: [{ type: "text", text: e.message }] };
-            this.logManager.log({ type: 'error', tool: name, server: targetServer, error: e.message, duration });
+            
+            // Calculate Error Tokens
+            const errorTokens = Math.ceil(JSON.stringify(err).length / 4);
+            
+            this.logManager.log({ 
+                type: 'error', 
+                tool: name, 
+                server: targetServer, 
+                error: e.message,
+                tokens: inputTokens + errorTokens
+            });
             return err;
         }
     }

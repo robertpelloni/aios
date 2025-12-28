@@ -128,13 +128,24 @@ export class CoreService {
     );
 
     this.mcpInterface = new McpInterface(this.hubServer);
-    this.agentExecutor = new AgentExecutor(this.proxyManager, this.secretManager, this.logManager, this.contextManager);
+    this.agentExecutor = new AgentExecutor(
+        this.proxyManager, 
+        this.secretManager, 
+        this.logManager,
+        this.contextManager,
+        // MemoryManager is not fully initialized yet (circular dependency risk if we pass it before re-init?)
+        // Actually, we re-init memoryManager right after this.
+        // Let's pass null for now and set it later, or move the re-init up.
+    );
     
     // Re-initialize MemoryManager with AgentExecutor for Context Compaction
     this.memoryManager = new MemoryManager(path.join(rootDir, 'data'), this.secretManager, this.agentExecutor);
     this.memoryManager.setBrowserManager(this.browserManager);
     this.proxyManager.setMemoryManager(this.memoryManager);
     this.messageBroker.setMemoryManager(this.memoryManager);
+    
+    // Now set the memory manager on the executor
+    this.agentExecutor.setMemoryManager(this.memoryManager);
     
     this.schedulerManager = new SchedulerManager(rootDir, this.agentExecutor, this.proxyManager);
     

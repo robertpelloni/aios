@@ -16,17 +16,17 @@ For a granular list of every planned feature and submodule integration from the 
     *   [x] **Router/Aggregator Logic:**
         *   [x] Implement intelligent routing of tool calls to downstream MCP servers (Reference: `metamcp`, `magg`).
         *   [x] Implement "Progressive Disclosure" (Lazy Loading) to keep context light (Reference: `lazy-mcp`, `Switchboard`).
-    *   [ ] **Traffic Inspection ("Mcpshark"):**
-        *   Build a UI to inspect MCP traffic in real-time (Reference: `mcpshark`, `metamcp` inspector).
-        *   Implement persistent logging to `pgvector` database.
-        *   **Cost & Usage Tracking:** Calculate and display token usage and estimated cost per session/agent.
+    *   [x] **Traffic Inspection ("Mcpshark"):**
+        *   [x] Build a UI to inspect MCP traffic in real-time (Reference: `mcpshark`, `metamcp` inspector).
+        *   [x] Implement persistent logging to `pgvector` database. (Using `better-sqlite3`).
+        *   [x] **Cost & Usage Tracking:** Calculate and display token usage and estimated cost per session/agent.
     *   [ ] **Context Visualization:**
         *   **Attribution:** Track "what came from where" (source file, tool output, user input).
-        *   **Breakdown:** Visualize context composition (e.g., "30% Code, 20% Memory, 50% Conversation").
+        *   [x] **Breakdown:** Visualize context composition (e.g., "30% Code, 20% Memory, 50% Conversation").
         *   **Inspector:** Allow users to view the exact context window being sent to the model.
     *   [x] **Context Mining:**
         *   [x] **Auto-Audit:** Trigger an "Analyst Mode" at session end to find abandoned threads and connections.
-        *   [ ] **Layering:** Inject metadata (System, Dev, User, Session) in strict order.
+        *   [x] **Layering:** Inject metadata (System, Dev, User, Session) in strict order.
 
 ## 2. Universal Client Integration
 **Status:** ✅ Implemented (v0.0.9)

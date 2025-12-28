@@ -6,6 +6,7 @@ import { SecretManager } from '../managers/SecretManager.js';
 import { LogManager } from '../managers/LogManager.js';
 import { ContextAnalyzer } from '../utils/ContextAnalyzer.js';
 import { ContextManager } from '../managers/ContextManager.js';
+import { MemoryManager } from '../managers/MemoryManager.js';
 
 export class AgentExecutor extends EventEmitter {
     private openai: OpenAI | null = null;
@@ -14,10 +15,15 @@ export class AgentExecutor extends EventEmitter {
         private proxyManager: McpProxyManager,
         private secretManager?: SecretManager,
         private logManager?: LogManager,
-        private contextManager?: ContextManager
+        private contextManager?: ContextManager,
+        private memoryManager?: MemoryManager
     ) {
         super();
         this.initializeOpenAI();
+    }
+
+    public setMemoryManager(memoryManager: MemoryManager) {
+        this.memoryManager = memoryManager;
     }
 
     private initializeOpenAI() {
@@ -41,34 +47,34 @@ export class AgentExecutor extends EventEmitter {
             return "Error: No OpenAI API Key found.";
         }
 
-        // Build System Prompt with Layering (System -> Dev -> User -> Session)
-        let systemPrompt = `You are ${agent.name}. ${agent.description}\n\n`;
-        
-        // 1. System Layer (Base Instructions)
-        systemPrompt += `## System Instructions\n${agent.instructions}\n\n`;
+        // --- Layer 1: System (Identity & Core Instructions) ---
+        let systemPrompt = `You are ${agent.name}. ${agent.description}\n\nInstructions:\n${agent.instructions}\n\n`;
+        systemPrompt += `You have access to tools. Use them to answer the user request.\n`;
 
-        // 2. Dev Layer (Project Context)
+        // --- Layer 2: Dev (Project Context) ---
         if (this.contextManager) {
             const contextFiles = this.contextManager.getContextFiles();
             if (contextFiles.length > 0) {
-                systemPrompt += `## Project Context\n`;
-                for (const file of contextFiles) {
-                    systemPrompt += `### ${file.name}\n${file.content}\n\n`;
-                }
+                systemPrompt += `\n## Project Context\n`;
+                // Limit context size? For now, dump it all (assuming small files like .cursorrules)
+                contextFiles.forEach(f => {
+                    systemPrompt += `\n### ${f.name}\n${f.content}\n`;
+                });
             }
         }
 
-        // 3. User Layer (Passed in context or profile - placeholder)
-        if (context.userPreferences) {
-            systemPrompt += `## User Preferences\n${context.userPreferences}\n\n`;
+        // --- Layer 3: Session (Memory & History) ---
+        // If we have relevant memories passed in context, inject them
+        if (context.memories && Array.isArray(context.memories)) {
+            systemPrompt += `\n## Relevant Memories\n`;
+            context.memories.forEach((m: any) => {
+                systemPrompt += `- ${m.content}\n`;
+            });
         }
-
-        // 4. Session Layer (Task)
-        systemPrompt += `## Current Task\n${task}\n\n`;
-        systemPrompt += `You have access to tools. Use them to answer the user request.`;
 
         const messages: any[] = [
             { role: 'system', content: systemPrompt },
+            // --- Layer 4: User (The Task) ---
             { role: 'user', content: task }
         ];
 

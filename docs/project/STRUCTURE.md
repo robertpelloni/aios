@@ -26,7 +26,7 @@ The central nervous system of the Super AI Plugin.
     -   `managers/`: Watchers for files (`AgentManager`, `DocumentManager`) and clients (`BrowserManager`, `VSCodeManager`, `SchedulerManager`, `MemoryManager`, `HandoffManager`).
     -   `services/`: `VectorStore`, `TrafficObserver`, `HealthService`, `SystemDoctor`.
     -   `gateway/`: `ModelGateway` (LLM abstraction).
-    -   `agents/`: `AgentExecutor` (ReAct loop).
+    -   `agents/`: `AgentExecutor` (ReAct loop), `LoopManager` (Autonomous Loops).
     -   `tools/`: `PipelineTool`, `PromptImprover`.
 
 ### `packages/ui`

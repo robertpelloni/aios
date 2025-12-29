@@ -31,8 +31,8 @@
 - [x] **"Toon" Format:** JSON -> Toon translation.
 - [x] **Agent Execution:** ReAct loop via AgentExecutor and ModelGateway.
 
-## Phase 5: Intelligence & Autonomy (Planned)
-- [ ] **Memory Consolidation:** Summarize logs into long-term memory.
-- [ ] **Autonomous Loops:** Agents that can self-schedule and recurse indefinitely.
+## Phase 5: Intelligence & Autonomy (In Progress)
+- [x] **Memory Consolidation:** Summarize logs into long-term memory.
+- [x] **Autonomous Loops:** Agents that can self-schedule and recurse indefinitely (LoopManager).
 - [ ] **Deep Research:** Dedicated agent for multi-step web research.
 - [ ] **Auth & Security:** Secure Socket.io and API endpoints.

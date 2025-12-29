@@ -3,6 +3,7 @@ import { LogManager } from './LogManager.js';
 import { MetaMcpClient } from '../clients/MetaMcpClient.js';
 import { ToolSearchService } from '../services/ToolSearchService.js';
 import { MemoryManager } from './MemoryManager.js';
+import { JSONPath } from 'jsonpath-plus';
 
 export class McpProxyManager {
     private metaClient: MetaMcpClient;
@@ -31,13 +32,112 @@ export class McpProxyManager {
         this.mcpManager.on('updated', () => {
             this.refreshRegistry().catch(e => console.error('[Proxy] Registry refresh failed:', e));
         });
+
+        // Register Chain Tool
+        this.registerInternalTool({
+            name: "mcp_chain",
+            description: "Execute a sequence of MCP tools, passing output from one to the next.",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    mcpPath: {
+                        type: "array",
+                        description: "An ordered array of tool configurations to execute sequentially.",
+                        items: {
+                            type: "object",
+                            properties: {
+                                toolName: { type: "string", description: "The name of the tool to execute." },
+                                toolArgs: { type: "string", description: "JSON string arguments. Use 'CHAIN_RESULT' as placeholder for previous output." },
+                                inputPath: { type: "string", description: "Optional JSONPath to extract specific data from previous result." },
+                                outputPath: { type: "string", description: "Optional JSONPath to extract specific data from this result." }
+                            },
+                            required: ["toolName", "toolArgs"]
+                        }
+                    }
+                },
+                required: ["mcpPath"]
+            }
+        }, async (args) => {
+            return await this.executeChain(args.mcpPath);
+        });
     }
 
     setMemoryManager(memoryManager: MemoryManager) {
         this.memoryManager = memoryManager;
     }
 
+    private async executeChain(mcpPath: any[]) {
+        let result: any = null;
+        const trace: any[] = [];
+
+        for (let i = 0; i < mcpPath.length; i++) {
+            const step = mcpPath[i];
+            const { toolName, inputPath, outputPath } = step;
+
+            // 1. Process Input (from previous result)
+            let processedPreviousResult = result;
+            if (i > 0 && result && inputPath) {
+                try {
+                     // Ensure JSON object
+                     const jsonResult = typeof result === 'string' ? JSON.parse(result) : result;
+                     const extracted = JSONPath({ path: inputPath, json: jsonResult });
+                     processedPreviousResult = extracted.length === 1 ? extracted[0] : extracted;
+                } catch (e) {
+                    console.warn(`[Chain] Failed to apply inputPath '${inputPath}'`, e);
+                }
+            }
+
+            // 2. Prepare Arguments
+            let toolArgs = step.toolArgs;
+            if (i > 0) {
+                 // Replace CHAIN_RESULT
+                 let replacement = processedPreviousResult;
+                 if (typeof replacement === 'object') {
+                     replacement = JSON.stringify(replacement);
+                 }
+                 // Naive string replacement (should be improved for robustness)
+                 toolArgs = toolArgs.replace("CHAIN_RESULT", String(replacement));
+                 toolArgs = toolArgs.replace("\"CHAIN_RESULT\"", JSON.stringify(replacement)); // Handle quoted
+            }
+
+            // 3. Call Tool
+            let parsedArgs;
+            try {
+                parsedArgs = JSON.parse(toolArgs);
+            } catch (e) {
+                throw new Error(`Invalid JSON args for tool ${toolName}: ${toolArgs}`);
+            }
+
+            const stepResult = await this.callTool(toolName, parsedArgs);
+            
+            // 4. Process Output
+            if (stepResult.content && stepResult.content[0] && stepResult.content[0].text) {
+                result = stepResult.content[0].text;
+                
+                if (outputPath) {
+                    try {
+                         const jsonResult = JSON.parse(result);
+                         const extracted = JSONPath({ path: outputPath, json: jsonResult });
+                         result = extracted.length === 1 ? extracted[0] : extracted;
+                    } catch (e) {
+                         console.warn(`[Chain] Failed to apply outputPath '${outputPath}'`, e);
+                    }
+                }
+            } else {
+                 result = JSON.stringify(stepResult);
+            }
+            
+            trace.push({ step: i, tool: toolName, output: result });
+        }
+
+        return { 
+            content: [{ type: "text", text: typeof result === 'string' ? result : JSON.stringify(result) }],
+            _trace: trace 
+        };
+    }
+
     registerInternalTool(def: any, handler: (args: any) => Promise<any>) {
+
         this.internalTools.set(def.name, { def, handler });
         // Update registry immediately for internal tools
         this.toolRegistry.set(def.name, 'internal');

@@ -193,3 +193,6 @@
 [submodule "references/clis/goose"]
 	path = references/clis/goose
 	url = https://github.com/block/goose
+[submodule "references/clis/kilocode"]
+	path = references/clis/kilocode
+	url = https://github.com/Kilo-Org/kilocode

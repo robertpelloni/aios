@@ -1,8 +1,6 @@
 # Agent Instructions
 
-See [Universal Instructions](docs/agents/UNIVERSAL_INSTRUCTIONS.md).
+See [Universal Instructions](docs/instructions/UNIVERSAL_INSTRUCTIONS.md).
 
 ## Specifics
-
--   **Agents Directory:** `agents/`
--   **Format:** JSON
+-   Agents defined in `agents/` should follow the `AgentDefinition` schema.

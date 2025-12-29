@@ -43,6 +43,7 @@ import { SubmoduleManager } from './managers/SubmoduleManager.js';
 import { VSCodeManager } from './managers/VSCodeManager.js';
 import { LoopManager } from './agents/LoopManager.js';
 import { WebSearchTool } from './tools/WebSearchTool.js';
+import { EconomyManager } from './managers/EconomyManager.js';
 import fs from 'fs';
 
 export class CoreService {
@@ -83,6 +84,7 @@ export class CoreService {
   private submoduleManager: SubmoduleManager;
   private vscodeManager: VSCodeManager;
   private loopManager: LoopManager;
+  private economyManager: EconomyManager;
 
   constructor(
     private rootDir: string
@@ -147,6 +149,7 @@ export class CoreService {
     this.submoduleManager = new SubmoduleManager();
     this.vscodeManager = new VSCodeManager();
     this.loopManager = new LoopManager(this.schedulerManager);
+    this.economyManager = new EconomyManager();
 
     this.commandManager.on('updated', (commands) => {
         this.registerCommandsAsTools(commands);
@@ -551,6 +554,14 @@ export class CoreService {
 
     // Register Web Search Tool
     this.proxyManager.registerInternalTool(WebSearchTool, WebSearchTool.handler);
+
+    this.economyManager.getToolDefinitions().forEach(tool => {
+        this.proxyManager.registerInternalTool(tool, async (args: any) => {
+             if (tool.name === 'submit_activity') return this.economyManager.mine(args);
+             if (tool.name === 'get_balance') return this.economyManager.getBalance();
+             return "Unknown tool";
+        });
+    });
 
     // Register Recursive Agent Tool
     this.proxyManager.registerInternalTool({

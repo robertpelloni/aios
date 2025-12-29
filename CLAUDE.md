@@ -1,8 +1,7 @@
 # Claude Instructions
 
-See [Universal Instructions](docs/agents/UNIVERSAL_INSTRUCTIONS.md).
+See [Universal Instructions](docs/instructions/UNIVERSAL_INSTRUCTIONS.md).
 
-## Model Specifics (Claude 3.5 Sonnet)
-
--   You excel at coding and architectural planning.
--   Utilize the `set_plan` tool frequently.
+## Model Specifics (Claude)
+-   Prioritize code correctness and safety.
+-   When modifying submodules, explicitly mention the path context.

@@ -68,6 +68,19 @@ This document tracks the status, location, and purpose of all submodules in the 
 | **claude-orchestration** | `references/orchestration/claude-orchestration` | Claude orchestration. |
 | **agentic-qe** | `references/testing/agentic-qe` | Quality engineering agents. |
 
+## CLI Ecosystem (Swiss Army Knife)
+
+These submodules represent the "blades" of the AIOS Swiss Army Knife. They are integrated as references to allow the OS to drive them.
+
+| Submodule | Path | Description |
+| :--- | :--- | :--- |
+| **gemini-cli** | `references/clis/gemini-cli` | Official Google Gemini CLI. |
+| **aider** | `references/clis/aider` | AI pair programmer with repo map. |
+| **mentat** | `references/clis/mentat` | AI coding assistant. |
+| **fabric** | `references/clis/fabric` | Augmented intelligence framework. |
+| **goose** | `references/clis/goose` | Developer agent by Block. |
+| **kilocode** | `references/clis/kilocode` | Agentic engineering platform. |
+
 ## Directory Structure
 
 ```

@@ -184,3 +184,12 @@
 [submodule "submodules/mcp-shark"]
 	path = submodules/mcp-shark
 	url = https://github.com/mcp-shark/mcp-shark
+[submodule "references/clis/gemini-cli"]
+	path = references/clis/gemini-cli
+	url = https://github.com/google-gemini/gemini-cli
+[submodule "references/clis/fabric"]
+	path = references/clis/fabric
+	url = https://github.com/danielmiessler/fabric
+[submodule "references/clis/goose"]
+	path = references/clis/goose
+	url = https://github.com/block/goose

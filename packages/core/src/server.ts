@@ -31,6 +31,7 @@ import { AutonomousAgentManager } from './managers/AutonomousAgentManager.js';
 import { BrowserManager } from './managers/BrowserManager.js';
 import { McpSharkManager } from './managers/McpSharkManager.js';
 import { ContextMiner } from './utils/ContextMiner.js';
+import { ContextCompactor } from './managers/ContextCompactor.js';
 import { ContextGenerator } from './utils/ContextGenerator.js';
 import { toToon, FormatTranslatorTool } from './utils/toon.js';
 import fs from 'fs';
@@ -243,6 +244,20 @@ export class CoreService {
         try {
             const content = await this.browserManager.getActiveTabContent();
             const result = await this.memoryManager.ingestSession("Browser Page", content);
+            return { result };
+        } catch (e: any) {
+            return reply.code(500).send({ error: e.message });
+        }
+    });
+
+    this.app.post('/api/memory/compact', async (request: any, reply) => {
+        const { content } = request.body;
+        if (!content) return reply.code(400).send({ error: 'Missing content' });
+        
+        try {
+            // Instantiate a fresh compactor for this request using the available executor
+            const compactor = new ContextCompactor(this.agentExecutor, this.memoryManager);
+            const result = await compactor.compact(content, 'conversation');
             return { result };
         } catch (e: any) {
             return reply.code(500).send({ error: e.message });

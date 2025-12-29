@@ -2,6 +2,9 @@
 
 The Ultimate "Meta-Orchestrator" for the Model Context Protocol (MCP). It acts as a universal hub, proxy, and agentic runtime for your AI tools.
 
+> **The "FOMO-Proof" AI Operating System.**
+> Don't choose between `claude-code`, `gemini-cli`, or `aider`. Use them all. AIOS aggregates the entire ecosystem into a single, unified interface.
+
 ## 🌟 Features
 
 *   **Universal Hub:** Aggregates tools from local MCP servers, remote MetaMCP instances, and internal capabilities.

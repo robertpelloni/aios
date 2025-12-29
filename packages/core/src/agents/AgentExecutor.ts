@@ -7,9 +7,12 @@ import { LogManager } from '../managers/LogManager.js';
 import { ContextAnalyzer } from '../utils/ContextAnalyzer.js';
 import { ContextManager } from '../managers/ContextManager.js';
 import { MemoryManager } from '../managers/MemoryManager.js';
+import { ContextCompactor } from '../managers/ContextCompactor.js';
 
 export class AgentExecutor extends EventEmitter {
     private openai: OpenAI | null = null;
+    private messageCountSinceReflect = 0;
+    private readonly REFLECTION_THRESHOLD = 5;
 
     constructor(
         private proxyManager: McpProxyManager,
@@ -22,7 +25,40 @@ export class AgentExecutor extends EventEmitter {
         this.initializeOpenAI();
     }
 
+
+    private async performReflection(messages: any[]) {
+        if (!this.memoryManager) return;
+
+        try {
+            // 1. Extract recent history
+            const recentHistory = messages
+                .slice(-this.REFLECTION_THRESHOLD * 2) // Rough estimate of messages
+                .map(m => `${m.role}: ${m.content}`)
+                .join('\n');
+
+            // 2. Compact using a temporary compactor instance
+            // We pass 'this' (the executor) to the compactor, but we must be careful about recursion.
+            // The compactor uses a specific agent name "ContextCompactor".
+            const compactor = new ContextCompactor(this, this.memoryManager);
+            const compacted = await compactor.compact(recentHistory, 'conversation');
+
+            // 3. Save as a "Session Summary" memory
+            if (compacted.summary) {
+                await this.memoryManager.remember({
+                    content: `[Auto-Reflection] ${compacted.summary}`,
+                    tags: ['reflection', 'auto-summary']
+                });
+                console.log(`[AgentExecutor] Reflected and saved summary: ${compacted.summary}`);
+            }
+
+            // Optional: We could prune messages here, but that's risky without more logic.
+        } catch (e) {
+            console.error("[AgentExecutor] Reflection failed:", e);
+        }
+    }
+
     public setMemoryManager(memoryManager: MemoryManager) {
+
         this.memoryManager = memoryManager;
     }
 
@@ -80,12 +116,21 @@ export class AgentExecutor extends EventEmitter {
 
         let iterations = 0;
         const maxIterations = 10;
+        this.messageCountSinceReflect = 0; // Reset per run
 
         while (iterations < maxIterations) {
             iterations++;
             console.log(`[AgentExecutor] Iteration ${iterations}`);
+            
+            // --- Auto-Reflection Logic ---
+            if (this.memoryManager && this.messageCountSinceReflect >= this.REFLECTION_THRESHOLD) {
+                console.log(`[AgentExecutor] Triggering Auto-Reflection (Count: ${this.messageCountSinceReflect})`);
+                await this.performReflection(messages);
+                this.messageCountSinceReflect = 0;
+            }
 
             try {
+
                 // 1. Get Tools
                 // We use getAllTools() which respects progressive disclosure (meta tools)
                 // BUT the agent needs to see the tools it loads.
@@ -153,12 +198,13 @@ export class AgentExecutor extends EventEmitter {
                     });
                 }
 
-                const message = completion.choices[0].message;
-                messages.push(message);
+                    const message = completion.choices[0].message;
+                    messages.push(message);
+                    this.messageCountSinceReflect++; // Count the assistant's reply
 
-                // 4. Handle Tool Calls
-                if (message.tool_calls && message.tool_calls.length > 0) {
-                    for (const toolCall of message.tool_calls) {
+                    // 4. Handle Tool Calls
+                    if (message.tool_calls && message.tool_calls.length > 0) {
+                        for (const toolCall of message.tool_calls) {
                         // @ts-ignore
                         const name = toolCall.function.name;
                         // @ts-ignore
@@ -177,10 +223,22 @@ export class AgentExecutor extends EventEmitter {
                                 else if (name === 'search_memory') result = await this.memoryManager.search(args);
                                 else if (name === 'ingest_content') result = await this.memoryManager.ingestSession(args.source, args.content);
                                 result = JSON.stringify(result);
+                                
+                                // Auto-ingest tool interactions (facts/decisions)
+                                // We don't ingest 'search_memory' to avoid loops, but 'remember' is interesting.
+                                if (name === 'remember') {
+                                     // No-op for now, as remember IS the storage mechanism
+                                }
+
                             } else {
                                 // Call via Proxy (handles local/remote/internal)
                                 const res = await this.proxyManager.callTool(name, args, sessionId);
                                 result = JSON.stringify(res);
+
+                                // Auto-ingest significant interactions
+                                if (this.memoryManager) {
+                                    this.memoryManager.ingestInteraction(name, args, res).catch(console.error);
+                                }
                             }
                         } catch (e: any) {
                             result = `Error: ${e.message}`;

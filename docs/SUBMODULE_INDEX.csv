@@ -2,6 +2,12 @@ Name,Path,Category,Role,Description,Rationale,Integration Strategy,Status
 CopilotKit,references/frameworks/CopilotKit,Framework,Reference,Full-stack AI Copilot platform.,Hub dashboard UI components.,Use UI components and backend logic for Hub dashboard.,Active
 claude-orchestration,references/orchestration/claude-orchestration,Orchestration,Reference,Orchestration patterns for Claude.,Agent coordination logic.,Integrate orchestration logic into AgentManager.,Active
 agentic-qe,references/testing/agentic-qe,Testing,Capability,Quality Engineering for agents.,Self-testing capabilities.,Implement self-testing loops for Hub agents.,Active
+gemini-cli,references/clis/gemini-cli,CLI,Driver,Official Google Gemini CLI.,Native Google integration.,Wrap as a Tool in metamcp.,Active
+aider,references/clis/aider,CLI,Driver,AI pair programmer.,SOTA code editing.,Wrap as a Tool in metamcp.,Active
+mentat,references/clis/mentat,CLI,Driver,AI coding assistant.,Alternative editing capability.,Wrap as a Tool in metamcp.,Planned
+fabric,references/clis/fabric,CLI,Driver,Augmented intelligence framework.,Wisdom extraction.,Wrap as a Tool in metamcp.,Planned
+goose,references/clis/goose,CLI,Driver,Developer agent.,Autonomous dev tasks.,Wrap as a Tool in metamcp.,Planned
+kilocode,references/clis/kilocode,CLI,Driver,Agentic engineering platform.,Project state management.,Wrap as a Tool in metamcp.,Planned
 A2A,references/protocols/A2A,Protocol,Standard,Agent-to-Agent Protocol spec.,Standardized agent comms.,Implement A2A endpoints in Core Service.,Active
 a2a-js,references/protocols/a2a-js,Protocol,Library,JS implementation of A2A.,JS support for A2A.,Use as dependency for Core Service.,Active
 a2a-python,references/protocols/a2a-python,Protocol,Library,Python implementation of A2A.,Python support for A2A.,Use in Python-based subagents.,Active

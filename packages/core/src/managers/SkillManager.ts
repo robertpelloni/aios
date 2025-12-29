@@ -13,7 +13,11 @@ export class SkillManager extends EventEmitter {
   }
 
   async start() {
-    this.watcher = chokidar.watch(this.skillsDir, {
+    // Also watch imported skills
+    const importedSkillsDir = path.resolve(process.cwd(), 'skills/imported');
+    const watchPaths = [this.skillsDir, importedSkillsDir];
+
+    this.watcher = chokidar.watch(watchPaths, {
       ignored: /(^|[\/\\])\../, 
       persistent: true
     });
@@ -22,20 +26,29 @@ export class SkillManager extends EventEmitter {
     this.watcher.on('change', this.loadSkill.bind(this));
     this.watcher.on('unlink', this.removeSkill.bind(this));
     
-    console.log(`[SkillManager] Watching ${this.skillsDir}`);
+    console.log(`[SkillManager] Watching ${watchPaths.join(', ')}`);
   }
 
   private async loadSkill(filepath: string) {
     try {
-      const content = await fs.readFile(filepath, 'utf-8');
+      // Check if it's a directory (for imported skills structure)
+      // Since chokidar emits 'add' for files, we check if the file is SKILL.md
       const filename = path.basename(filepath);
       
       if (filename === 'SKILL.md' || filename.endsWith('.skill.md')) {
+         const content = await fs.readFile(filepath, 'utf-8');
+         let skillName = filename.replace('.skill.md', '').replace('.md', '');
+         
+         // If it's SKILL.md, use the parent directory name as the skill name
+         if (filename === 'SKILL.md') {
+             skillName = path.basename(path.dirname(filepath));
+         }
+
          const skill: SkillDefinition = {
-             name: filename.replace('.skill.md', '').replace('.md', ''),
+             name: skillName,
              content: content
          };
-         this.skills.set(filename, skill);
+         this.skills.set(skillName, skill); // Use Name as key, not filename
          console.log(`[SkillManager] Loaded skill: ${skill.name}`);
          this.emit('updated', this.getSkills());
       }
@@ -45,8 +58,11 @@ export class SkillManager extends EventEmitter {
   }
 
   private removeSkill(filepath: string) {
-      const filename = path.basename(filepath);
-      this.skills.delete(filename);
+      let skillName = path.basename(filepath).replace('.skill.md', '').replace('.md', '');
+      if (path.basename(filepath) === 'SKILL.md') {
+          skillName = path.basename(path.dirname(filepath));
+      }
+      this.skills.delete(skillName);
       this.emit('updated', this.getSkills());
   }
 

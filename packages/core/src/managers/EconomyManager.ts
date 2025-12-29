@@ -12,7 +12,7 @@ export class EconomyManager extends EventEmitter {
      * Submit activity data (Proof of Dance) to mine Bobcoin.
      * In a real implementation, this would verify signatures from the hardware.
      */
-    async mine(activityData: { steps?: number, heartRate?: number, danceScore?: number }) {
+    async mine(activityData: { steps?: number, heartRate?: number, danceScore?: number, nodeUptime?: number }) {
         console.log(`[Economy] Mining request:`, activityData);
 
         // Simple mock formula: 1 token per 1000 steps or 100 dance score points
@@ -20,13 +20,16 @@ export class EconomyManager extends EventEmitter {
         if (activityData.steps) reward += activityData.steps / 1000;
         if (activityData.danceScore) reward += activityData.danceScore / 100;
 
+        // Reward node uptime (1 token per hour approx)
+        if (activityData.nodeUptime) reward += activityData.nodeUptime / 3600;
+
         if (reward > 0) {
             this.balance += reward;
             this.emit('transaction', { type: 'mining', amount: reward, timestamp: new Date() });
             return `Mined ${reward.toFixed(4)} Bobcoin! New Balance: ${this.balance.toFixed(4)}`;
         }
 
-        return "No reward earned. Keep dancing!";
+        return "No reward earned. Keep dancing or seeding!";
     }
 
     getBalance() {

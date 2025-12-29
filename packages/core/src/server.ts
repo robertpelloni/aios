@@ -44,6 +44,7 @@ import { VSCodeManager } from './managers/VSCodeManager.js';
 import { LoopManager } from './agents/LoopManager.js';
 import { WebSearchTool } from './tools/WebSearchTool.js';
 import { EconomyManager } from './managers/EconomyManager.js';
+import { NodeManager } from './managers/NodeManager.js';
 import fs from 'fs';
 
 export class CoreService {
@@ -85,6 +86,7 @@ export class CoreService {
   private vscodeManager: VSCodeManager;
   private loopManager: LoopManager;
   private economyManager: EconomyManager;
+  private nodeManager: NodeManager;
 
   constructor(
     private rootDir: string
@@ -150,6 +152,7 @@ export class CoreService {
     this.vscodeManager = new VSCodeManager();
     this.loopManager = new LoopManager(this.schedulerManager);
     this.economyManager = new EconomyManager();
+    this.nodeManager = new NodeManager();
 
     this.commandManager.on('updated', (commands) => {
         this.registerCommandsAsTools(commands);
@@ -500,6 +503,15 @@ export class CoreService {
              if (tool.name === 'remember') return this.memoryManager.remember(args);
              if (tool.name === 'search_memory') return this.memoryManager.search(args);
              if (tool.name === 'recall_recent') return this.memoryManager.recall(args);
+             return "Unknown tool";
+        });
+    });
+
+    this.nodeManager.getToolDefinitions().forEach(tool => {
+        this.proxyManager.registerInternalTool(tool, async (args: any) => {
+             if (tool.name === 'node_status') return this.nodeManager.getStatus();
+             if (tool.name === 'toggle_tor') return this.nodeManager.toggleTor(args.active);
+             if (tool.name === 'toggle_torrent') return this.nodeManager.toggleTorrent(args.active);
              return "Unknown tool";
         });
     });

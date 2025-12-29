@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { startCommand } from './commands/start.js';
 import { statusCommand } from './commands/status.js';
 import { runAgentCommand } from './commands/run.js';
+import { mineCommand } from './commands/mine.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -19,5 +20,6 @@ program
 program.addCommand(startCommand);
 program.addCommand(statusCommand);
 program.addCommand(runAgentCommand);
+program.addCommand(mineCommand);
 
 program.parse(process.argv);

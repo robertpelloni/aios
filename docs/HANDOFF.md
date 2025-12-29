@@ -1,45 +1,37 @@
 # Super AI Plugin Handoff
 
 **Date:** 2024-05-23
-**Session Goal:** Establish monorepo skeleton, Core Service, UI, and basic MCP management.
+**Version:** 0.2.1-alpha
 
 ## Accomplishments
 
 1.  **Architecture:**
-    -   Established TypeScript monorepo (`packages/core`, `packages/ui`) using `pnpm workspaces`.
-    -   Integrated `metamcp` as a submodule.
-    -   Created `packages/core` with Fastify + Socket.io.
-    -   Created `packages/ui` with React + Vite.
+    -   Complete Monorepo Structure with Core, UI, CLI, Adapters, VSCode, and Browser packages.
+    -   Integrated `metamcp` submodule.
 
-2.  **Core Features:**
-    -   **Managers:** Implemented watchers for `agents/`, `skills/`, `hooks/`, `prompts/`, `context/`.
-    -   **MCP Support:** `McpManager` uses `@modelcontextprotocol/sdk` to manage local servers. `ConfigGenerator` scans `mcp-servers/`.
-    -   **Hooks:** `HookExecutor` runs shell commands on events.
+2.  **Core Services:**
+    -   Fastify + Socket.io backend.
+    -   Managers for Agents, Skills, Hooks, Prompts, Context, MCP, Browser, VSCode.
+    -   **Intelligence:** `ModelGateway`, `AgentExecutor` (ReAct), `VectorStore`, `MemoryManager`.
+    -   **Autonomy:** `SchedulerManager`, `LoopManager`.
+    -   **Tools:** `PipelineTool`, `PromptImprover`.
 
-3.  **Fixes:**
-    -   Fixed `mcp-servers/test-server` to be a persistent MCP server (prevents crash).
-    -   Fixed `PromptManager` to use `chokidar` for recursive watching.
+3.  **Clients:**
+    -   `@super-ai/cli`: `start`, `status`, `run`.
+    -   `@super-ai/claude-adapter`: Wraps Claude CLI.
+    -   `@super-ai/gemini-adapter`: Wraps Gemini CLI.
+    -   `super-ai-vscode`: Extension connecting to Hub.
+    -   `super-ai-browser`: Chrome Extension connecting to Hub.
 
-## Architecture Overview
+## Recent Features (0.2.1-alpha)
 
--   **Core Service:** The "Brain". Runs on port (default 3000?). Serves API and WebSockets.
--   **UI:** The "Face". Connects to Core via Socket.io.
--   **Extensions:** (Planned) VSCode, Chrome, CLI will act as thin clients connecting to Core.
+-   **Memory Consolidation:** `MemoryManager.consolidateLogs` summarizes daily traffic into long-term vector memory.
+-   **Autonomous Loops:** `LoopManager` creates recurring agent tasks.
+-   **System Prompts:** `SystemPromptManager` injects user-specific instructions from profiles.
 
-## Directory Structure
+## Next Steps (Recommended)
 
--   `packages/core`: Backend service.
--   `packages/ui`: Frontend dashboard.
--   `packages/types`: Shared types.
--   `agents/`: JSON agent definitions.
--   `skills/`: Markdown skill definitions.
--   `hooks/`: Event hooks configuration.
--   `mcp-servers/`: Local MCP servers.
--   `prompts/`: Prompt templates.
-
-## Next Steps (Immediate)
-
-1.  **Documentation:** Standardize `AGENTS.md`, `ROADMAP.md`, and project structure docs.
-2.  **Versioning:** Implement `VERSION` file and sync scripts.
-3.  **Dashboard:** Add "System Status" page to UI listing submodules and version.
-4.  **Multi-CLI:** Begin implementing the CLI wrapper/orchestration logic.
+1.  **Deep Research Agent:** Implement a specialized agent in `agents/researcher.json` that uses `search_tools` and recursive sub-agents to compile reports.
+2.  **Authentication:** Secure the Socket.io connection with a token handshake (simple shared secret).
+3.  **UI Visualization:** Add a "Memory" page to the Dashboard to view/search vector store entries.
+4.  **CLI Polish:** Improve the `super-ai run` output streaming.

@@ -27,6 +27,7 @@ The central nervous system of the Super AI Plugin.
     -   `services/`: `VectorStore`, `TrafficObserver`, `HealthService`, `SystemDoctor`.
     -   `gateway/`: `ModelGateway` (LLM abstraction).
     -   `agents/`: `AgentExecutor` (ReAct loop), `LoopManager` (Autonomous Loops).
+    -   `managers/`: ... `EconomyManager` (Bobcoin).
     -   `tools/`: `PipelineTool`, `PromptImprover`.
 
 ### `packages/ui`

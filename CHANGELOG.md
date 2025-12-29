@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.6] - 2025-12-29
+
+### Added
+- **Features**: Implemented Mem0 (Cloud Memory) integration with real API calls.
+- **Improvements**: Enhanced `MemoryManager` to perform parallel searches across all providers (Local, Mem0) and aggregate results.
+- **Dashboard**: Added filtering and health checks to the Ecosystem Dashboard.
+- **Testing**: Added integration tests for MemoryManager.
+
 ## [0.2.5] - 2025-12-29
 
 ### Added

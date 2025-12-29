@@ -4,9 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { CheckCircle2, XCircle, AlertTriangle } from 'lucide-react';
+import EcosystemList from './EcosystemList'; // We'll move the client-side list logic here
 
 // Type definition for our submodule data
-interface Submodule {
+export interface Submodule {
   name: string;
   path: string;
   category: string;
@@ -105,50 +107,7 @@ export default async function EcosystemDashboard() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {submodules.map((module, index) => (
-          <Card key={index} className="flex flex-col h-full border-gray-800 bg-gray-950/50 hover:bg-gray-900/50 transition-colors">
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <CardTitle className="text-xl text-blue-400">{module.name}</CardTitle>
-                <Badge variant={module.isInstalled ? "default" : "secondary"}>
-                  {module.isInstalled ? "Active" : "Reference"}
-                </Badge>
-              </div>
-              <div className="flex gap-2 mt-2">
-                <Badge variant="secondary" className="text-xs">{module.category}</Badge>
-                <Badge variant="outline" className="text-xs">{module.role}</Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <p className="text-sm text-gray-300 mb-4">{module.description}</p>
-              
-              <div className="space-y-2">
-                <div>
-                  <span className="text-xs font-semibold text-gray-500 uppercase">Rationale</span>
-                  <p className="text-xs text-gray-400">{module.rationale}</p>
-                </div>
-                {module.integrationStrategy && (
-                  <div>
-                    <span className="text-xs font-semibold text-gray-500 uppercase">Integration</span>
-                    <p className="text-xs text-gray-400">{module.integrationStrategy}</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-            <CardFooter className="pt-4 border-t border-gray-800">
-              <div className="flex justify-between w-full items-center">
-                 <code className="text-xs bg-gray-900 px-2 py-1 rounded text-gray-500 truncate max-w-[150px]" title={module.path}>
-                   {module.path}
-                 </code>
-                 <Button variant="ghost" size="sm" asChild>
-                   <Link href={`/dashboard/ecosystem/${module.name}`}>Details &rarr;</Link>
-                 </Button>
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+      <EcosystemList initialSubmodules={submodules} />
     </div>
   );
 }

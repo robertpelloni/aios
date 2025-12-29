@@ -17,7 +17,7 @@ export class LocalFileProvider implements MemoryProvider {
         this.dataFile = path.join(dataDir, 'memory.json');
         this.fuse = new Fuse([], {
             keys: ['content', 'tags'],
-            threshold: 0.4
+            threshold: 0.6 // Increased threshold (0.0 is perfect match, 1.0 is no match)
         });
         this.loadSync();
     }

@@ -214,7 +214,9 @@ export class MemoryManager {
         // Helper to search a single provider
         const searchProvider = async (provider: MemoryProvider) => {
              try {
-                return await provider.search(args.query, 5, embedding);
+                const results = await provider.search(args.query, 5, embedding);
+                console.log(`[Memory] Search ${provider.id} returned ${results.length} results`);
+                return results;
             } catch (e) {
                 console.error(`[Memory] Search failed for ${provider.name}:`, e);
                 return [];
@@ -229,12 +231,18 @@ export class MemoryManager {
         }
 
         // Otherwise, search ALL providers and aggregate
-        const allResults: MemoryResult[] = [];
-        for (const provider of this.providers.values()) {
-            const results = await searchProvider(provider);
-            allResults.push(...results);
-        }
-        return allResults;
+        const searchPromises = Array.from(this.providers.values()).map(provider => searchProvider(provider));
+        
+        const resultsArray = await Promise.all(searchPromises);
+        const allResults: MemoryResult[] = resultsArray.flat();
+
+        // Sort by similarity (descending) if available, otherwise by timestamp (newest first)
+        return allResults.sort((a, b) => {
+            if (a.similarity !== undefined && b.similarity !== undefined) {
+                return b.similarity - a.similarity;
+            }
+            return b.timestamp - a.timestamp;
+        });
     }
 
     // Legacy method for backward compatibility

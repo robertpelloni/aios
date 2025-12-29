@@ -44,8 +44,9 @@ For a granular list of every planned feature and submodule integration from the 
 
 *   **Objective:** Orchestrate multiple memory backends (local, cloud, browser) and synchronize data.
 *   **Planned Features:**
-    *   [ ] **Memory Orchestrator:** Refactor `MemoryManager` to support pluggable providers.
-    *   [ ] **Providers:** Adapters for File (JSON), Mem0, Pinecone, Chroma.
+    *   [x] **Memory Orchestrator:** Refactor `MemoryManager` to support pluggable providers (File, Mem0).
+    *   [x] **Ingestion Engine:** Backend service to ingest, summarize, and tag raw content.
+    *   [x] **Ingest UI:** User interface for manual text/document ingestion.
     *   [ ] **Dashboard:** UI for viewing, searching, and syncing memories across providers.
     *   [ ] **Auto-Detection:** Detect running vector DBs and config files.
     *   [ ] **Sync/Transfer:** Tools to move memories between systems.

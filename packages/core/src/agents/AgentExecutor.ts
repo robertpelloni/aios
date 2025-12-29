@@ -93,7 +93,15 @@ export class AgentExecutor extends EventEmitter {
                 // Let's use agent.name as sessionId for now to persist state across runs?
                 // Or a unique run ID.
                 const sessionId = `agent-${agent.name}-${Date.now()}`;
-                const tools = await this.proxyManager.getAllTools(sessionId);
+                let tools = await this.proxyManager.getAllTools(sessionId);
+
+                // Inject Memory Tools if manager is present
+                if (this.memoryManager) {
+                     const memoryTools = this.memoryManager.getToolDefinitions();
+                     // Filter out tools already present to avoid duplicates (though name check is primitive)
+                     const existingNames = new Set(tools.map(t => t.name));
+                     tools = [...tools, ...memoryTools.filter(t => !existingNames.has(t.name))];
+                }
 
                 // Map tools to OpenAI format
                 const openAiTools = tools.map(t => ({
@@ -161,9 +169,19 @@ export class AgentExecutor extends EventEmitter {
 
                         let result;
                         try {
-                            // Call via Proxy (handles local/remote/internal)
-                            const res = await this.proxyManager.callTool(name, args, sessionId);
-                            result = JSON.stringify(res);
+                            // Check local tools first (MemoryManager tools are not yet in ProxyManager except via hacky ways)
+                            // We should really register MemoryManager as a proper tool provider in ProxyManager.
+                            // But for now, let's intercept.
+                            if (this.memoryManager && (name === 'remember' || name === 'search_memory' || name === 'ingest_content')) {
+                                if (name === 'remember') result = await this.memoryManager.remember(args);
+                                else if (name === 'search_memory') result = await this.memoryManager.search(args);
+                                else if (name === 'ingest_content') result = await this.memoryManager.ingestSession(args.source, args.content);
+                                result = JSON.stringify(result);
+                            } else {
+                                // Call via Proxy (handles local/remote/internal)
+                                const res = await this.proxyManager.callTool(name, args, sessionId);
+                                result = JSON.stringify(res);
+                            }
                         } catch (e: any) {
                             result = `Error: ${e.message}`;
                         }

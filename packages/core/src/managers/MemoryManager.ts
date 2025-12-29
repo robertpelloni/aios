@@ -35,7 +35,7 @@ export class MemoryManager {
         }
 
         if (agentExecutor) {
-            this.compactor = new ContextCompactor(agentExecutor);
+            this.compactor = new ContextCompactor(agentExecutor, this);
         }
 
         // Initialize Default Provider
@@ -293,14 +293,30 @@ export class MemoryManager {
     }
 
     async backfillEmbeddings() {
-        // Only relevant for FileProvider currently
+        if (!this.openai) return "OpenAI not available for embeddings";
+
         const provider = this.providers.get('default-file');
-        if (provider instanceof LocalFileProvider && this.openai) {
-             // Logic to iterate and update would go here
-             // For now, we'll skip complex backfill logic in this refactor
-             return "Backfill not implemented for multi-provider yet";
+        if (!(provider instanceof LocalFileProvider)) return "Default provider is not a LocalFileProvider";
+
+        const allMemories = await provider.getAll();
+        let updatedCount = 0;
+
+        for (const memory of allMemories) {
+            if (!memory.embedding) {
+                try {
+                    const embedding = await this.generateEmbedding(memory.content);
+                    if (embedding) {
+                        memory.embedding = embedding;
+                        await provider.store(memory);
+                        updatedCount++;
+                    }
+                } catch (e) {
+                    console.error(`[Memory] Failed to backfill embedding for ${memory.id}:`, e);
+                }
+            }
         }
-        return "No suitable provider for backfill";
+
+        return `Backfilled embeddings for ${updatedCount} memories.`;
     }
 
     private async generateEmbedding(text: string): Promise<number[] | undefined> {

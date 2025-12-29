@@ -1,4 +1,5 @@
 import { AgentExecutor } from '../agents/AgentExecutor.js';
+import { MemoryManager } from './MemoryManager.js';
 
 export interface CompactedContext {
     summary: string;
@@ -8,7 +9,10 @@ export interface CompactedContext {
 }
 
 export class ContextCompactor {
-    constructor(private agentExecutor: AgentExecutor) {}
+    constructor(
+        private agentExecutor: AgentExecutor,
+        private memoryManager?: MemoryManager
+    ) {}
 
     async compact(content: string, type: 'conversation' | 'tool_output' = 'conversation'): Promise<CompactedContext> {
         const prompt = `
@@ -40,14 +44,42 @@ export class ContextCompactor {
             }
 
             // Attempt to parse JSON
+            let compacted: CompactedContext;
             const jsonMatch = result.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
-                return JSON.parse(jsonMatch[0]);
+                compacted = JSON.parse(jsonMatch[0]);
+            } else {
+                compacted = { summary: result, facts: [], decisions: [], actionItems: [] };
             }
-            return { summary: result, facts: [], decisions: [], actionItems: [] };
+
+            // Deduplication Logic
+            if (this.memoryManager && compacted.facts.length > 0) {
+                const uniqueFacts: string[] = [];
+                for (const fact of compacted.facts) {
+                    const exists = await this.checkFactExists(fact);
+                    if (!exists) {
+                        uniqueFacts.push(fact);
+                    }
+                }
+                compacted.facts = uniqueFacts;
+            }
+
+            return compacted;
+
         } catch (e) {
             console.error("Context compaction failed:", e);
             return { summary: "Failed to compact context.", facts: [], decisions: [], actionItems: [] };
+        }
+    }
+
+    private async checkFactExists(fact: string): Promise<boolean> {
+        if (!this.memoryManager) return false;
+        try {
+            const results = await this.memoryManager.search({ query: fact });
+            // If we find a highly similar memory (e.g. > 0.85), assume it exists
+            return results.some(r => r.similarity !== undefined && r.similarity > 0.85);
+        } catch (e) {
+            return false;
         }
     }
 }

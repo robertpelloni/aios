@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.7] - 2025-12-29
+
+### Added
+- **Skills**: Added `codex-debug` skill for root cause analysis using OpenAI Codex via slash command.
+- **Memory**: Implemented fact deduplication in `ContextCompactor` to reduce memory noise.
+- **Memory**: Added `backfillEmbeddings` capability to `MemoryManager`.
+- **Agents**: `AgentExecutor` now natively supports memory tools (`remember`, `search_memory`, `ingest_content`).
+
 ## [0.2.6] - 2025-12-29
 
 ### Added

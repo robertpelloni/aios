@@ -98,6 +98,11 @@ export default async function EcosystemDashboard() {
           </p>
         </div>
         <div className="flex gap-2">
+           {submodules.length > 0 && (
+             <Badge variant="outline" className="text-lg py-1 px-3 bg-green-950/30 text-green-400 border-green-800 flex items-center gap-1">
+               <CheckCircle2 className="h-4 w-4" /> Index Synced
+             </Badge>
+           )}
            <Badge variant="outline" className="text-lg py-1 px-3">
              {submodules.length} Modules
            </Badge>

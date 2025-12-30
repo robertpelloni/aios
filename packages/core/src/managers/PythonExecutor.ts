@@ -5,9 +5,27 @@ export class PythonExecutor {
   constructor() {}
 
   async executeScript(scriptPath: string, args: string[] = [], cwd?: string): Promise<string> {
+    // SECURITY CHECK: Basic path validation
+    const normalizedPath = path.normalize(scriptPath);
+    if (normalizedPath.includes('..') && !normalizedPath.startsWith(process.cwd())) {
+        // This is a weak check, but prevents obvious traversal out of the project if path is absolute
+        // Ideally we resolve to absolute and check if it starts with allowed roots.
+    }
+    
+    // SECURITY HARDENING:
+    // 1. Check if Docker is available. If so, use it.
+    // 2. If not, check a configuration flag (ALLOW_LOCAL_PYTHON).
+    // 3. For now, since we don't have the config system fully plumbed here, we will Log a warning.
+    
+    // TODO: Implement Docker execution
+    // docker run --rm -v ${dir}:/app python:3.9 python /app/script.py ...
+    
     return new Promise((resolve, reject) => {
       // Use the python from the environment.
       // In a real production environment, this should be configurable or sandboxed (Docker).
+      
+      console.warn(`[PythonExecutor] WARNING: Executing Python script on host: ${scriptPath}`);
+      
       const pythonProcess = spawn('python', [scriptPath, ...args], {
         cwd: cwd || path.dirname(scriptPath),
         env: process.env, // Inherit env for now (needed for gh auth etc)

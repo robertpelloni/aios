@@ -1,6 +1,6 @@
 # Submodule Dashboard
 
-**Last Updated:** 2025-12-30 04:46:27
+**Last Updated:** 2025-12-30 05:20:23
 
 This document tracks the status, location, and version of all submodules and reference repositories in the AIOS project.
 
@@ -10,11 +10,11 @@ This document tracks the status, location, and version of all submodules and ref
 |------|------|---------|--------|
 | **CLIProxyAPI** | `submodules/CLIProxyAPI` | (v6.6.70) | `857c880` |
 | **claude-mem** | `submodules/claude-mem` | (v7.1.2-146-g1415ef4) | `1415ef4` |
-| **jules-app** | `submodules/jules-app` | (v0.2.5-51-g1e3e5b6) | `1e3e5b6` |
+| **jules-app** | `submodules/jules-app` | (v0.2.5-54-ga362fa2) | `+a362fa` |
 | **mcp-shark** | `submodules/mcp-shark` | (1.5.9) | `6d7abfc` |
 | **mcpenetes** | `submodules/mcpenetes` | (v1.0.3-55-gf0fd60e) | `f0fd60e` |
 | **metamcp** | `submodules/metamcp` | (v2.4.21-67-g80344bb) | `80344bb` |
-| **quotio** | `submodules/quotio` | (v0.2.3-1-gd5b3426) | `d5b3426` |
+| **quotio** | `submodules/quotio` | (v0.3.2-1-g165e877) | `165e877` |
 
 ## Reference Repositories (`references/`)
 

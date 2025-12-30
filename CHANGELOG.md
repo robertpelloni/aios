@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.2] - 2025-12-30
+
+### Maintenance
+- **Submodules**: Comprehensive update of all 400+ submodules to their latest upstream versions, including `agentic`, `jules-app`, and `maestro`.
+- **Dashboard**: Regenerated `docs/SUBMODULE_DASHBOARD.md` to provide a real-time view of the ecosystem state.
+- **Versioning**: Bumped project version to `0.4.2`.
+- **Standards**: Verified `LLM_INSTRUCTIONS.md` compliance across all documentation updates.
+
 ## [0.4.1] - 2025-12-30
 
 ### Maintenance

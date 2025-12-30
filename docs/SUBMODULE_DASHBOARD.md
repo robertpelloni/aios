@@ -1,6 +1,6 @@
 # Submodule Dashboard
 
-**Last Updated:** 2025-12-30 05:20:23
+**Last Updated:** 2025-12-30 05:32:47
 
 This document tracks the status, location, and version of all submodules and reference repositories in the AIOS project.
 
@@ -10,7 +10,7 @@ This document tracks the status, location, and version of all submodules and ref
 |------|------|---------|--------|
 | **CLIProxyAPI** | `submodules/CLIProxyAPI` | (v6.6.70) | `857c880` |
 | **claude-mem** | `submodules/claude-mem` | (v7.1.2-146-g1415ef4) | `1415ef4` |
-| **jules-app** | `submodules/jules-app` | (v0.2.5-54-ga362fa2) | `+a362fa` |
+| **jules-app** | `submodules/jules-app` | (v0.2.5-54-ga362fa2) | `a362fa2` |
 | **mcp-shark** | `submodules/mcp-shark` | (1.5.9) | `6d7abfc` |
 | **mcpenetes** | `submodules/mcpenetes` | (v1.0.3-55-gf0fd60e) | `f0fd60e` |
 | **metamcp** | `submodules/metamcp` | (v2.4.21-67-g80344bb) | `80344bb` |
@@ -51,6 +51,9 @@ These are cloned repositories used for research, pattern extraction, and feature
 | **magg** | `references/magg` | (v0.10.1) | `c237d4c` |
 | **mcp-server-code-execution-mode** | `references/mcp-server-code-execution-mode` | (heads/main) | `27d23b8` |
 | **mcp-tool-chainer** | `references/mcp-tool-chainer` | (heads/main) | `84ab853` |
+| **awesome-mcp-servers-appcypher** | `references/mcp_repos/awesome-mcp-servers-appcypher` | (heads/main) | `187929a` |
+| **awesome-mcp-servers-punkpeye** | `references/mcp_repos/awesome-mcp-servers-punkpeye` | (heads/main) | `262c0b0` |
+| **awesome-mcp-servers-wong2** | `references/mcp_repos/awesome-mcp-servers-wong2` | (heads/main) | `a4316c7` |
 | **mcphub** | `references/mcphub` | (v0.11.4-1-gab7c210) | `ab7c210` |
 | **mcpm.sh** | `references/mcpm.sh` | (v1.1.1-200-g74dbfb6) | `74dbfb6` |
 | **mcpproxy-go** | `references/mcpproxy-go` | (v0.10.11-1-gf0ca376) | `f0ca376` |
@@ -76,6 +79,8 @@ These are cloned repositories used for research, pattern extraction, and feature
 | **dev-browser** | `references/skills/dev-browser` | (v1.0.0) | `b549fb0` |
 | **oai-skills** | `references/skills/oai-skills` | (heads/main) | `d0d16a0` |
 | **skrills** | `references/skills/skrills` | (v0.4.0-6-g2e5d98f) | `2e5d98f` |
+| **anthropic-skills** | `references/skills_repos/anthropic-skills` | (heads/main) | `69c0b1a` |
+| **openai-skills** | `references/skills_repos/openai-skills` | (heads/main) | `dadec22` |
 | **smolagents** | `references/smolagents` | (v1.0.0-876-g83090a9) | `83090a9` |
 | **superpowers** | `references/superpowers` | (v3.6.2-3-g5faddc4) | `5faddc4` |
 | **toon** | `references/toon` | (v2.1.0-7-g189bbfa) | `189bbfa` |

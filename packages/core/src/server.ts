@@ -34,7 +34,9 @@ import { McpSharkManager } from './managers/McpSharkManager.js';
 import { ContextMiner } from './utils/ContextMiner.js';
 import { ContextCompactor } from './managers/ContextCompactor.js';
 import { ContextGenerator } from './utils/ContextGenerator.js';
+import { FileSystemManager } from './managers/FileSystemManager.js';
 import { toToon, FormatTranslatorTool } from './utils/toon.js';
+
 import fs from 'fs';
 import crypto from 'crypto';
 import { registerMcpRoutes } from './routes/mcpRoutes.js';
@@ -76,6 +78,7 @@ export class CoreService {
   public browserManager: BrowserManager;
   public mcpSharkManager: McpSharkManager;
   public contextMiner: ContextMiner;
+  public fileSystemManager: FileSystemManager;
 
   constructor(
     private rootDir: string
@@ -128,6 +131,7 @@ export class CoreService {
     );
     this.browserManager = new BrowserManager();
     this.mcpSharkManager = new McpSharkManager(rootDir);
+    this.fileSystemManager = new FileSystemManager(rootDir);
 
     this.hubServer = new HubServer(
         this.proxyManager,
@@ -803,6 +807,100 @@ export class CoreService {
     }, async (args: any) => {
         return await this.clientManager.installCLI();
     });
+
+    // --- File System Tools (Required for OpenCode Agents) ---
+    this.proxyManager.registerInternalTool({
+        name: "read",
+        description: "Read a file from the local filesystem.",
+        inputSchema: {
+            type: "object",
+            properties: {
+                filePath: { type: "string", description: "The path to the file to read" }
+            },
+            required: ["filePath"]
+        }
+    }, async (args: any) => {
+        return await this.fileSystemManager.readFile(args.filePath);
+    });
+
+    this.proxyManager.registerInternalTool({
+        name: "write",
+        description: "Write content to a file in the local filesystem.",
+        inputSchema: {
+            type: "object",
+            properties: {
+                filePath: { type: "string", description: "The path to the file to write" },
+                content: { type: "string", description: "The content to write" }
+            },
+            required: ["filePath", "content"]
+        }
+    }, async (args: any) => {
+        return await this.fileSystemManager.writeFile(args.filePath, args.content);
+    });
+
+    this.proxyManager.registerInternalTool({
+        name: "edit",
+        description: "Edit a file by replacing a string.",
+        inputSchema: {
+            type: "object",
+            properties: {
+                filePath: { type: "string", description: "The path to the file to edit" },
+                oldString: { type: "string", description: "The string to replace" },
+                newString: { type: "string", description: "The new string" },
+                replaceAll: { type: "boolean", description: "Whether to replace all occurrences" }
+            },
+            required: ["filePath", "oldString", "newString"]
+        }
+    }, async (args: any) => {
+        return await this.fileSystemManager.editFile(args.filePath, args.oldString, args.newString, args.replaceAll);
+    });
+
+    this.proxyManager.registerInternalTool({
+        name: "bash",
+        description: "Execute a bash command.",
+        inputSchema: {
+            type: "object",
+            properties: {
+                command: { type: "string", description: "The command to execute" },
+                timeout: { type: "number", description: "Timeout in milliseconds" }
+            },
+            required: ["command"]
+        }
+    }, async (args: any) => {
+        return await this.fileSystemManager.executeCommand(args.command, args.timeout);
+    });
+
+    this.proxyManager.registerInternalTool({
+        name: "glob",
+        description: "Search for files using glob patterns.",
+        inputSchema: {
+            type: "object",
+            properties: {
+                pattern: { type: "string", description: "The glob pattern" },
+                path: { type: "string", description: "The directory to search in" }
+            },
+            required: ["pattern"]
+        }
+    }, async (args: any) => {
+        return JSON.stringify(await this.fileSystemManager.globSearch(args.pattern, args.path));
+    });
+
+    this.proxyManager.registerInternalTool({
+        name: "grep",
+        description: "Search file contents using regex.",
+        inputSchema: {
+            type: "object",
+            properties: {
+                pattern: { type: "string", description: "The regex pattern" },
+                path: { type: "string", description: "The directory to search in" },
+                include: { type: "string", description: "File pattern to include" }
+            },
+            required: ["pattern"]
+        }
+    }, async (args: any) => {
+        return await this.fileSystemManager.grepSearch(args.pattern, args.path, args.include);
+    });
+    // -----------------------------------------------------
     
     try {
       await this.app.listen({ port, host: '0.0.0.0' });

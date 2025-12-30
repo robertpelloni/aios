@@ -15,6 +15,7 @@ import { Settings } from './pages/Settings';
 import { Tools } from './pages/Tools';
 import { Submodules } from './pages/Submodules';
 import { Economy } from './pages/Economy';
+import { Memory } from './pages/Memory';
 import { Billing, Cloud, Jules } from './pages/Placeholders';
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
           <Route path="tools" element={<Tools />} />
           <Route path="submodules" element={<Submodules />} />
           <Route path="economy" element={<Economy />} />
+          <Route path="memory" element={<Memory />} />
           <Route path="billing" element={<Billing />} />
           <Route path="cloud" element={<Cloud />} />
           <Route path="jules" element={<Jules />} />

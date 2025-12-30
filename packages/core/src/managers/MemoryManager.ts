@@ -40,6 +40,15 @@ export class MemoryManager {
         return memories.slice(-(args.limit || 10));
     }
 
+    async getStats() {
+        const memories = JSON.parse(fs.readFileSync(this.memoryPath, 'utf-8'));
+        return {
+            totalEntries: memories.length,
+            lastEntry: memories[memories.length - 1]?.timestamp || 'Never',
+            dbSize: fs.statSync(this.memoryPath).size
+        };
+    }
+
     async consolidateLogs(logs: any[]) {
         // Simple heuristic: concatenate "response" type logs and save as a daily summary.
         const summary = logs
@@ -88,6 +97,11 @@ export class MemoryManager {
                         limit: { type: "number" }
                     }
                 }
+            },
+            {
+                name: "memory_stats",
+                description: "Get statistics about the long-term memory.",
+                inputSchema: { type: "object", properties: {} }
             }
         ];
     }

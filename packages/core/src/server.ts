@@ -521,6 +521,7 @@ export class CoreService {
              if (tool.name === 'remember') return this.memoryManager.remember(args);
              if (tool.name === 'search_memory') return this.memoryManager.search(args);
              if (tool.name === 'recall_recent') return this.memoryManager.recall(args);
+             if (tool.name === 'memory_stats') return this.memoryManager.getStats();
              return "Unknown tool";
         });
     });

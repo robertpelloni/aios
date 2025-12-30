@@ -21,7 +21,7 @@ export class SkillManager {
     if (fs.existsSync(this.registryPath)) {
       const data = fs.readFileSync(this.registryPath, 'utf-8');
       this.registry = JSON.parse(data);
-      console.log(`[SkillManager] Loaded ${this.registry.length} skills from registry.`);
+      // console.log(`[SkillManager] Loaded ${this.registry.length} skills from registry.`);
     } else {
       console.warn(`[SkillManager] Registry not found at ${this.registryPath}`);
     }

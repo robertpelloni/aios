@@ -48,31 +48,26 @@ All skills must be converted to a standard JSON schema compatible with MCP `tool
 - [x] Implement `PythonExecutor` in `packages/core/src/managers/PythonExecutor.ts` to handle OpenAI skills.
 - [x] Verify execution of both Skill Types.
 
-### Phase 3: Marketplace (In Progress)
+### Phase 3: Marketplace (Completed)
 - [x] Expose the registry via the MCP server.
-    - Implemented `SkillRegistryServer` with tools: `list_skills`, `get_skill_info`, `execute_skill`.
-    - Created entry point `packages/core/bin/skill-registry-server.ts`.
-- [ ] **Next Step:** Integrate this MCP server into the main AIOS agent runtime so agents can auto-discover it.
-- [ ] Allow agents to "install" skills (dynamic loading).
+- [x] Integrate `SkillRegistryServer` into `MarketplaceManager`.
+- [x] Verify that `McpManager` can start the registry server and clients can discover tools.
 
-## 4. Analysis of Skill Types
-...
-### Type C: "Knowledge/Reference" Skills (e.g., `brand-guidelines`)
-*   **Structure:** `SKILL.md` essentially acting as a knowledge base entry.
-*   **Execution:** Handled by `PromptDriver` (same as Type A).
-*   **Status:** Working.
+### Phase 4: Dynamic Agent Loading (Next)
+- [ ] Create an Agent that uses `execute_skill` to solve a task.
+- [ ] Implement `install_skill` in `MarketplaceManager` to fetch new skills from remote URLs (currently mocked).
 
 ## 6. MCP Server Tools
-The new `SkillRegistryServer` provides:
-*   `list_skills()`: Returns JSON list of all 26 skills.
-*   `get_skill_info(skill_id)`: Returns full metadata + type info.
-*   `execute_skill(skill_id, params)`: 
-    *   For Prompt skills: Returns the prompt content.
-    *   For Script skills: Executes the script and returns stdout.
+The `SkillRegistryServer` is now a core component, started automatically by `MarketplaceManager`.
+Tools available to all agents:
+*   `list_skills`
+*   `get_skill_info`
+*   `execute_skill`
 
 ## 7. Known Issues
 *   **Security:** `PythonExecutor` is not sandboxed.
-*   **Parameter Mapping:** `execute_skill` takes a generic `params` object. We blindly convert this to command line args (e.g. `{foo: "bar"}` -> `--foo bar`). This works for many CLI tools but not all. We need a rigorous schema mapper in Phase 4.
+*   **Stdio Noise:** Console logs from `SkillManager` were breaking MCP protocol. Fixed by commenting out logs, but we need a better logging strategy (stderr vs stdout).
+
 
 
 

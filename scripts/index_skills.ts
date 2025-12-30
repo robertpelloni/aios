@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-// import * as yaml from 'js-yaml'; // Removed to avoid dependency issues
 
 // Define interfaces for our Internal Skill Registry
 interface SkillDefinition {
@@ -18,9 +17,8 @@ const REGISTRY_PATH = path.join(ROOT_DIR, 'packages/core/data/skills_registry.js
 const ANTHROPIC_ROOT = path.join(ROOT_DIR, 'references/skills_repos/anthropic-skills/skills');
 const OPENAI_ROOT = path.join(ROOT_DIR, 'references/skills_repos/openai-skills/skills');
 
-// Simple Frontmatter Parser (regex based to avoid deps for now)
+// Improved Frontmatter Parser that handles multi-line strings
 function parseFrontmatter(content: string): Record<string, any> {
-  // Normalize line endings to \n
   const normalized = content.replace(/\r\n/g, '\n');
   const match = normalized.match(/^---\n([\s\S]*?)\n---/);
   if (!match) return {};
@@ -29,19 +27,43 @@ function parseFrontmatter(content: string): Record<string, any> {
   const lines = match[1].split('\n');
   
   let currentKey = '';
+  let currentValue = '';
+  let isMultiline = false;
   
-  for (const line of lines) {
-    // Handle simple key: value
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    
+    // Check for key: value
     const keyValMatch = line.match(/^([a-zA-Z0-9_-]+):\s*(.*)$/);
     if (keyValMatch) {
+        // If we were processing a previous key, save it
+        if (currentKey) {
+            frontmatter[currentKey] = currentValue.trim();
+        }
+        
         currentKey = keyValMatch[1].trim();
-        frontmatter[currentKey] = keyValMatch[2].trim();
-    } else if (currentKey && line.trim().startsWith('-')) {
-        // Handle list items (very basic)
-        // This is a hacky way to handle multiline or list values if needed, 
-        // but for now we just want simple strings like name and description.
+        const value = keyValMatch[2].trim();
+        
+        if (value === '|' || value === '>') {
+            isMultiline = true;
+            currentValue = '';
+        } else {
+            isMultiline = false;
+            currentValue = value;
+        }
+    } else if (currentKey && isMultiline) {
+        // Append line to current value
+        currentValue += line + '\n';
+    } else if (currentKey && !isMultiline && line.trim() !== '') {
+        // Continuation of single line value (rare in YAML but possible)
+        currentValue += ' ' + line.trim();
     }
   }
+  // Save last key
+  if (currentKey) {
+      frontmatter[currentKey] = currentValue.trim();
+  }
+  
   return frontmatter;
 }
 

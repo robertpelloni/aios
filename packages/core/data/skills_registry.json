@@ -216,7 +216,7 @@
     "metadata": {
       "name": "gh-address-comments",
       "description": "Help address review/issue comments on the open GitHub PR for the current branch using gh CLI; verify gh auth first and prompt the user to authenticate if not logged in.",
-      "metadata": ""
+      "metadata": "short-description: Address comments in a GitHub PR review"
     }
   },
   {
@@ -229,7 +229,7 @@
     "metadata": {
       "name": "gh-fix-ci",
       "description": "Inspect GitHub PR checks with gh, pull failing GitHub Actions logs, summarize failure context, then create a fix plan and implement after user approval. Use when a user asks to debug or fix failing PR CI/CD checks on GitHub Actions and wants a plan + code changes; for external checks (e.g., Buildkite), only report the details URL and mark them out of scope.",
-      "metadata": ""
+      "metadata": "short-description: Fix failing Github CI actions"
     }
   },
   {
@@ -242,7 +242,7 @@
     "metadata": {
       "name": "notion-knowledge-capture",
       "description": "Capture conversations and decisions into structured Notion pages; use when turning chats/notes into wiki entries, how-tos, decisions, or FAQs with proper linking.",
-      "metadata": ""
+      "metadata": "short-description: Capture conversations into structured Notion pages"
     }
   },
   {
@@ -255,7 +255,7 @@
     "metadata": {
       "name": "notion-meeting-intelligence",
       "description": "Prepare meeting materials with Notion context and Codex research; use when gathering context, drafting agendas/pre-reads, and tailoring materials to attendees.",
-      "metadata": ""
+      "metadata": "short-description: Prep meetings with Notion context and tailored agendas"
     }
   },
   {
@@ -268,7 +268,7 @@
     "metadata": {
       "name": "notion-research-documentation",
       "description": "Research across Notion and synthesize into structured documentation; use when gathering info from multiple Notion sources to produce briefs, comparisons, or reports with citations.",
-      "metadata": ""
+      "metadata": "short-description: Research Notion content and produce briefs/reports"
     }
   },
   {
@@ -281,7 +281,7 @@
     "metadata": {
       "name": "notion-spec-to-implementation",
       "description": "Turn Notion specs into implementation plans, tasks, and progress tracking; use when implementing PRDs/feature specs and creating Notion plans + tasks from them.",
-      "metadata": ""
+      "metadata": "short-description: Turn Notion specs into implementation plans, tasks, and progress tracking"
     }
   },
   {
@@ -294,7 +294,7 @@
     "metadata": {
       "name": "create-plan",
       "description": "Create a concise plan. Use when a user explicitly asks for a plan related to a coding task.",
-      "metadata": ""
+      "metadata": "short-description: Create a plan"
     }
   },
   {
@@ -307,7 +307,7 @@
     "metadata": {
       "name": "linear",
       "description": "Manage issues, projects & team workflows in Linear. Use when the user wants to read, create or updates tickets in Linear.",
-      "metadata": ""
+      "metadata": "short-description: Manage Linear issues in Codex"
     }
   },
   {
@@ -320,7 +320,7 @@
     "metadata": {
       "name": "skill-creator",
       "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Codex's capabilities with specialized knowledge, workflows, or tool integrations.",
-      "metadata": ""
+      "metadata": "short-description: Create or update a skill"
     }
   },
   {
@@ -333,7 +333,7 @@
     "metadata": {
       "name": "skill-installer",
       "description": "Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos).",
-      "metadata": ""
+      "metadata": "short-description: Install curated skills from openai/skills or other repos"
     }
   }
 ]

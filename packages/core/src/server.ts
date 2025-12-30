@@ -293,9 +293,11 @@ export class CoreService {
         this.agentExecutor.run(agent, `Research this topic: ${topic}`, {}, sessionId)
             .then(result => {
                 console.log(`[Research] Completed for ${topic}`);
+                this.io.emit('research_update', { sessionId, status: 'completed', message: 'Research finished.', result });
             })
             .catch(err => {
                 console.error(`[Research] Failed: ${err.message}`);
+                this.io.emit('research_update', { sessionId, status: 'error', message: err.message });
             });
 
         return { status: 'started', sessionId };

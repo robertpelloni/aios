@@ -16,6 +16,7 @@ import { Tools } from './pages/Tools';
 import { Submodules } from './pages/Submodules';
 import { Economy } from './pages/Economy';
 import { Memory } from './pages/Memory';
+import { Research } from './pages/Research';
 import { Billing, Cloud, Jules } from './pages/Placeholders';
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <Route path="submodules" element={<Submodules />} />
           <Route path="economy" element={<Economy />} />
           <Route path="memory" element={<Memory />} />
+          <Route path="research" element={<Research />} />
           <Route path="billing" element={<Billing />} />
           <Route path="cloud" element={<Cloud />} />
           <Route path="jules" element={<Jules />} />

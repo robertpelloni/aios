@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.1] - 2025-12-30
+
+### Maintenance
+- **Submodules**: Synchronized all 400+ submodules to their latest upstream versions.
+- **Cleanup**: Removed broken submodule references (`opencode-workflows`, `opencode-plugin-template`, `opencode-background`).
+- **Dashboard**: Regenerated `docs/SUBMODULE_DASHBOARD.md` to reflect the latest state of the ecosystem.
+- **Dependencies**: Fixed Vercel deployment issues by resolving `prisma` and `typescript` version conflicts in `jules-app`.
+- **Versioning**: Unified versioning across the repo to `0.4.1`.
+
 ## [0.2.7] - 2025-12-29
 
 ### Added

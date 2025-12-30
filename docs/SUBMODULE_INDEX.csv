@@ -1,45 +1,5 @@
-Name,Path,Category,Role,Description,Rationale,Integration Strategy,Status
-CopilotKit,references/frameworks/CopilotKit,Framework,Reference,Full-stack AI Copilot platform.,Hub dashboard UI components.,Use UI components and backend logic for Hub dashboard.,Active
-claude-orchestration,references/orchestration/claude-orchestration,Orchestration,Reference,Orchestration patterns for Claude.,Agent coordination logic.,Integrate orchestration logic into AgentManager.,Active
-agentic-qe,references/testing/agentic-qe,Testing,Capability,Quality Engineering for agents.,Self-testing capabilities.,Implement self-testing loops for Hub agents.,Active
-gemini-cli,references/clis/gemini-cli,CLI,Driver,Official Google Gemini CLI.,Native Google integration.,Wrap as a Tool in metamcp.,Active
-aider,references/clis/aider,CLI,Driver,AI pair programmer.,SOTA code editing.,Wrap as a Tool in metamcp.,Active
-mentat,references/clis/mentat,CLI,Driver,AI coding assistant.,Alternative editing capability.,Wrap as a Tool in metamcp.,Planned
-fabric,references/clis/fabric,CLI,Driver,Augmented intelligence framework.,Wisdom extraction.,Wrap as a Tool in metamcp.,Planned
-goose,references/clis/goose,CLI,Driver,Developer agent.,Autonomous dev tasks.,Wrap as a Tool in metamcp.,Planned
-kilocode,references/clis/kilocode,CLI,Driver,Agentic engineering platform.,Project state management.,Wrap as a Tool in metamcp.,Planned
-A2A,references/protocols/A2A,Protocol,Standard,Agent-to-Agent Protocol spec.,Standardized agent comms.,Implement A2A endpoints in Core Service.,Active
-a2a-js,references/protocols/a2a-js,Protocol,Library,JS implementation of A2A.,JS support for A2A.,Use as dependency for Core Service.,Active
-a2a-python,references/protocols/a2a-python,Protocol,Library,Python implementation of A2A.,Python support for A2A.,Use in Python-based subagents.,Active
-MCP-SuperAssistant,references/MCP-SuperAssistant,Connectivity,Foundation,Browser extension interface.,Browser connectivity.,Reference for browser integration.,Active
-claude-mem,submodules/claude-mem,Memory,Core,Memory system for Claude.,Long-term memory & context.,Integrate as core memory provider.,Integrated
-metamcp,submodules/metamcp,Infrastructure,Core,MCP proxy and router.,MCP Middleware & Aggregation.,Base for Core Service.,Integrated
-mcpenetes,submodules/mcpenetes,Infrastructure,Core,Client detection and config.,Environment configuration.,Port detection logic to Core Service.,Integrated
-spec-kit,references/arch/spec-kit,Architecture,Library,Specification management.,structured specs.,Integrate into Spec Editor UI.,Reference
-CodeMachine-CLI,references/arch/CodeMachine-CLI,Architecture,Reference,CLI orchestration.,CLI patterns.,Adopt orchestration patterns.,Reference
-CLIProxyAPI,submodules/CLIProxyAPI,Infrastructure,Core,Proxy for OpenAI/Gemini/Claude APIs.,Unified Model Access.,Centralize API calls through this proxy.,Integrated
-jules-app,submodules/jules-app,Agent UI,Interface,Workspace for Jules agent.,Advanced Agent UI.,Adapt for generic agent interface.,Integrated
-mcp-shark,submodules/mcp-shark,Observability,Tool,MCP traffic monitor.,Debugging & Inspection.,Use for monitoring agent-tool traffic.,Integrated
-quotio,submodules/quotio,Infrastructure,App,MacOS menu bar app for CLIProxyAPI.,Local Management.,Provide easier management of the proxy.,Integrated
-opencode,references/opencode,Agent,Reference,Open source code interpreter.,Code execution patterns.,Analyze for sandboxing implementation.,Reference
-notebooklm-mcp,references/notebooklm-mcp,Tool,Reference,NotebookLM integration.,RAG capabilities.,Study for document ingestion patterns.,Reference
-voicemode,references/voicemode,Interface,Reference,Voice interaction capabilities.,Multimodal input.,Reference for voice command implementation.,Reference
-pluggedin-app,references/pluggedin-app,App,Reference,Plugin management app.,Plugin UI patterns.,Study user flow for plugin installation.,Reference
-pctx,references/pctx,Memory,Reference,Persistent Context storage.,Context management.,Compare with claude-mem for storage strategies.,Reference
-mcp-server-code-execution-mode,references/mcp-server-code-execution-mode,Tool,Reference,Safe code execution server.,Sandboxing.,Adopt security best practices for code execution.,Reference
-claude-squad,references/claude-squad,Orchestration,Reference,Multi-agent squad framework.,Team orchestration.,Reference for multi-agent delegation.,Reference
-mcpm.sh,references/mcpm.sh,Infrastructure,Reference,MCP Package Manager.,Package management.,Potential source for package registry logic.,Reference
-superpowers,references/superpowers,Skills,Library,Collection of agent skills.,Skill library.,Import useful skills into core skills directory.,Reference
-smolagents,references/smolagents,Framework,Reference,Lightweight agent framework.,Minimalist design.,Reference for lightweight agent implementation.,Reference
-mcp-tool-chainer,references/mcp-tool-chainer,Tool,Reference,Chains multiple tools together.,Workflow automation.,Implement similar chaining in Core.,Reference
-prompt-eng-tutorial,references/prompt-eng-tutorial,Documentation,Guide,Tutorial on prompt engineering.,Prompt strategies.,Integrate best practices into system prompts.,Reference
-awesome-llm-apps,references/awesome-llm-apps,Collection,Resource,List of LLM applications.,Inspiration.,Source of ideas for new agents.,Reference
-beads,references/memory/beads,Memory,Reference,Memory structure reference.,Data structure.,Review for memory optimization.,Reference
-txtai,references/memory/txtai,Memory,Library,Embeddings database.,Vector storage.,Compare with Chroma for embedding storage.,Reference
-mem0,references/memory/mem0,Memory,Platform,Memory layer for LLMs.,Memory architecture.,Analyze API design for memory service.,Reference
-laddr,references/orchestration/laddr,Orchestration,Reference,Orchestration framework.,Routing logic.,Study routing algorithms.,Reference
-OpenHands,references/agents/OpenHands,Agent,Framework,Open source agent implementation.,Agent architecture.,Reference for core agent loop.,Reference
-autogen,references/agents/autogen,Agent,Framework,Multi-agent conversation framework.,Conversation patterns.,Study multi-agent chat patterns.,Reference
-kilo cloud agent,submodules/kilo-cloud-agent,Infrastructure,Tool,Cloud deployment agent.,Cloud infrastructure management.,Integrate for deployment automation.,Planned
-kilo deploy,submodules/kilo-deploy,Infrastructure,Tool,Deployment tool.,Automated deployments.,Use for CI/CD pipelines.,Planned
-kilo app builder,submodules/kilo-app-builder,Infrastructure,Tool,App building tool.,Automated app creation.,Use for scaffolding new apps.,Planned
+openai-skills,references/skills_repos/openai-skills,Skills,Reference,Official OpenAI Codex skills.,Source for Codex integrations.,Index and normalize into universal skills registry.,Reference
+anthropic-skills,references/skills_repos/anthropic-skills,Skills,Reference,Official Anthropic skills.,Source for Claude integrations.,Index and normalize into universal skills registry.,Reference
+awesome-mcp-servers-punkpeye,references/mcp_repos/awesome-mcp-servers-punkpeye,Directory,Resource,Curated list of MCP servers.,Discovery source.,Parse and add to MCP Marketplace.,Reference
+awesome-mcp-servers-appcypher,references/mcp_repos/awesome-mcp-servers-appcypher,Directory,Resource,Curated list of MCP servers.,Discovery source.,Parse and add to MCP Marketplace.,Reference
+awesome-mcp-servers-wong2,references/mcp_repos/awesome-mcp-servers-wong2,Directory,Resource,Curated list of MCP servers.,Discovery source.,Parse and add to MCP Marketplace.,Reference

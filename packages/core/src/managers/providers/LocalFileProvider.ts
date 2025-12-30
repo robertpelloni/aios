@@ -68,6 +68,15 @@ export class LocalFileProvider implements MemoryProvider {
         }));
     }
 
+    async update(id: string, updates: Partial<Memory>): Promise<void> {
+        const index = this.memories.findIndex(m => m.id === id);
+        if (index === -1) throw new Error(`Memory with ID ${id} not found`);
+
+        this.memories[index] = { ...this.memories[index], ...updates };
+        this.fuse.setCollection(this.memories);
+        this.save();
+    }
+
     async delete(id: string): Promise<void> {
         this.memories = this.memories.filter(m => m.id !== id);
         this.fuse.setCollection(this.memories);

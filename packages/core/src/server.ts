@@ -46,6 +46,9 @@ import { memoryRoutes } from './routes/memoryRoutes.js';
 import { contextRoutes } from './routes/contextRoutes.js';
 import { ingestionRoutes } from './routes/ingestionRoutes.js';
 
+import { createSupervisorRoutes } from './routes/supervisorRoutes.js';
+import { SupervisorPlugin } from '@super-ai/supervisor-plugin';
+
 export class CoreService {
   public app;
   public io: SocketIOServer;
@@ -79,6 +82,7 @@ export class CoreService {
   public mcpSharkManager: McpSharkManager;
   public contextMiner: ContextMiner;
   public fileSystemManager: FileSystemManager;
+  public supervisorPlugin: SupervisorPlugin;
 
   constructor(
     private rootDir: string
@@ -132,6 +136,12 @@ export class CoreService {
     this.browserManager = new BrowserManager();
     this.mcpSharkManager = new McpSharkManager(rootDir);
     this.fileSystemManager = new FileSystemManager(rootDir);
+    
+    // Initialize Supervisor Plugin
+    this.supervisorPlugin = new SupervisorPlugin();
+    this.supervisorPlugin.setSocketServer(this.io);
+    // Point to the correct prompts directory
+    this.supervisorPlugin.setPromptsDir(path.join(rootDir, 'prompts'));
 
     this.hubServer = new HubServer(
         this.proxyManager,
@@ -151,6 +161,9 @@ export class CoreService {
         // Actually, we re-init memoryManager right after this.
         // Let's pass null for now and set it later, or move the re-init up.
     );
+    
+    // Inject Executor into Supervisor
+    this.supervisorPlugin.setAgentExecutor(this.agentExecutor);
     
     // Re-initialize MemoryManager with AgentExecutor for Context Compaction
     this.memoryManager = new MemoryManager(path.join(rootDir, 'data'), this.secretManager, this.agentExecutor);
@@ -229,6 +242,7 @@ export class CoreService {
     registerMcpRoutes(this.app, this);
     registerAgentRoutes(this.app, this);
     registerRegistryRoutes(this.app, this);
+    createSupervisorRoutes(this.app, this.supervisorPlugin);
     // Register memory routes using the imported function
     this.app.register(async (instance) => {
         await memoryRoutes(instance, this.memoryManager);

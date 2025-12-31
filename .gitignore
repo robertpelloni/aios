@@ -11,3 +11,5 @@ verification/
 .env.local
 .next
 next-env.d.ts
+packages/core/logs/*.db
+packages/core/logs/*.db-journal

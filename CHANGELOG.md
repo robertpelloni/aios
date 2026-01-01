@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.3] - 2026-01-01
+
+### Added
+- **Architecture**: Introduced the "Local vs. Remote" architecture.
+    - **Council (Local)**: Integrated `opencode-autopilot-council` as the manager for transient, local sessions.
+    - **Jules (Remote)**: Reaffirmed `jules-app` as the manager for persistent, cloud-based sessions.
+- **UI**: Added a new **"Council"** tab to the Dashboard for managing local Autopilot sessions.
+- **Documentation**: Updated `PROJECT_STRUCTURE.md` and `DESIGN.md` to reflect the new "AIOS as Central Router" philosophy.
+
+### Maintenance
+- **Submodules**: Added `opencode-autopilot-council` submodule.
+- **Standards**: Verified documentation compliance with `LLM_INSTRUCTIONS.md`.
+
 ## [0.4.2] - 2025-12-30
 
 ### Maintenance

@@ -463,3 +463,6 @@
 [submodule "references/skills_repos/openai-skills"]
 	path = references/skills_repos/openai-skills
 	url = https://github.com/openai/skills
+[submodule "submodules/opencode-autopilot-council"]
+	path = submodules/opencode-autopilot-council
+	url = https://github.com/robertpelloni/opencode-autopilot-council

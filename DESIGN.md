@@ -49,12 +49,25 @@ The architecture is modular to the extreme:
     - **Universal Host:** Adapters for **Google GenAI**, **OpenAI Assistants**, **Microsoft Semantic Kernel**, **AutoGen**, and **LangChain**.
     - **A2A Interoperability:** A standardized "Agent Bus" allowing a Google agent to talk to a Microsoft agent, sharing context and tools.
 
-### 3. Connectivity & Orchestration
-- **MCP Client & Server:** The Core acts as both. It consumes downstream MCP servers and exposes itself as an upstream MCP server to clients (IDEs).
-- **Cloud Integration:** Connects to cloud development environments (GitHub Codespaces, etc.) to spawn tasks.
-- **A2A (Agent-to-Agent):** Provides a standard interface for agents to communicate and collaborate.
-    - **Protocol Translation:** Translates between different agent protocols (e.g., converting an AutoGen message to a LangChain event).
-    - **Shared Memory:** All agents, regardless of SDK, read/write to the central `claude-mem` graph.
+### 3. Connectivity & Orchestration (Remote vs. Local)
+This is the core differentiator of the v0.4.3 architecture.
+
+*   **Remote Realm (Jules):**
+    *   **Submodule:** `submodules/jules-app`
+    *   **Focus:** Persistent, cloud-based sessions.
+    *   **Use Case:** Long-running research, team collaboration, "fire and forget" tasks.
+    *   **State:** Stored in a remote DB (Postgres/Supabase).
+
+*   **Local Realm (Council):**
+    *   **Submodule:** `submodules/opencode-autopilot-council`
+    *   **Focus:** Transient, local sessions tied to the current working directory.
+    *   **Use Case:** Rapid iteration, local debugging, direct file manipulation on the user's machine.
+    *   **State:** Transient (lives as long as the CLI/IDE session), but maintains a history of "Recent Sessions" locally.
+
+*   **The Bridge (AIOS Hub):**
+    *   The Hub routes traffic between these two realms.
+    *   It allows a **Remote** agent (Jules) to ask a **Local** agent (Council) to "run this test on the user's machine."
+    *   It allows a **Local** agent to "ask Jules to research this library online."
 
 ## Detailed Feature Design
 
@@ -138,4 +151,3 @@ To fulfill the vision of a "AIOS", the Hub must seamlessly integrate with the us
 3.  **Code Mode:** Implement secure sandbox (currently using `vm` fallback).
 4.  **Inspection:** Build "Mcpshark" UI features.
 5.  **Client Integration:** Implement the `ClientManager` to auto-configure the 50+ supported tools.
-

@@ -19,6 +19,7 @@ import { Menu, LogOut, Settings, BarChart3, MessageSquare, ChevronLeft, ChevronR
 import { TerminalPanel } from './terminal-panel';
 import { useTerminalAvailable } from '@/hooks/use-terminal-available';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
+import { CouncilDashboard } from './council-dashboard';
 import { SessionKeeperManager } from './session-keeper-manager';
 
 export function AppLayout() {
@@ -27,7 +28,7 @@ export function AppLayout() {
   const router = useRouter();
   const { isAvailable: terminalAvailable } = useTerminalAvailable();
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
-  const [view, setView] = useState<'sessions' | 'analytics' | 'templates'>('sessions');
+  const [view, setView] = useState<'sessions' | 'analytics' | 'templates' | 'council'>('sessions');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -220,6 +221,17 @@ export function AppLayout() {
               <span className="text-[10px] font-mono uppercase tracking-wider">Logs</span>
             </Button>
 
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`h-8 px-3 hover:bg-white/5 ${view === 'council' ? 'text-white' : 'text-white/60'}`}
+              onClick={() => setView('council')}
+            >
+              <LayoutTemplate className="h-3.5 w-3.5 mr-1.5" />
+              <span className="text-[10px] font-mono uppercase tracking-wider">Council</span>
+            </Button>
+
             {terminalAvailable && (
               <Button
                 variant="ghost"
@@ -324,6 +336,8 @@ export function AppLayout() {
                       <AnalyticsDashboard />
                     ) : view === 'templates' ? (
                       <TemplatesPage onStartSession={handleStartSessionFromTemplate} />
+                    ) : view === 'council' ? (
+                      <CouncilDashboard />
                     ) : selectedSession ? (
                       <ActivityFeed
                         key={selectedSession.id}

@@ -1,9 +1,13 @@
 # Agent Definitions
 
-Please refer to the Universal LLM Instructions for this project:
-[docs/LLM_INSTRUCTIONS.md](docs/LLM_INSTRUCTIONS.md)
+**Core Directives:**
+1.  **Read Universal Instructions:** First, read and follow [docs/LLM_INSTRUCTIONS.md](docs/LLM_INSTRUCTIONS.md).
 
-## Agent Standards
-- **Format:** All agents should be defined in `agents/` as JSON or YAML.
-- **Schema:** Follow the `packages/core/src/types/Agent.ts` interface.
-- **Capabilities:** Clearly list tools and permissions for each agent.
+**Agent Standards:**
+- **Location:** Define all agents in `agents/`.
+- **Format:** JSON or YAML.
+- **Schema:** Strictly adhere to `packages/core/src/types/Agent.ts`.
+- **Capabilities:** Clearly define tools, permissions, and instructions.
+
+**Reference:**
+- See `docs/LLM_INSTRUCTIONS.md` for broader project context.

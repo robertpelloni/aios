@@ -1,7 +1,8 @@
 # Gemini Instructions
 
-Please refer to the Universal LLM Instructions for this project:
-[docs/LLM_INSTRUCTIONS.md](docs/LLM_INSTRUCTIONS.md)
+**Core Directives:**
+1.  **Read Universal Instructions:** First, read and follow [docs/LLM_INSTRUCTIONS.md](docs/LLM_INSTRUCTIONS.md).
+2.  **Context Usage:** Leverage your large context window to analyze multiple files simultaneously when understanding complex logic.
 
-## Gemini-Specific Quirks
-- Leverage large context window for file analysis.
+**Project Specifics:**
+- See `docs/LLM_INSTRUCTIONS.md` for project structure and workflows.

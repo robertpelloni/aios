@@ -1,8 +1,10 @@
 # Claude Instructions
 
-Please refer to the Universal LLM Instructions for this project:
-[docs/LLM_INSTRUCTIONS.md](docs/LLM_INSTRUCTIONS.md)
+**Core Directives:**
+1.  **Read Universal Instructions:** First, read and follow [docs/LLM_INSTRUCTIONS.md](docs/LLM_INSTRUCTIONS.md).
+2.  **TypeScript First:** Prioritize TypeScript for all code changes.
+3.  **Conciseness:** Be extremely concise.
+4.  **XML Usage:** Use XML tags for structured data outputs if requested or beneficial for parsing.
 
-## Claude-Specific Quirks
-- Prefer XML tags for structured data if necessary.
-- Focus on concise TypeScript.
+**Project Specifics:**
+- See `docs/LLM_INSTRUCTIONS.md` for project structure and workflows.

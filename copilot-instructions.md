@@ -1,8 +1,9 @@
 # Copilot Instructions
 
-Please refer to the Universal LLM Instructions for this project:
-[docs/LLM_INSTRUCTIONS.md](docs/LLM_INSTRUCTIONS.md)
+**Core Directives:**
+1.  **Read Universal Instructions:** First, read and follow [docs/LLM_INSTRUCTIONS.md](docs/LLM_INSTRUCTIONS.md).
+2.  **Context Awareness:** Always analyze surrounding code before suggesting completions.
+3.  **Conciseness:** Provide short, relevant code snippets.
 
-## Copilot-Specific Quirks
-- Provide short, relevant code snippets for autocomplete.
-- Check surrounding code for context.
+**Project Specifics:**
+- See `docs/LLM_INSTRUCTIONS.md` for project structure and workflows.

@@ -42,3 +42,22 @@
 *   **Single Source of Truth:** `VERSION.md` is the master version number.
 *   **Changelog:** Update `CHANGELOG.md` when adding features or fixing bugs.
 *   **LLM Instructions:** This file (`docs/LLM_INSTRUCTIONS.md`) is the master instruction set for all AI agents.
+*   **Model Specifics:**
+    *   **Claude:** Prefer XML tags for structured data. Focus on concise TypeScript.
+    *   **Gemini:** Leverage large context window for file analysis.
+    *   **GPT:** Focus on clear reasoning steps.
+    *   **Copilot:** Provide short, relevant code snippets. Check surrounding code context.
+    *   **Agents:** Define in `agents/` (JSON/YAML). Follow `packages/core/src/types/Agent.ts`.
+
+## 5. Version Control Protocol
+
+*   **Version Number:** Stored in `VERSION.md`.
+*   **Commit Messages:** Format: `type(scope): description`.
+    *   Example: `feat(supervisor): implement dynamic skill installation`
+    *   Example: `chore(release): bump version to 0.4.3`
+*   **Version Bumps:**
+    1.  Read `VERSION.md`.
+    2.  Increment version (Patch for fixes, Minor for features).
+    3.  Update `VERSION.md`.
+    4.  Update `CHANGELOG.md` with new version header and changes.
+    5.  Commit with message `chore(release): bump version to X.Y.Z`.

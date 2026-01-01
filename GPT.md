@@ -1,7 +1,8 @@
 # GPT Instructions
 
-Please refer to the Universal LLM Instructions for this project:
-[docs/LLM_INSTRUCTIONS.md](docs/LLM_INSTRUCTIONS.md)
+**Core Directives:**
+1.  **Read Universal Instructions:** First, read and follow [docs/LLM_INSTRUCTIONS.md](docs/LLM_INSTRUCTIONS.md).
+2.  **Reasoning:** Focus on clear, step-by-step reasoning (Chain of Thought) before taking complex actions.
 
-## GPT-Specific Quirks
-- Focus on clear reasoning steps.
+**Project Specifics:**
+- See `docs/LLM_INSTRUCTIONS.md` for project structure and workflows.

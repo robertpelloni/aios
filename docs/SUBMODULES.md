@@ -6,7 +6,8 @@ This document tracks the status, location, and purpose of all submodules in the 
 | :--- | :--- | :--- |
 | **mcpenetes** | `submodules/mcpenetes` | Client configuration injection and management. |
 | **metamcp** | `submodules/metamcp` | Meta-orchestrator for complex routing and tool aggregation. |
-| **jules-app** | `submodules/jules-app` | The "Jules" assistant logic and session management. |
+| **jules-app** | `submodules/jules-app` | The "Jules" assistant logic and session management (Remote). |
+| **opencode-autopilot-council** | `submodules/opencode-autopilot-council` | The "Council" assistant logic and session management (Local). |
 | **quotio** | `submodules/quotio` | Shell profile management and CLI installation logic. |
 | **CLIProxyAPI** | `submodules/CLIProxyAPI` | Proxy API for CLI tools. |
 | **claude-mem** | `submodules/claude-mem` | Memory management logic and patterns. |

@@ -463,6 +463,96 @@
 [submodule "references/skills_repos/openai-skills"]
 	path = references/skills_repos/openai-skills
 	url = https://github.com/openai/skills
-[submodule "submodules/opencode-autopilot-council"]
-	path = submodules/opencode-autopilot
-	url = https://github.com/robertpelloni/opencode-autopilot-council
+[submodule "submodules/Agent-MCP"]
+	path = submodules/Agent-MCP
+	url = https://github.com/rinadelph/Agent-MCP
+[submodule "submodules/DesktopCommanderMCP"]
+	path = submodules/DesktopCommanderMCP
+	url = https://github.com/wonderwhy-er/DesktopCommanderMCP
+[submodule "submodules/Windows-MCP"]
+	path = submodules/Windows-MCP
+	url = https://github.com/CursorTouch/Windows-MCP
+[submodule "submodules/mcp-agent"]
+	path = submodules/mcp-agent
+	url = https://github.com/lastmile-ai/mcp-agent
+[submodule "submodules/mcp-hub"]
+	path = submodules/mcp-hub
+	url = https://github.com/ravitemer/mcp-hub
+[submodule "submodules/mcp-launcher"]
+	path = submodules/mcp-launcher
+	url = https://github.com/moeru-ai/mcp-launcher
+[submodule "submodules/mcp-router"]
+	path = submodules/mcp-router
+	url = https://github.com/mcp-router/mcp-router
+[submodule "submodules/mcp-zen"]
+	path = submodules/mcp-zen
+	url = https://github.com/199-mcp/mcp-zen
+[submodule "submodules/agent-cli"]
+	path = submodules/agent-cli
+	url = https://github.com/basnijholt/agent-cli
+[submodule "submodules/agent-client-protocol"]
+	path = submodules/agent-client-protocol
+	url = https://github.com/agentclientprotocol/agent-client-protocol
+[submodule "submodules/agentmux"]
+	path = submodules/agentmux
+	url = https://github.com/stevehuang0115/agentmux
+[submodule "submodules/software-agent-sdk"]
+	path = submodules/software-agent-sdk
+	url = https://github.com/OpenHands/software-agent-sdk
+[submodule "submodules/trae-agent"]
+	path = submodules/trae-agent
+	url = https://github.com/bytedance/trae-agent
+[submodule "submodules/Unified-MCP-Tool-Graph"]
+	path = submodules/Unified-MCP-Tool-Graph
+	url = https://github.com/pratikjadhav2726/Unified-MCP-Tool-Graph
+[submodule "submodules/copilot-cli"]
+	path = submodules/copilot-cli
+	url = https://github.com/github/copilot-cli
+[submodule "submodules/gemini-bridge"]
+	path = submodules/gemini-bridge
+	url = https://github.com/eLyiN/gemini-bridge
+[submodule "submodules/qwen-code"]
+	path = submodules/qwen-code
+	url = https://github.com/QwenLM/qwen-code
+[submodule "submodules/browser-use"]
+	path = submodules/browser-use
+	url = https://github.com/browser-use/browser-use
+[submodule "submodules/plandex"]
+	path = submodules/plandex
+	url = https://github.com/plandex-ai/plandex
+[submodule "submodules/ai-that-works"]
+	path = submodules/ai-that-works
+	url = https://github.com/ai-that-works/ai-that-works/
+[submodule "submodules/claude-code"]
+	path = submodules/claude-code
+	url = https://github.com/anthropics/claude-code
+[submodule "submodules/claude-lazy-loading"]
+	path = submodules/claude-lazy-loading
+	url = https://github.com/machjesusmoto/claude-lazy-loading
+[submodule "external/auth/opencode-antigravity-auth"]
+	path = external/auth/opencode-antigravity-auth
+	url = https://github.com/NoeFabris/opencode-antigravity-auth
+[submodule "external/auth/opencode-google-antigravity-auth"]
+	path = external/auth/opencode-google-antigravity-auth
+	url = https://github.com/shekohex/opencode-google-antigravity-auth
+[submodule "external/plugins/opencode-dynamic-context-pruning"]
+	path = external/plugins/opencode-dynamic-context-pruning
+	url = https://github.com/Opencode-DCP/opencode-dynamic-context-pruning
+[submodule "external/plugins/opencode-shell-strategy"]
+	path = external/plugins/opencode-shell-strategy
+	url = https://github.com/JRedeker/opencode-shell-strategy
+[submodule "external/plugins/opencode-md-table-formatter"]
+	path = external/plugins/opencode-md-table-formatter
+	url = https://github.com/franlol/opencode-md-table-formatter
+[submodule "external/plugins/opencode-morph-fast-apply"]
+	path = external/plugins/opencode-morph-fast-apply
+	url = https://github.com/JRedeker/opencode-morph-fast-apply
+[submodule "external/plugins/opencode-notifier"]
+	path = external/plugins/opencode-notifier
+	url = https://github.com/mohak34/opencode-notifier
+[submodule "external/plugins/opencode-notificator"]
+	path = external/plugins/opencode-notificator
+	url = https://github.com/panta82/opencode-notificator
+[submodule "submodules/mcp-manager"]
+	path = submodules/mcp-manager
+	url = https://github.com/timetime-software/mcp-manager

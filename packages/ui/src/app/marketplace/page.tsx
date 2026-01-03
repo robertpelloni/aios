@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { ShoppingBag, Download } from 'lucide-react';
 import { io } from 'socket.io-client';
 
-const socket = io();
+const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3002');
 const API_BASE = '';
 
 export default function Marketplace() {

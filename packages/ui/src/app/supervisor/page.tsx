@@ -23,7 +23,7 @@ export default function SupervisorPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const socket = io('http://localhost:3002');
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3002');
 
     socket.on('connect', () => {
       setIsConnected(true);

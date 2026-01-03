@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { MessageSquare } from 'lucide-react';
 import { io } from 'socket.io-client';
 
-const socket = io();
+const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3002');
 
 export default function Prompts() {
   const [prompts, setPrompts] = useState<any[]>([]);

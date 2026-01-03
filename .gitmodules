@@ -745,3 +745,6 @@
 [submodule "external/tools/mcpc/repo"]
 	path = external/tools/mcpc/repo
 	url = https://github.com/apify/mcpc
+[submodule "submodules/mcpc"]
+	path = submodules/mcpc
+	url = https://github.com/apify/mcpc

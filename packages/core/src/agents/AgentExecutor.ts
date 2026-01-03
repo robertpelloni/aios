@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { McpProxyManager } from '../managers/McpProxyManager.js';
+import { McpRouter } from '../managers/McpRouter.js';
 import { AgentDefinition } from '../types.js';
 import OpenAI from 'openai';
 import { SecretManager } from '../managers/SecretManager.js';
@@ -15,7 +15,7 @@ export class AgentExecutor extends EventEmitter {
     private readonly REFLECTION_THRESHOLD = 5;
 
     constructor(
-        private proxyManager: McpProxyManager,
+        private mcpRouter: McpRouter,
         private secretManager?: SecretManager,
         private logManager?: LogManager,
         private contextManager?: ContextManager,
@@ -138,25 +138,32 @@ export class AgentExecutor extends EventEmitter {
                 // Let's use agent.name as sessionId for now to persist state across runs?
                 // Or a unique run ID.
                 const sessionId = `agent-${agent.name}-${Date.now()}`;
-                let tools = await this.proxyManager.getAllTools(sessionId);
+                let tools = await this.mcpRouter.getAllTools(sessionId);
 
                 // Inject Memory Tools if manager is present
                 if (this.memoryManager) {
                      const memoryTools = this.memoryManager.getToolDefinitions();
                      // Filter out tools already present to avoid duplicates (though name check is primitive)
                      const existingNames = new Set(tools.map(t => t.name));
-                     tools = [...tools, ...memoryTools.filter(t => !existingNames.has(t.name))];
+                     // Cast memoryTools to any[] to avoid type conflict with Tool[] from sdk
+                     const additionalTools = memoryTools.filter(t => !existingNames.has(t.name)) as any[];
+                     tools = [...tools, ...additionalTools];
                 }
 
                 // Map tools to OpenAI format
-                const openAiTools = tools.map(t => ({
+                const openAiTools = tools.map((t: any) => {
+                  const inputSchema = t.inputSchema as any;
+                  return {
                     type: 'function',
                     function: {
                         name: t.name,
                         description: t.description,
-                        parameters: t.inputSchema || {}
+                        parameters: inputSchema && typeof inputSchema === 'object' && inputSchema.type === 'object' 
+                          ? inputSchema 
+                          : { type: 'object', properties: {} }
                     }
-                }));
+                  }
+                });
 
                 // 2. Analyze Context
                 const contextAnalysis = ContextAnalyzer.analyze(messages);
@@ -232,7 +239,7 @@ export class AgentExecutor extends EventEmitter {
 
                             } else {
                                 // Call via Proxy (handles local/remote/internal)
-                                const res = await this.proxyManager.callTool(name, args, sessionId);
+                                const res = await this.mcpRouter.callToolSimple(name, args, sessionId);
                                 result = JSON.stringify(res);
 
                                 // Auto-ingest significant interactions

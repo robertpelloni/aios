@@ -1,7 +1,7 @@
 import { AutonomousAgent } from '../agents/AutonomousAgent.js';
 import { AgentManager } from './AgentManager.js';
 import { AgentMessageBroker } from './AgentMessageBroker.js';
-import { McpProxyManager } from './McpProxyManager.js';
+import { McpRouter } from './McpRouter.js';
 import { LogManager } from './LogManager.js';
 import { SecretManager } from './SecretManager.js';
 
@@ -11,7 +11,7 @@ export class AutonomousAgentManager {
     constructor(
         private agentManager: AgentManager,
         private messageBroker: AgentMessageBroker,
-        private proxyManager: McpProxyManager,
+        private mcpRouter: McpRouter,
         private logManager: LogManager,
         private secretManager: SecretManager
     ) {}
@@ -56,7 +56,7 @@ export class AutonomousAgentManager {
             agentId,
             def,
             this.messageBroker,
-            this.proxyManager,
+            this.mcpRouter,
             this.logManager,
             apiKey,
             parentId

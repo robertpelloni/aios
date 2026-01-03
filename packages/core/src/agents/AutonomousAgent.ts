@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { AgentDefinition } from '../types.js';
 import { AgentMessageBroker } from '../managers/AgentMessageBroker.js';
-import { McpProxyManager } from '../managers/McpProxyManager.js';
+import { McpRouter } from '../managers/McpRouter.js';
 import { LogManager } from '../managers/LogManager.js';
 import OpenAI from 'openai';
 
@@ -16,7 +16,7 @@ export class AutonomousAgent extends EventEmitter {
         public readonly id: string,
         public readonly definition: AgentDefinition,
         private messageBroker: AgentMessageBroker,
-        private proxyManager: McpProxyManager,
+        private mcpRouter: McpRouter,
         private logManager: LogManager,
         private apiKey: string,
         private parentId?: string
@@ -107,8 +107,8 @@ export class AutonomousAgent extends EventEmitter {
             iterations++;
             
             // 1. Get Tools
-            const tools = await this.proxyManager.getAllTools(this.sessionId);
-            const openAiTools = tools.map(t => ({
+            const tools = await this.mcpRouter.getAllTools(this.sessionId);
+            const openAiTools = tools.map((t: any) => ({
                 type: 'function',
                 function: {
                     name: t.name,
@@ -158,7 +158,7 @@ export class AutonomousAgent extends EventEmitter {
                     
                     let result;
                     try {
-                        const res = await this.proxyManager.callTool(name, args, this.sessionId);
+                        const res = await this.mcpRouter.callToolSimple(name, args, this.sessionId);
                         result = JSON.stringify(res);
                     } catch (e: any) {
                         result = `Error: ${e.message}`;

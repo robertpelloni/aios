@@ -14,9 +14,10 @@ import { HookExecutor } from './utils/HookExecutor.js';
 import { McpInterface } from './interfaces/McpInterface.js';
 import { ClientManager } from './managers/ClientManager.js';
 import { CodeExecutionManager } from './managers/CodeExecutionManager.js';
-import { McpProxyManager } from './managers/McpProxyManager.js';
+import { McpRouter } from './managers/McpRouter.js';
 import { LogManager } from './managers/LogManager.js';
 import { SecretManager } from './managers/SecretManager.js';
+
 import { HubServer } from './hub/HubServer.js';
 import { HookEvent } from './types.js';
 import { AgentExecutor } from './agents/AgentExecutor.js';
@@ -64,9 +65,10 @@ export class CoreService {
   public mcpInterface: McpInterface;
   public clientManager: ClientManager;
   public codeExecutionManager: CodeExecutionManager;
-  public proxyManager: McpProxyManager;
+  public mcpRouter: McpRouter;
   public logManager: LogManager;
   public secretManager: SecretManager;
+
   public hubServer: HubServer;
   public agentExecutor: AgentExecutor;
   public memoryManager: MemoryManager;
@@ -119,7 +121,7 @@ export class CoreService {
     this.codeExecutionManager = new CodeExecutionManager();
     this.logManager = new LogManager(path.join(rootDir, 'logs'));
     this.secretManager = new SecretManager(rootDir);
-    this.proxyManager = new McpProxyManager(this.mcpManager, this.logManager);
+    this.mcpRouter = new McpRouter(this.mcpManager, this.logManager);
     this.memoryManager = new MemoryManager(path.join(rootDir, 'data'), this.secretManager);
     this.marketplaceManager = new MarketplaceManager(rootDir);
     this.documentManager = new DocumentManager(path.join(rootDir, 'documents'), this.memoryManager);
@@ -129,10 +131,11 @@ export class CoreService {
     this.autonomousAgentManager = new AutonomousAgentManager(
         this.agentManager,
         this.messageBroker,
-        this.proxyManager,
+        this.mcpRouter,
         this.logManager,
         this.secretManager
     );
+
     this.browserManager = new BrowserManager();
     this.mcpSharkManager = new McpSharkManager(rootDir);
     this.fileSystemManager = new FileSystemManager(rootDir);
@@ -144,7 +147,7 @@ export class CoreService {
     this.supervisorPlugin.setPromptsDir(path.join(rootDir, 'prompts'));
 
     this.hubServer = new HubServer(
-        this.proxyManager,
+        this.mcpRouter,
         this.codeExecutionManager,
         this.agentManager,
         this.skillManager,
@@ -153,10 +156,11 @@ export class CoreService {
 
     this.mcpInterface = new McpInterface(this.hubServer);
     this.agentExecutor = new AgentExecutor(
-        this.proxyManager, 
+        this.mcpRouter, 
         this.secretManager, 
         this.logManager,
         this.contextManager,
+
         // MemoryManager is not fully initialized yet (circular dependency risk if we pass it before re-init?)
         // Actually, we re-init memoryManager right after this.
         // Let's pass null for now and set it later, or move the re-init up.
@@ -170,19 +174,21 @@ export class CoreService {
     this.ingestionManager = new IngestionManager(this.memoryManager, this.agentExecutor);
 
     this.memoryManager.setBrowserManager(this.browserManager);
-    this.proxyManager.setMemoryManager(this.memoryManager);
+    // this.proxyManager.setMemoryManager(this.memoryManager); // McpRouter doesn't strictly need MemoryManager unless we want to hook it into middleware
     this.messageBroker.setMemoryManager(this.memoryManager);
+
     
     // Now set the memory manager on the executor
     this.agentExecutor.setMemoryManager(this.memoryManager);
     
-    this.schedulerManager = new SchedulerManager(rootDir, this.agentExecutor, this.proxyManager);
+    this.schedulerManager = new SchedulerManager(rootDir, this.agentExecutor, this.mcpRouter);
     
     this.contextMiner = new ContextMiner(this.logManager, this.memoryManager, this.agentExecutor);
 
     this.commandManager.on('updated', (commands) => {
         this.registerCommandsAsTools(commands);
     });
+
     
     // --- Skill Registration ---
     this.skillManager.on('updated', (skills) => {
@@ -196,7 +202,7 @@ export class CoreService {
 
   private registerCommandsAsTools(commands: any[]) {
       commands.forEach(cmd => {
-          this.proxyManager.registerInternalTool({
+          this.mcpRouter.registerInternalTool({
               name: cmd.name,
               description: cmd.description || `Execute command: ${cmd.command}`,
               inputSchema: {
@@ -213,7 +219,7 @@ export class CoreService {
   // --- Register Skills as Tools ---
   private registerSkillsAsTools(skills: any[]) {
       skills.forEach(skill => {
-          this.proxyManager.registerInternalTool({
+          this.mcpRouter.registerInternalTool({
               name: `skill_${skill.name}`,
               description: skill.description || `Execute skill: ${skill.name}`,
               inputSchema: skill.inputSchema || {
@@ -383,7 +389,7 @@ export class CoreService {
     this.app.post('/api/inspector/replay', async (request: any, reply) => {
         const { tool, args, _server } = request.body;
         try {
-            const result = await this.proxyManager.callTool(tool, args);
+            const result = await this.mcpRouter.callToolSimple(tool, args);
             return { result };
         } catch (e: any) {
             return reply.code(500).send({ error: e.message });
@@ -507,9 +513,10 @@ export class CoreService {
     await this.promptManager.start();
     await this.contextManager.start();
     await this.commandManager.start();
-    await this.proxyManager.start();
+    // await this.proxyManager.start(); // McpRouter doesn't have a start method, it initializes in constructor
     this.schedulerManager.start();
     await this.mcpSharkManager.start();
+
     await this.marketplaceManager.refresh();
     // await this.documentManager.start();
 
@@ -519,7 +526,7 @@ export class CoreService {
     }
 
     this.memoryManager.getToolDefinitions().forEach(tool => {
-        this.proxyManager.registerInternalTool(tool, async (args: any) => {
+        this.mcpRouter.registerInternalTool(tool, async (args: any) => {
              if (tool.name === 'remember') return this.memoryManager.remember(args);
              if (tool.name === 'search_memory') return this.memoryManager.search(args);
              if (tool.name === 'semantic_search') return this.memoryManager.searchSemantic(args);
@@ -533,12 +540,12 @@ export class CoreService {
         });
     });
 
-    this.proxyManager.registerInternalTool(FormatTranslatorTool, async (args: any) => {
+    this.mcpRouter.registerInternalTool(FormatTranslatorTool, async (args: any) => {
         const json = typeof args.data === 'string' ? JSON.parse(args.data) : args.data;
         return toToon(json);
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "generate_context_file",
         description: "Generate a context file (CLAUDE.md, .cursorrules) based on the current profile.",
         inputSchema: {
@@ -567,7 +574,7 @@ export class CoreService {
         return content;
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "get_traffic_logs",
         description: "Retrieve traffic logs for debugging and auditing.",
         inputSchema: {
@@ -582,7 +589,7 @@ export class CoreService {
         return await this.logManager.getLogs(args);
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "install_package",
         description: "Install an Agent or Skill from the Marketplace.",
         inputSchema: { type: "object", properties: { name: { type: "string" } }, required: ["name"] }
@@ -590,7 +597,7 @@ export class CoreService {
         return await this.marketplaceManager.installPackage(args.name);
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "improve_prompt",
         description: "Rewrite a prompt using the configured LLM to follow best practices.",
         inputSchema: { type: "object", properties: { prompt: { type: "string" } }, required: ["prompt"] }
@@ -606,7 +613,7 @@ export class CoreService {
     });
 
     // Agent Communication Tools
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "send_message",
         description: "Send a message to another agent.",
         inputSchema: {
@@ -632,7 +639,7 @@ export class CoreService {
         return "Message sent";
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "check_mailbox",
         description: "Check for new messages.",
         inputSchema: {
@@ -647,7 +654,7 @@ export class CoreService {
         return messages.length > 0 ? JSON.stringify(messages) : "No new messages";
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "list_agents",
         description: "List all available agents in the registry.",
         inputSchema: { type: "object", properties: {}, required: [] }
@@ -656,7 +663,7 @@ export class CoreService {
         return JSON.stringify(agents.map(a => ({ id: a.id, name: a.name, capabilities: a.capabilities })));
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "delegate_task",
         description: "Delegate a task to a sub-agent. Spawns the agent if not running.",
         inputSchema: {
@@ -690,7 +697,7 @@ export class CoreService {
     });
 
     // Browser Tools
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "browser_navigate",
         description: "Navigate the connected browser to a URL.",
         inputSchema: {
@@ -704,7 +711,7 @@ export class CoreService {
         return await this.browserManager.navigate(args.url);
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "browser_get_content",
         description: "Get the text content of the active tab in the connected browser.",
         inputSchema: { type: "object", properties: {}, required: [] }
@@ -712,7 +719,7 @@ export class CoreService {
         return await this.browserManager.getActiveTabContent();
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "browser_search_history",
         description: "Search the connected browser's history.",
         inputSchema: {
@@ -727,7 +734,7 @@ export class CoreService {
         return await this.browserManager.searchHistory(args.query, args.limit);
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "browser_get_bookmarks",
         description: "Search or list bookmarks from the connected browser.",
         inputSchema: {
@@ -740,7 +747,7 @@ export class CoreService {
         return await this.browserManager.getBookmarks(args.query);
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "ingest_browser_page",
         description: "Read the current browser page and ingest it into memory as a session.",
         inputSchema: { type: "object", properties: {}, required: [] }
@@ -759,7 +766,7 @@ export class CoreService {
         }
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "mine_context",
         description: "Analyze recent session logs to find abandoned threads and key insights.",
         inputSchema: {
@@ -772,7 +779,19 @@ export class CoreService {
         return await this.contextMiner.mineContext(args.sessionId);
     });
     
-    this.proxyManager.registerInternalTool({
+    // NOTE: run_code is already registered in McpRouter constructor as a meta tool.
+    // However, McpRouter's default run_code implementation might need tweaking to use codeExecutionManager if we want to centralize execution logic.
+    // The current McpRouter implementation uses SandboxManager directly.
+    // Let's override it here if we want to use codeExecutionManager instead, OR update McpRouter to use CodeExecutionManager.
+    // For now, let's keep the router's internal implementation but maybe we should unify.
+    
+    // Actually, server.ts was registering run_code using codeExecutionManager.
+    // Let's re-register it to override the default one if needed, or stick with what we have.
+    // Since we are moving to Router, let's stick with Router's implementation or port this logic there.
+    // The router's run_code is generic. The one here was using codeExecutionManager.
+    // Let's re-register it for consistency with the rest of the app.
+    
+    this.mcpRouter.registerInternalTool({
         name: "run_code",
         description: "Execute JavaScript code in a secure sandbox. The code can call other tools using `await call_tool('tool_name', args)`.",
         inputSchema: {
@@ -787,14 +806,14 @@ export class CoreService {
         // Define the callback that the sandbox will use to call tools
         const toolCallback = async (name: string, toolArgs: any) => {
             console.log(`[Sandbox] Requesting tool: ${name}`);
-            // We use the proxyManager to call the tool, ensuring permissions/routing
-            return await this.proxyManager.callTool(name, toolArgs, args.sessionId);
+            // We use the mcpRouter to call the tool, ensuring permissions/routing
+            return await this.mcpRouter.callToolSimple(name, toolArgs, args.sessionId);
         };
 
         return await this.codeExecutionManager.execute(args.code, toolCallback, args.sessionId);
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "configure_client",
         description: "Auto-configure a client (VSCode, Claude, Cursor) to use the AIOS Hub.",
         inputSchema: {
@@ -814,7 +833,7 @@ export class CoreService {
         });
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "install_cli",
         description: "Install the 'aios' CLI command to your shell profile.",
         inputSchema: { type: "object", properties: {}, required: [] }
@@ -823,7 +842,7 @@ export class CoreService {
     });
 
     // --- File System Tools (Required for OpenCode Agents) ---
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "read",
         description: "Read a file from the local filesystem.",
         inputSchema: {
@@ -837,7 +856,7 @@ export class CoreService {
         return await this.fileSystemManager.readFile(args.filePath);
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "write",
         description: "Write content to a file in the local filesystem.",
         inputSchema: {
@@ -852,7 +871,7 @@ export class CoreService {
         return await this.fileSystemManager.writeFile(args.filePath, args.content);
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "edit",
         description: "Edit a file by replacing a string.",
         inputSchema: {
@@ -869,7 +888,7 @@ export class CoreService {
         return await this.fileSystemManager.editFile(args.filePath, args.oldString, args.newString, args.replaceAll);
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "bash",
         description: "Execute a bash command.",
         inputSchema: {
@@ -884,7 +903,7 @@ export class CoreService {
         return await this.fileSystemManager.executeCommand(args.command, args.timeout);
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "glob",
         description: "Search for files using glob patterns.",
         inputSchema: {
@@ -899,7 +918,7 @@ export class CoreService {
         return JSON.stringify(await this.fileSystemManager.globSearch(args.pattern, args.path));
     });
 
-    this.proxyManager.registerInternalTool({
+    this.mcpRouter.registerInternalTool({
         name: "grep",
         description: "Search file contents using regex.",
         inputSchema: {
@@ -914,6 +933,7 @@ export class CoreService {
     }, async (args: any) => {
         return await this.fileSystemManager.grepSearch(args.pattern, args.path, args.include);
     });
+
     // -----------------------------------------------------
     
     try {

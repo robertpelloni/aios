@@ -16,7 +16,7 @@ export async function registerAgentRoutes(app: FastifyInstance, service: CoreSer
         const { code, sessionId } = request.body;
         try {
             const result = await service.codeExecutionManager.execute(code, async (name, args) => {
-                return await service.proxyManager.callTool(name, args, sessionId);
+                return await service.mcpRouter.callToolSimple(name, args, sessionId);
             }, sessionId);
             return { result };
         } catch (err: any) {

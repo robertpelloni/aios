@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
 import { AgentExecutor } from '../agents/AgentExecutor.js';
-import { McpProxyManager } from '../managers/McpProxyManager.js';
+import { McpRouter } from '../managers/McpRouter.js';
 
 interface ScheduledTask {
     id: string;
@@ -24,7 +24,7 @@ export class SchedulerManager extends EventEmitter {
     constructor(
         rootDir: string,
         private agentExecutor: AgentExecutor,
-        private proxyManager: McpProxyManager
+        private mcpRouter: McpRouter
     ) {
         super();
         this.configFile = path.join(rootDir, 'scheduler.json');
@@ -76,9 +76,9 @@ export class SchedulerManager extends EventEmitter {
                         // We rely on AgentExecutor having access to AgentManager?
                         // Or we pass the task name and let Hub handle it?
                         // For simplicity, we assume we can call an internal tool "run_agent".
-                        await this.proxyManager.callTool('run_agent', { agentName: task.target, task: task.args.task });
+                        await this.mcpRouter.callToolSimple('run_agent', { agentName: task.target, task: task.args.task });
                     } else {
-                        await this.proxyManager.callTool(task.target, task.args);
+                        await this.mcpRouter.callToolSimple(task.target, task.args);
                     }
 
                     task.lastRun = Date.now();

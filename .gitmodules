@@ -748,3 +748,7 @@
 [submodule "submodules/mcpc"]
 	path = submodules/mcpc
 	url = https://github.com/apify/mcpc
+
+[submodule "submodules/opencode-autopilot"]
+	path = submodules/opencode-autopilot
+	url = https://github.com/robertpelloni/opencode-autopilot-council

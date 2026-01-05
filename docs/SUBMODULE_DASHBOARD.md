@@ -1,103 +1,146 @@
 # Submodule Dashboard
 
-**Last Updated:** 2025-12-30 05:41:31
+**Last Updated:** 2026-01-05 15:23:58
 
-This document tracks the status, location, and version of all submodules and reference repositories in the aios project.
+This document tracks the status of all submodules and repositories in the aios project.
 
-## Core Submodules (`submodules/`)
+## Agents
 
-| Name | Path | Version | Commit |
-|------|------|---------|--------|
-| **CLIProxyAPI** | `submodules/CLIProxyAPI` | (v6.6.70) | `857c880` |
-| **claude-mem** | `submodules/claude-mem` | (v7.1.2-146-g1415ef4) | `1415ef4` |
-| **jules-app** | `submodules/jules-app` | (v0.2.5-54-ga362fa2) | `a362fa2` |
-| **mcp-shark** | `submodules/mcp-shark` | (1.5.9) | `6d7abfc` |
-| **mcpenetes** | `submodules/mcpenetes` | (v1.0.3-55-gf0fd60e) | `f0fd60e` |
-| **metamcp** | `submodules/metamcp` | (v2.4.21-67-g80344bb) | `80344bb` |
-| **quotio** | `submodules/quotio` | (v0.3.2-1-g165e877) | `165e877` |
+| Name | Path | Type | Commit | Description |
+|------|------|------|--------|-------------|
+| **agent-sessions** | `external/agents_repos/agent-sessions` | Submodule | `1943003` | No README found. |
+| **agentic** | `external/agents_repos/agentic` | Submodule | `3a39153` | No README found. |
+| **claude-squad** | `external/agents_repos/claude-squad` | Submodule | `9d7ca2d` | No README found. |
+| **humanlayer** | `external/agents_repos/humanlayer` | Submodule | `5486c0c` | No README found. |
+| **maestro** | `external/agents_repos/maestro` | Submodule | `4d67cce` | No README found. |
+| **mark-hingston-workflows** | `external/agents_repos/mark-hingston-workflows` | Submodule | `1c3c167` | No README found. |
+| **open-agents** | `external/agents_repos/open-agents` | Submodule | `6465208` | No README found. |
+| **openchamber** | `external/agents_repos/openchamber` | Submodule | `f534e0b` | No README found. |
+| **opencode-agents** | `external/agents_repos/opencode-agents` | Submodule | `81f03c9` | No README found. |
+| **opencode-elf** | `external/agents_repos/opencode-elf` | Submodule | `9959573` | No README found. |
+| **opencode-maestro** | `external/agents_repos/opencode-maestro` | Submodule | `ee8cf68` | No README found. |
+| **opencode-parallel-agents** | `external/agents_repos/opencode-parallel-agents` | Submodule | `3b2fe53` | No README found. |
+| **opencodetisan** | `external/agents_repos/opencodetisan` | Submodule | `bdf95fc` | No README found. |
+| **personal-agent-systems** | `external/agents_repos/personal-agent-systems` | Submodule | `5f6a35b` | No README found. |
+| **rse-agents** | `external/agents_repos/rse-agents` | Submodule | `7667eef` | No README found. |
+| **subagents** | `external/agents_repos/subagents` | Submodule | `1412038` | No README found. |
 
-## Reference Repositories (`references/`)
+## Authentication
 
-These are cloned repositories used for research, pattern extraction, and feature porting.
+| Name | Path | Type | Commit | Description |
+|------|------|------|--------|-------------|
+| **anthropic** | `external/auth/anthropic` | Submodule | `4a68fcf` | No README found. |
+| **copilot** | `external/auth/copilot` | Submodule | `9d3ae3a` | No README found. |
+| **gemini** | `external/auth/gemini` | Submodule | `b53d8e6` | No README found. |
+| **openai-codex** | `external/auth/openai-codex` | Submodule | `ca4ce05` | No README found. |
+| **opencode-antigravity-auth** | `external/auth/opencode-antigravity-auth` | Submodule | `0c521a6` | No README found. |
+| **opencode-google-antigravity-auth** | `external/auth/opencode-google-antigravity-auth` | Submodule | `31a1a89` | No README found. |
 
-| Name | Path | Version | Commit |
-|------|------|---------|--------|
-| **MCP-SuperAssistant** | `references/MCP-SuperAssistant` | (v.0.5.8) | `c8ccc18` |
-| **MCP-Zero** | `references/MCP-Zero` | (heads/master) | `fd666c4` |
-| **Polymcp** | `references/Polymcp` | (heads/main) | `f2487d7` |
-| **Puzld.ai** | `references/Puzld.ai` | (v0.1.9-53-g77ff444) | `77ff444` |
-| **Super-MCP** | `references/Super-MCP` | (heads/main) | `cf8b782` |
-| **agents-md** | `references/agents-md` | (heads/main) | `efab70c` |
-| **BMAD-METHOD** | `references/agents/BMAD-METHOD` | (6.0.0-alpha.21-15-g484990de) | `484990d` |
-| **OpenHands** | `references/agents/OpenHands` | (0.22.0-2502-gd5e83d0f0) | `d5e83d0` |
-| **agent-zero** | `references/agents/agent-zero` | (v0.9.7-12-ga54768c) | `a54768c` |
-| **amplifier** | `references/agents/amplifier` | (heads/main) | `4a763b1` |
-| **autogen** | `references/agents/autogen` | (v0.1.10-2929-g13e144e54) | `13e144e` |
-| **magentic-ui** | `references/agents/magentic-ui` | (v0.1.6-7-gedaed9a) | `edaed9a` |
-| **openagents** | `references/agents/openagents` | (v0.8.0-73-g71beaf5c) | `71beaf5` |
-| **CodeMachine-CLI** | `references/arch/CodeMachine-CLI` | (v0.7.0-164-g2ab4f18) | `2ab4f18` |
-| **claude-code-router** | `references/arch/claude-code-router` | (heads/main) | `31042a6` |
-| **spec-kit** | `references/arch/spec-kit` | (v0.0.90) | `9111699` |
-| **awesome-llm-apps** | `references/awesome-llm-apps` | (heads/main) | `a7f7258` |
-| **claude-code-infrastructure-showcase** | `references/claude-code-infrastructure-showcase` | (heads/main) | `a5818cb` |
-| **claude-squad** | `references/claude-squad` | (v1.0.10-9-gfc1b967) | `fc1b967` |
-| **fabric** | `references/clis/fabric` | (v1.4.13-1859-g45d06f88) | `45d06f8` |
-| **gemini-cli** | `references/clis/gemini-cli` | (MK_TAG_TEST-2585-gfb22f5b8e) | `fb22f5b` |
-| **kilocode** | `references/clis/kilocode` | (v4.140.3-1-g905bcacb64) | `905bcac` |
-| **claude-code-config** | `references/config/claude-code-config` | (v0.1.2) | `193e989` |
-| **emdash** | `references/emdash` | (v0.3.39-2-g8ce8228) | `8ce8228` |
-| **CopilotKit** | `references/frameworks/CopilotKit` | (v1.50.1-16-g40cdfd981) | `40cdfd9` |
-| **lazy-mcp** | `references/lazy-mcp` | (v0.5.4-2-ga9928c8) | `a9928c8` |
-| **magg** | `references/magg` | (v0.10.1) | `c237d4c` |
-| **mcp-server-code-execution-mode** | `references/mcp-server-code-execution-mode` | (heads/main) | `27d23b8` |
-| **mcp-tool-chainer** | `references/mcp-tool-chainer` | (heads/main) | `84ab853` |
-| **awesome-mcp-servers-appcypher** | `references/mcp_repos/awesome-mcp-servers-appcypher` | (heads/main) | `187929a` |
-| **awesome-mcp-servers-punkpeye** | `references/mcp_repos/awesome-mcp-servers-punkpeye` | (heads/main) | `262c0b0` |
-| **awesome-mcp-servers-wong2** | `references/mcp_repos/awesome-mcp-servers-wong2` | (heads/main) | `a4316c7` |
-| **mcphub** | `references/mcphub` | (v0.11.4-1-gab7c210) | `ab7c210` |
-| **mcpm.sh** | `references/mcpm.sh` | (v1.1.1-200-g74dbfb6) | `74dbfb6` |
-| **mcpproxy-go** | `references/mcpproxy-go` | (v0.10.11-1-gf0ca376) | `f0ca376` |
-| **beads** | `references/memory/beads` | (v0.41.0-47-g7f5378ba) | `7f5378b` |
-| **cognee** | `references/memory/cognee` | (v0.5.0.dev0-233-g5b42b21a) | `5b42b21` |
-| **letta** | `references/memory/letta` | (0.1.15-6362-ge026bef80) | `e026bef` |
-| **mem0** | `references/memory/mem0` | (v1.0.0-56-g417ebffa) | `417ebff` |
-| **txtai** | `references/memory/txtai` | (v3.3.0-1420-g995428d) | `995428d` |
-| **mux** | `references/mux` | (v0.9.3-5-g6cd905df) | `6cd905d` |
-| **notebooklm-mcp** | `references/notebooklm-mcp` | (v1.3.6-6-g5ba9714) | `5ba9714` |
-| **opencode** | `references/opencode` | (v0.0.55-4-g73ee493) | `73ee493` |
-| **claude-orchestration** | `references/orchestration/claude-orchestration` | (heads/main) | `376d369` |
-| **claude-squad-smtg** | `references/orchestration/claude-squad-smtg` | (v1.0.10-11-g9d7ca2d) | `9d7ca2d` |
-| **laddr** | `references/orchestration/laddr` | (v0.9.6-2-g858de3c) | `858de3c` |
-| **pal-mcp-server** | `references/pal-mcp-server` | (v9.4.2-5-g5c3dd75) | `5c3dd75` |
-| **pctx** | `references/pctx` | (pctx-py-v0.1.0-rc.2-22-ge0d128d) | `e0d128d` |
-| **pluggedin-app** | `references/pluggedin-app` | (v2.19.0-51-g5a72b316) | `5a72b31` |
-| **pluggedin-mcp** | `references/pluggedin-mcp` | (v1.12.2-1-gc4b99ee) | `c4b99ee` |
-| **prompt-eng-tutorial** | `references/prompt-eng-tutorial` | (heads/master) | `0d27754` |
-| **claude-code-system-prompts** | `references/prompts/claude-code-system-prompts` | (v2.0.75-5-g4910369) | `4910369` |
-| **gemini-cli-tips** | `references/prompts/gemini-cli-tips` | (heads/main) | `2096f87` |
-| **thoughtbox** | `references/prompts/thoughtbox` | (v1.2.0-14-g1f7d08b) | `1f7d08b` |
-| **dev-browser** | `references/skills/dev-browser` | (v1.0.0) | `b549fb0` |
-| **oai-skills** | `references/skills/oai-skills` | (heads/main) | `d0d16a0` |
-| **skrills** | `references/skills/skrills` | (v0.4.0-6-g2e5d98f) | `2e5d98f` |
-| **anthropic-skills** | `references/skills_repos/anthropic-skills` | (heads/main) | `69c0b1a` |
-| **openai-skills** | `references/skills_repos/openai-skills` | (heads/main) | `dadec22` |
-| **smolagents** | `references/smolagents` | (v1.0.0-876-g83090a9) | `83090a9` |
-| **superpowers** | `references/superpowers` | (v3.6.2-3-g5faddc4) | `5faddc4` |
-| **toon** | `references/toon` | (v2.1.0-7-g189bbfa) | `189bbfa` |
-| **voicemode** | `references/voicemode` | (v7.0.1-4-ge27c592) | `e27c592` |
+## Configuration & Templates
 
-## Project Structure Explanation
+| Name | Path | Type | Commit | Description |
+|------|------|------|--------|-------------|
+| **Setup_Ultimate_OpenCode** | `external/config_repos/Setup_Ultimate_OpenCode` | Submodule | `b7bc0cf` | No README found. |
+| **opencode-config-joelhooks** | `external/config_repos/opencode-config-joelhooks` | Submodule | `3732acb` | No README found. |
+| **opencode-config-nexxeln** | `external/config_repos/opencode-config-nexxeln` | Submodule | `a7139dc` | No README found. |
+| **opencode-flake** | `external/config_repos/opencode-flake` | Submodule | `57574d4` | No README found. |
+| **opencode-manager** | `external/config_repos/opencode-manager` | Submodule | `614c6eb` | No README found. |
+| **opencode-plugin-template** | `external/config_repos/opencode-plugin-template` | Embedded | `1449f33` | No README found. |
+| **opencode-template** | `external/config_repos/opencode-template` | Embedded | `1d00e3d` | No README found. |
 
-```
-aios/
-├── packages/
-│   ├── core/       # The Node.js/Fastify Hub (Backend)
-│   ├── ui/         # The Next.js Dashboard (Frontend)
-│   ├── cli/        # The 'aios' command line tool
-│   └── types/      # Shared TypeScript definitions
-├── submodules/     # Integrated components (Git Submodules)
-├── references/     # Research material (Git Submodules/Clones)
-├── docs/           # Documentation & Strategy
-├── scripts/        # Utility scripts
-└── mcp-servers/    # Local MCP servers managed by the Hub
-```
+## Miscellaneous
+
+| Name | Path | Type | Commit | Description |
+|------|------|------|--------|-------------|
+| **OpenCode-Hrishikesh** | `external/misc/OpenCode-Hrishikesh` | Embedded | `f6af160` | No README found. |
+| **awesome-opencode** | `external/misc/awesome-opencode` | Embedded | `56664b5` | No README found. |
+| **hephaestus** | `external/misc/hephaestus` | Embedded | `cff3d63` | No README found. |
+| **ocmonitor-share** | `external/misc/ocmonitor-share` | Embedded | `9328322` | No README found. |
+| **oh-my-opencode** | `external/misc/oh-my-opencode` | Embedded | `048ed36` | No README found. |
+| **openMode** | `external/misc/openMode` | Embedded | `a70101b` | No README found. |
+| **openapi-ts** | `external/misc/openapi-ts` | Embedded | `a6de8a7` | No README found. |
+| **opencode-box** | `external/misc/opencode-box` | Embedded | `720a096` | No README found. |
+| **opencode-context-analysis** | `external/misc/opencode-context-analysis` | Embedded | `3676b9f` | No README found. |
+| **opencode-intersystems** | `external/misc/opencode-intersystems` | Embedded | `a268e2b` | No README found. |
+| **opencode-mobile** | `external/misc/opencode-mobile` | Embedded | `829521f` | No README found. |
+| **opencode-pty** | `external/misc/opencode-pty` | Embedded | `98d457a` | No README found. |
+| **opencode-roadmap** | `external/misc/opencode-roadmap` | Embedded | `790d2b2` | No README found. |
+| **opencode-sessions** | `external/misc/opencode-sessions` | Embedded | `99b40df` | No README found. |
+| **opencode-supermemory** | `external/misc/opencode-supermemory` | Embedded | `7448e8c` | No README found. |
+| **opencode-tokenscope** | `external/misc/opencode-tokenscope` | Embedded | `14120ae` | No README found. |
+| **opencode-vibe** | `external/misc/opencode-vibe` | Embedded | `76bfdb7` | No README found. |
+| **opencode-wrapped** | `external/misc/opencode-wrapped` | Embedded | `a604019` | No README found. |
+| **tokscale** | `external/misc/tokscale` | Embedded | `279c611` | No README found. |
+
+## Plugins
+
+| Name | Path | Type | Commit | Description |
+|------|------|------|--------|-------------|
+| **ericc-ch-opencode-plugins** | `external/plugins/ericc-ch-opencode-plugins` | Embedded | `f65469a` | No README found. |
+| **opencode-background** | `external/plugins/opencode-background` | Embedded | `63156b4` | No README found. |
+| **opencode-codex-plugin** | `external/plugins/opencode-codex-plugin` | Embedded | `b7387b8` | No README found. |
+| **opencode-codex-provider** | `external/plugins/opencode-codex-provider` | Embedded | `e4454c4` | No README found. |
+| **opencode-dynamic-context-pruning** | `external/plugins/opencode-dynamic-context-pruning` | Embedded | `a5731e6` | No README found. |
+| **opencode-google-ai-search** | `external/plugins/opencode-google-ai-search` | Embedded | `70c8b25` | No README found. |
+| **opencode-md-table-formatter** | `external/plugins/opencode-md-table-formatter` | Embedded | `24b7ce2` | No README found. |
+| **opencode-morph-fast-apply** | `external/plugins/opencode-morph-fast-apply` | Embedded | `08b5462` | No README found. |
+| **opencode-notificator** | `external/plugins/opencode-notificator` | Embedded | `467da26` | No README found. |
+| **opencode-notifier** | `external/plugins/opencode-notifier` | Embedded | `5618f12` | No README found. |
+| **opencode-shell-strategy** | `external/plugins/opencode-shell-strategy` | Embedded | `edf5c42` | No README found. |
+| **opencode-skillful** | `external/plugins/opencode-skillful` | Embedded | `5483b9c` | No README found. |
+| **opencode-smart-title** | `external/plugins/opencode-smart-title` | Embedded | `3511d1d` | No README found. |
+| **opencode-type-inject** | `external/plugins/opencode-type-inject` | Embedded | `bc48d0d` | No README found. |
+| **opencode-wakatime** | `external/plugins/opencode-wakatime` | Embedded | `f3ad7e4` | No README found. |
+| **opencode-websearch-cited** | `external/plugins/opencode-websearch-cited` | Embedded | `57cfe32` | No README found. |
+| **opencode-zed-extension** | `external/plugins/opencode-zed-extension` | Embedded | `b0c9958` | No README found. |
+| **pickle-thinker** | `external/plugins/pickle-thinker` | Embedded | `8c93727` | No README found. |
+| **shantur-opencode-gemini-auth** | `external/plugins/shantur-opencode-gemini-auth` | Embedded | `972c11f` | No README found. |
+
+## Research
+
+| Name | Path | Type | Commit | Description |
+|------|------|------|--------|-------------|
+| **OpenCodeEval** | `external/research/OpenCodeEval` | Embedded | `ff4e891` | No README found. |
+| **OpenCoder-llm** | `external/research/OpenCoder-llm` | Embedded | `6131c47` | No README found. |
+| **OpenQode** | `external/research/OpenQode` | Embedded | `01da8fe` | **The Next-Generation AI-Powered IDE for Modern Developers.** |
+| **opencoder** | `external/research/opencoder` | Embedded | `08ab3a8` | No README found. |
+
+## Skills
+
+| Name | Path | Type | Commit | Description |
+|------|------|------|--------|-------------|
+| **awesome-llm-skills** | `external/skills_repos/awesome-llm-skills` | Embedded | `d62d651` | No README found. |
+| **malhashemi-skills** | `external/skills_repos/malhashemi-skills` | Embedded | `5579eff` | No README found. |
+| **opencode-agent-skills** | `external/skills_repos/opencode-agent-skills` | Embedded | `b5b9f5e` | No README found. |
+| **skills-example** | `external/skills_repos/skills-example` | Embedded | `268af9a` | No README found. |
+| **swarm-tools** | `external/skills_repos/swarm-tools` | Embedded | `5ebc9cc` | No README found. |
+
+## Tools
+
+| Name | Path | Type | Commit | Description |
+|------|------|------|--------|-------------|
+| **OpenCodeRunner** | `external/tools/OpenCodeRunner` | Embedded | `805c2d3` | No README found. |
+| **convx** | `external/tools/convx` | Embedded | `4acf3a0` | No README found. |
+| **cupcake** | `external/tools/cupcake` | Embedded | `da8fd54` | No README found. |
+| **lunaroute** | `external/tools/lunaroute` | Embedded | `4e3eafe` | No README found. |
+| **occtx** | `external/tools/occtx` | Embedded | `8546933` | No README found. |
+| **opencode_tools** | `external/tools/opencode_tools` | Embedded | `0ad8234` | No README found. |
+| **poe-code** | `external/tools/poe-code` | Embedded | `cc27ebf` | No README found. |
+| **splitrail** | `external/tools/splitrail` | Embedded | `b6340be` | No README found. |
+
+## Web Interfaces
+
+| Name | Path | Type | Commit | Description |
+|------|------|------|--------|-------------|
+| **opencode-gui** | `external/web_repos/opencode-gui` | Embedded | `33420bf` | No README found. |
+| **opencode-web-chris-tse** | `external/web_repos/opencode-web-chris-tse` | Embedded | `0ab3c85` | No README found. |
+| **opencode-web-nihalshetty0** | `external/web_repos/opencode-web-nihalshetty0` | Embedded | `fb6e335` | No README found. |
+| **opencodespace** | `external/web_repos/opencodespace` | Embedded | `3c05d50` | No README found. |
+| **opengui** | `external/web_repos/opengui` | Embedded | `2652e68` | No README found. |
+| **portal** | `external/web_repos/portal` | Embedded | `9512696` | No README found. |
+| **superset** | `external/web_repos/superset` | Embedded | `42dc9ec` | No README found. |
+
+## Directory Structure
+    
+- **external/**: Contains third-party or decoupled components organized by category.
+- **submodules/**: Contains core integrated components.

@@ -35,12 +35,12 @@
 - [x] **Memory Consolidation:** Summarize logs into long-term memory.
 - [x] **Autonomous Loops:** Agents that can self-schedule and recurse indefinitely (LoopManager).
 - [x] **Deep Research:** Dedicated agent for multi-step web research.
-- [ ] **Auth & Security:** Secure Socket.io and API endpoints.
+- [x] **Auth & Security:** Secure Socket.io and API endpoints.
 
 ## Phase 6: Economy & Autonomy (In Progress)
 - [x] **Bobcoin Integration:** Submodule added and Economy Manager implemented (Mock).
 - [x] **Universal Instructions:** Centralized agent instructions and development protocol.
 - [x] **Infrastructure Simulation:** Node Manager (Tor, Torrent, Storage) implemented.
 - [x] **Miner CLI:** `super-ai mine` command for simulating physical activity.
-- [ ] **Physical Mining:** Integrate real hardware signals (Serial/GPIO) for "Proof of Dance".
+- [/] **Physical Mining:** Integrate real hardware signals (Serial/GPIO) for "Proof of Dance".
 - [ ] **Wallet Connect:** Real wallet integration.

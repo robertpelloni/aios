@@ -3,7 +3,7 @@ import axios from 'axios';
 import chalk from 'chalk';
 
 export const statusCommand = new Command('status')
-  .description('Check the status of the Super AI Core Service')
+  .description('Check the status of the AIOS Core Service')
   .option('-u, --url <string>', 'Core Service URL', 'http://localhost:3000')
   .action(async (options) => {
     try {

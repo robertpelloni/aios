@@ -78,4 +78,18 @@ export class BrowserManager extends EventEmitter {
             }
         ];
     }
+
+    isConnected(): boolean {
+        return this.clients.size > 0;
+    }
+
+    async searchHistory(query: string, limit?: number): Promise<any[]> {
+        // Mock implementation for now as we don't have full browser history access via socket yet
+        return [];
+    }
+
+    async getBookmarks(query?: string): Promise<any[]> {
+        // Mock implementation
+        return [];
+    }
 }

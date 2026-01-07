@@ -4,8 +4,9 @@ import { MetaMcpClient } from '../clients/MetaMcpClient.js';
 import { ToolSearchService } from '../services/ToolSearchService.js';
 import { MemoryManager } from './MemoryManager.js';
 import { JSONPath } from 'jsonpath-plus';
+import { EventEmitter } from 'events';
 
-export class McpProxyManager {
+export class McpProxyManager extends EventEmitter {
     private metaClient: MetaMcpClient;
     private searchService: ToolSearchService;
     private internalTools: Map<string, { def: any, handler: (args: any) => Promise<any> }> = new Map();
@@ -25,6 +26,7 @@ export class McpProxyManager {
         private mcpManager: McpManager,
         private logManager: LogManager
     ) {
+        super();
         this.metaClient = new MetaMcpClient();
         this.searchService = new ToolSearchService();
         
@@ -364,6 +366,8 @@ export class McpProxyManager {
             tokens: inputTokens
         });
 
+        this.emit('pre_tool_call', { tool: name, args, sessionId });
+
         try {
             let result;
             if (targetServer === 'internal') {
@@ -401,9 +405,12 @@ export class McpProxyManager {
                 cost: cost
             });
             
+            this.emit('post_tool_call', { tool: name, result, sessionId });
+
             // Hook for Memory
             if (this.memoryManager) {
-                this.memoryManager.ingestInteraction(name, args, result).catch(e => console.error(e));
+                // @ts-ignore - method added in runtime or recently
+                this.memoryManager.ingestInteraction({ tool: name, args, result }).catch(e => console.error(e));
             }
 
             return result;

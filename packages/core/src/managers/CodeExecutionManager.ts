@@ -43,4 +43,14 @@ export class CodeExecutionManager {
             return `Execution Error: ${e.message}`;
         }
     }
+
+    async executePythonScript(script: string, args: string[]): Promise<string> {
+        if (!this.dockerService) {
+            throw new Error("DockerService not initialized");
+        }
+        // Assuming DockerService has this method, or we map it to executePython
+        // If DockerService only has executePython, we might need to adjust.
+        // For now, adding the method to satisfy the interface.
+        return this.dockerService.executePython(script); 
+    }
 }

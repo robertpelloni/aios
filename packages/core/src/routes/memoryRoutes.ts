@@ -20,7 +20,7 @@ export async function memoryRoutes(server: FastifyInstance, memoryManager: Memor
     const { query, providerId } = request.query as { query: string, providerId?: string };
     if (!query) return reply.code(400).send({ error: 'Query is required' });
     
-    return memoryManager.search({ query, providerId });
+    return memoryManager.search({ query });
   });
 
   // Remember something (Ingest)
@@ -35,7 +35,7 @@ export async function memoryRoutes(server: FastifyInstance, memoryManager: Memor
 
   // List snapshots
   server.get('/memory/snapshots', async () => {
-      return memoryManager.listSnapshots({});
+      return memoryManager.listSnapshots();
   });
 
   // Create snapshot
@@ -43,7 +43,7 @@ export async function memoryRoutes(server: FastifyInstance, memoryManager: Memor
       const { sessionId, context } = request.body as { sessionId: string, context: any };
       if (!sessionId || !context) return reply.code(400).send({ error: 'Missing sessionId or context' });
       
-      const result = await memoryManager.createSnapshot({ sessionId, context });
+      const result = await memoryManager.createSnapshot();
       return { success: true, message: result };
   });
 
@@ -53,7 +53,7 @@ export async function memoryRoutes(server: FastifyInstance, memoryManager: Memor
       if (!filename) return reply.code(400).send({ error: 'Missing filename' });
 
       try {
-        const result = await memoryManager.restoreSnapshot({ filename });
+        const result = await memoryManager.restoreSnapshot(filename);
         return { success: true, data: result };
       } catch (error: any) {
         return reply.code(500).send({ error: error.message });

@@ -5,7 +5,21 @@ export interface ChatMessage {
     content: string;
 }
 
+export interface UsageStats {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+    cost: number;
+}
+
 export class ModelGateway {
+    public stats: UsageStats = {
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0,
+        cost: 0
+    };
+
     constructor(private secretManager: SecretManager) {}
 
     async chat(messages: ChatMessage[], model: string = 'gpt-3.5-turbo'): Promise<string> {

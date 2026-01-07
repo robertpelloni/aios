@@ -19,7 +19,7 @@ export class SystemPromptManager extends EventEmitter {
         if (fs.existsSync(this.filePath)) {
             this.content = fs.readFileSync(this.filePath, 'utf-8');
         } else {
-            this.content = "You are a helpful AI assistant within the Super AI Plugin ecosystem.";
+            this.content = "You are a helpful AI assistant within the AIOS ecosystem.";
             this.save(this.content);
         }
     }

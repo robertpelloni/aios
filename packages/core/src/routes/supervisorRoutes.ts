@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { SupervisorPlugin } from '@super-ai/supervisor-plugin';
+import { SupervisorPlugin } from '@aios/supervisor-plugin';
 
 export const createSupervisorRoutes = (app: FastifyInstance, supervisor: SupervisorPlugin) => {
   app.post('/api/supervisor/task', async (req: any, reply) => {

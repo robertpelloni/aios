@@ -4,6 +4,7 @@ import { CodeExecutionManager } from '../managers/CodeExecutionManager.js';
 import { AgentManager } from '../managers/AgentManager.js';
 import { SkillManager } from '../managers/SkillManager.js';
 import { PromptManager } from '../managers/PromptManager.js';
+import { McpProxyManager } from '../managers/McpProxyManager.js';
 
 /**
  * HubServer acts as the central brain.
@@ -12,7 +13,7 @@ import { PromptManager } from '../managers/PromptManager.js';
  */
 export class HubServer extends EventEmitter {
     constructor(
-        private mcpRouter: McpRouter,
+        private mcpRouter: McpRouter | McpProxyManager,
         private codeManager: CodeExecutionManager,
         private agentManager?: AgentManager,
         private skillManager?: SkillManager,
@@ -137,7 +138,17 @@ export class HubServer extends EventEmitter {
             // Check if it's a code execution request
             if (name === 'execute_code') {
                 const result = await this.codeManager.execute(args.code, async (toolName: string, toolArgs: any) => {
-                    return this.mcpRouter.callToolSimple(toolName, toolArgs);
+                    // Check if it's McpRouter (has callToolSimple) or McpProxyManager (use callTool)
+                    if ('callToolSimple' in this.mcpRouter) {
+                        return this.mcpRouter.callToolSimple(toolName, toolArgs);
+                    } else {
+                        // For McpProxyManager, callTool returns full result object
+                        const res = await this.mcpRouter.callTool(toolName, toolArgs);
+                        // We need to unpack it if it's complex, or return simple text
+                        // But AgentExecutor usually expects raw tool result or simple string.
+                        // Let's assume standardized result format.
+                        return res;
+                    }
                 });
                 return {
                     jsonrpc: "2.0",
@@ -148,7 +159,13 @@ export class HubServer extends EventEmitter {
 
             // Otherwise route to the correct MCP server
             try {
-                const result = await this.mcpRouter.callToolSimple(name, args);
+                let result;
+                if ('callToolSimple' in this.mcpRouter) {
+                    result = await this.mcpRouter.callToolSimple(name, args);
+                } else {
+                    result = await this.mcpRouter.callTool(name, args);
+                }
+                
                 return {
                     jsonrpc: "2.0",
                     id: message.id,

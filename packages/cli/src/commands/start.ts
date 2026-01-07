@@ -7,11 +7,11 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const startCommand = new Command('start')
-  .description('Start the Super AI Core Service')
+  .description('Start the AIOS Core Service')
   .option('-p, --port <number>', 'Port to run on', '3000')
   .option('-d, --detached', 'Run in detached mode')
   .action((options) => {
-    console.log(`Starting Super AI Core on port ${options.port}...`);
+    console.log(`Starting AIOS Core on port ${options.port}...`);
 
     // Resolve path to core package
     // Assuming structure: packages/cli/dist/commands -> packages/cli/dist -> packages/cli -> packages/core
@@ -25,7 +25,7 @@ export const startCommand = new Command('start')
         process.exit(1);
     }
 
-    const child = spawn('pnpm', ['--filter', '@super-ai/core', 'start'], {
+    const child = spawn('pnpm', ['--filter', '@aios/core', 'start'], {
         stdio: options.detached ? 'ignore' : 'inherit',
         detached: options.detached,
         env: { ...process.env, PORT: options.port }

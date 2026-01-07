@@ -4,10 +4,10 @@ import { io } from 'socket.io-client';
 let socket: any;
 
 export function activate(context: vscode.ExtensionContext) {
-	console.log('Super AI Plugin is now active!');
+	console.log('AIOS Plugin is now active!');
 
-	let disposable = vscode.commands.registerCommand('super-ai.connect', () => {
-		const config = vscode.workspace.getConfiguration('super-ai');
+	let disposable = vscode.commands.registerCommand('aios.connect', () => {
+		const config = vscode.workspace.getConfiguration('aios');
         const url = config.get<string>('hubUrl') || 'http://localhost:3000';
 
         if (socket) {
@@ -19,11 +19,11 @@ export function activate(context: vscode.ExtensionContext) {
         });
 
         socket.on('connect', () => {
-            vscode.window.showInformationMessage(`Connected to Super AI Hub at ${url}`);
+            vscode.window.showInformationMessage(`Connected to AIOS Hub at ${url}`);
         });
 
         socket.on('disconnect', () => {
-            vscode.window.showWarningMessage('Disconnected from Super AI Hub');
+            vscode.window.showWarningMessage('Disconnected from AIOS Hub');
         });
 
         socket.on('hook_event', (event: any) => {

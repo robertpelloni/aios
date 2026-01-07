@@ -47,7 +47,7 @@ export class AgentMessageBroker extends EventEmitter {
       // Actually, let's use the compactor via a new method in MemoryManager or reuse ingestSession logic?
       // Let's add a specialized method in MemoryManager for messages.
       
-      await this.memoryManager.ingestAgentMessage(message);
+      await this.memoryManager.ingestAgentMessage(message.sourceAgentId, message);
   }
 
   subscribe(agentId: string, handler: (msg: AgentMessage) => void) {

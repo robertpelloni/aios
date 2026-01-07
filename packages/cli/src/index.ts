@@ -13,8 +13,8 @@ const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 
 const program = new Command();
 
 program
-  .name('super-ai')
-  .description('CLI for Super AI Plugin Monorepo')
+  .name('aios')
+  .description('CLI for AIOS Monorepo')
   .version(pkg.version);
 
 program.addCommand(startCommand);

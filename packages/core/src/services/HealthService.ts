@@ -43,7 +43,7 @@ export class HealthService extends EventEmitter {
 
     getSystemStatus() {
         const clients = this.getClients();
-        const mcps = this.mcpManager.getServers();
+        const mcps = this.mcpManager.getAllServers();
 
         return {
             status: 'operational',

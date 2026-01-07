@@ -140,7 +140,7 @@ export class ClientManager {
 
         if (!currentConfig.mcpServers) currentConfig.mcpServers = {};
 
-        currentConfig.mcpServers["super-ai-hub"] = {
+        currentConfig.mcpServers["aios-hub"] = {
             command: "node",
             args: [hubConfig.scriptPath],
             env: {

@@ -1,0 +1,246 @@
+commit 37664630a2ff5284f7b158fb8ecb5ceef115b3f8
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Mon Jan 5 15:18:02 2026 -0500
+
+    chore: fix and restore all missing submodules
+
+ delete mode 160000 references/agents/Distil-NPCs
+
+commit fbb295eba8778db11e2ab0b6b3d776d08e2dc806
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Fri Jan 2 23:22:04 2026 -0500
+
+    Refactor: Replace McpProxyManager with McpRouter in core
+
+ delete mode 100644 external/tools/mcpc/README.md
+ delete mode 100644 packages/core/src/managers/McpProxyManager.ts
+
+commit 59c347fa258b1444f922e20cb3be5cdfbf58ae76
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Fri Jan 2 12:18:20 2026 -0500
+
+    Add majority of submodules to AIOS
+
+ delete mode 160000 external/config_repos/oh-my-opencode
+
+commit 97fe908f2e0b855c4bfce6a5d3ad24fe6cc508e1
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Wed Dec 31 21:55:57 2025 -0500
+
+    Revise LLM and agent instructions, add handoff doc
+    
+    Updated AGENTS.md, CLAUDE.md, GEMINI.md, GPT.md, and copilot-instructions.md to clarify core directives and project specifics for each model. Expanded docs/LLM_INSTRUCTIONS.md with model-specific and version control protocols. Added a session handoff summary for AIOS Core Phase 3 in docs/handoffs/session_handoff_2025_12_31.md. Bumped version to 0.4.3 and removed core_log.txt. Updated submodule and build artifacts.
+
+ delete mode 100644 core_log.txt
+
+commit a384634c8edc6a6c792507472553f30b2d93999e
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Wed Dec 31 09:20:33 2025 -0500
+
+    chore: stop tracking binary log file (traffic.db)
+
+ delete mode 100644 packages/core/logs/traffic.db
+
+commit bb8b6ace23bd6e5a5e4159becce67add62a7677a
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Tue Dec 30 13:22:33 2025 -0500
+
+    Add skill-user-agent and update skill registry metadata
+    
+    Introduces the skill-user-agent definition and a test for agent loading. Updates skills_registry.json to include short descriptions for several skills. Improves frontmatter parsing in index_skills.ts and comments out noisy SkillManager logs. Removes obsolete test_integration and external config repo.
+
+ delete mode 160000 external/config_repos/oh-my-opencode
+ delete mode 100644 test_integration.ts
+
+commit dccea5f85e35143144965ab01015df0494af0c8a
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Tue Dec 30 04:27:20 2025 -0500
+
+    chore: remove broken submodules
+
+ delete mode 160000 external/agents_repos/opencode-workflows
+ delete mode 160000 external/config_repos/opencode-plugin-template
+ delete mode 160000 external/plugins/opencode-background
+
+commit c276e73b234573aec2f78cb55307fb2420f23958
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Mon Dec 29 02:13:59 2025 -0500
+
+    feat: implement Mem0 memory provider and enhance ecosystem dashboard
+
+ delete mode 100644 test-data-memory/memory.json
+
+commit b80a39cae724041449ec5d5c26fc38747d244d68
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Sun Dec 28 18:33:57 2025 -0500
+
+    Refactor memory providers and update UI for new API
+    
+    Replaces FileMemoryProvider with test data, updates BrowserStorageProvider and PineconeMemoryProvider to use new Memory API (init, store, retrieve), and enhances MemoryPage UI to display similarity scores and provider types with new icons. This refactor aligns providers with a unified interface and improves memory search result presentation.
+
+ delete mode 100644 packages/core/src/managers/providers/FileMemoryProvider.ts
+
+commit f0e62967d4f5b7d91f8e23ca5b8025f639d6e0dc
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Sun Dec 28 03:44:12 2025 -0500
+
+    Update submodules, remove broken references, and refresh dashboard
+
+ delete mode 160000 references/testing/agentic-qe
+
+commit 9427e7aa0ef991e9e788a30df48ba982dacb3f41
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Sun Dec 28 03:41:14 2025 -0500
+
+    chore: standardize AGENTS.md and update status for v0.2.3
+
+ delete mode 160000 references/memory/vibeship-mind
+
+commit 7b7dd2f60b69219730a485dfc1275e64f2fe9f0d
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Sun Dec 28 02:41:40 2025 -0500
+
+    chore: release v0.2.3 - Universal Charter & Submodule Sync
+
+ delete mode 100644 packages/ui/src/app/jules/page.tsx
+ delete mode 100644 packages/ui/src/app/memory/page.tsx
+ delete mode 100644 packages/ui/src/app/page.tsx
+
+commit 2e11a553bd94d8dc43134bfb6054f5cc920c8d94
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Sat Dec 27 22:57:45 2025 -0500
+
+    Remove duration from LogManager and logs schema
+    
+    Eliminates the 'duration' field from the LogManager, its database schema, and all related logic. Also deletes the test_traffic.ts file, which depended on the duration field. Adds mcp-shark as a new submodule.
+
+ delete mode 100644 packages/core/src/test_traffic.ts
+
+commit de218f0d29dc283518f768ff8e9e28219838d65d
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Sat Dec 27 05:01:23 2025 -0500
+
+    Refactor LogManager to use SQLite and fix test cleanup
+
+ delete mode 100644 packages/core/test_logs/traffic.db
+
+commit 97b3f0e73982e3fa4fa12a60b3f16a2a49d99ab4
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Thu Dec 25 12:31:48 2025 -0500
+
+    chore: sync components and libs from jules-app after merge
+
+ delete mode 100644 packages/ui/components/SessionKeeper.tsx
+
+commit b18600be28c425fa978b7fe22dc0c8a7f5aad62d
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Wed Dec 24 23:50:12 2025 -0500
+
+    chore: update submodules, docs, and version to 0.0.2
+
+ delete mode 100644 fix_submodules.py
+ delete mode 100644 resolve_agent_executor.py
+ delete mode 100644 resolve_code_exec.py
+ delete mode 100644 resolve_readme.py
+ delete mode 100644 resolve_roadmap.py
+ delete mode 100644 resolve_server.py
+
+commit 231429ac0e12dcf8e78337e1ed9bfc0b5621cb51
+Author: google-labs-jules[bot] <161369871+google-labs-jules[bot]@users.noreply.github.com>
+Date:   Thu Dec 25 03:05:29 2025 +0000
+
+    feat: Complete Super AI Plugin Multiplatform Skeleton
+    
+    - Added `packages/vscode` skeleton (VSCode Client).
+    - Added `packages/browser` skeleton (Chrome Manifest V3 Client).
+    - Implemented `HandoffManager` for session persistence (`save_handoff` tool).
+    - Implemented `HealthService` to track connected clients and system status.
+    - Updated UI with `SystemStatus` widget and `Handoffs` page.
+    - Finalized Core Service logic to support multi-client orchestration.
+    
+    Full Monorepo Structure:
+    - Core: Node.js Hub (Fastify + Socket.io)
+    - UI: React Dashboard
+    - CLI: Command Line Interface
+    - VSCode: Extension Client
+    - Browser: Extension Client
+    
+    This completes the requested Multiplatform Skeleton.
+
+ delete mode 100644 packages/core/src/managers/DocumentManager.ts
+ delete mode 100644 packages/core/src/routes/agentRoutes.ts
+ delete mode 100644 packages/core/src/routes/mcpRoutes.ts
+
+commit ce06f38d91c40aad29168d71e0f5c383026edc1f
+Author: Robert Pelloni <pelloni.robert@gmail.com>
+Date:   Wed Dec 24 21:57:37 2025 -0500
+
+    Update submodules and remove broken ones
+
+ delete mode 160000 references/Switchboard
+ delete mode 160000 references/ToolRAG
+ delete mode 160000 references/agent-mcp-gateway
+ delete mode 160000 references/agents/Agent-MCP
+ delete mode 160000 references/agents/claude-code-subagents-collection
+ delete mode 160000 references/agents/claude-code-tresor
+ delete mode 160000 references/agents/codex-subagents-mcp
+ delete mode 160000 references/claude-lazy-loading
+ delete mode 160000 references/code-executor-MCP
+ delete mode 160000 references/code-mode
+ delete mode 160000 references/code-mode-toon
+ delete mode 160000 references/codemode-unified
+ delete mode 160000 references/lootbox
+ delete mode 160000 references/mcp-funnel
+ delete mode 160000 references/mcp-json-yaml-toml
+ delete mode 160000 references/mcpproxy
+ delete mode 160000 references/meta-mcp-proxy
+ delete mode 160000 references/ncp
+ delete mode 160000 references/orchestration/TaskSync
+ delete mode 160000 references/orchestration/agentic-project-management
+ delete mode 160000 references/orchestration/claude-task-master
+ delete mode 160000 references/orchestration/npcsh
+ delete mode 160000 references/orchestration/opencode-sessions
+ delete mode 160000 references/orchestration/systemprompt-code-orchestrator
+ delete mode 160000 references/orchestration/ultra-mcp
+ delete mode 160000 references/programmatic-tool-calling-ai-sdk
+ delete mode 160000 references/skills/ComposioHQ-awesome-claude-skills
+ delete mode 160000 references/skills/SWORDSwarm
+ delete mode 160000 references/skills/Superpowers
+ delete mode 160000 references/skills/VoltAgent-awesome-claude-skills
+ delete mode 160000 references/skills/anthropics-skills
+ delete mode 160000 references/skills/claude-code-tools
+ delete mode 160000 references/skills/claude-win11-speckit
+ delete mode 160000 references/skills/claudisms
+ delete mode 160000 references/skills/dot-context
+ delete mode 160000 references/skills/maxvaega-awesome-skills
+ delete mode 160000 references/skills/meridian
+ delete mode 160000 references/skills/opencode-skills
+ delete mode 160000 references/skills/openskills
+ delete mode 160000 references/skills/righter
+ delete mode 160000 references/skills/skilled-intelligence-marketplace
+ delete mode 160000 references/skills/skillkit
+ delete mode 160000 references/skills/travisvn-awesome-claude-skills
+ delete mode 160000 references/utcp-mcp
+
+commit b2aa16dcd23cf89ba275474a581c8173c753cea5
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Wed Dec 24 22:12:46 2025 +0000
+
+    Migrate UI from Vite to Next.js for Vercel deployment
+    
+    Co-authored-by: robertpelloni <673434+robertpelloni@users.noreply.github.com>
+
+ delete mode 100644 packages/ui/index.html
+ delete mode 100644 packages/ui/src/App.tsx
+ delete mode 100644 packages/ui/src/components/Layout.tsx
+ delete mode 100644 packages/ui/src/components/Mcpshark.tsx
+ delete mode 100644 packages/ui/src/components/layout/Layout.tsx
+ delete mode 100644 packages/ui/src/main.tsx
+ delete mode 100644 packages/ui/src/pages/Agents.tsx
+ delete mode 100644 packages/ui/src/pages/Context.tsx
+ delete mode 100644 packages/ui/src/pages/Home.tsx
+ delete mode 100644 packages/ui/src/pages/Inspector.tsx
+ delete mode 100644 packages/ui/src/pages/Marketplace.tsx
+ delete mode 100644 packages/ui/src/pages/McpServers.tsx
+ delete mode 100644 packages/ui/src/pages/Placeholders.tsx
+ delete mode 100644 packages/ui/src/pages/Prompts.tsx

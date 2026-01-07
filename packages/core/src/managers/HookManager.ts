@@ -23,16 +23,17 @@ export class HookManager extends EventEmitter {
     console.log(`[HookManager] Watching ${this.hooksDir}`);
   }
 
-  private async loadHooks(filepath: string) {
+  public async loadHooks(filepath?: string) {
+    const targetPath = filepath || path.join(this.hooksDir, 'hooks.json');
     try {
-      const content = await fs.readFile(filepath, 'utf-8');
+      const content = await fs.readFile(targetPath, 'utf-8');
       const data = JSON.parse(content);
       // Basic validation could go here
       this.hooks = Array.isArray(data) ? data : [];
       console.log(`[HookManager] Loaded ${this.hooks.length} hooks`);
       this.emit('loaded', this.hooks);
     } catch (err) {
-      console.error(`[HookManager] Error loading hooks from ${filepath}:`, err);
+      console.error(`[HookManager] Error loading hooks from ${targetPath}:`, err);
     }
   }
 

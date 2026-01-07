@@ -871,3 +871,6 @@
 [submodule "external/research/OpenQode"]
 	path = external/research/OpenQode
 	url = https://github.com/roman-ryzenadvanced/OpenQode-Public-Alpha-GooseUltra-
+[submodule "openevolve"]
+	path = openevolve
+	url = https://github.com/codelion/openevolve

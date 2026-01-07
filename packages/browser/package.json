@@ -1,5 +1,5 @@
 {
-  "name": "@super-ai/browser-extension",
+  "name": "@aios/browser-extension",
   "version": "0.1.0-skeleton",
   "scripts": {
     "build": "webpack --config webpack.config.js"
@@ -8,9 +8,10 @@
     "socket.io-client": "^4.7.4"
   },
   "devDependencies": {
+    "@types/chrome": "^0.0.263",
+    "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
     "webpack": "^5.90.0",
-    "webpack-cli": "^5.1.0",
-    "ts-loader": "^9.5.1"
+    "webpack-cli": "^5.1.0"
   }
 }

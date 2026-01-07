@@ -51,7 +51,7 @@ export class CoreService {
   private io: SocketIOServer;
   
   private hookManager: HookManager;
-  private agentManager: AgentManager;
+  public agentManager: AgentManager;
   private skillManager: SkillManager;
   private promptManager: PromptManager;
   private contextManager: ContextManager;
@@ -135,7 +135,7 @@ export class CoreService {
 
     this.healthService = new HealthService(this.mcpManager, this.modelGateway);
 
-    this.proxyManager = new McpProxyManager(this.mcpManager, this.logManager, this.vectorStore);
+    this.proxyManager = new McpProxyManager(this.mcpManager, this.logManager);
 
     this.hubServer = new HubServer(
         this.proxyManager,

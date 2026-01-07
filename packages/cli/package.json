@@ -1,8 +1,9 @@
 {
-  "name": "@super-ai/cli",
+  "name": "@aios/cli",
   "version": "0.1.0-skeleton",
+  "type": "module",
   "bin": {
-    "super-ai": "./dist/index.js"
+    "aios": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",

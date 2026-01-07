@@ -1,5 +1,5 @@
 {
-  "name": "@super-ai/supervisor-plugin",
+  "name": "@aios/supervisor-plugin",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",

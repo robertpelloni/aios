@@ -64,7 +64,9 @@ export class ContextMiner {
         try {
             const analysisResult = await this.agentExecutor.run(
                 analystAgent, 
-                `Analyze this transcript:\n\n${transcript}`
+                `Analyze this transcript:\n\n${transcript}`,
+                {},
+                sessionId || 'system-mining'
             );
 
             if (!analysisResult) {
@@ -90,11 +92,10 @@ export class ContextMiner {
             // 5. Store Insights in Memory
             if (analysis.facts && Array.isArray(analysis.facts)) {
                 for (const fact of analysis.facts) {
-                    await this.memoryManager.remember({
-                        content: fact,
-                        tags: ['auto-mined', 'fact'],
-                        providerId: 'default' // Use default provider
-                    });
+            await this.memoryManager.remember({
+                content: fact,
+                tags: ['mined', 'context-miner', sessionId || 'system']
+            });
                 }
             }
 

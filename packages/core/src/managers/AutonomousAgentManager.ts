@@ -24,27 +24,12 @@ export class AutonomousAgentManager {
 
         // 1. Get Definition
         // The AgentManager stores agents by filename or ID.
-        // Let's assume agentId matches what AgentManager has.
-        const agents = this.agentManager.getAgents();
-        // We need a way to find the definition by ID.
-        // AgentManager.agents is Map<string, AgentDefinition> where key is filename/ID.
-        // But AgentRegistry uses IDs.
+        const profile = this.agentManager.registry.get(agentId);
         
-        // Let's try to find it in the registry first to get the name/metadata
-        const profile = this.agentManager.registry.getAgent(agentId);
-        if (!profile) {
-            throw new Error(`Agent ${agentId} not found in registry.`);
-        }
-
-        // Now get the full definition. 
-        // Since AgentManager doesn't expose getAgent(id) directly (only getAgents()), 
-        // we might need to iterate or update AgentManager.
-        // For now, let's iterate.
-        const allAgents = this.agentManager.getAgents();
-        const def = allAgents.find(a => a.name === profile.name); // Weak link, but works for now if names are unique
+        const def = profile || this.agentManager.getAgents().find(a => a.name === agentId);
 
         if (!def) {
-             throw new Error(`Agent definition for ${profile.name} not found.`);
+             throw new Error(`Agent definition for ${agentId} not found.`);
         }
 
         const apiKey = this.secretManager.getSecret('OPENAI_API_KEY');

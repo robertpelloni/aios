@@ -43,3 +43,4 @@ verification/
 references/
 packages/core/core.log
 packages/ui/ui.log
+.next/

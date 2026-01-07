@@ -123,4 +123,8 @@ export class AgentManager extends EventEmitter {
   getAgents() {
     return Array.from(this.agents.values());
   }
+
+  get registry() {
+      return this.agents;
+  }
 }

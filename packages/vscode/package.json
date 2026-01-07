@@ -1,20 +1,20 @@
 {
-  "name": "super-ai-vscode",
-  "displayName": "Super AI Plugin",
+  "name": "aios-vscode",
+  "displayName": "AIOS Plugin",
   "version": "0.1.0-skeleton",
-  "publisher": "super-ai",
+  "publisher": "aios",
   "engines": {
     "vscode": "^1.85.0"
   },
   "main": "./dist/extension.js",
   "activationEvents": [
-      "onCommand:super-ai.connect"
+      "onCommand:aios.connect"
   ],
   "contributes": {
     "commands": [
       {
-        "command": "super-ai.connect",
-        "title": "Super AI: Connect to Hub"
+        "command": "aios.connect",
+        "title": "AIOS: Connect to Hub"
       }
     ]
   },

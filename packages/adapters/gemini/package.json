@@ -1,9 +1,9 @@
 {
-  "name": "@super-ai/gemini-adapter",
+  "name": "@aios/gemini-adapter",
   "version": "0.1.0-skeleton",
   "main": "dist/index.js",
   "bin": {
-    "super-gemini": "./dist/index.js"
+    "aios-gemini": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",

@@ -1,9 +1,9 @@
 {
-  "name": "@super-ai/claude-adapter",
+  "name": "@aios/claude-adapter",
   "version": "0.1.0-skeleton",
   "main": "dist/index.js",
   "bin": {
-    "super-claude": "./dist/index.js"
+    "aios-claude": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",

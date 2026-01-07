@@ -4,10 +4,11 @@ import { AgentExecutor } from '../agents/AgentExecutor.js';
 export class HookExecutor {
     constructor(private agentExecutor?: AgentExecutor) {}
 
-    static async executeCommand(command: string): Promise<string> {
+    static async executeCommand(command: string, args: string[] = []): Promise<string> {
+        const fullCommand = args && args.length > 0 ? `${command} ${args.join(' ')}` : command;
         return new Promise((resolve, reject) => {
-            console.log(`Executing hook command: ${command}`);
-            exec(command, (error, stdout, stderr) => {
+            console.log(`Executing hook command: ${fullCommand}`);
+            exec(fullCommand, (error, stdout, stderr) => {
                 if (error) {
                     console.error(`Hook execution failed: ${error.message}`);
                     return reject(error);

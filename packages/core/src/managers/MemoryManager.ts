@@ -63,6 +63,43 @@ export class MemoryManager {
         return "No logs to consolidate.";
     }
 
+    async ingestSession(sessionId: string, sessionData: any) {
+        await this.remember({
+            content: `Session ${sessionId} summary: ${JSON.stringify(sessionData)}`,
+            tags: ['session', sessionId]
+        });
+    }
+
+    async ingestAgentMessage(agentId: string, message: any) {
+        await this.remember({
+            content: `Agent ${agentId} message: ${JSON.stringify(message)}`,
+            tags: ['agent', agentId]
+        });
+    }
+
+    async ingestInteraction(data: any) {
+        await this.remember({
+            content: `Interaction: ${JSON.stringify(data)}`,
+            tags: ['interaction']
+        });
+    }
+
+    getProviders() {
+        return [];
+    }
+
+    listSnapshots() {
+        return [];
+    }
+
+    async createSnapshot() {
+        return { id: 'snapshot-' + Date.now(), timestamp: new Date().toISOString() };
+    }
+
+    async restoreSnapshot(id: string) {
+        return { success: true, id };
+    }
+
     getToolDefinitions() {
         return [
             {

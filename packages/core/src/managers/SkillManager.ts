@@ -32,6 +32,10 @@ export class SkillManager {
     }
   }
 
+  public async loadSkills(): Promise<void> {
+      await this.initialize();
+  }
+
   public listSkills(): SkillDefinition[] {
     return this.registry;
   }

@@ -37,7 +37,7 @@ export class ContextCompactor {
                 description: "Compacts raw text into structured memory.",
                 instructions: "You are a precise data extractor. Output valid JSON only.",
                 model: "gpt-4-turbo" // Or configurable
-            }, prompt);
+            }, prompt, {}, "system-compaction");
 
             if (!result) {
                 return { summary: "No result from agent", facts: [], decisions: [], actionItems: [] };
@@ -77,7 +77,7 @@ export class ContextCompactor {
         try {
             const results = await this.memoryManager.search({ query: fact });
             // If we find a highly similar memory (e.g. > 0.85), assume it exists
-            return results.some(r => r.similarity !== undefined && r.similarity > 0.85);
+            return results.some(r => (r as any).similarity !== undefined && (r as any).similarity > 0.85);
         } catch (e) {
             return false;
         }

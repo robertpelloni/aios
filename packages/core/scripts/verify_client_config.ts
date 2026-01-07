@@ -38,11 +38,11 @@ async function main() {
     const updatedConfig = JSON.parse(fs.readFileSync(mockConfigPath, 'utf-8'));
     console.log('Updated Config:', JSON.stringify(updatedConfig, null, 2));
 
-    if (!updatedConfig.mcpServers['super-ai-hub']) {
-        throw new Error('super-ai-hub entry missing');
+    if (!updatedConfig.mcpServers['aios-hub']) {
+        throw new Error('aios-hub entry missing');
     }
 
-    if (updatedConfig.mcpServers['super-ai-hub'].args[0] !== scriptPath) {
+    if (updatedConfig.mcpServers['aios-hub'].args[0] !== scriptPath) {
         throw new Error('Incorrect script path injected');
     }
 

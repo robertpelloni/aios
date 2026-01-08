@@ -7,6 +7,7 @@ import { SkillManager } from './managers/SkillManager.js';
 import { PromptManager } from './managers/PromptManager.js';
 import { ContextManager } from './managers/ContextManager.js';
 import { McpManager } from './managers/McpManager.js';
+import { McpClientManager } from './managers/McpClientManager.js';
 import { CommandManager } from './managers/CommandManager.js';
 import { ConfigGenerator } from './utils/ConfigGenerator.js';
 import { HookExecutor } from './utils/HookExecutor.js';
@@ -44,6 +45,9 @@ import { WebSearchTool } from './tools/WebSearchTool.js';
 import { EconomyManager } from './managers/EconomyManager.js';
 import { NodeManager } from './managers/NodeManager.js';
 import { AuthMiddleware } from './middleware/AuthMiddleware.js';
+import { SystemTrayManager } from './managers/SystemTrayManager.js';
+import { ConductorManager } from './managers/ConductorManager.js';
+import { VibeKanbanManager } from './managers/VibeKanbanManager.js';
 import fs from 'fs';
 
 export class CoreService {
@@ -57,6 +61,7 @@ export class CoreService {
   private contextManager: ContextManager;
   private commandManager: CommandManager;
   private mcpManager: McpManager;
+  private mcpClientManager: McpClientManager;
   private configGenerator: ConfigGenerator;
   private mcpInterface: McpInterface;
   private clientManager: ClientManager;
@@ -87,6 +92,9 @@ export class CoreService {
   private economyManager: EconomyManager;
   private nodeManager: NodeManager;
   private authMiddleware: AuthMiddleware;
+  private systemTrayManager: SystemTrayManager;
+  private conductorManager: ConductorManager;
+  private vibeKanbanManager: VibeKanbanManager;
 
   constructor(
     private rootDir: string
@@ -113,6 +121,7 @@ export class CoreService {
     this.contextManager = new ContextManager(path.join(rootDir, 'context'));
     this.commandManager = new CommandManager(path.join(rootDir, 'commands'));
     this.mcpManager = new McpManager(path.join(rootDir, 'mcp-servers'));
+    this.mcpClientManager = new McpClientManager();
     this.configGenerator = new ConfigGenerator(path.join(rootDir, 'mcp-servers'), rootDir);
     this.clientManager = new ClientManager();
     this.codeExecutionManager = new CodeExecutionManager();
@@ -154,6 +163,14 @@ export class CoreService {
     this.economyManager = new EconomyManager();
     this.nodeManager = new NodeManager();
     this.authMiddleware = new AuthMiddleware(this.secretManager);
+    this.systemTrayManager = new SystemTrayManager(
+        this.healthService,
+        this.agentManager,
+        this.mcpManager,
+        this.rootDir
+    );
+    this.conductorManager = new ConductorManager(rootDir);
+    this.vibeKanbanManager = new VibeKanbanManager(rootDir);
 
     this.commandManager.on('updated', (commands) => {
         this.registerCommandsAsTools(commands);
@@ -369,6 +386,57 @@ export class CoreService {
         return { status: 'stopped' };
     });
 
+    // --- McpClientManager Routes (Persistent Sessions) ---
+    this.app.get('/api/mcp-client/sessions', async () => {
+        return { sessions: await this.mcpClientManager.listSessions() };
+    });
+
+    this.app.get('/api/mcp-client/sessions/:name', async (req: any, reply) => {
+        const session = await this.mcpClientManager.getSession(req.params.name);
+        if (!session) return reply.code(404).send({ error: "Session not found" });
+        return { session };
+    });
+
+    this.app.post('/api/mcp-client/sessions/start', async (req: any, reply) => {
+        const { name, config, options } = req.body;
+        if (!name || !config) return reply.code(400).send({ error: "Name and config required" });
+        try {
+            await this.mcpClientManager.startSession(name, config, options);
+            return { status: 'started', name };
+        } catch (e: any) {
+            return reply.code(500).send({ error: e.message });
+        }
+    });
+
+    this.app.post('/api/mcp-client/sessions/stop', async (req: any, reply) => {
+        const { name } = req.body;
+        await this.mcpClientManager.deleteSession(name);
+        return { status: 'stopped' };
+    });
+
+    this.app.get('/api/mcp-client/sessions/:name/tools', async (req: any, reply) => {
+        try {
+            const tools = await this.mcpClientManager.listTools(req.params.name);
+            return { tools };
+        } catch (e: any) {
+            return reply.code(500).send({ error: e.message });
+        }
+    });
+
+    this.app.post('/api/mcp-client/sessions/:name/call', async (req: any, reply) => {
+        const { tool, args } = req.body;
+        try {
+            const result = await this.mcpClientManager.callTool(req.params.name, tool, args);
+            return { result };
+        } catch (e: any) {
+            return reply.code(500).send({ error: e.message });
+        }
+    });
+    
+    this.app.get('/api/mcp-client/profiles', async () => {
+        return { profiles: await this.mcpClientManager.listAuthProfiles() };
+    });
+
     this.app.get('/api/secrets', async () => {
         return { secrets: this.secretManager.getAllSecrets() };
     });
@@ -445,6 +513,41 @@ export class CoreService {
     // --- Submodules Route ---
     this.app.get('/api/submodules', async () => {
         return { submodules: this.submoduleManager.getSubmodules() };
+    });
+
+    // --- Conductor Routes ---
+    this.app.get('/api/conductor/tasks', async () => {
+        return { tasks: await this.conductorManager.listTasks() };
+    });
+
+    this.app.post('/api/conductor/start', async (req: any) => {
+        const { role } = req.body;
+        const result = await this.conductorManager.startTask(role);
+        return { result };
+    });
+
+    this.app.get('/api/conductor/status', async () => {
+        return await this.conductorManager.getStatus();
+    });
+
+    // --- Vibe Kanban Routes ---
+    this.app.post('/api/vibekanban/start', async (req: any, reply) => {
+        const { frontendPort, backendPort } = req.body;
+        try {
+            await this.vibeKanbanManager.start(frontendPort, backendPort);
+            return { status: 'started' };
+        } catch (e: any) {
+            return reply.code(500).send({ error: e.message });
+        }
+    });
+
+    this.app.post('/api/vibekanban/stop', async () => {
+        await this.vibeKanbanManager.stop();
+        return { status: 'stopped' };
+    });
+
+    this.app.get('/api/vibekanban/status', async () => {
+        return this.vibeKanbanManager.getStatus();
     });
   }
 
@@ -529,6 +632,8 @@ export class CoreService {
     await this.proxyManager.start();
     this.schedulerManager.start();
     await this.marketplaceManager.refresh();
+    this.systemTrayManager.start();
+    await this.conductorManager.initialize();
 
     if (process.env.MCP_STDIO_ENABLED === 'true') {
         console.error('[Core] Starting MCP Stdio Interface...');

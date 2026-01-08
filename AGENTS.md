@@ -1,7 +1,8 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-01-07
+**Generated:** 2026-01-08
 **Context:** Monorepo (pnpm) | Node.js v18+ | Fastify | Next.js | TypeScript
+**Version:** 0.3.0
 
 ## OVERVIEW
 The Super AI Plugin is a "Meta-Orchestrator" for the Model Context Protocol (MCP). It acts as a universal hub connecting tools, agents, and local servers to LLM clients (Claude Desktop, VSCode). Core stack: Fastify backend (`packages/core`), Next.js dashboard (`packages/ui`), and a CLI (`packages/cli`).
@@ -21,6 +22,12 @@ The Super AI Plugin is a "Meta-Orchestrator" for the Model Context Protocol (MCP
 ├── docs/             # Documentation (Consolidated)
 └── submodules/       # External dependencies (metamcp, mcpenetes)
 ```
+
+## CRITICAL RESOURCES
+*   **`SUBMODULES.md`**: Dashboard of all 70+ integrated submodules and their status.
+*   **`ROADMAP.md`**: Current strategic goals and timeline.
+*   **`CHANGELOG.md`**: History of project changes.
+*   **`CLAUDE.md`**: Legacy context instructions (superseded by this file but kept for reference).
 
 ## WHERE TO LOOK
 | Task | Location | Notes |
@@ -63,4 +70,4 @@ pnpm run build          # Build all packages
 ## NOTES
 - **Mixed Lockfiles**: Project contains both `pnpm-lock.yaml` and `package-lock.json`. Use `pnpm`.
 - **UI Server**: `packages/ui` uses a custom `server.js`. Do not try to run with standard `next dev`.
-- **Skeleton**: `packages/cli` is currently a skeleton (v0.1.0).
+- **Submodules**: Always check `SUBMODULES.md` before assuming a submodule's state.

@@ -466,9 +466,6 @@
 [submodule "external/plugins/opencode-background"]
 	path = external/plugins/opencode-background
 	url = https://github.com/zenobi-us/opencode-background
-[submodule "external/plugins/opencode-skillful"]
-	path = external/plugins/opencode-skillful
-	url = https://github.com/zenobi-us/opencode-skillful
 [submodule "external/tools/mcpc/repo"]
 	path = external/tools/mcpc/repo
 	url = https://github.com/apify/mcpc
@@ -886,3 +883,18 @@
 [submodule "kapture"]
 	path = kapture
 	url = https://github.com/williamkapke/kapture
+[submodule "submodules/mcp-cli"]
+	path = submodules/mcp-cli
+	url = https://github.com/robertpelloni/mcp-cli
+[submodule "submodules/vibe-kanban"]
+	path = submodules/vibe-kanban
+	url = https://github.com/BloopAI/vibe-kanban
+[submodule "submodules/mcp-reticle"]
+	path = submodules/mcp-reticle
+	url = https://github.com/LabTerminal/mcp-reticle
+[submodule "submodules/apify-mcp-cli"]
+	path = submodules/apify-mcp-cli
+	url = https://github.com/apify/mcp-cli
+[submodule "submodules/code-conductor"]
+	path = submodules/code-conductor
+	url = https://github.com/ryanmac/code-conductor

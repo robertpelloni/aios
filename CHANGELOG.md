@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-01-08
+
+### Deep Initialization & Cleanup
+- **Versioning:** Standardized project version to `0.3.0` across all packages (bumped from 0.2.5).
+- **Submodules:** Deep synchronization of all submodules.
+- **Fixes:** Resolved Windows path issues by removing `opencode-skillful`.
+- **Documentation:** Created `SUBMODULES.md` dashboard.
+
 ## [1.1.1] - 2026-01-05
 
 ### Fixed

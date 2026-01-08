@@ -6,8 +6,8 @@
     "start": "pnpm --filter @aios/core start",
     "dev": "pnpm --filter @aios/core dev",
     "build": "pnpm --filter \"./packages/*\" build",
-    "test": "echo \"Error: no test specified\" && exit 0",
-    "lint": "echo \"Linting...\"",
+    "test": "pnpm --filter \"./packages/*\" test",
+    "lint": "pnpm --filter \"./packages/*\" lint",
     "start:all": "pnpm run build && pnpm start"
   },
   "devDependencies": {

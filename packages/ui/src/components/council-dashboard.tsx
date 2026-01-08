@@ -181,7 +181,7 @@ export function CouncilDashboard() {
           <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-white/10 rounded-lg bg-zinc-900/50">
             <Folder className="h-12 w-12 text-white/20 mb-4" />
             <p className="text-white/40 font-mono text-sm">No local repositories connected.</p>
-            <p className="text-white/20 text-xs mt-1">Click "Add Local Repo" to start.</p>
+            <p className="text-white/20 text-xs mt-1">Click &quot;Add Local Repo&quot; to start.</p>
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

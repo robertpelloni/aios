@@ -7,6 +7,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsc --watch",
+    "lint": "tsc --noEmit",
     "test": "tsx test/chaining.test.ts"
   },
   "dependencies": {

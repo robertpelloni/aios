@@ -40,7 +40,6 @@ temp/
 verification/
 
 # Specific ignores
-references/
 packages/core/core.log
 packages/ui/ui.log
 .next/

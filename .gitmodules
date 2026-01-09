@@ -850,10 +850,6 @@
 	path = submodules/opencode-autopilot
 	url = https://github.com/robertpelloni/opencode-autopilot-council
 
-[submodule "submodules/opencode-autopilot-backup"]
-	path = submodules/opencode-autopilot-backup
-	url = https://github.com/robertpelloni/opencode-autopilot-council
-
 [submodule "submodules/plandex"]
 	path = submodules/plandex
 	url = https://github.com/plandex-ai/plandex

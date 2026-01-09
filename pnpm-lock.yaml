@@ -136,6 +136,9 @@ importers:
       '@types/node':
         specifier: ^20.11.0
         version: 20.19.27
+      '@types/react':
+        specifier: ^19.2.7
+        version: 19.2.7
       '@types/serialport':
         specifier: ^10.2.0
         version: 10.2.0

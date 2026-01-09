@@ -20,7 +20,7 @@
 	path = references/Super-MCP
 	url = https://github.com/robertpelloni/Super-MCP
 [submodule "submodules/claude-mem"]
-	path = submodules/claude-mem
+	path = memory/plugins/claude-mem
 	url = https://github.com/robertpelloni/claude-mem
 [submodule "references/opencode"]
 	path = references/opencode
@@ -128,19 +128,19 @@
 	path = references/memory/vibeship-mind
 	url = https://github.com/vibeforge1111/vibeship-mind
 [submodule "references/memory/beads"]
-	path = references/memory/beads
+	path = memory/systems-refs/beads
 	url = https://github.com/steveyegge/beads
 [submodule "references/memory/txtai"]
-	path = references/memory/txtai
+	path = memory/systems-refs/txtai
 	url = https://github.com/neuml/txtai
 [submodule "references/memory/mem0"]
-	path = references/memory/mem0
+	path = memory/systems-refs/mem0
 	url = https://github.com/mem0ai/mem0
 [submodule "references/memory/letta"]
-	path = references/memory/letta
+	path = memory/systems-refs/letta
 	url = https://github.com/letta-ai/letta
 [submodule "references/memory/cognee"]
-	path = references/memory/cognee
+	path = memory/systems-refs/cognee
 	url = https://github.com/topoteretes/cognee
 [submodule "references/orchestration/laddr"]
 	path = references/orchestration/laddr
@@ -308,7 +308,7 @@
 	path = external/misc/opencode-sessions
 	url = https://github.com/malhashemi/opencode-sessions
 [submodule "external/misc/opencode-supermemory"]
-	path = external/misc/opencode-supermemory
+	path = memory/plugins/opencode-supermemory
 	url = https://github.com/supermemoryai/opencode-supermemory
 [submodule "external/misc/opencode-tokenscope"]
 	path = external/misc/opencode-tokenscope
@@ -993,3 +993,84 @@
 [submodule "submodules/reag"]
 	path = submodules/reag
 	url = https://github.com/robertpelloni/reag
+[submodule "memory/systems/langmem"]
+	path = memory/systems/langmem
+	url = https://github.com/langchain-ai/langmem
+[submodule "memory/vector-stores/qdrant"]
+	path = memory/vector-stores/qdrant
+	url = https://github.com/qdrant/qdrant
+[submodule "memory/systems/MemoryOS"]
+	path = memory/systems/MemoryOS
+	url = https://github.com/BAI-LAB/MemoryOS
+[submodule "memory/systems/zep"]
+	path = memory/systems/zep
+	url = https://github.com/getzep/zep
+[submodule "memory/systems/supermemory"]
+	path = memory/systems/supermemory
+	url = https://github.com/supermemoryai/supermemory
+[submodule "memory/projects/claude-mem"]
+	path = memory/projects/claude-mem
+	url = https://github.com/robertpelloni/claude-mem
+[submodule "superai-cli/tools/ccs"]
+	path = superai-cli/tools/ccs
+	url = https://github.com/kaitranntt/ccs
+[submodule "superai-cli/tools/Lynkr"]
+	path = superai-cli/tools/Lynkr
+	url = https://github.com/vishalveerareddy123/Lynkr
+[submodule "superai-cli/tools/cc-switch"]
+	path = superai-cli/tools/cc-switch
+	url = https://github.com/farion1231/cc-switch
+[submodule "superai-cli/agents/claude-squad"]
+	path = superai-cli/agents/claude-squad
+	url = https://github.com/robertpelloni/claude-squad
+[submodule "superai-cli/routers/claude-code-router"]
+	path = superai-cli/routers/claude-code-router
+	url = https://github.com/musistudio/claude-code-router
+[submodule "superai-cli/clis/emdash"]
+	path = superai-cli/clis/emdash
+	url = https://github.com/robertpelloni/emdash
+[submodule "superai-cli/tools/code-assistant-manager"]
+	path = superai-cli/tools/code-assistant-manager
+	url = https://github.com/Chat2AnyLLM/code-assistant-manager
+[submodule "superai-cli/proxies/openai-gemini"]
+	path = superai-cli/proxies/openai-gemini
+	url = https://github.com/PublicAffairs/openai-gemini
+[submodule "superai-cli/clis/CodeNomad"]
+	path = superai-cli/clis/CodeNomad
+	url = https://github.com/NeuralNomadsAI/CodeNomad
+[submodule "superai-cli/clis/claude-code-madapp"]
+	path = superai-cli/clis/claude-code-madapp
+	url = https://github.com/MadAppGang/claude-code
+[submodule "superai-cli/proxies/gemini-openai-proxy-zuisong"]
+	path = superai-cli/proxies/gemini-openai-proxy-zuisong
+	url = https://github.com/zuisong/gemini-openai-proxy
+[submodule "superai-cli/proxies/vercel-ai-proxy"]
+	path = superai-cli/proxies/vercel-ai-proxy
+	url = https://github.com/Hk-Gosuto/vercel-ai-proxy
+[submodule "superai-cli/proxies/gemini-openai-proxy-zhu"]
+	path = superai-cli/proxies/gemini-openai-proxy-zhu
+	url = https://github.com/zhu327/gemini-openai-proxy
+[submodule "superai-cli/routers/gemini-cli-router"]
+	path = superai-cli/routers/gemini-cli-router
+	url = https://github.com/Jasonzhangf/gemini-cli-router
+[submodule "superai-cli/routers/gemini-router"]
+	path = superai-cli/routers/gemini-router
+	url = https://github.com/takltc/gemini-router
+[submodule "superai-cli/proxies/ccproxy"]
+	path = superai-cli/proxies/ccproxy
+	url = https://github.com/starbased-co/ccproxy
+[submodule "superai-cli/routers/GoogleGeminiRouter"]
+	path = superai-cli/routers/GoogleGeminiRouter
+	url = https://github.com/Dhatchinamoorthy/GoogleGeminiRouter
+[submodule "superai-cli/extensions/gemini-superclaude-mcp-server"]
+	path = superai-cli/extensions/gemini-superclaude-mcp-server
+	url = https://github.com/Dianel555/gemini-superclaude-mcp-server
+[submodule "superai-cli/resources/awesome-opencode"]
+	path = superai-cli/resources/awesome-opencode
+	url = https://github.com/awesome-opencode/awesome-opencode
+[submodule "superai-cli/harnesses/SuperClaude_Framework"]
+	path = superai-cli/harnesses/SuperClaude_Framework
+	url = https://github.com/SuperClaude-Org/SuperClaude_Framework
+[submodule "superai-cli/tools/cc-switch-cli"]
+	path = superai-cli/tools/cc-switch-cli
+	url = https://github.com/SaladDay/cc-switch-cli

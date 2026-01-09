@@ -45,8 +45,8 @@ export class CouncilManager extends EventEmitter {
         // storageDir is usually packages/core/data
         // So we look up from there.
         const potentialPaths = [
-            path.resolve(process.cwd(), 'submodules', 'opencode-autopilot-council'), // If running from root
-            path.resolve(storageDir, '..', '..', '..', 'submodules', 'opencode-autopilot-council') // If running from packages/core
+            path.resolve(process.cwd(), 'submodules', 'opencode-autopilot'), // If running from root
+            path.resolve(storageDir, '..', '..', '..', 'submodules', 'opencode-autopilot') // If running from packages/core
         ];
 
         this.councilSubmodulePath = potentialPaths.find(p => fs.existsSync(p)) || potentialPaths[0];

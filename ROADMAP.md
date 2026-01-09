@@ -1,4 +1,5 @@
-# Roadmap
+# aios Roadmap
+# include "CORE_INSTRUCTIONS.md"
 
 ## Phase 1: Foundation (Completed)
 - [x] Monorepo Structure (pnpm workspaces)

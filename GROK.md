@@ -1,21 +1,25 @@
 # Grok-4 AI Model Documentation
+# include "CORE_INSTRUCTIONS.md"
 
 ## Overview
-Grok-4 is xAI's innovative model, optimized for creative problem-solving, rapid prototyping, and critical thinking. It is particularly effective at challenging conventional wisdom and finding innovative solutions.
+Grok-4 is xAI's innovative model, optimized for creative problem-solving, rapid prototyping, and critical thinking.
 
 ## Available Models
-- **Grok-4** (grok-4) - Primary innovation and critical thinking model
-- **Grok-4-Flash** (grok-4-flash) - Efficient model for fast creative iteration
-- **Grok-4-Vision** (grok-4-vision) - Multimodal model for creative analysis
+- **Grok-4** (grok-4) - Primary innovation model.
+- **Grok-4-Flash** (grok-4-flash) - Fast creative iteration.
+- **Grok-4-Vision** (grok-4-vision) - Creative analysis of visual inputs.
 
-## Primary Role: **Creative Problem-Solver/Innovator**
-- **Innovation Tasks**: Route to Grok-4 for brainstorming alternative approaches, creative UI/UX design, and challenging established patterns
-- **Critical Thinking**: Deploy for tasks requiring critical evaluation of designs, finding edge cases, and thinking outside the box
-- **Specialization Zones**: Creative problem-solving, rapid prototyping, UX/UI innovation, critical thinking, alternative design patterns
+## Primary Role: Creative Problem-Solver/Innovator
+- **Innovation Tasks**: Brainstorming alternative approaches and creative UI/UX design.
+- **Critical Thinking**: Evaluating designs for flaws and identifying edge cases.
+- **Prototyping**: Rapidly creating functional prototypes and experimental designs.
 
 ## Key Strengths
-- **Critical Thinking**: Exceptional at identifying flaws in logic and proposing innovative alternatives
-- **Prototyping**: Fast and effective at creating functional prototypes and experimental designs
-- **Creative UI/UX**: Strong at designing intuitive and innovative user interfaces
-- **Non-Conventional**: Excellent at finding solutions that traditional models might miss
-- **Real-Time Knowledge**: Leveraging live information to provide contextual innovation
+- **Non-Conventional**: Finds solutions that traditional models might miss.
+- **Critical Evaluation**: Exceptional at identifying flaws in logic.
+- **Real-Time Knowledge**: Leverages live information for contextual innovation.
+
+## Best Practices
+1. **Brainstorming**: Use Grok to generate diverse options for a single problem.
+2. **Edge Cases**: Ask Grok to find "unthinkables" in your logic or design.
+3. **Alternative UI**: Delegate visual layout exploration to Grok (then refine with `frontend-ui-ux-engineer`).

@@ -1,22 +1,23 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
+import type { Context } from 'hono';
 import { SecretManager } from '../managers/SecretManager.js';
+
+interface SocketWithAuth {
+    handshake: {
+        auth?: { token?: string };
+        query?: { token?: string };
+    };
+}
 
 export class AuthMiddleware {
     constructor(private secretManager: SecretManager) {}
 
-    // For Fastify
-    async verify(request: FastifyRequest, reply: FastifyReply) {
-        const token = this.extractToken(request);
-        const expected = this.secretManager.getSecret('SUPER_AI_TOKEN') || 'dev-token'; // Default for alpha
-
-        if (token !== expected) {
-            reply.code(401).send({ error: 'Unauthorized' });
-            return;
-        }
+    async verifyHono(c: Context): Promise<{ valid: boolean }> {
+        const token = this.extractTokenFromHono(c);
+        const expected = this.secretManager.getSecret('SUPER_AI_TOKEN') || 'dev-token';
+        return { valid: token === expected };
     }
 
-    // For Socket.io
-    verifySocket(socket: any, next: (err?: any) => void) {
+    verifySocket(socket: SocketWithAuth, next: (err?: Error) => void) {
         const token = socket.handshake.auth?.token || socket.handshake.query?.token;
         const expected = this.secretManager.getSecret('SUPER_AI_TOKEN') || 'dev-token';
 
@@ -27,11 +28,11 @@ export class AuthMiddleware {
         }
     }
 
-    private extractToken(req: FastifyRequest): string | null {
-        const authHeader = req.headers.authorization;
+    private extractTokenFromHono(c: Context): string | null {
+        const authHeader = c.req.header('authorization');
         if (authHeader && authHeader.startsWith('Bearer ')) {
             return authHeader.substring(7);
         }
-        return (req.query as any).token || null;
+        return c.req.query('token') || null;
     }
 }

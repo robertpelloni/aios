@@ -15,9 +15,15 @@
     "axios": "^1.6.0",
     "chalk": "^5.3.0",
     "commander": "^11.1.0",
+    "ink": "^6.6.0",
+    "ink-select-input": "^6.2.0",
+    "ink-spinner": "^5.0.0",
+    "ink-text-input": "^6.0.0",
     "ora": "^8.0.0",
+    "react": "^19.2.3",
     "serialport": "^13.0.0",
-    "socket.io-client": "^4.7.4"
+    "socket.io-client": "^4.7.4",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

@@ -1,21 +1,24 @@
 # Gemini-2.5-Pro AI Model Documentation
+# include "CORE_INSTRUCTIONS.md"
 
 ## Overview
-Gemini-2.5-Pro is Google's advanced multimodal AI model with a 1M+ token context window, optimized for deep analysis of large codebases, complex architecture reviews, and cross-module reasoning.
+Gemini-2.5-Pro is Google's advanced multimodal AI model with a 1M+ token context window, optimized for deep analysis and cross-module reasoning.
 
 ## Available Models
-- **Gemini-2.5-Pro** (gemini-2.5-pro) - Primary reasoning and analysis model
-- **Gemini-2.5-Flash** (gemini-2.5-flash) - Efficient model for fast analysis
-- **Gemini-1.5-Pro** (gemini-1.5-pro) - High-performance legacy model
+- **Gemini-2.5-Pro** (gemini-2.5-pro) - Primary reasoning and analysis model.
+- **Gemini-2.5-Flash** (gemini-2.5-flash) - Fast analysis and prototyping.
 
-## Primary Role: **Performance Analyst/Optimizer**
-- **Deep Analysis**: Route to Gemini-2.5-Pro for analyzing cross-module dependencies, large-scale refactors, and performance optimization
-- **Context Mastery**: Deploy for tasks requiring comprehensive understanding of large codebases and complex documentation
-- **Specialization Zones**: Performance analysis, architectural review, codebase auditing, documentation synthesis, multimodal analysis
+## Primary Role: Performance Analyst/Optimizer
+- **Deep Analysis**: Analyzing cross-module dependencies and large-scale refactors.
+- **Context Mastery**: Comprehension of massive codebases (1M+ context window).
+- **Multimodal**: Analyzing diagrams, UI screenshots, and visual documentation.
 
 ## Key Strengths
-- **Context Window**: 1M+ tokens for analyzing entire projects in a single pass
-- **Multimodal**: Strong at analyzing diagrams, screenshots, and visual documentation
-- **Multilingual**: Excellent at cross-language analysis and translation
-- **Search**: Strong reasoning across massive amounts of information
-- **Reasoning**: Advanced logical deduction and problem-solving
+- **Massive Context**: Ideal for project-wide auditing and documentation synthesis.
+- **Multilingual**: Superior cross-language analysis.
+- **Reasoning**: Advanced logical deduction for complex problem-solving.
+
+## Best Practices
+1. **Large Context**: Use Gemini when you need to load multiple large files or entire modules for context.
+2. **Visual Audit**: Route UI diagrams or architectural charts to Gemini for interpretation.
+3. **Refactoring**: Consult Gemini before large-scale structural changes.

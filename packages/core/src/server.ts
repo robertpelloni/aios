@@ -1,4 +1,8 @@
-import Fastify from 'fastify';
+import { Hono, type Context, type Next } from 'hono';
+import { cors } from 'hono/cors';
+import { streamSSE } from 'hono/streaming';
+import { serve } from '@hono/node-server';
+import { createServer, type Server } from 'node:http';
 import { Socket, Server as SocketIOServer } from 'socket.io';
 import path from 'path';
 import { HookManager } from './managers/HookManager.js';
@@ -51,8 +55,9 @@ import { VibeKanbanManager } from './managers/VibeKanbanManager.js';
 import fs from 'fs';
 
 export class CoreService {
-  private app = Fastify({ logger: true });
-  private io: SocketIOServer;
+  private app = new Hono();
+  private io!: SocketIOServer;
+  private httpServer!: ReturnType<typeof createServer>;
   
   private hookManager: HookManager;
   public agentManager: AgentManager;
@@ -99,20 +104,8 @@ export class CoreService {
   constructor(
     private rootDir: string
   ) {
-    this.io = new SocketIOServer(this.app.server, {
-      cors: { origin: "*" }
-    });
-
-    // Enable CORS for API routes
-    this.app.register(import('@fastify/cors'), {
-        origin: '*'
-    });
-
-    const uiDist = path.resolve(rootDir, '../ui/dist');
-    this.app.register(import('@fastify/static'), {
-        root: uiDist,
-        prefix: '/'
-    });
+    // Enable CORS
+    this.app.use('*', cors({ origin: '*' }));
 
     this.hookManager = new HookManager(path.join(rootDir, 'hooks'));
     this.agentManager = new AgentManager(rootDir);
@@ -176,8 +169,8 @@ export class CoreService {
         this.registerCommandsAsTools(commands);
     });
 
-    this.healthService.on('clientsUpdated', (clients) => {
-        this.io.emit('health_updated', this.healthService.getSystemStatus());
+    this.healthService.on('clientsUpdated', () => {
+        this.io?.emit('health_updated', this.healthService.getSystemStatus());
     });
 
     // Hook Trigger Wiring
@@ -191,24 +184,27 @@ export class CoreService {
 
     this.setupAuth();
     this.setupRoutes();
-    this.setupSocket();
   }
 
   private setupAuth() {
-      // Secure Socket
-      this.io.use((socket, next) => this.authMiddleware.verifySocket(socket, next));
-
-      // Secure API (except health/public)
-      this.app.addHook('preHandler', async (req, reply) => {
-          if (req.url === '/health' || req.url === '/api/doctor' || req.url.startsWith('/assets') || req.url === '/') return;
-          // For Alpha, we might be lenient or enforce strictness.
-          // Enforcing strictness now.
-          await this.authMiddleware.verify(req, reply);
+      // Auth middleware for API routes
+      this.app.use('/api/*', async (c, next) => {
+          const url = new URL(c.req.url);
+          // Skip auth for health/public endpoints
+          if (url.pathname === '/health' || url.pathname === '/api/doctor') {
+              return next();
+          }
+          // Verify auth
+          const authResult = await this.authMiddleware.verifyHono(c);
+          if (!authResult.valid) {
+              return c.json({ error: 'Unauthorized' }, 401);
+          }
+          return next();
       });
   }
 
-  private registerCommandsAsTools(commands: any[]) {
-      commands.forEach(cmd => {
+  private registerCommandsAsTools(commands: unknown[]) {
+      (commands as Array<{ name: string; description?: string; command: string; args?: string[] }>).forEach(cmd => {
           this.proxyManager.registerInternalTool({
               name: cmd.name,
               description: cmd.description || `Execute command: ${cmd.command}`,
@@ -224,120 +220,116 @@ export class CoreService {
   }
 
   private setupRoutes() {
-    this.app.get('/health', async () => this.healthService.getSystemStatus());
-    this.app.get('/api/doctor', async () => this.systemDoctor.checkAll());
+    // Health & System
+    this.app.get('/health', (c) => c.json(this.healthService.getSystemStatus()));
+    this.app.get('/api/doctor', async (c) => c.json(await this.systemDoctor.checkAll()));
 
-    this.app.get('/api/system', async () => {
+    this.app.get('/api/system', (c) => {
         const versionPath = path.join(this.rootDir, '../..', 'VERSION');
         const version = fs.existsSync(versionPath) ? fs.readFileSync(versionPath, 'utf-8').trim() : 'unknown';
-        return {
+        return c.json({
             version,
             submodules: this.submoduleManager.getSubmodules()
-        };
+        });
     });
 
-    this.app.get('/api/clients', async () => ({ clients: this.clientManager.getClients() }));
+    this.app.get('/api/clients', (c) => c.json({ clients: this.clientManager.getClients() }));
 
     // Handoff Routes
-    this.app.post('/api/handoff', async (req: any) => {
-        const { description, context } = req.body;
+    this.app.post('/api/handoff', async (c) => {
+        const { description, context } = await c.req.json();
         const id = await this.handoffManager.createHandoff(description, context);
-        return { id };
+        return c.json({ id });
     });
 
-    this.app.get('/api/handoff', async () => ({ handoffs: this.handoffManager.getHandoffs() }));
+    this.app.get('/api/handoff', (c) => c.json({ handoffs: this.handoffManager.getHandoffs() }));
 
     // Session Routes
-    this.app.get('/api/sessions', async () => ({ sessions: this.sessionManager.listSessions() }));
-    this.app.get('/api/sessions/:id', async (req: any) => ({ session: this.sessionManager.loadSession(req.params.id) }));
+    this.app.get('/api/sessions', (c) => c.json({ sessions: this.sessionManager.listSessions() }));
+    this.app.get('/api/sessions/:id', (c) => {
+        const id = c.req.param('id');
+        return c.json({ session: this.sessionManager.loadSession(id) });
+    });
 
-    this.app.post('/api/inspector/replay', async (request: any, reply) => {
-        const { tool, args } = request.body;
+    this.app.post('/api/inspector/replay', async (c) => {
+        const { tool, args } = await c.req.json();
         try {
             const result = await this.proxyManager.callTool(tool, args);
-            return { result };
-        } catch (e: any) {
-            return reply.code(500).send({ error: e.message });
+            return c.json({ result });
+        } catch (e: unknown) {
+            return c.json({ error: (e as Error).message }, 500);
         }
     });
 
-    this.app.setNotFoundHandler((req, res) => {
-        if (!req.raw.url?.startsWith('/api')) {
-             res.sendFile('index.html');
-        } else {
-             res.status(404).send({ error: "Not found" });
-        }
-    });
-
-    this.app.post('/api/clients/configure', async (request: any, reply) => {
-        const { clientName } = request.body;
+    this.app.post('/api/clients/configure', async (c) => {
+        const { clientName } = await c.req.json();
         const scriptPath = path.resolve(process.argv[1]);
         try {
             const result = await this.clientManager.configureClient(clientName, {
                 scriptPath,
                 env: { MCP_STDIO_ENABLED: 'true' }
             });
-            return result;
-        } catch (err: any) {
-            return reply.code(500).send({ error: err.message });
+            return c.json(result);
+        } catch (err: unknown) {
+            return c.json({ error: (err as Error).message }, 500);
         }
     });
 
-    this.app.post('/api/code/run', async (request: any, reply) => {
-        const { code } = request.body;
+    this.app.post('/api/code/run', async (c) => {
+        const { code } = await c.req.json();
         try {
             const result = await this.codeExecutionManager.execute(code, async (name, args) => {
                 return await this.proxyManager.callTool(name, args);
             });
-            return { result };
-        } catch (err: any) {
-            return reply.code(500).send({ error: err.message });
+            return c.json({ result });
+        } catch (err: unknown) {
+            return c.json({ error: (err as Error).message }, 500);
         }
     });
 
-    this.app.post('/api/agents/run', async (request: any, reply) => {
-        const { agentName, task, sessionId } = request.body;
+    this.app.post('/api/agents/run', async (c) => {
+        const { agentName, task, sessionId } = await c.req.json();
         const agents = this.agentManager.getAgents();
         const agent = agents.find(a => a.name === agentName);
-        if (!agent) return reply.code(404).send({ error: "Agent not found" });
+        if (!agent) return c.json({ error: "Agent not found" }, 404);
 
         const result = await this.agentExecutor.run(agent, task, {}, sessionId);
-        return { result };
+        return c.json({ result });
     });
 
-    this.app.post('/api/agents', async (request: any, reply) => {
-        const { name, description, instructions, model } = request.body;
-        if (!name) return reply.code(400).send({ error: "Name required" });
+    this.app.post('/api/agents', async (c) => {
+        const { name, description, instructions, model } = await c.req.json();
+        if (!name) return c.json({ error: "Name required" }, 400);
 
         await this.agentManager.saveAgent(name, {
             name, description, instructions, model
         });
-        return { status: 'saved' };
+        return c.json({ status: 'saved' });
     });
 
-    this.app.post('/api/research', async (request: any, reply) => {
-        const { topic } = request.body;
-        if (!topic) return reply.code(400).send({ error: "Topic required" });
+    this.app.post('/api/research', async (c) => {
+        const { topic } = await c.req.json();
+        if (!topic) return c.json({ error: "Topic required" }, 400);
 
         const agent = this.agentManager.getAgents().find(a => a.name === 'researcher');
-        if (!agent) return reply.code(404).send({ error: "Research agent not found" });
+        if (!agent) return c.json({ error: "Research agent not found" }, 404);
 
         const sessionId = `research-${Date.now()}`;
         // Run asynchronously
         this.agentExecutor.run(agent, `Research this topic: ${topic}`, {}, sessionId)
             .then(result => {
                 console.log(`[Research] Completed for ${topic}`);
-                this.io.emit('research_update', { sessionId, status: 'completed', message: 'Research finished.', result });
+                this.io?.emit('research_update', { sessionId, status: 'completed', message: 'Research finished.', result });
             })
-            .catch(err => {
+            .catch((err: Error) => {
                 console.error(`[Research] Failed: ${err.message}`);
-                this.io.emit('research_update', { sessionId, status: 'error', message: err.message });
+                this.io?.emit('research_update', { sessionId, status: 'error', message: err.message });
             });
 
-        return { status: 'started', sessionId };
+        return c.json({ status: 'started', sessionId });
     });
 
-    this.app.get('/api/state', async () => ({
+    this.app.get('/api/state', (c) => c.json({
         agents: this.agentManager.getAgents(),
         skills: this.skillManager.getSkills(),
         hooks: this.hookManager.getHooks(),
@@ -350,22 +342,22 @@ export class CoreService {
         profiles: this.profileManager.getProfiles()
     }));
 
-    this.app.get('/api/config/mcp/:format', async (request: any, reply) => {
-        const { format } = request.params as any;
+    this.app.get('/api/config/mcp/:format', async (c) => {
+        const format = c.req.param('format');
         if (['json', 'toml', 'xml'].includes(format)) {
-            return this.configGenerator.generateConfig(format as any);
+            return c.json(await this.configGenerator.generateConfig(format as 'json' | 'toml' | 'xml'));
         }
-        reply.code(400).send({ error: 'Invalid format' });
+        return c.json({ error: 'Invalid format' }, 400);
     });
 
-    this.app.post('/api/mcp/start', async (request: any, reply) => {
-        const { name } = request.body;
+    this.app.post('/api/mcp/start', async (c) => {
+        const { name } = await c.req.json();
         const allConfigStr = await this.configGenerator.generateConfig('json');
         const allConfig = JSON.parse(allConfigStr);
         const serverConfig = allConfig.mcpServers[name];
 
         if (!serverConfig) {
-            return reply.code(404).send({ error: 'Server configuration not found' });
+            return c.json({ error: 'Server configuration not found' }, 404);
         }
 
         try {
@@ -374,184 +366,215 @@ export class CoreService {
             serverConfig.env = env;
 
             await this.mcpManager.startServerSimple(name, serverConfig);
-            return { status: 'started' };
-        } catch (err: any) {
-            return reply.code(500).send({ error: err.message });
+            return c.json({ status: 'started' });
+        } catch (err: unknown) {
+            return c.json({ error: (err as Error).message }, 500);
         }
     });
 
-    this.app.post('/api/mcp/stop', async (request: any, reply) => {
-        const { name } = request.body;
+    this.app.post('/api/mcp/stop', async (c) => {
+        const { name } = await c.req.json();
         await this.mcpManager.stopServer(name);
-        return { status: 'stopped' };
+        return c.json({ status: 'stopped' });
     });
 
     // --- McpClientManager Routes (Persistent Sessions) ---
-    this.app.get('/api/mcp-client/sessions', async () => {
-        return { sessions: await this.mcpClientManager.listSessions() };
+    this.app.get('/api/mcp-client/sessions', async (c) => {
+        return c.json({ sessions: await this.mcpClientManager.listSessions() });
     });
 
-    this.app.get('/api/mcp-client/sessions/:name', async (req: any, reply) => {
-        const session = await this.mcpClientManager.getSession(req.params.name);
-        if (!session) return reply.code(404).send({ error: "Session not found" });
-        return { session };
+    this.app.get('/api/mcp-client/sessions/:name', async (c) => {
+        const name = c.req.param('name');
+        const session = await this.mcpClientManager.getSession(name);
+        if (!session) return c.json({ error: "Session not found" }, 404);
+        return c.json({ session });
     });
 
-    this.app.post('/api/mcp-client/sessions/start', async (req: any, reply) => {
-        const { name, config, options } = req.body;
-        if (!name || !config) return reply.code(400).send({ error: "Name and config required" });
+    this.app.post('/api/mcp-client/sessions/start', async (c) => {
+        const { name, config, options } = await c.req.json();
+        if (!name || !config) return c.json({ error: "Name and config required" }, 400);
         try {
             await this.mcpClientManager.startSession(name, config, options);
-            return { status: 'started', name };
-        } catch (e: any) {
-            return reply.code(500).send({ error: e.message });
+            return c.json({ status: 'started', name });
+        } catch (e: unknown) {
+            return c.json({ error: (e as Error).message }, 500);
         }
     });
 
-    this.app.post('/api/mcp-client/sessions/stop', async (req: any, reply) => {
-        const { name } = req.body;
+    this.app.post('/api/mcp-client/sessions/stop', async (c) => {
+        const { name } = await c.req.json();
         await this.mcpClientManager.deleteSession(name);
-        return { status: 'stopped' };
+        return c.json({ status: 'stopped' });
     });
 
-    this.app.get('/api/mcp-client/sessions/:name/tools', async (req: any, reply) => {
+    this.app.get('/api/mcp-client/sessions/:name/tools', async (c) => {
+        const name = c.req.param('name');
         try {
-            const tools = await this.mcpClientManager.listTools(req.params.name);
-            return { tools };
-        } catch (e: any) {
-            return reply.code(500).send({ error: e.message });
+            const tools = await this.mcpClientManager.listTools(name);
+            return c.json({ tools });
+        } catch (e: unknown) {
+            return c.json({ error: (e as Error).message }, 500);
         }
     });
 
-    this.app.post('/api/mcp-client/sessions/:name/call', async (req: any, reply) => {
-        const { tool, args } = req.body;
+    this.app.post('/api/mcp-client/sessions/:name/call', async (c) => {
+        const name = c.req.param('name');
+        const { tool, args } = await c.req.json();
         try {
-            const result = await this.mcpClientManager.callTool(req.params.name, tool, args);
-            return { result };
-        } catch (e: any) {
-            return reply.code(500).send({ error: e.message });
+            const result = await this.mcpClientManager.callTool(name, tool, args);
+            return c.json({ result });
+        } catch (e: unknown) {
+            return c.json({ error: (e as Error).message }, 500);
         }
     });
     
-    this.app.get('/api/mcp-client/profiles', async () => {
-        return { profiles: await this.mcpClientManager.listAuthProfiles() };
+    this.app.get('/api/mcp-client/profiles', async (c) => {
+        return c.json({ profiles: await this.mcpClientManager.listAuthProfiles() });
     });
 
-    this.app.get('/api/secrets', async () => {
-        return { secrets: this.secretManager.getAllSecrets() };
+    this.app.get('/api/secrets', (c) => {
+        return c.json({ secrets: this.secretManager.getAllSecrets() });
     });
 
-    this.app.post('/api/secrets', async (request: any, reply) => {
-        const { key, value } = request.body;
+    this.app.post('/api/secrets', async (c) => {
+        const { key, value } = await c.req.json();
         if (!key || !value) {
-            return reply.code(400).send({ error: 'Missing key or value' });
+            return c.json({ error: 'Missing key or value' }, 400);
         }
         this.secretManager.setSecret(key, value);
-        return { status: 'created' };
+        return c.json({ status: 'created' });
     });
 
-    this.app.delete('/api/secrets/:key', async (request: any, reply) => {
-        const { key } = request.params;
+    this.app.delete('/api/secrets/:key', (c) => {
+        const key = c.req.param('key');
         this.secretManager.deleteSecret(key);
-        return { status: 'deleted' };
+        return c.json({ status: 'deleted' });
     });
 
-    this.app.post('/api/marketplace/refresh', async () => {
+    this.app.post('/api/marketplace/refresh', async (c) => {
         await this.marketplaceManager.refresh();
-        return { status: 'ok' };
+        return c.json({ status: 'ok' });
     });
 
-    this.app.post('/api/marketplace/install', async (request: any, reply) => {
-        const { name } = request.body;
+    this.app.post('/api/marketplace/install', async (c) => {
+        const { name } = await c.req.json();
         try {
             const result = await this.marketplaceManager.installPackage(name);
-            return { result };
-        } catch (e: any) {
-            return reply.code(500).send({ error: e.message });
+            return c.json({ result });
+        } catch (e: unknown) {
+            return c.json({ error: (e as Error).message }, 500);
         }
     });
 
     // System Prompt API
-    this.app.get('/api/system/prompt', async () => ({ content: this.systemPromptManager.getPrompt() }));
-    this.app.post('/api/system/prompt', async (req: any) => {
-        this.systemPromptManager.save(req.body.content);
-        return { status: 'saved' };
+    this.app.get('/api/system/prompt', (c) => c.json({ content: this.systemPromptManager.getPrompt() }));
+    this.app.post('/api/system/prompt', async (c) => {
+        const { content } = await c.req.json();
+        this.systemPromptManager.save(content);
+        return c.json({ status: 'saved' });
     });
 
-    this.app.get('/api/hub/sse', async (request: any, reply) => {
-        await this.hubServer.handleSSE(request.raw, reply.raw);
-        reply.hijack();
+    this.app.get('/api/hub/sse', async (c) => {
+        const sessionId = Date.now().toString();
+        return streamSSE(c, async (stream) => {
+            const msg = JSON.stringify({
+                event: 'endpoint',
+                data: `/api/hub/messages?sessionId=${sessionId}`
+            });
+            await stream.writeSSE({ event: 'endpoint', data: msg });
+            
+            const interval = setInterval(async () => {
+                await stream.writeSSE({ data: '' });
+            }, 15000);
+            
+            c.req.raw.signal.addEventListener('abort', () => clearInterval(interval));
+        });
     });
 
-    this.app.post('/api/hub/messages', async (request: any, reply) => {
-        const sessionId = request.query.sessionId as string;
-        await this.hubServer.handleMessage(sessionId, request.body, reply.raw);
-        reply.hijack();
+    this.app.post('/api/hub/messages', async (c) => {
+        const sessionId = c.req.query('sessionId') || '';
+        const body = await c.req.json();
+        const result = await this.hubServer.handleMessage(sessionId, body);
+        return c.json(result);
     });
 
     // --- Profile Routes ---
-    this.app.get('/api/profiles', async () => {
-        return {
+    this.app.get('/api/profiles', (c) => {
+        return c.json({
             profiles: this.profileManager.getProfiles(),
             active: this.profileManager.getActiveProfile()
-        };
+        });
     });
 
-    this.app.post('/api/profiles', async (request: any, reply) => {
-        const { name, description, config } = request.body;
-        if (!name) return reply.code(400).send({ error: "Name required" });
+    this.app.post('/api/profiles', async (c) => {
+        const { name, description, config } = await c.req.json();
+        if (!name) return c.json({ error: "Name required" }, 400);
         this.profileManager.createProfile(name, { description, config });
-        return { status: 'created' };
+        return c.json({ status: 'created' });
     });
 
-    this.app.post('/api/profiles/switch', async (request: any, reply) => {
-        const { name } = request.body;
+    this.app.post('/api/profiles/switch', async (c) => {
+        const { name } = await c.req.json();
         this.profileManager.setActiveProfile(name);
-        return { status: 'switched', active: name };
+        return c.json({ status: 'switched', active: name });
     });
 
     // --- Submodules Route ---
-    this.app.get('/api/submodules', async () => {
-        return { submodules: this.submoduleManager.getSubmodules() };
+    this.app.get('/api/submodules', (c) => {
+        return c.json({ submodules: this.submoduleManager.getSubmodules() });
     });
 
     // --- Conductor Routes ---
-    this.app.get('/api/conductor/tasks', async () => {
-        return { tasks: await this.conductorManager.listTasks() };
+    this.app.get('/api/conductor/tasks', async (c) => {
+        return c.json({ tasks: await this.conductorManager.listTasks() });
     });
 
-    this.app.post('/api/conductor/start', async (req: any) => {
-        const { role } = req.body;
+    this.app.post('/api/conductor/start', async (c) => {
+        const { role } = await c.req.json();
         const result = await this.conductorManager.startTask(role);
-        return { result };
+        return c.json({ result });
     });
 
-    this.app.get('/api/conductor/status', async () => {
-        return await this.conductorManager.getStatus();
+    this.app.get('/api/conductor/status', async (c) => {
+        return c.json(await this.conductorManager.getStatus());
     });
 
     // --- Vibe Kanban Routes ---
-    this.app.post('/api/vibekanban/start', async (req: any, reply) => {
-        const { frontendPort, backendPort } = req.body;
+    this.app.post('/api/vibekanban/start', async (c) => {
+        const { frontendPort, backendPort } = await c.req.json();
         try {
             await this.vibeKanbanManager.start(frontendPort, backendPort);
-            return { status: 'started' };
-        } catch (e: any) {
-            return reply.code(500).send({ error: e.message });
+            return c.json({ status: 'started' });
+        } catch (e: unknown) {
+            return c.json({ error: (e as Error).message }, 500);
         }
     });
 
-    this.app.post('/api/vibekanban/stop', async () => {
+    this.app.post('/api/vibekanban/stop', async (c) => {
         await this.vibeKanbanManager.stop();
-        return { status: 'stopped' };
+        return c.json({ status: 'stopped' });
     });
 
-    this.app.get('/api/vibekanban/status', async () => {
-        return this.vibeKanbanManager.getStatus();
+    this.app.get('/api/vibekanban/status', (c) => {
+        return c.json(this.vibeKanbanManager.getStatus());
+    });
+
+    // SPA fallback - serve index.html for non-API routes
+    this.app.notFound((c) => {
+        const url = new URL(c.req.url);
+        if (!url.pathname.startsWith('/api')) {
+            const indexPath = path.resolve(this.rootDir, '../ui/dist/index.html');
+            if (fs.existsSync(indexPath)) {
+                return c.html(fs.readFileSync(indexPath, 'utf-8'));
+            }
+        }
+        return c.json({ error: "Not found" }, 404);
     });
   }
 
   private setupSocket() {
+    this.io.use((socket, next) => this.authMiddleware.verifySocket(socket, next));
+
     this.io.on('connection', (socket: Socket) => {
       const clientType = (socket.handshake.query.clientType as string) || 'unknown';
       this.healthService.registerClient(socket.id, clientType);
@@ -582,7 +605,7 @@ export class CoreService {
 
       socket.on('hook_event', (event: HookEvent) => {
         console.log('Received hook event:', event);
-        this.processHook(event);
+        this.processHook(event as unknown as Record<string, unknown>);
       });
     });
 
@@ -604,7 +627,7 @@ export class CoreService {
     this.profileManager.on('profileChanged', (p) => this.io.emit('profile_changed', p));
   }
 
-  private async processHook(event: any) {
+  private async processHook(event: Record<string, unknown>) {
       const hooks = this.hookManager.getHooks();
       const matched = hooks.filter(h => h.event === event.type);
       
@@ -613,9 +636,9 @@ export class CoreService {
           if (hook.type === 'command') {
               try {
                   const output = await HookExecutor.executeCommand(hook.action);
-                  this.io.emit('hook_log', { ...event, output });
-              } catch (err: any) {
-                  console.error(`Error executing hook: ${err.message}`);
+                  this.io?.emit('hook_log', { ...event, output });
+              } catch (err: unknown) {
+                  console.error(`Error executing hook: ${(err as Error).message}`);
               }
           }
       }
@@ -641,34 +664,34 @@ export class CoreService {
     }
 
     this.memoryManager.getToolDefinitions().forEach(tool => {
-        this.proxyManager.registerInternalTool(tool, async (args: any) => {
-             if (tool.name === 'remember') return this.memoryManager.remember(args);
-             if (tool.name === 'search_memory') return this.memoryManager.search(args);
+        this.proxyManager.registerInternalTool(tool, async (args: Record<string, unknown>) => {
+             if (tool.name === 'remember') return this.memoryManager.remember(args as { content: string; tags?: string[] });
+             if (tool.name === 'search_memory') return this.memoryManager.search(args as { query: string });
              if (tool.name === 'recall_recent') return this.memoryManager.recall(args);
              if (tool.name === 'memory_stats') return this.memoryManager.getStats();
              return "Unknown tool";
         });
     });
 
-    this.proxyManager.registerInternalTool(FormatTranslatorTool, async (args: any) => {
+    this.proxyManager.registerInternalTool(FormatTranslatorTool, async (args: { data: string | object }) => {
         const json = typeof args.data === 'string' ? JSON.parse(args.data) : args.data;
         return toToon(json);
     });
 
     this.browserManager.getToolDefinitions().forEach(tool => {
-        this.proxyManager.registerInternalTool(tool, async (args: any) => {
+        this.proxyManager.registerInternalTool(tool, async (args: { url?: string; text?: string }) => {
              if (tool.name === 'read_active_tab') return this.browserManager.readActiveTab();
-             if (tool.name === 'browser_navigate') return this.browserManager.navigate(args.url);
-             if (tool.name === 'inject_context') return this.browserManager.injectContext(args.text);
+             if (tool.name === 'browser_navigate') return this.browserManager.navigate(args.url!);
+             if (tool.name === 'inject_context') return this.browserManager.injectContext(args.text!);
              return "Unknown tool";
         });
     });
 
     this.vscodeManager.getToolDefinitions().forEach(tool => {
-        this.proxyManager.registerInternalTool(tool, async (args: any) => {
-             if (tool.name === 'vscode_open_file') return this.vscodeManager.openFile(args.path);
+        this.proxyManager.registerInternalTool(tool, async (args: { path?: string; text?: string }) => {
+             if (tool.name === 'vscode_open_file') return this.vscodeManager.openFile(args.path!);
              if (tool.name === 'vscode_get_active_file') return this.vscodeManager.getActiveFile();
-             if (tool.name === 'vscode_insert_text') return this.vscodeManager.insertText(args.text);
+             if (tool.name === 'vscode_insert_text') return this.vscodeManager.insertText(args.text!);
              return "Unknown tool";
         });
     });
@@ -685,14 +708,13 @@ export class CoreService {
             },
             required: ["description"]
         }
-    }, async (args: any) => {
+    }, async (args: { description: string; note?: string }) => {
         const id = await this.handoffManager.createHandoff(args.description, { note: args.note });
         return `Handoff created with ID: ${id}`;
     });
 
-    // Register Pipeline Tool
-    this.proxyManager.registerInternalTool(PipelineTool, async (args: any) => {
-        return await executePipeline(this.proxyManager, args.steps, args.initialContext);
+    this.proxyManager.registerInternalTool(PipelineTool, async (args: { steps: unknown[]; initialContext?: unknown }) => {
+        return await executePipeline(this.proxyManager, args.steps as Parameters<typeof executePipeline>[1], args.initialContext);
     });
 
     const promptImprover = createPromptImprover(this.modelGateway);
@@ -702,7 +724,7 @@ export class CoreService {
     this.proxyManager.registerInternalTool(WebSearchTool, WebSearchTool.handler);
 
     this.economyManager.getToolDefinitions().forEach(tool => {
-        this.proxyManager.registerInternalTool(tool, async (args: any) => {
+        this.proxyManager.registerInternalTool(tool, async (args: Record<string, unknown>) => {
              if (tool.name === 'submit_activity') return this.economyManager.mine(args);
              if (tool.name === 'get_balance') return this.economyManager.getBalance();
              return "Unknown tool";
@@ -710,10 +732,10 @@ export class CoreService {
     });
 
     this.nodeManager.getToolDefinitions().forEach(tool => {
-        this.proxyManager.registerInternalTool(tool, async (args: any) => {
+        this.proxyManager.registerInternalTool(tool, async (args: { active?: boolean }) => {
              if (tool.name === 'node_status') return this.nodeManager.getStatus();
-             if (tool.name === 'toggle_tor') return this.nodeManager.toggleTor(args.active);
-             if (tool.name === 'toggle_torrent') return this.nodeManager.toggleTorrent(args.active);
+             if (tool.name === 'toggle_tor') return this.nodeManager.toggleTor(args.active!);
+             if (tool.name === 'toggle_torrent') return this.nodeManager.toggleTorrent(args.active!);
              return "Unknown tool";
         });
     });
@@ -730,7 +752,7 @@ export class CoreService {
             },
             required: ["agentName", "task"]
         }
-    }, async (args: any) => {
+    }, async (args: { agentName: string; task: string }) => {
         const agent = this.agentManager.getAgents().find(a => a.name === args.agentName);
         if (!agent) throw new Error(`Agent ${args.agentName} not found.`);
         return await this.agentExecutor.run(agent, args.task, {}, `sub-${Date.now()}`);
@@ -756,7 +778,7 @@ export class CoreService {
             },
             required: ["sessionId", "newMessage"]
         }
-    }, async (args: any) => {
+    }, async (args: { sessionId: string; newMessage: string }) => {
         const session = this.sessionManager.loadSession(args.sessionId);
         if (!session) throw new Error("Session not found");
         const agent = this.agentManager.getAgents().find(a => a.name === session.agentName);
@@ -768,24 +790,31 @@ export class CoreService {
         name: "install_package",
         description: "Install an Agent or Skill from the Marketplace.",
         inputSchema: { type: "object", properties: { name: { type: "string" } }, required: ["name"] }
-    }, async (args: any) => {
+    }, async (args: { name: string }) => {
         return await this.marketplaceManager.installPackage(args.name);
     });
 
     this.loopManager.getToolDefinitions().forEach(tool => {
-        this.proxyManager.registerInternalTool(tool, async (args: any) => {
-             if (tool.name === 'create_loop') return this.loopManager.createLoop(args.name, args.agentName, args.task, args.cron);
-             if (tool.name === 'stop_loop') return this.loopManager.stopLoop(args.loopId);
+        this.proxyManager.registerInternalTool(tool, async (args: { name?: string; agentName?: string; task?: string; cron?: string; loopId?: string }) => {
+             if (tool.name === 'create_loop') return this.loopManager.createLoop(args.name!, args.agentName!, args.task!, args.cron!);
+             if (tool.name === 'stop_loop') return this.loopManager.stopLoop(args.loopId!);
              return "Unknown tool";
         });
     });
     
-    try {
-      await this.app.listen({ port, host: '0.0.0.0' });
-      console.log(`[Core] Server listening on port ${port}`);
-    } catch (err) {
-      this.app.log.error(err);
-      process.exit(1);
-    }
+    this.httpServer = createServer();
+    this.io = new SocketIOServer(this.httpServer, {
+        cors: { origin: "*" }
+    });
+    this.setupSocket();
+
+    serve({ fetch: this.app.fetch, port });
+
+    const socketPort = port + 1;
+    this.httpServer.listen(socketPort, () => {
+        console.log(`[Core] Socket.io listening on port ${socketPort}`);
+    });
+
+    console.log(`[Core] Hono server listening on port ${port}`);
   }
 }

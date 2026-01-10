@@ -1,49 +1,131 @@
-import { spawn } from 'child_process';
+import { spawn, execSync } from 'child_process';
 import * as path from 'path';
+import * as fs from 'fs';
+
+export interface PythonExecutorOptions {
+  useDocker?: boolean;
+  dockerImage?: string;
+  timeout?: number;
+  allowLocalFallback?: boolean;
+}
 
 export class PythonExecutor {
-  constructor() {}
+  private dockerAvailable: boolean | null = null;
+  private defaultOptions: PythonExecutorOptions = {
+    useDocker: true,
+    dockerImage: 'python:3.11-slim',
+    timeout: 60000,
+    allowLocalFallback: true
+  };
 
-  async executeScript(scriptPath: string, args: string[] = [], cwd?: string): Promise<string> {
-    // SECURITY CHECK: Basic path validation
-    const normalizedPath = path.normalize(scriptPath);
-    if (normalizedPath.includes('..') && !normalizedPath.startsWith(process.cwd())) {
-        // This is a weak check, but prevents obvious traversal out of the project if path is absolute
-        // Ideally we resolve to absolute and check if it starts with allowed roots.
+  constructor(options?: Partial<PythonExecutorOptions>) {
+    this.defaultOptions = { ...this.defaultOptions, ...options };
+  }
+
+  private checkDockerAvailable(): boolean {
+    if (this.dockerAvailable !== null) return this.dockerAvailable;
+    
+    try {
+      execSync('docker --version', { stdio: 'pipe' });
+      execSync('docker info', { stdio: 'pipe', timeout: 5000 });
+      this.dockerAvailable = true;
+    } catch {
+      this.dockerAvailable = false;
     }
+    return this.dockerAvailable;
+  }
+
+  private async executeInDocker(
+    scriptPath: string, 
+    args: string[], 
+    cwd: string,
+    options: PythonExecutorOptions
+  ): Promise<string> {
+    const scriptDir = path.dirname(scriptPath);
+    const scriptName = path.basename(scriptPath);
+    const dockerImage = options.dockerImage || this.defaultOptions.dockerImage;
     
-    // SECURITY HARDENING:
-    // 1. Check if Docker is available. If so, use it.
-    // 2. If not, check a configuration flag (ALLOW_LOCAL_PYTHON).
-    // 3. For now, since we don't have the config system fully plumbed here, we will Log a warning.
-    
-    // TODO: Implement Docker execution
-    // docker run --rm -v ${dir}:/app python:3.9 python /app/script.py ...
-    
+    const dockerArgs = [
+      'run', '--rm',
+      '--network', 'none',
+      '-v', `${scriptDir}:/app:ro`,
+      '-w', '/app',
+      '--memory', '512m',
+      '--cpus', '1',
+      dockerImage!,
+      'python', scriptName, ...args
+    ];
+
     return new Promise((resolve, reject) => {
-      // Use the python from the environment.
-      // In a real production environment, this should be configurable or sandboxed (Docker).
+      const timeout = options.timeout || this.defaultOptions.timeout;
+      let timedOut = false;
+
+      const dockerProcess = spawn('docker', dockerArgs, { cwd });
       
-      console.warn(`[PythonExecutor] WARNING: Executing Python script on host: ${scriptPath}`);
-      
-      const pythonProcess = spawn('python', [scriptPath, ...args], {
-        cwd: cwd || path.dirname(scriptPath),
-        env: process.env, // Inherit env for now (needed for gh auth etc)
-        shell: true
-      });
+      const timer = setTimeout(() => {
+        timedOut = true;
+        dockerProcess.kill('SIGKILL');
+        reject(new Error(`Docker execution timed out after ${timeout}ms`));
+      }, timeout);
 
       let output = '';
       let errorOutput = '';
 
-      pythonProcess.stdout.on('data', (data) => {
-        output += data.toString();
+      dockerProcess.stdout.on('data', (data) => { output += data.toString(); });
+      dockerProcess.stderr.on('data', (data) => { errorOutput += data.toString(); });
+
+      dockerProcess.on('close', (code) => {
+        clearTimeout(timer);
+        if (timedOut) return;
+        
+        if (code !== 0) {
+          reject(new Error(`Docker Python execution failed (code ${code}): ${errorOutput}`));
+        } else {
+          resolve(output);
+        }
       });
 
-      pythonProcess.stderr.on('data', (data) => {
-        errorOutput += data.toString();
+      dockerProcess.on('error', (err) => {
+        clearTimeout(timer);
+        reject(err);
       });
+    });
+  }
+
+  private async executeLocal(
+    scriptPath: string, 
+    args: string[], 
+    cwd: string,
+    options: PythonExecutorOptions
+  ): Promise<string> {
+    console.warn(`[PythonExecutor] WARNING: Executing Python script on host (no sandbox): ${scriptPath}`);
+    
+    return new Promise((resolve, reject) => {
+      const timeout = options.timeout || this.defaultOptions.timeout;
+      let timedOut = false;
+
+      const pythonProcess = spawn('python', [scriptPath, ...args], {
+        cwd,
+        env: process.env,
+        shell: true
+      });
+
+      const timer = setTimeout(() => {
+        timedOut = true;
+        pythonProcess.kill('SIGKILL');
+        reject(new Error(`Local Python execution timed out after ${timeout}ms`));
+      }, timeout);
+
+      let output = '';
+      let errorOutput = '';
+
+      pythonProcess.stdout.on('data', (data) => { output += data.toString(); });
+      pythonProcess.stderr.on('data', (data) => { errorOutput += data.toString(); });
 
       pythonProcess.on('close', (code) => {
+        clearTimeout(timer);
+        if (timedOut) return;
+        
         if (code !== 0) {
           reject(new Error(`Python script exited with code ${code}\nErrors: ${errorOutput}`));
         } else {
@@ -51,9 +133,39 @@ export class PythonExecutor {
         }
       });
       
-      pythonProcess.on('error', (err) => {
-          reject(err);
-      });
+      pythonProcess.on('error', reject);
     });
+  }
+
+  async executeScript(
+    scriptPath: string, 
+    args: string[] = [], 
+    cwd?: string,
+    options?: Partial<PythonExecutorOptions>
+  ): Promise<string> {
+    const opts = { ...this.defaultOptions, ...options };
+    const normalizedPath = path.normalize(scriptPath);
+    const workingDir = cwd || path.dirname(normalizedPath);
+
+    if (!fs.existsSync(normalizedPath)) {
+      throw new Error(`Script not found: ${normalizedPath}`);
+    }
+
+    const useDocker = opts.useDocker && this.checkDockerAvailable();
+
+    if (useDocker) {
+      console.log(`[PythonExecutor] Executing in Docker container: ${path.basename(scriptPath)}`);
+      return this.executeInDocker(normalizedPath, args, workingDir, opts);
+    }
+
+    if (!opts.allowLocalFallback) {
+      throw new Error('Docker not available and local execution is disabled');
+    }
+
+    return this.executeLocal(normalizedPath, args, workingDir, opts);
+  }
+
+  isDockerAvailable(): boolean {
+    return this.checkDockerAvailable();
   }
 }

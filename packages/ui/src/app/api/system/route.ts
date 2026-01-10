@@ -8,7 +8,34 @@ export const dynamic = 'force-dynamic';
 
 const execAsync = promisify(exec);
 
-export async function GET() {
+type SyncStatus = 'synced' | 'behind' | 'ahead' | 'diverged' | 'unknown';
+
+async function getSyncStatus(submodulePath: string, rootDir: string): Promise<SyncStatus> {
+  try {
+    const fullPath = path.join(rootDir, submodulePath);
+    if (!fs.existsSync(fullPath)) return 'unknown';
+
+    await execAsync('git fetch origin --quiet', { cwd: fullPath, timeout: 10000 });
+    
+    const { stdout: local } = await execAsync('git rev-parse HEAD', { cwd: fullPath });
+    const { stdout: remote } = await execAsync('git rev-parse @{u}', { cwd: fullPath });
+    
+    if (local.trim() === remote.trim()) return 'synced';
+    
+    const { stdout: base } = await execAsync('git merge-base HEAD @{u}', { cwd: fullPath });
+    
+    if (base.trim() === local.trim()) return 'behind';
+    if (base.trim() === remote.trim()) return 'ahead';
+    return 'diverged';
+  } catch {
+    return 'unknown';
+  }
+}
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const includeSyncStatus = searchParams.get('syncStatus') === 'true';
+
   try {
     // Assuming the API is running from packages/ui, the root is two levels up
     // But in production/build, it might be different. 
@@ -51,7 +78,8 @@ export async function GET() {
         commit,
         branch,
         date,
-        status: statusChar === '+' ? 'Modified' : statusChar === '-' ? 'Uninitialized' : statusChar === 'U' ? 'Conflict' : 'Clean'
+        status: statusChar === '+' ? 'Modified' : statusChar === '-' ? 'Uninitialized' : statusChar === 'U' ? 'Conflict' : 'Clean',
+        syncStatus: includeSyncStatus ? await getSyncStatus(pathStr, rootDir) : undefined
       };
     }));
 

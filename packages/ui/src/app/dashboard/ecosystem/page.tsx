@@ -5,13 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { CheckCircle2, XCircle, AlertTriangle } from 'lucide-react';
+import { CheckCircle2, XCircle, AlertTriangle, RefreshCw } from 'lucide-react';
 import EcosystemList from './EcosystemList';
-import { Submodule, SubmoduleData } from '@/types/submodule';
+import { Submodule, SubmoduleData, SyncStatus } from '@/types/submodule';
 
 export default function EcosystemDashboard() {
   const [data, setData] = useState<SubmoduleData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [syncLoading, setSyncLoading] = useState(false);
 
   useEffect(() => {
     fetch('/submodules.json')
@@ -25,6 +26,30 @@ export default function EcosystemDashboard() {
         setLoading(false);
       });
   }, []);
+
+  const refreshSyncStatus = async () => {
+    setSyncLoading(true);
+    try {
+      const res = await fetch('/api/system?syncStatus=true');
+      const systemData = await res.json();
+      
+      if (data && systemData.submodules) {
+        const syncMap = new Map<string, SyncStatus>(
+          systemData.submodules.map((s: { path: string; syncStatus?: SyncStatus }) => [s.path, s.syncStatus])
+        );
+        
+        const updatedSubmodules = data.submodules.map(sub => ({
+          ...sub,
+          syncStatus: syncMap.get(sub.path) || sub.syncStatus
+        }));
+        
+        setData({ ...data, submodules: updatedSubmodules });
+      }
+    } catch (err) {
+      console.error('Failed to fetch sync status:', err);
+    }
+    setSyncLoading(false);
+  };
 
   if (loading) {
     return <div className="p-8 text-center">Loading ecosystem data...</div>;
@@ -43,6 +68,16 @@ export default function EcosystemDashboard() {
           </p>
         </div>
         <div className="flex gap-2">
+           <Button 
+             variant="outline" 
+             size="sm" 
+             onClick={refreshSyncStatus}
+             disabled={syncLoading}
+             className="flex items-center gap-2"
+           >
+             <RefreshCw className={`h-4 w-4 ${syncLoading ? 'animate-spin' : ''}`} />
+             {syncLoading ? 'Checking...' : 'Check Sync'}
+           </Button>
            {submodules.length > 0 && (
              <Badge variant="outline" className="text-lg py-1 px-3 bg-green-950/30 text-green-400 border-green-800 flex items-center gap-1">
                <CheckCircle2 className="h-4 w-4" /> Index Synced

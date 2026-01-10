@@ -28,8 +28,9 @@ export class McpRouter {
   private toolSearchService: ToolSearchService;
   private internalTools: Map<string, Tool> = new Map();
   
-  // Cache for routing: toolName -> serverName
   private toolRoutingTable: Map<string, string> = new Map();
+  private toolConflicts: Map<string, string[]> = new Map();
+  private namespacedTools: Map<string, string> = new Map();
 
   // The final composed handler
   private composedCallToolHandler: CallToolHandler;
@@ -232,15 +233,42 @@ export class McpRouter {
                 try {
                     const result = await client.listTools();
                     for (const tool of result.tools) {
-                        // TODO: Handle naming conflicts (namespace? prefix?)
-                        // For now, first come first served (or overwrite)
-                        this.toolRoutingTable.set(tool.name, server.name);
+                        const baseName = tool.name;
+                        const namespacedName = `${server.name}/${baseName}`;
+                        
+                        if (this.toolRoutingTable.has(baseName)) {
+                            const existingServer = this.toolRoutingTable.get(baseName)!;
+                            if (existingServer !== server.name) {
+                                if (!this.toolConflicts.has(baseName)) {
+                                    this.toolConflicts.set(baseName, [existingServer]);
+                                }
+                                this.toolConflicts.get(baseName)!.push(server.name);
+                                
+                                this.namespacedTools.set(namespacedName, server.name);
+                                
+                                const existingNamespaced = `${existingServer}/${baseName}`;
+                                if (!this.namespacedTools.has(existingNamespaced)) {
+                                    this.namespacedTools.set(existingNamespaced, existingServer);
+                                }
+                            }
+                        } else {
+                            this.toolRoutingTable.set(baseName, server.name);
+                        }
+                        
+                        this.namespacedTools.set(namespacedName, server.name);
                         allTools.push(tool);
                     }
                 } catch (e) {
                     console.error(`[McpRouter] Failed to list tools from ${server.name}:`, e);
                 }
             }
+        }
+    }
+
+    if (this.toolConflicts.size > 0) {
+        console.log(`[McpRouter] Tool naming conflicts detected. Use namespaced names (server/tool) for:`);
+        for (const [name, servers] of this.toolConflicts) {
+            console.log(`  - ${name}: available from [${servers.join(', ')}]`);
         }
     }
 
@@ -403,28 +431,38 @@ export class McpRouter {
    */
   private async executeToolCall(request: CallToolRequest, context: MetaMCPHandlerContext): Promise<CallToolResult> {
       const { name, arguments: args } = request.params;
-      const target = this.toolRoutingTable.get(name);
+      
+      let target = this.toolRoutingTable.get(name);
+      
+      if (!target && this.namespacedTools.has(name)) {
+          target = this.namespacedTools.get(name);
+      }
 
       if (!target) {
-          // Try one refresh
           await this.refreshRoutingTable();
-          if (!this.toolRoutingTable.has(name)) {
-             throw new Error(`Tool '${name}' not found.`);
+          target = this.toolRoutingTable.get(name) || this.namespacedTools.get(name);
+          
+          if (!target) {
+              const conflict = this.toolConflicts.get(name);
+              if (conflict) {
+                  throw new Error(`Tool '${name}' exists on multiple servers: [${conflict.join(', ')}]. Use namespaced format: server/${name}`);
+              }
+              throw new Error(`Tool '${name}' not found.`);
           }
       }
 
-      const finalTarget = this.toolRoutingTable.get(name)!;
-
-      if (finalTarget === 'internal') {
+      if (target === 'internal') {
           return this.handleInternalTool(name, args, context);
       } else {
-          // Route to external server
-          const client = this.mcpManager.getClient(finalTarget);
+          const client = this.mcpManager.getClient(target);
           if (!client) {
-              throw new Error(`Server '${finalTarget}' is not connected.`);
+              throw new Error(`Server '${target}' is not connected.`);
           }
+          
+          const actualToolName = name.includes('/') ? name.split('/').pop()! : name;
+          
           const result = await client.callTool({
-              name,
+              name: actualToolName,
               arguments: args
           });
           return result as unknown as CallToolResult;

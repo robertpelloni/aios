@@ -1098,3 +1098,45 @@
 [submodule "computer-use/browser/algonius-browser"]
 	path = computer-use/browser/algonius-browser
 	url = https://github.com/algonius/algonius-browser
+[submodule "code-sandbox/tools/cohere-terrarium"]
+	path = code-sandbox/tools/cohere-terrarium
+	url = https://github.com/cohere-ai/cohere-terrarium
+[submodule "code-sandbox/tools/e2b-code-interpreter"]
+	path = code-sandbox/tools/e2b-code-interpreter
+	url = https://github.com/e2b-dev/code-interpreter
+[submodule "code-sandbox/tools/open-interpreter"]
+	path = code-sandbox/tools/open-interpreter
+	url = https://github.com/OpenInterpreter/open-interpreter
+[submodule "search/mcp-servers/web-search-mcp"]
+	path = search/mcp-servers/web-search-mcp
+	url = https://github.com/mrkrsl/web-search-mcp
+[submodule "search/mcp-servers/mcp-everything-search"]
+	path = search/mcp-servers/mcp-everything-search
+	url = https://github.com/mamertofabian/mcp-everything-search
+[submodule "search/tools/DesktopCommanderMCP"]
+	path = search/tools/DesktopCommanderMCP
+	url = https://github.com/wonderwhy-er/DesktopCommanderMCP
+[submodule "financial/mcp-servers/octagon-mcp-server"]
+	path = financial/mcp-servers/octagon-mcp-server
+	url = https://github.com/OctagonAI/octagon-mcp-server
+[submodule "financial/mcp-servers/alpha_vantage_mcp"]
+	path = financial/mcp-servers/alpha_vantage_mcp
+	url = https://github.com/alphavantage/alpha_vantage_mcp
+[submodule "financial/mcp-servers/financial-datasets-mcp"]
+	path = financial/mcp-servers/financial-datasets-mcp
+	url = https://github.com/financial-datasets/mcp-server
+[submodule "financial/trading/trade-agent-mcp"]
+	path = financial/trading/trade-agent-mcp
+	url = https://github.com/Trade-Agent/trade-agent-mcp
+[submodule "financial/crypto/coingecko-mcp"]
+	path = financial/crypto/coingecko-mcp
+	url = https://github.com/coingecko/coingecko-typescript
+[submodule "financial/crypto/coinstats-mcp"]
+	path = financial/crypto/coinstats-mcp
+	url = https://github.com/CoinStatsHQ/coinstats-mcp
+[submodule "financial/crypto/awesome-crypto-mcp"]
+	path = financial/crypto/awesome-crypto-mcp
+	url = https://github.com/badkk/awesome-crypto-mcp-servers
+[submodule "financial/trading/ai-hedge-fund"]
+	path = financial/trading/ai-hedge-fund
+	url = https://github.com/virattt/ai-hedge-fund

@@ -1,3 +1,5 @@
+export type SyncStatus = 'synced' | 'behind' | 'ahead' | 'diverged' | 'unknown';
+
 export interface Submodule {
   name: string;
   path: string;
@@ -11,6 +13,7 @@ export interface Submodule {
   integrationStrategy: string;
   isInstalled: boolean;
   date?: string;
+  syncStatus?: SyncStatus;
 }
 
 export interface SubmoduleData {

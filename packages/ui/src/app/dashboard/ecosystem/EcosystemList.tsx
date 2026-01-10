@@ -6,8 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
-import { CheckCircle2, XCircle, AlertTriangle, Search, Filter } from 'lucide-react';
-import type { Submodule } from '@/types/submodule';
+import { CheckCircle2, XCircle, AlertTriangle, Search, Filter, GitBranch } from 'lucide-react';
+import type { Submodule, SyncStatus } from '@/types/submodule';
 
 interface EcosystemListProps {
   initialSubmodules: Submodule[];
@@ -85,7 +85,7 @@ export default function EcosystemList({ initialSubmodules }: EcosystemListProps)
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredSubmodules.map((module, index) => (
           <Card key={index} className="flex flex-col h-full border-gray-800 bg-gray-950/50 hover:bg-gray-900/50 transition-colors">
-            <CardHeader>
+<CardHeader>
               <div className="flex justify-between items-start">
                 <CardTitle className="text-xl text-blue-400 flex items-center gap-2">
                   {module.name}
@@ -99,9 +99,26 @@ export default function EcosystemList({ initialSubmodules }: EcosystemListProps)
                     </span>
                   )}
                 </CardTitle>
-                <Badge variant={module.isInstalled ? "default" : "secondary"}>
-                  {module.isInstalled ? "Active" : "Reference"}
-                </Badge>
+                <div className="flex gap-2">
+                  {module.syncStatus && (
+                    <Badge 
+                      variant="outline" 
+                      className={
+                        module.syncStatus === 'synced' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+                        module.syncStatus === 'behind' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
+                        module.syncStatus === 'ahead' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' :
+                        module.syncStatus === 'diverged' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
+                        'bg-gray-500/20 text-gray-400 border-gray-500/30'
+                      }
+                    >
+                      <GitBranch className="h-3 w-3 mr-1" />
+                      {module.syncStatus}
+                    </Badge>
+                  )}
+                  <Badge variant={module.isInstalled ? "default" : "secondary"}>
+                    {module.isInstalled ? "Active" : "Reference"}
+                  </Badge>
+                </div>
               </div>
               <div className="flex gap-2 mt-2">
                 <Badge variant="secondary" className="text-xs">{module.category}</Badge>

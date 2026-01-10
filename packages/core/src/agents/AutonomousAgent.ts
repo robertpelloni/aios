@@ -5,12 +5,22 @@ import { McpRouter } from '../managers/McpRouter.js';
 import { LogManager } from '../managers/LogManager.js';
 import OpenAI from 'openai';
 
+export interface ReflectionResult {
+    wasSuccessful: boolean;
+    reasoning: string;
+    improvements: string[];
+    shouldRetry: boolean;
+    adjustedApproach?: string;
+}
+
 export class AutonomousAgent extends EventEmitter {
     private status: 'idle' | 'busy' | 'paused' = 'idle';
     private loopInterval: NodeJS.Timeout | null = null;
     private messages: any[] = [];
     private openai: OpenAI | null = null;
     private sessionId: string;
+    private reflectionEnabled: boolean = true;
+    private reflectionHistory: ReflectionResult[] = [];
 
     constructor(
         public readonly id: string,
@@ -174,8 +184,111 @@ export class AutonomousAgent extends EventEmitter {
             } else {
                 // 4. Final Answer / Stop
                 console.log(`[AutonomousAgent:${this.definition.name}] Cycle complete. Response: ${message.content}`);
+                
+                // 5. Auto-Reflection (if enabled)
+                if (this.reflectionEnabled && message.content) {
+                    const reflection = await this.reflect(message.content);
+                    this.reflectionHistory.push(reflection);
+                    
+                    if (reflection.shouldRetry && reflection.adjustedApproach) {
+                        console.log(`[AutonomousAgent:${this.definition.name}] Reflection suggests retry: ${reflection.reasoning}`);
+                        // Add reflection as context for retry
+                        this.messages.push({
+                            role: 'user',
+                            content: `[Self-Reflection] Your previous response may need improvement.\n\nAnalysis: ${reflection.reasoning}\n\nSuggested improvements:\n${reflection.improvements.map((i, idx) => `${idx + 1}. ${i}`).join('\n')}\n\nPlease try again with this adjusted approach: ${reflection.adjustedApproach}`
+                        });
+                        // Continue loop for one more iteration
+                        continue;
+                    }
+                }
                 break;
             }
         }
+    }
+
+    /**
+     * Self-reflection mechanism - analyzes the agent's output and determines if improvement is needed
+     */
+    private async reflect(output: string): Promise<ReflectionResult> {
+        if (!this.openai) {
+            return { wasSuccessful: true, reasoning: 'No OpenAI key for reflection', improvements: [], shouldRetry: false };
+        }
+
+        const reflectionPrompt = `You are a self-reflection module for an AI agent. Analyze the following agent output and evaluate its quality.
+
+Agent Name: ${this.definition.name}
+Agent Purpose: ${this.definition.description}
+
+Agent's Output:
+"""
+${output.substring(0, 4000)}
+"""
+
+Recent reflection history (last 3):
+${this.reflectionHistory.slice(-3).map(r => `- ${r.wasSuccessful ? 'SUCCESS' : 'NEEDS_IMPROVEMENT'}: ${r.reasoning}`).join('\n') || 'None'}
+
+Evaluate:
+1. Did the agent accomplish its intended task?
+2. Was the response complete and accurate?
+3. Are there obvious errors or omissions?
+4. Could the approach be significantly improved?
+
+Return a JSON object with:
+{
+  "wasSuccessful": boolean,
+  "reasoning": "brief explanation",
+  "improvements": ["improvement 1", "improvement 2"],
+  "shouldRetry": boolean (only true if critical issues found AND this is first reflection),
+  "adjustedApproach": "specific guidance for retry" (only if shouldRetry is true)
+}
+
+Be conservative with shouldRetry - only suggest retry for significant issues, not minor improvements.
+Output JSON only.`;
+
+        try {
+            const completion = await this.openai.chat.completions.create({
+                model: 'gpt-4-turbo',
+                messages: [
+                    { role: 'system', content: 'You are a precise evaluator. Output valid JSON only.' },
+                    { role: 'user', content: reflectionPrompt }
+                ],
+                temperature: 0.3
+            });
+
+            const content = completion.choices[0].message.content || '';
+            const jsonMatch = content.match(/\{[\s\S]*\}/);
+            
+            if (jsonMatch) {
+                const result = JSON.parse(jsonMatch[0]) as ReflectionResult;
+                // Prevent infinite retry loops - only allow retry if we haven't retried recently
+                if (result.shouldRetry && this.reflectionHistory.length > 0) {
+                    const lastReflection = this.reflectionHistory[this.reflectionHistory.length - 1];
+                    if (lastReflection.shouldRetry) {
+                        result.shouldRetry = false; // Don't retry twice in a row
+                    }
+                }
+                console.log(`[AutonomousAgent:${this.definition.name}] Reflection: ${result.wasSuccessful ? 'SUCCESS' : 'NEEDS_IMPROVEMENT'} - ${result.reasoning}`);
+                return result;
+            }
+            
+            return { wasSuccessful: true, reasoning: 'Could not parse reflection', improvements: [], shouldRetry: false };
+        } catch (e) {
+            console.error(`[AutonomousAgent:${this.definition.name}] Reflection failed:`, e);
+            return { wasSuccessful: true, reasoning: 'Reflection error', improvements: [], shouldRetry: false };
+        }
+    }
+
+    /**
+     * Enable or disable auto-reflection
+     */
+    public setReflectionEnabled(enabled: boolean) {
+        this.reflectionEnabled = enabled;
+    }
+
+    /**
+     * Get reflection history for analysis
+     */
+    public getReflectionHistory(): ReflectionResult[] {
+        return [...this.reflectionHistory];
     }
 }

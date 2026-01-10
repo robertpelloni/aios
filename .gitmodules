@@ -1140,3 +1140,96 @@
 [submodule "financial/trading/ai-hedge-fund"]
 	path = financial/trading/ai-hedge-fund
 	url = https://github.com/virattt/ai-hedge-fund
+[submodule "RAG/systems/orama"]
+	path = RAG/systems/orama
+	url = https://github.com/oramasearch/orama.git
+[submodule "code-indexing/tools/bloop"]
+	path = code-indexing/tools/bloop
+	url = https://github.com/BloopAI/bloop.git
+[submodule "code-indexing/tools/aider"]
+	path = code-indexing/tools/aider
+	url = https://github.com/aider-ai/aider.git
+[submodule "code-indexing/ast/ast-grep"]
+	path = code-indexing/ast/ast-grep
+	url = https://github.com/ast-grep/ast-grep.git
+[submodule "code-indexing/ast/tree-sitter"]
+	path = code-indexing/ast/tree-sitter
+	url = https://github.com/tree-sitter/tree-sitter.git
+[submodule "skills/prompts/anthropic-prompt-tutorial"]
+	path = skills/prompts/anthropic-prompt-tutorial
+	url = https://github.com/anthropics/prompt-eng-interactive-tutorial.git
+[submodule "skills/prompts/anthropic-quickstarts"]
+	path = skills/prompts/anthropic-quickstarts
+	url = https://github.com/anthropics/anthropic-quickstarts.git
+[submodule "RAG/systems/haystack"]
+	path = RAG/systems/haystack
+	url = https://github.com/deepset-ai/haystack.git
+[submodule "RAG/methods/instructor"]
+	path = RAG/methods/instructor
+	url = https://github.com/jxnl/instructor.git
+[submodule "RAG/systems/qdrant"]
+	path = RAG/systems/qdrant
+	url = https://github.com/qdrant/qdrant.git
+[submodule "RAG/systems/chroma"]
+	path = RAG/systems/chroma
+	url = https://github.com/chroma-core/chroma.git
+[submodule "RAG/systems/langchain"]
+	path = RAG/systems/langchain
+	url = https://github.com/langchain-ai/langchain.git
+[submodule "RAG/systems/weaviate"]
+	path = RAG/systems/weaviate
+	url = https://github.com/weaviate/weaviate.git
+[submodule "superai-cli/agents/autogen"]
+	path = superai-cli/agents/autogen
+	url = https://github.com/microsoft/autogen.git
+[submodule "RAG/systems/milvus"]
+	path = RAG/systems/milvus
+	url = https://github.com/milvus-io/milvus.git
+[submodule "superai-cli/agents/smolagents"]
+	path = superai-cli/agents/smolagents
+	url = https://github.com/huggingface/smolagents.git
+[submodule "superai-cli/agents/openhands"]
+	path = superai-cli/agents/openhands
+	url = https://github.com/All-Hands-AI/OpenHands.git
+[submodule "superai-cli/agents/crewai"]
+	path = superai-cli/agents/crewai
+	url = https://github.com/crewAIInc/crewAI.git
+[submodule "computer-use/browser/playwright"]
+	path = computer-use/browser/playwright
+	url = https://github.com/microsoft/playwright.git
+[submodule "computer-use/browser/stagehand"]
+	path = computer-use/browser/stagehand
+	url = https://github.com/browserbase/stagehand.git
+[submodule "code-sandbox/runtimes/dagger"]
+	path = code-sandbox/runtimes/dagger
+	url = https://github.com/dagger/dagger.git
+[submodule "RAG/parsing/docling"]
+	path = RAG/parsing/docling
+	url = https://github.com/DS4SD/docling.git
+[submodule "memory/systems/mem0"]
+	path = memory/systems/mem0
+	url = https://github.com/mem0ai/mem0.git
+[submodule "superai-cli/wallet/walletconnect"]
+	path = superai-cli/wallet/walletconnect
+	url = https://github.com/WalletConnect/walletconnect-monorepo.git
+[submodule "superai-cli/wallet/wagmi"]
+	path = superai-cli/wallet/wagmi
+	url = https://github.com/wevm/wagmi.git
+[submodule "superai-cli/wallet/viem"]
+	path = superai-cli/wallet/viem
+	url = https://github.com/wevm/viem.git
+[submodule "superai-cli/agents/langgraph"]
+	path = superai-cli/agents/langgraph
+	url = https://github.com/langchain-ai/langgraph.git
+[submodule "superai-cli/agents/pydantic-ai"]
+	path = superai-cli/agents/pydantic-ai
+	url = https://github.com/pydantic/pydantic-ai.git
+[submodule "superai-cli/mcp-advanced/anthropic-tools"]
+	path = superai-cli/mcp-advanced/anthropic-tools
+	url = https://github.com/anthropics/anthropic-tools.git
+[submodule "superai-cli/mcp-advanced/mcp-servers"]
+	path = superai-cli/mcp-advanced/mcp-servers
+	url = https://github.com/modelcontextprotocol/servers.git
+[submodule "superai-cli/mcp-advanced/awesome-mcp-servers"]
+	path = superai-cli/mcp-advanced/awesome-mcp-servers
+	url = https://github.com/punkpeye/awesome-mcp-servers.git

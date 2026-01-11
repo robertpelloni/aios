@@ -1,41 +1,483 @@
 import * as vscode from 'vscode';
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
-let socket: any;
+let socket: Socket | null = null;
+let statusBarItem: vscode.StatusBarItem;
+let outputChannel: vscode.OutputChannel;
+
+interface HubStatus {
+    connected: boolean;
+    url: string;
+    agentCount?: number;
+    toolCount?: number;
+}
+
+interface MemorySearchItem {
+    label: string;
+    detail: string;
+    content: string;
+}
+
+interface ToolItem {
+    label: string;
+    description: string;
+    detail: string;
+    tool: any;
+}
+
+let hubStatus: HubStatus = { connected: false, url: '' };
 
 export function activate(context: vscode.ExtensionContext) {
-	console.log('AIOS Plugin is now active!');
+    console.log('AIOS Plugin is now active!');
 
-	let disposable = vscode.commands.registerCommand('aios.connect', () => {
-		const config = vscode.workspace.getConfiguration('aios');
-        const url = config.get<string>('hubUrl') || 'http://localhost:3000';
+    outputChannel = vscode.window.createOutputChannel('AIOS Hub');
 
-        if (socket) {
-            socket.disconnect();
+    statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+    statusBarItem.command = 'aios.showStatus';
+    updateStatusBar();
+    statusBarItem.show();
+    context.subscriptions.push(statusBarItem);
+
+    const commands = [
+        vscode.commands.registerCommand('aios.connect', connectToHub),
+        vscode.commands.registerCommand('aios.disconnect', disconnectFromHub),
+        vscode.commands.registerCommand('aios.showStatus', showHubStatus),
+        vscode.commands.registerCommand('aios.runAgent', runAgent),
+        vscode.commands.registerCommand('aios.searchMemory', searchMemory),
+        vscode.commands.registerCommand('aios.rememberSelection', rememberSelection),
+        vscode.commands.registerCommand('aios.listTools', listTools),
+        vscode.commands.registerCommand('aios.invokeTool', invokeTool),
+        vscode.commands.registerCommand('aios.openDashboard', openDashboard),
+        vscode.commands.registerCommand('aios.showLogs', () => outputChannel.show()),
+    ];
+
+    commands.forEach(cmd => context.subscriptions.push(cmd));
+
+    const config = vscode.workspace.getConfiguration('aios');
+    if (config.get<boolean>('autoConnect')) {
+        connectToHub();
+    }
+}
+
+function updateStatusBar() {
+    if (hubStatus.connected) {
+        statusBarItem.text = `$(plug) AIOS: Connected`;
+        statusBarItem.tooltip = `Connected to ${hubStatus.url}\nAgents: ${hubStatus.agentCount ?? '?'} | Tools: ${hubStatus.toolCount ?? '?'}`;
+        statusBarItem.backgroundColor = undefined;
+    } else {
+        statusBarItem.text = `$(debug-disconnect) AIOS: Disconnected`;
+        statusBarItem.tooltip = 'Click to view status';
+        statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground');
+    }
+}
+
+function log(message: string) {
+    const timestamp = new Date().toISOString();
+    outputChannel.appendLine(`[${timestamp}] ${message}`);
+}
+
+async function connectToHub() {
+    const config = vscode.workspace.getConfiguration('aios');
+    const url = config.get<string>('hubUrl') || 'http://localhost:3000';
+    const apiKey = config.get<string>('apiKey');
+
+    if (socket) {
+        socket.disconnect();
+    }
+
+    log(`Connecting to AIOS Hub at ${url}...`);
+
+    socket = io(url, {
+        query: { clientType: 'vscode' },
+        auth: apiKey ? { apiKey } : undefined,
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+    });
+
+    socket.on('connect', async () => {
+        hubStatus = { connected: true, url };
+        log(`Connected to AIOS Hub`);
+        vscode.window.showInformationMessage(`Connected to AIOS Hub at ${url}`);
+        
+        try {
+            const response = await fetch(`${url}/api/system/status`);
+            if (response.ok) {
+                const status = await response.json();
+                hubStatus.agentCount = status.agents?.count;
+                hubStatus.toolCount = status.tools?.count;
+            }
+        } catch (_) {
+            /* Status bar will show '?' */
+        }
+        
+        updateStatusBar();
+    });
+
+    socket.on('disconnect', (reason) => {
+        hubStatus.connected = false;
+        log(`Disconnected from AIOS Hub: ${reason}`);
+        vscode.window.showWarningMessage('Disconnected from AIOS Hub');
+        updateStatusBar();
+    });
+
+    socket.on('connect_error', (error) => {
+        log(`Connection error: ${error.message}`);
+    });
+
+    socket.on('hook_event', (event: any) => {
+        log(`Hook event: ${JSON.stringify(event)}`);
+        if (event.type === 'notification') {
+            vscode.window.showInformationMessage(`[Hub] ${event.message}`);
+        }
+    });
+
+    socket.on('agent:started', (data: any) => {
+        log(`Agent started: ${data.agentId}`);
+        vscode.window.showInformationMessage(`Agent ${data.agentId} started`);
+    });
+
+    socket.on('agent:completed', (data: any) => {
+        log(`Agent completed: ${data.agentId}`);
+        vscode.window.showInformationMessage(`Agent ${data.agentId} completed`);
+    });
+
+    socket.on('agent:error', (data: any) => {
+        log(`Agent error: ${data.agentId} - ${data.error}`);
+        vscode.window.showErrorMessage(`Agent ${data.agentId} error: ${data.error}`);
+    });
+
+    socket.on('tool:result', (data: any) => {
+        log(`Tool result: ${data.tool} - ${JSON.stringify(data.result).substring(0, 200)}`);
+    });
+}
+
+function disconnectFromHub() {
+    if (socket) {
+        socket.disconnect();
+        socket = null;
+        hubStatus = { connected: false, url: '' };
+        updateStatusBar();
+        vscode.window.showInformationMessage('Disconnected from AIOS Hub');
+    }
+}
+
+async function showHubStatus() {
+    const config = vscode.workspace.getConfiguration('aios');
+    const url = config.get<string>('hubUrl') || 'http://localhost:3000';
+
+    if (!hubStatus.connected) {
+        const action = await vscode.window.showWarningMessage(
+            `Not connected to AIOS Hub (${url})`,
+            'Connect',
+            'Open Dashboard'
+        );
+        if (action === 'Connect') {
+            connectToHub();
+        } else if (action === 'Open Dashboard') {
+            openDashboard();
+        }
+        return;
+    }
+
+    try {
+        const response = await fetch(`${url}/api/system/status`);
+        if (response.ok) {
+            const status = await response.json();
+            const items = [
+                `Status: ${status.status}`,
+                `Uptime: ${Math.floor(status.uptime / 60)} minutes`,
+                `Agents: ${status.agents?.count ?? 'N/A'}`,
+                `Tools: ${status.tools?.count ?? 'N/A'}`,
+                `Memory entries: ${status.memory?.entries ?? 'N/A'}`,
+            ];
+            vscode.window.showQuickPick(items, { title: 'AIOS Hub Status' });
+        }
+    } catch (e: any) {
+        vscode.window.showErrorMessage(`Failed to fetch status: ${e.message}`);
+    }
+}
+
+async function runAgent() {
+    const config = vscode.workspace.getConfiguration('aios');
+    const url = config.get<string>('hubUrl') || 'http://localhost:3000';
+
+    if (!hubStatus.connected) {
+        vscode.window.showWarningMessage('Not connected to AIOS Hub. Connect first.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${url}/api/agents`);
+        if (!response.ok) throw new Error('Failed to fetch agents');
+        
+        const agents = await response.json();
+        const agentNames = agents.map((a: any) => a.name || a.id);
+
+        const selected = await vscode.window.showQuickPick(agentNames, {
+            title: 'Select Agent to Run',
+            placeHolder: 'Choose an agent...'
+        });
+
+        if (!selected) return;
+
+        const task = await vscode.window.showInputBox({
+            title: 'Agent Task',
+            prompt: 'Enter the task for the agent',
+            placeHolder: 'e.g., Analyze the current file for improvements'
+        });
+
+        if (!task) return;
+
+        const editor = vscode.window.activeTextEditor;
+        const context: any = {};
+        if (editor) {
+            context.currentFile = editor.document.uri.fsPath;
+            context.currentLanguage = editor.document.languageId;
+            context.selection = editor.document.getText(editor.selection);
         }
 
-        socket = io(url, {
-            query: { clientType: 'vscode' }
+        log(`Running agent ${selected} with task: ${task}`);
+        vscode.window.showInformationMessage(`Starting agent: ${selected}`);
+
+        const runResponse = await fetch(`${url}/api/agents/${selected}/run`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task, context })
         });
 
-        socket.on('connect', () => {
-            vscode.window.showInformationMessage(`Connected to AIOS Hub at ${url}`);
+        if (!runResponse.ok) {
+            const error = await runResponse.text();
+            throw new Error(error);
+        }
+
+        const result = await runResponse.json();
+        log(`Agent ${selected} result: ${JSON.stringify(result)}`);
+
+        outputChannel.appendLine(`\n=== Agent ${selected} Result ===`);
+        outputChannel.appendLine(JSON.stringify(result, null, 2));
+        outputChannel.show();
+
+    } catch (e: any) {
+        log(`Error running agent: ${e.message}`);
+        vscode.window.showErrorMessage(`Failed to run agent: ${e.message}`);
+    }
+}
+
+async function searchMemory() {
+    const config = vscode.workspace.getConfiguration('aios');
+    const url = config.get<string>('hubUrl') || 'http://localhost:3000';
+
+    const query = await vscode.window.showInputBox({
+        title: 'Search Memory',
+        prompt: 'Enter search query',
+        placeHolder: 'e.g., authentication patterns'
+    });
+
+    if (!query) return;
+
+    try {
+        log(`Searching memory for: ${query}`);
+        const response = await fetch(`${url}/api/memory/search`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query, limit: 10 })
         });
 
-        socket.on('disconnect', () => {
-            vscode.window.showWarningMessage('Disconnected from AIOS Hub');
+        if (!response.ok) throw new Error('Search failed');
+
+        const results = await response.json();
+        
+        if (!results.length) {
+            vscode.window.showInformationMessage('No memory entries found');
+            return;
+        }
+
+        const items: MemorySearchItem[] = results.map((r: any, i: number) => ({
+            label: `${i + 1}. ${r.content?.substring(0, 60) || 'No content'}...`,
+            detail: `Score: ${r.score?.toFixed(2) || 'N/A'} | Tags: ${r.tags?.join(', ') || 'none'}`,
+            content: r.content
+        }));
+
+        const selected = await vscode.window.showQuickPick(items, {
+            title: 'Memory Search Results',
+            placeHolder: 'Select to view full content'
         });
 
-        socket.on('hook_event', (event: any) => {
-            if (event.type === 'notification') {
-                vscode.window.showInformationMessage(`[Hub] ${event.message}`);
-            }
-        });
-	});
+        if (selected) {
+            outputChannel.appendLine(`\n=== Memory Entry ===`);
+            outputChannel.appendLine(selected.content);
+            outputChannel.show();
+        }
 
-	context.subscriptions.push(disposable);
+    } catch (e: any) {
+        log(`Memory search error: ${e.message}`);
+        vscode.window.showErrorMessage(`Memory search failed: ${e.message}`);
+    }
+}
+
+async function rememberSelection() {
+    const config = vscode.workspace.getConfiguration('aios');
+    const url = config.get<string>('hubUrl') || 'http://localhost:3000';
+
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        vscode.window.showWarningMessage('No active editor');
+        return;
+    }
+
+    const selection = editor.document.getText(editor.selection);
+    if (!selection) {
+        vscode.window.showWarningMessage('No text selected');
+        return;
+    }
+
+    const tags = await vscode.window.showInputBox({
+        title: 'Memory Tags',
+        prompt: 'Enter tags (comma-separated)',
+        placeHolder: 'e.g., code, pattern, typescript'
+    });
+
+    try {
+        log(`Remembering selection (${selection.length} chars)`);
+        const response = await fetch(`${url}/api/memory/remember`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                content: selection,
+                tags: tags?.split(',').map(t => t.trim()).filter(Boolean) || [],
+                metadata: {
+                    source: 'vscode',
+                    file: editor.document.uri.fsPath,
+                    language: editor.document.languageId
+                }
+            })
+        });
+
+        if (!response.ok) throw new Error('Remember failed');
+
+        vscode.window.showInformationMessage('Selection saved to memory');
+        log('Selection saved to memory');
+
+    } catch (e: any) {
+        log(`Remember error: ${e.message}`);
+        vscode.window.showErrorMessage(`Failed to save to memory: ${e.message}`);
+    }
+}
+
+async function listTools() {
+    const config = vscode.workspace.getConfiguration('aios');
+    const url = config.get<string>('hubUrl') || 'http://localhost:3000';
+
+    try {
+        const response = await fetch(`${url}/api/hub/tools`);
+        if (!response.ok) throw new Error('Failed to fetch tools');
+
+        const tools = await response.json();
+        
+        const items: ToolItem[] = tools.map((t: any) => ({
+            label: t.name,
+            description: t.namespace ? `[${t.namespace}]` : '',
+            detail: t.description?.substring(0, 100) || 'No description',
+            tool: t
+        }));
+
+        const selected = await vscode.window.showQuickPick(items, {
+            title: 'Available Tools',
+            placeHolder: 'Select a tool to invoke'
+        });
+
+        if (selected) {
+            invokeToolWithSchema(selected.tool);
+        }
+
+    } catch (e: any) {
+        log(`List tools error: ${e.message}`);
+        vscode.window.showErrorMessage(`Failed to list tools: ${e.message}`);
+    }
+}
+
+async function invokeTool() {
+    const toolName = await vscode.window.showInputBox({
+        title: 'Invoke Tool',
+        prompt: 'Enter tool name',
+        placeHolder: 'e.g., execute_code, mcp_chain'
+    });
+
+    if (!toolName) return;
+
+    const config = vscode.workspace.getConfiguration('aios');
+    const url = config.get<string>('hubUrl') || 'http://localhost:3000';
+
+    try {
+        const response = await fetch(`${url}/api/hub/tools/${encodeURIComponent(toolName)}`);
+        if (!response.ok) throw new Error(`Tool ${toolName} not found`);
+        
+        const tool = await response.json();
+        await invokeToolWithSchema(tool);
+
+    } catch (e: any) {
+        log(`Invoke tool error: ${e.message}`);
+        vscode.window.showErrorMessage(`Failed to invoke tool: ${e.message}`);
+    }
+}
+
+async function invokeToolWithSchema(tool: any) {
+    const config = vscode.workspace.getConfiguration('aios');
+    const url = config.get<string>('hubUrl') || 'http://localhost:3000';
+
+    const argsInput = await vscode.window.showInputBox({
+        title: `Invoke: ${tool.name}`,
+        prompt: 'Enter arguments as JSON',
+        placeHolder: tool.inputSchema ? JSON.stringify(tool.inputSchema.properties || {}) : '{}'
+    });
+
+    if (argsInput === undefined) return;
+
+    let args = {};
+    try {
+        args = argsInput ? JSON.parse(argsInput) : {};
+    } catch {
+        vscode.window.showErrorMessage('Invalid JSON arguments');
+        return;
+    }
+
+    try {
+        log(`Invoking tool ${tool.name} with args: ${JSON.stringify(args)}`);
+        
+        const response = await fetch(`${url}/api/hub/invoke`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tool: tool.name, arguments: args })
+        });
+
+        const result = await response.json();
+        
+        outputChannel.appendLine(`\n=== Tool: ${tool.name} ===`);
+        outputChannel.appendLine(`Arguments: ${JSON.stringify(args, null, 2)}`);
+        outputChannel.appendLine(`Result: ${JSON.stringify(result, null, 2)}`);
+        outputChannel.show();
+
+        vscode.window.showInformationMessage(`Tool ${tool.name} executed`);
+
+    } catch (e: any) {
+        log(`Tool execution error: ${e.message}`);
+        vscode.window.showErrorMessage(`Tool execution failed: ${e.message}`);
+    }
+}
+
+function openDashboard() {
+    const config = vscode.workspace.getConfiguration('aios');
+    const url = config.get<string>('hubUrl') || 'http://localhost:3000';
+    vscode.env.openExternal(vscode.Uri.parse(url));
 }
 
 export function deactivate() {
-    if (socket) socket.disconnect();
+    if (socket) {
+        socket.disconnect();
+        socket = null;
+    }
+    if (outputChannel) {
+        outputChannel.dispose();
+    }
 }

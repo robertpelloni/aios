@@ -2,12 +2,16 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Settings, Activity, Box, Terminal } from 'lucide-react';
+import { Home, Settings, Activity, Box, Terminal, Zap, Cpu, Workflow, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: Home },
   { name: 'Agents', href: '/agents', icon: Activity },
+  { name: 'Sessions', href: '/sessions', icon: MessageSquare },
+  { name: 'Autopilot', href: '/autopilot', icon: Zap },
+  { name: 'Conductor', href: '/conductor', icon: Workflow },
+  { name: 'Hardware', href: '/hardware', icon: Cpu },
   { name: 'Council', href: '/council', icon: Terminal },
   { name: 'MCP Servers', href: '/mcp', icon: Box },
   { name: 'Settings', href: '/settings', icon: Settings },

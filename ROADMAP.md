@@ -111,3 +111,18 @@
 ### Documentation
 - [x] **API Reference:** docs/API_REFERENCE.md - REST, WebSocket, services documentation
 - [x] **Deployment Guide:** docs/DEPLOYMENT.md - Docker, Kubernetes, scaling, security
+
+## Phase 10: MetaMCP Migration (Completed)
+### Core Engine Integration
+- [x] **SQLite Schema:** Full database schema with types, interfaces, and DDL (packages/core/src/db/schema.ts)
+- [x] **DatabaseManager:** Singleton CRUD manager for all entities - MCP servers, tools, namespaces, endpoints, policies, API keys, tool call logs, saved scripts, tool sets
+- [x] **Enhanced McpManager:** Multi-transport support (STDIO, SSE, StreamableHTTP), namespace/endpoint management, policy integration, tool call logging
+- [x] **ToolSearchService:** Fuzzy search (Fuse.js), semantic search (embeddings + cosine similarity), hybrid search with configurable weights
+- [x] **PolicyService:** Priority-ordered policy evaluation, glob pattern matching, rate limiting, time-based conditions, policy templates
+
+### Code Execution
+- [x] **CodeExecutorService:** Secure sandboxed execution via isolated-vm (V8 isolates), MCP context injection (mcp.call), configurable memory/timeout limits, console capture
+- [x] **SavedScriptService:** Script CRUD, favorites/tagging, execution tracking, import/export, syntax validation
+
+### Services Module
+- [x] **Unified Exports:** packages/core/src/services/index.ts - centralized service exports

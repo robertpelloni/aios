@@ -1,0 +1,12 @@
+{
+  "supervisors": [
+    {
+      "name": "GPT-4",
+      "provider": "openai",
+      "model": "gpt-4"
+    }
+  ],
+  "debateRounds": 1,
+  "autoApprove": true,
+  "consensusThreshold": 1.0
+}

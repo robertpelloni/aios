@@ -447,107 +447,107 @@
 	url = https://github.com/cloudflare/vibesdk
 
 [submodule "references/mcp_repos/awesome-mcp-servers-appcypher"]
-	path = mcp-refs/awesome-mcp-servers-appcypher
+	path = mcp-hubs/awesome-mcp-servers-appcypher
 	url = https://github.com/appcypher/awesome-mcp-servers
 
 [submodule "references/mcp_repos/awesome-mcp-servers-wong2"]
-	path = mcp-refs/awesome-mcp-servers-wong2
+	path = mcp-hubs/awesome-mcp-servers-wong2
 	url = https://github.com/wong2/awesome-mcp-servers
 
 [submodule "references/mcp_repos/chroma-mcp"]
-	path = mcp-refs/chroma-mcp
+	path = mcp-servers/memory/chroma-mcp
 	url = https://github.com/chroma-core/chroma-mcp
 
 [submodule "references/mcp_repos/chrome-devtools-mcp"]
-	path = mcp-refs/chrome-devtools-mcp
+	path = mcp-servers/browser/chrome-devtools-mcp
 	url = https://github.com/ChromeDevTools/chrome-devtools-mcp
 
 [submodule "references/mcp_repos/computer-control-mcp"]
-	path = mcp-refs/computer-control-mcp
+	path = mcp-servers/browser/computer-control-mcp
 	url = https://github.com/AB498/computer-control-mcp
 
 [submodule "references/mcp_repos/gemini-mcp-tool"]
-	path = mcp-refs/gemini-mcp-tool
+	path = mcp-servers/ai/gemini-mcp-tool
 	url = https://github.com/jamubc/gemini-mcp-tool
 
 [submodule "references/mcp_repos/inspector"]
-	path = mcp-refs/inspector
+	path = mcp-tools/inspector
 	url = https://github.com/MCPJam/inspector
 
 [submodule "references/mcp_repos/mcp-context-forge"]
-	path = mcp-refs/mcp-context-forge
+	path = mcp-servers/memory/mcp-context-forge
 	url = https://github.com/IBM/mcp-context-forge
 
 [submodule "references/mcp_repos/mcp-easy-installer"]
-	path = mcp-refs/mcp-easy-installer
+	path = mcp-hubs/mcp-easy-installer
 	url = https://github.com/onigetoc/mcp-easy-installer
 
 [submodule "references/mcp_repos/mcp-gearbox"]
-	path = mcp-refs/mcp-gearbox
+	path = mcp-tools/mcp-gearbox
 	url = https://github.com/rohitsoni007/mcp-gearbox
 
 [submodule "references/mcp_repos/mcp-gearbox-cli"]
-	path = mcp-refs/mcp-gearbox-cli
+	path = mcp-tools/mcp-gearbox-cli
 	url = https://github.com/rohitsoni007/mcp-gearbox-cli
 
 [submodule "references/mcp_repos/mcp-gearbox-js"]
-	path = mcp-refs/mcp-gearbox-js
+	path = mcp-tools/mcp-gearbox-js
 	url = https://github.com/rohitsoni007/mcp-gearbox-js
 
 [submodule "references/mcp_repos/mcp-mem0"]
-	path = mcp-refs/mcp-mem0
+	path = mcp-servers/memory/mcp-mem0
 	url = https://github.com/coleam00/mcp-mem0
 
 [submodule "references/mcp_repos/mcp-proxy"]
-	path = mcp-refs/mcp-proxy
+	path = mcp-proxies/mcp-proxy
 	url = https://github.com/TBXark/mcp-proxy
 
 [submodule "references/mcp_repos/mcp-server-deep-research"]
-	path = mcp-refs/mcp-server-deep-research
+	path = mcp-servers/ai/mcp-server-deep-research
 	url = https://github.com/reading-plus-ai/mcp-server-deep-research
 
 [submodule "references/mcp_repos/mcp-server-gemini"]
-	path = mcp-refs/mcp-server-gemini
+	path = mcp-servers/ai/mcp-server-gemini
 	url = https://github.com/aliargun/mcp-server-gemini
 
 [submodule "references/mcp_repos/mcp-toolz"]
-	path = mcp-refs/mcp-toolz
+	path = mcp-tools/mcp-toolz
 	url = https://github.com/taylorleese/mcp-toolz
 
 [submodule "references/mcp_repos/mcp-use"]
-	path = mcp-refs/mcp-use
+	path = mcp-tools/mcp-use
 	url = https://github.com/mcp-use/mcp-use
 
 [submodule "references/mcp_repos/mcpproxy"]
-	path = mcp-refs/mcpproxy
+	path = mcp-proxies/mcpproxy
 	url = https://github.com/Dumbris/mcpproxy
 
 [submodule "references/mcp_repos/mem0-mcp"]
-	path = mcp-refs/mem0-mcp
+	path = mcp-servers/memory/mem0-mcp
 	url = https://github.com/mem0ai/mem0-mcp
 
 [submodule "references/mcp_repos/meta-mcp-proxy"]
-	path = mcp-refs/meta-mcp-proxy
+	path = mcp-proxies/meta-mcp-proxy
 	url = https://github.com/nullplatform/meta-mcp-proxy
 
 [submodule "references/mcp_repos/playwright-mcp"]
-	path = mcp-refs/playwright-mcp
+	path = mcp-servers/browser/playwright-mcp
 	url = https://github.com/microsoft/playwright-mcp
 
 [submodule "references/mcp_repos/sourcerer-mcp"]
-	path = mcp-refs/sourcerer-mcp
+	path = mcp-servers/search/sourcerer-mcp
 	url = https://github.com/st3v3nmw/sourcerer-mcp
 
 [submodule "references/mcp_repos/ultra-mcp"]
-	path = mcp-refs/ultra-mcp
+	path = mcp-frameworks/ultra-mcp
 	url = https://github.com/RealMikeChong/ultra-mcp
 
 [submodule "references/mcp_repos/vibe-check-mcp-server"]
-	path = mcp-refs/vibe-check-mcp-server
+	path = mcp-servers/misc/vibe-check-mcp-server
 	url = https://github.com/PV-Bhat/vibe-check-mcp-server
 
 [submodule "references/mcp_repos/youtube-video-summarizer-mcp"]
-	path = mcp-refs/youtube-video-summarizer-mcp
+	path = mcp-servers/search/youtube-video-summarizer-mcp
 	url = https://github.com/nabid-pf/youtube-video-summarizer-mcp
 
 [submodule "references/skills_repos/anthropic-skills"]

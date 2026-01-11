@@ -122,3 +122,33 @@
 
 ### Services Module
 - [x] **Unified Exports:** packages/core/src/services/index.ts - centralized service exports
+
+## Phase 11: Multi-Model AI Council (Completed)
+### Core Council Engine (from opencode-autopilot)
+- [x] **Supervisor Framework:** BaseSupervisor with retry logic, exponential backoff
+- [x] **Provider Adapters:** OpenAI, Anthropic, DeepSeek, Gemini, Grok/xAI, Qwen, Kimi/Moonshot
+- [x] **SupervisorCouncilManager:** Core debate engine with multi-round deliberation
+- [x] **8 Consensus Modes:** simple-majority, supermajority, unanimous, weighted, ceo-override, ceo-veto, hybrid-ceo-majority, ranked-choice
+- [x] **Weighted Voting:** Formula: Σ(approved × weight × confidence) / Σ(weight)
+- [x] **Dissent Tracking:** Strong rejection (confidence > 0.7) blocks auto-approval
+
+### Council API
+- [x] **REST Endpoints:** /api/council/* - 13 endpoints for supervisor and debate management
+- [x] **Supervisor Management:** Add/remove/list supervisors, set weights
+- [x] **Debate Operations:** Run debates, chat with fallback, configure consensus
+- [x] **Settings API:** Update debateRounds, threshold, lead supervisor, fallback chain
+
+### Documentation
+- [x] **Council README:** docs/council/README.md - overview, quick start, architecture
+- [x] **API Reference:** docs/council/API.md - full endpoint documentation
+- [x] **Usage Guide:** docs/council/USAGE.md - scenarios, CI/CD integration, best practices
+- [x] **Configuration:** docs/council/CONFIGURATION.md - providers, settings, security
+
+### Future Council Enhancements (Available for Integration)
+- [ ] **Dynamic Supervisor Selection:** Auto-select optimal team based on task type
+- [ ] **Human-in-the-Loop Veto:** Developer acts as Council Chair
+- [ ] **Debate History:** Persistent debate records with analytics
+- [ ] **Supervisor Analytics:** Performance tracking per supervisor
+- [ ] **Debate Templates:** Pre-configured debate scenarios
+- [ ] **Smart Pilot:** Auto-continue when council approves
+- [ ] **Plugin Ecosystem:** External supervisor plugins

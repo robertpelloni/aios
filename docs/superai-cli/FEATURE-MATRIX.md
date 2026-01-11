@@ -18,6 +18,9 @@
 | **Claude-Squad** | CLI | Go | Multi-agent orchestrator with tmux |
 | **MCP-CLI** | CLI | TypeScript | Universal MCP client |
 | **Vibe-Kanban** | Web | Rust | Kanban board with MCP |
+| **Vibeship Spawner** | MCP/CLI | TypeScript | 462-skill orchestrator with guardrails |
+| **Vibeship Scanner** | MCP/CLI | TypeScript | Security scanner (16 tools, 2000+ rules) |
+| **Vibememo** | MCP | Python | Semantic memory for AI CLIs |
 
 ---
 
@@ -127,8 +130,11 @@
 | Cursor | ✅ | ❌ | ❌ | ❌ | ✅ (MCP) |
 | Continue.dev | ✅ | ✅ | ❌ | ❌ | ✅ (context providers) |
 | Cline | ✅ | ❌ | ❌ | ✅ | ✅ (MCP) |
+| **Vibeship Plugin** | ✅ | ✅ | ✅ | ✅ (462) | ✅ (MCP) |
 
 **Context Providers** (Continue.dev): 13+ built-in (File, Code, Diff, Terminal, HTTP, etc.)
+
+**Vibeship Plugin**: Claude Code plugin integrating memory (Mind MCP), 462 skills, and security scanning. Commands: `/vibeship-init`, `/vibeship-start`, `/vibeship-save`, `/vibeship-status`, `/vibeship-scan`
 
 ---
 
@@ -152,8 +158,53 @@
 | Aider | ❌ | ❌ | ❌ | ❌ |
 | Cody | ✅ | ✅ | ✅ | ✅ |
 | Continue.dev | ✅ | ✅ | ✅ | ❌ |
+| **Vibememo** | ✅ (ChromaDB) | ✅ (sentence-transformers) | ✅ | ✅ (two-stage) |
 
 **AIChat RAG**: HNSW vector search + BM25 keyword reranking = hybrid search.
+
+**Vibememo**: AI-curated semantic memory for CLI tools. Two-stage retrieval (vector + recency), session primers, Claude Code hooks integration.
+
+---
+
+## Security Scanning
+
+| Tool | SAST | Dependency Scan | Secret Detection | Container Scan | AI Fix Prompts | MCP Server |
+|------|:----:|:---------------:|:----------------:|:--------------:|:--------------:|:----------:|
+| **Vibeship Scanner** | ✅ (Opengrep) | ✅ (npm audit, pip-audit) | ✅ (Gitleaks) | ✅ (Trivy) | ✅ | ✅ |
+| Snyk | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| SonarQube | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+
+**Vibeship Scanner** (10★): 16 integrated scanners with 2000+ security rulesets. Unique feature: AI-generated fix prompts for vulnerabilities. MCP endpoint: `npx mcp-remote https://scanner.vibeship.co/mcp`
+
+---
+
+## Skills & Extension Systems
+
+| Tool | Skill Format | Skill Count | Anti-Patterns | Validation | Collaboration Rules |
+|------|:------------:|:-----------:|:-------------:|:----------:|:-------------------:|
+| **Vibeship Spawner Skills** | YAML (4-file) | 462 | ✅ (sharp-edges.yaml) | ✅ (validations.yaml) | ✅ (collaboration.yaml) |
+| Claude Code | Markdown | ~20 | ❌ | ❌ | ❌ |
+| Cursor | MDC | ~10 | ❌ | ❌ | ❌ |
+| Continue.dev | YAML | ~15 | ❌ | ❌ | ❌ |
+
+**Vibeship Spawner Skills** (520★): Production-grade 4-file skill system:
+- `skill.yaml`: Identity, patterns, anti-patterns, handoffs
+- `sharp-edges.yaml`: Gotchas with detection patterns (from real failures)
+- `validations.yaml`: Automated code quality checks
+- `collaboration.yaml`: Skill delegation rules
+
+---
+
+## Multi-Agent Orchestration
+
+| Tool | Specialists | Memory | Guardrails | Sharp Edges | MCP Integration |
+|------|:-----------:|:------:|:----------:|:-----------:|:---------------:|
+| **Vibeship Spawner** | 462 skills | ✅ (project memory) | ✅ | ✅ (2000+) | ✅ |
+| Claude-Squad | N/A | ❌ | ❌ | ❌ | ❌ |
+| OpenCode-Autopilot | 3-model council | ❌ | ❌ | ❌ | ❌ |
+| SuperAI CLI (v0.5.0) | Configurable | ✅ | ❌ | ❌ | ✅ |
+
+**Vibeship Spawner** (14★): Orchestration with 462 specialist skills. 2000+ sharp edges (gotchas from real failures). MCP endpoint: `https://mcp.vibeship.co`
 
 ---
 

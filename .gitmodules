@@ -55,9 +55,6 @@
 [submodule "references/toon"]
 	path = misc/toon
 	url = https://github.com/toon-format/toon
-[submodule "references/memory/vibeship-mind"]
-	path = memory/refs/vibeship-mind
-	url = https://github.com/vibeforge1111/vibeship-mind
 [submodule "references/memory/beads"]
 	path = memory/systems-refs/beads
 	url = https://github.com/steveyegge/beads
@@ -471,7 +468,7 @@
 	url = https://github.com/jamubc/gemini-mcp-tool
 
 [submodule "references/mcp_repos/inspector"]
-	path = mcp-tools/inspector
+	path = mcp-dev-tools/inspector
 	url = https://github.com/MCPJam/inspector
 
 [submodule "references/mcp_repos/mcp-context-forge"]
@@ -479,19 +476,19 @@
 	url = https://github.com/IBM/mcp-context-forge
 
 [submodule "references/mcp_repos/mcp-easy-installer"]
-	path = mcp-hubs/mcp-easy-installer
+	path = mcp-servers/misc/mcp-easy-installer
 	url = https://github.com/onigetoc/mcp-easy-installer
 
 [submodule "references/mcp_repos/mcp-gearbox"]
-	path = mcp-tools/mcp-gearbox
+	path = mcp-dev-tools/mcp-gearbox
 	url = https://github.com/rohitsoni007/mcp-gearbox
 
 [submodule "references/mcp_repos/mcp-gearbox-cli"]
-	path = mcp-tools/mcp-gearbox-cli
+	path = mcp-dev-tools/mcp-gearbox-cli
 	url = https://github.com/rohitsoni007/mcp-gearbox-cli
 
 [submodule "references/mcp_repos/mcp-gearbox-js"]
-	path = mcp-tools/mcp-gearbox-js
+	path = mcp-dev-tools/mcp-gearbox-js
 	url = https://github.com/rohitsoni007/mcp-gearbox-js
 
 [submodule "references/mcp_repos/mcp-mem0"]
@@ -499,7 +496,7 @@
 	url = https://github.com/coleam00/mcp-mem0
 
 [submodule "references/mcp_repos/mcp-proxy"]
-	path = mcp-proxies/mcp-proxy
+	path = mcp-routers/mcp-proxy
 	url = https://github.com/TBXark/mcp-proxy
 
 [submodule "references/mcp_repos/mcp-server-deep-research"]
@@ -511,15 +508,15 @@
 	url = https://github.com/aliargun/mcp-server-gemini
 
 [submodule "references/mcp_repos/mcp-toolz"]
-	path = mcp-tools/mcp-toolz
+	path = mcp-servers/misc/mcp-toolz
 	url = https://github.com/taylorleese/mcp-toolz
 
 [submodule "references/mcp_repos/mcp-use"]
-	path = mcp-tools/mcp-use
+	path = mcp-frameworks/mcp-use
 	url = https://github.com/mcp-use/mcp-use
 
 [submodule "references/mcp_repos/mcpproxy"]
-	path = mcp-proxies/mcpproxy
+	path = mcp-routers/mcpproxy
 	url = https://github.com/Dumbris/mcpproxy
 
 [submodule "references/mcp_repos/mem0-mcp"]
@@ -527,7 +524,7 @@
 	url = https://github.com/mem0ai/mem0-mcp
 
 [submodule "references/mcp_repos/meta-mcp-proxy"]
-	path = mcp-proxies/meta-mcp-proxy
+	path = mcp-routers/meta-mcp-proxy
 	url = https://github.com/nullplatform/meta-mcp-proxy
 
 [submodule "references/mcp_repos/playwright-mcp"]
@@ -539,15 +536,15 @@
 	url = https://github.com/st3v3nmw/sourcerer-mcp
 
 [submodule "references/mcp_repos/ultra-mcp"]
-	path = mcp-frameworks/ultra-mcp
+	path = mcp-servers/ai/ultra-mcp
 	url = https://github.com/RealMikeChong/ultra-mcp
 
 [submodule "references/mcp_repos/vibe-check-mcp-server"]
-	path = mcp-servers/misc/vibe-check-mcp-server
+	path = mcp-servers/oversight/vibe-check-mcp-server
 	url = https://github.com/PV-Bhat/vibe-check-mcp-server
 
 [submodule "references/mcp_repos/youtube-video-summarizer-mcp"]
-	path = mcp-servers/search/youtube-video-summarizer-mcp
+	path = mcp-servers/media/youtube-video-summarizer-mcp
 	url = https://github.com/nabid-pf/youtube-video-summarizer-mcp
 
 [submodule "references/skills_repos/anthropic-skills"]
@@ -623,7 +620,7 @@
 	url = https://github.com/timetime-software/mcp-manager
 
 [submodule "submodules/mcp-router"]
-	path = mcp-proxies/mcp-router
+	path = mcp-dev-tools/mcp-router
 	url = https://github.com/mcp-router/mcp-router
 
 [submodule "submodules/mcp-shark"]
@@ -631,7 +628,7 @@
 	url = https://github.com/mcp-shark/mcp-shark
 
 [submodule "submodules/mcp-zen"]
-	path = mcp-servers/misc/mcp-zen
+	path = mcp-servers/ai/mcp-zen
 	url = https://github.com/199-mcp/mcp-zen
 
 [submodule "submodules/mcpc"]
@@ -700,7 +697,7 @@
 	path = submodules/Puzld.ai
 	url = https://github.com/MedChaouch/Puzld.ai
 [submodule "submodules/mux"]
-	path = mcp-proxies/mux
+	path = agent-tools/mux
 	url = https://github.com/coder/mux
 [submodule "submodules/voicemode"]
 	path = tools/refs/voicemode
@@ -709,7 +706,7 @@
 	path = tools/refs/superpowers
 	url = https://github.com/obra/superpowers
 [submodule "submodules/mcpm.sh"]
-	path = mcp-hubs/mcpm.sh
+	path = cli-tools/mcpm.sh
 	url = https://github.com/pathintegral-institute/mcpm.sh
 [submodule "submodules/Super-MCP"]
 	path = mcp-frameworks/Super-MCP
@@ -721,7 +718,7 @@
 	path = submodules/emdash
 	url = https://github.com/generalaction/emdash
 [submodule "submodules/mcpproxy-go"]
-	path = mcp-proxies/mcpproxy-go
+	path = mcp-routers/mcpproxy-go
 	url = https://github.com/smart-mcp-proxy/mcpproxy-go
 [submodule "submodules/smolagents"]
 	path = agents/refs/smolagents
@@ -730,10 +727,10 @@
 	path = mcp-servers/code/mcp-server-code-execution-mode
 	url = https://github.com/elusznik/mcp-server-code-execution-mode
 [submodule "submodules/pal-mcp-server"]
-	path = mcp-servers/misc/pal-mcp-server
+	path = mcp-frameworks/pal-mcp-server
 	url = https://github.com/BeehiveInnovations/pal-mcp-server
 [submodule "submodules/Polymcp"]
-	path = mcp-proxies/Polymcp
+	path = mcp-frameworks/Polymcp
 	url = https://github.com/poly-mcp/Polymcp
 [submodule "submodules/claude-squad"]
 	path = submodules/claude-squad
@@ -751,10 +748,10 @@
 	path = tools/refs/magg
 	url = https://github.com/sitbon/magg
 [submodule "submodules/mcp-tool-chainer"]
-	path = mcp-tools/mcp-tool-chainer
+	path = mcp-servers/orchestration/mcp-tool-chainer
 	url = https://github.com/thirdstrandstudio/mcp-tool-chainer
 [submodule "submodules/MCP-Zero"]
-	path = mcp-frameworks/MCP-Zero
+	path = research/MCP-Zero
 	url = https://github.com/xfey/MCP-Zero
 [submodule "submodules/claudex"]
 	path = submodules/claudex
@@ -952,9 +949,6 @@
 [submodule "superai-cli/agents/langgraph"]
 	path = superai-cli/agents/langgraph
 	url = https://github.com/langchain-ai/langgraph.git
-[submodule "superai-cli/agents/pydantic-ai"]
-	path = superai-cli/agents/pydantic-ai
-	url = https://github.com/pydantic/pydantic-ai.git
 [submodule "superai-cli/mcp-advanced/anthropic-tools"]
 	path = superai-cli/mcp-advanced/anthropic-tools
 	url = https://github.com/anthropics/anthropic-tools.git
@@ -976,3 +970,40 @@
 [submodule "agents/refs/pydantic-ai"]
 	path = agents/refs/pydantic-ai
 	url = https://github.com/pydantic/pydantic-ai
+
+[submodule "submodules/mcp-cli"]
+	path = submodules/mcp-cli
+	url = https://github.com/apify/mcp-cli
+
+[submodule "submodules/mcp-launcher"]
+	path = submodules/mcp-launcher
+	url = https://github.com/moeru-ai/mcp-launcher
+
+[submodule "submodules/claude-lazy-loading"]
+	path = submodules/claude-lazy-loading
+	url = https://github.com/machjesusmoto/claude-lazy-loading
+
+
+[submodule "mcp-servers/memory/vibememo"]
+	path = mcp-servers/memory/vibememo
+	url = https://github.com/vibeforge1111/vibememo
+
+[submodule "external/plugins/vibeship/vibeship-plugin"]
+	path = external/plugins/vibeship/vibeship-plugin
+	url = https://github.com/vibeforge1111/vibeship-plugin
+
+[submodule "tools/security/vibeship-scanner"]
+	path = tools/security/vibeship-scanner
+	url = https://github.com/vibeforge1111/vibeship-scanner
+
+[submodule "agents/orchestration/vibeship-spawner"]
+	path = agents/orchestration/vibeship-spawner
+	url = https://github.com/vibeforge1111/vibeship-spawner
+
+[submodule "external/skills_repos/vibeship/vibeship-spawner-skills"]
+	path = external/skills_repos/vibeship/vibeship-spawner-skills
+	url = https://github.com/vibeforge1111/vibeship-spawner-skills
+
+[submodule "tools/misc/vibeship-idearater"]
+	path = tools/misc/vibeship-idearater
+	url = https://github.com/vibeforge1111/vibeship-idearater

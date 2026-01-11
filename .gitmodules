@@ -5,58 +5,58 @@
 	path = memory/plugins/claude-mem
 	url = https://github.com/robertpelloni/claude-mem
 [submodule "references/opencode"]
-	path = references/opencode
+	path = references-core/opencode
 	url = https://github.com/opencode-ai/opencode
 [submodule "references/prompt-eng-tutorial"]
-	path = references/prompt-eng-tutorial
+	path = prompts/tutorials/prompt-eng-tutorial
 	url = https://github.com/anthropics/prompt-eng-interactive-tutorial
 [submodule "references/awesome-llm-apps"]
-	path = references/awesome-llm-apps
+	path = misc/awesome-llm-apps
 	url = https://github.com/Shubhamsaboo/awesome-llm-apps
 [submodule "references/agents-md"]
-	path = references/agents-md
+	path = agents/agents-md
 	url = https://github.com/agentsmd/agents.md
 [submodule "references/claude-code-infrastructure-showcase"]
-	path = references/claude-code-infrastructure-showcase
+	path = misc/claude-code-infrastructure-showcase
 	url = https://github.com/diet103/claude-code-infrastructure-showcase
 [submodule "references/prompts/gemini-cli-tips"]
-	path = references/prompts/gemini-cli-tips
+	path = prompts/gemini-cli-tips
 	url = https://github.com/addyosmani/gemini-cli-tips
 [submodule "references/prompts/thoughtbox"]
-	path = references/prompts/thoughtbox
+	path = prompts/thoughtbox
 	url = https://github.com/Kastalien-Research/thoughtbox
 [submodule "references/prompts/claude-code-system-prompts"]
-	path = references/prompts/claude-code-system-prompts
+	path = prompts/claude-code-system-prompts
 	url = https://github.com/Piebald-AI/claude-code-system-prompts
 [submodule "references/config/claude-code-config"]
-	path = references/config/claude-code-config
+	path = config/claude-code-config
 	url = https://github.com/drewipson/claude-code-config
 [submodule "references/arch/spec-kit"]
-	path = references/arch/spec-kit
+	path = architecture/spec-kit
 	url = https://github.com/github/spec-kit
 [submodule "references/arch/CodeMachine-CLI"]
-	path = references/arch/CodeMachine-CLI
+	path = architecture/CodeMachine-CLI
 	url = https://github.com/moazbuilds/CodeMachine-CLI
 [submodule "references/skills/dev-browser"]
-	path = references/skills/dev-browser
+	path = skills/refs/dev-browser
 	url = https://github.com/SawyerHood/dev-browser
 [submodule "references/arch/claude-code-router"]
-	path = references/arch/claude-code-router
+	path = architecture/claude-code-router
 	url = https://github.com/musistudio/claude-code-router
 [submodule "references/agents/BMAD-METHOD"]
-	path = references/agents/BMAD-METHOD
+	path = agents/refs/BMAD-METHOD
 	url = https://github.com/bmad-code-org/BMAD-METHOD
 [submodule "references/skills/oai-skills"]
-	path = references/skills/oai-skills
+	path = skills/refs/oai-skills
 	url = https://github.com/eliasjudin/oai-skills
 [submodule "references/skills/skrills"]
-	path = references/skills/skrills
+	path = skills/refs/skrills
 	url = https://github.com/athola/skrills
 [submodule "references/toon"]
-	path = references/toon
+	path = misc/toon
 	url = https://github.com/toon-format/toon
 [submodule "references/memory/vibeship-mind"]
-	path = references/memory/vibeship-mind
+	path = memory/refs/vibeship-mind
 	url = https://github.com/vibeforge1111/vibeship-mind
 [submodule "references/memory/beads"]
 	path = memory/systems-refs/beads
@@ -71,34 +71,34 @@
 	path = memory/systems-refs/cognee
 	url = https://github.com/topoteretes/cognee
 [submodule "references/orchestration/laddr"]
-	path = references/orchestration/laddr
+	path = orchestration/laddr
 	url = https://github.com/AgnetLabs/laddr
 [submodule "references/agents/OpenHands"]
-	path = references/agents/OpenHands
+	path = agents/refs/OpenHands
 	url = https://github.com/OpenHands/OpenHands
 [submodule "references/agents/amplifier"]
-	path = references/agents/amplifier
+	path = agents/refs/amplifier
 	url = https://github.com/microsoft/amplifier
 [submodule "references/agents/magentic-ui"]
-	path = references/agents/magentic-ui
+	path = agents/refs/magentic-ui
 	url = https://github.com/microsoft/magentic-ui
 [submodule "references/agents/autogen"]
-	path = references/agents/autogen
+	path = agents/refs/autogen
 	url = https://github.com/microsoft/autogen
 [submodule "references/agents/agent-zero"]
-	path = references/agents/agent-zero
+	path = agents/refs/agent-zero
 	url = https://github.com/agent0ai/agent-zero
 [submodule "references/agents/openagents"]
-	path = references/agents/openagents
+	path = agents/refs/openagents
 	url = https://github.com/openagents-org/openagents
 [submodule "references/frameworks/CopilotKit"]
-	path = references/frameworks/CopilotKit
+	path = frameworks/CopilotKit
 	url = https://github.com/CopilotKit/CopilotKit
 [submodule "references/orchestration/claude-orchestration"]
-	path = references/orchestration/claude-orchestration
+	path = orchestration/claude-orchestration
 	url = https://github.com/mbruhler/claude-orchestration
 [submodule "references/testing/agentic-qe"]
-	path = references/testing/agentic-qe
+	path = testing/agentic-qe
 	url = https://github.com/proffesor-for-testing/agentic-qe
 [submodule "submodules/metamcp"]
 	path = submodules/metamcp
@@ -108,217 +108,217 @@
 	url = https://github.com/robertpelloni/jules-app
 
 [submodule "external/agents_repos/agent-sessions"]
-	path = external/agents_repos/agent-sessions
+	path = agents/agent-sessions
 	url = https://github.com/jazzyalex/agent-sessions
 [submodule "external/agents_repos/agentic"]
-	path = external/agents_repos/agentic
+	path = agents/agentic
 	url = https://github.com/Cluster444/agentic
 [submodule "external/agents_repos/humanlayer"]
-	path = external/agents_repos/humanlayer
+	path = agents/humanlayer
 	url = https://github.com/humanlayer/humanlayer
 [submodule "external/agents_repos/maestro"]
-	path = external/agents_repos/maestro
+	path = agents/maestro
 	url = https://github.com/pedramamini/Maestro
 [submodule "external/agents_repos/mark-hingston-workflows"]
-	path = external/agents_repos/mark-hingston-workflows
+	path = agents/mark-hingston-workflows
 	url = https://github.com/mark-hingston/opencode-workflows
 [submodule "external/agents_repos/open-agents"]
-	path = external/agents_repos/open-agents
+	path = agents/open-agents
 	url = https://github.com/darrenhinde/OpenAgents
 [submodule "external/agents_repos/openchamber"]
-	path = external/agents_repos/openchamber
+	path = agents/openchamber
 	url = https://github.com/btriapitsyn/openchamber
 [submodule "external/agents_repos/opencode-agents"]
-	path = external/agents_repos/opencode-agents
+	path = agents/opencode-agents
 	url = https://github.com/veschin/opencode-agents
 [submodule "external/agents_repos/opencode-elf"]
-	path = external/agents_repos/opencode-elf
+	path = agents/opencode-elf
 	url = https://github.com/mark-hingston/opencode-elf
 [submodule "external/agents_repos/opencode-maestro"]
-	path = external/agents_repos/opencode-maestro
+	path = agents/opencode-maestro
 	url = https://github.com/lleewwiiss/opencode-maestro
 [submodule "external/agents_repos/opencode-parallel-agents"]
-	path = external/agents_repos/opencode-parallel-agents
+	path = agents/opencode-parallel-agents
 	url = https://github.com/aptdnfapt/opencode-parallel-agents
 [submodule "external/agents_repos/opencodetisan"]
-	path = external/agents_repos/opencodetisan
+	path = agents/opencodetisan
 	url = https://github.com/opencodetisan/opencodetisan
 [submodule "external/agents_repos/personal-agent-systems"]
-	path = external/agents_repos/personal-agent-systems
+	path = agents/personal-agent-systems
 	url = https://github.com/darrenhinde/personal-agent-systems
 [submodule "external/agents_repos/rse-agents"]
-	path = external/agents_repos/rse-agents
+	path = agents/rse-agents
 	url = https://github.com/uw-ssec/rse-agents
 [submodule "external/agents_repos/subagents"]
-	path = external/agents_repos/subagents
+	path = agents/subagents
 	url = https://github.com/RichardHightower/subagents
 [submodule "external/auth/anthropic"]
-	path = external/auth/anthropic
+	path = auth/anthropic
 	url = https://github.com/sst/opencode-anthropic-auth
 [submodule "external/auth/copilot"]
-	path = external/auth/copilot
+	path = auth/copilot
 	url = https://github.com/sst/opencode-copilot-auth
 [submodule "external/auth/gemini"]
-	path = external/auth/gemini
+	path = auth/gemini
 	url = https://github.com/jenslys/opencode-gemini-auth
 [submodule "external/auth/openai-codex"]
-	path = external/auth/openai-codex
+	path = auth/openai-codex
 	url = https://github.com/numman-ali/opencode-openai-codex-auth
 [submodule "external/auth/opencode-antigravity-auth"]
-	path = external/auth/opencode-antigravity-auth
+	path = auth/opencode-antigravity-auth
 	url = https://github.com/NoeFabris/opencode-antigravity-auth
 [submodule "external/auth/opencode-google-antigravity-auth"]
-	path = external/auth/opencode-google-antigravity-auth
+	path = auth/opencode-google-antigravity-auth
 	url = https://github.com/shekohex/opencode-google-antigravity-auth
 [submodule "external/config_repos/Setup_Ultimate_OpenCode"]
-	path = external/config_repos/Setup_Ultimate_OpenCode
+	path = config/Setup_Ultimate_OpenCode
 	url = https://github.com/FadhliRajwaa/Setup_Ultimate_OpenCode
 [submodule "external/config_repos/opencode-config-joelhooks"]
-	path = external/config_repos/opencode-config-joelhooks
+	path = config/opencode-config-joelhooks
 	url = https://github.com/joelhooks/opencode-config
 [submodule "external/config_repos/opencode-config-nexxeln"]
-	path = external/config_repos/opencode-config-nexxeln
+	path = config/opencode-config-nexxeln
 	url = https://github.com/nexxeln/opencode-config
 [submodule "external/config_repos/opencode-flake"]
-	path = external/config_repos/opencode-flake
+	path = config/opencode-flake
 	url = https://github.com/AodhanHayter/opencode-flake
 [submodule "external/config_repos/opencode-manager"]
-	path = external/config_repos/opencode-manager
+	path = config/opencode-manager
 	url = https://github.com/chriswritescode-dev/opencode-manager
 [submodule "external/misc/OpenCode-Hrishikesh"]
-	path = external/misc/OpenCode-Hrishikesh
+	path = misc/OpenCode-Hrishikesh
 	url = https://github.com/Hrishikesh332/OpenCode
 [submodule "external/misc/awesome-opencode"]
-	path = external/misc/awesome-opencode
+	path = misc/awesome-opencode
 	url = https://github.com/awesome-opencode/awesome-opencode
 [submodule "external/misc/hephaestus"]
-	path = external/misc/hephaestus
+	path = misc/hephaestus
 	url = https://github.com/opencodenitr/hephaestus
 [submodule "external/misc/ocmonitor-share"]
-	path = external/misc/ocmonitor-share
+	path = misc/ocmonitor-share
 	url = https://github.com/Shlomob/ocmonitor-share
 [submodule "external/misc/oh-my-opencode"]
-	path = external/misc/oh-my-opencode
+	path = misc/oh-my-opencode
 	url = https://github.com/code-yeongyu/oh-my-opencode
 [submodule "external/misc/openMode"]
-	path = external/misc/openMode
+	path = misc/openMode
 	url = https://github.com/easychen/openMode
 [submodule "external/misc/openapi-ts"]
-	path = external/misc/openapi-ts
+	path = misc/openapi-ts
 	url = https://github.com/hey-api/openapi-ts
 [submodule "external/misc/opencode-box"]
-	path = external/misc/opencode-box
+	path = misc/opencode-box
 	url = https://github.com/filipesoccol/opencode-box
 [submodule "external/misc/opencode-context-analysis"]
-	path = external/misc/opencode-context-analysis
+	path = misc/opencode-context-analysis
 	url = https://github.com/IgorWarzocha/Opencode-Context-Analysis-Plugin
 [submodule "external/misc/opencode-intersystems"]
-	path = external/misc/opencode-intersystems
+	path = misc/opencode-intersystems
 	url = https://github.com/intersystems-ib/OpenCode
 [submodule "external/misc/opencode-mobile"]
-	path = external/misc/opencode-mobile
+	path = misc/opencode-mobile
 	url = https://github.com/DRNKNDev/opencode-mobile
 [submodule "external/misc/opencode-pty"]
-	path = external/misc/opencode-pty
+	path = misc/opencode-pty
 	url = https://github.com/shekohex/opencode-pty
 [submodule "external/misc/opencode-roadmap"]
-	path = external/misc/opencode-roadmap
+	path = misc/opencode-roadmap
 	url = https://github.com/IgorWarzocha/Opencode-Roadmap
 [submodule "external/misc/opencode-sessions"]
-	path = external/misc/opencode-sessions
+	path = misc/opencode-sessions
 	url = https://github.com/malhashemi/opencode-sessions
 [submodule "external/misc/opencode-supermemory"]
 	path = memory/plugins/opencode-supermemory
 	url = https://github.com/supermemoryai/opencode-supermemory
 [submodule "external/misc/opencode-tokenscope"]
-	path = external/misc/opencode-tokenscope
+	path = misc/opencode-tokenscope
 	url = https://github.com/ramtinJ95/opencode-tokenscope
 [submodule "external/misc/opencode-vibe"]
-	path = external/misc/opencode-vibe
+	path = misc/opencode-vibe
 	url = https://github.com/joelhooks/opencode-vibe
 [submodule "external/misc/opencode-wrapped"]
-	path = external/misc/opencode-wrapped
+	path = misc/opencode-wrapped
 	url = https://github.com/moddi3/opencode-wrapped
 [submodule "external/misc/tokscale"]
-	path = external/misc/tokscale
+	path = misc/tokscale
 	url = https://github.com/junhoyeo/tokscale
 [submodule "external/plugins/ericc-ch-opencode-plugins"]
-	path = external/plugins/ericc-ch-opencode-plugins
+	path = plugins/ericc-ch-opencode-plugins
 	url = https://github.com/ericc-ch/opencode-plugins
 [submodule "external/plugins/opencode-codex-plugin"]
-	path = external/plugins/opencode-codex-plugin
+	path = plugins/opencode-codex-plugin
 	url = https://github.com/sting8k/opencode-codex-plugin
 [submodule "external/plugins/opencode-codex-provider"]
-	path = external/plugins/opencode-codex-provider
+	path = plugins/opencode-codex-provider
 	url = https://github.com/withakay/opencode-codex-provider
 [submodule "external/plugins/opencode-dynamic-context-pruning"]
-	path = external/plugins/opencode-dynamic-context-pruning
+	path = plugins/opencode-dynamic-context-pruning
 	url = https://github.com/Opencode-DCP/opencode-dynamic-context-pruning
 [submodule "external/plugins/opencode-google-ai-search"]
-	path = external/plugins/opencode-google-ai-search
+	path = plugins/opencode-google-ai-search
 	url = https://github.com/IgorWarzocha/Opencode-Google-AI-Search-Plugin
 [submodule "external/plugins/opencode-md-table-formatter"]
-	path = external/plugins/opencode-md-table-formatter
+	path = plugins/opencode-md-table-formatter
 	url = https://github.com/franlol/opencode-md-table-formatter
 [submodule "external/plugins/opencode-morph-fast-apply"]
-	path = external/plugins/opencode-morph-fast-apply
+	path = plugins/opencode-morph-fast-apply
 	url = https://github.com/JRedeker/opencode-morph-fast-apply
 [submodule "external/plugins/opencode-notificator"]
-	path = external/plugins/opencode-notificator
+	path = plugins/opencode-notificator
 	url = https://github.com/panta82/opencode-notificator
 [submodule "external/plugins/opencode-notifier"]
-	path = external/plugins/opencode-notifier
+	path = plugins/opencode-notifier
 	url = https://github.com/mohak34/opencode-notifier
 [submodule "external/plugins/opencode-shell-strategy"]
-	path = external/plugins/opencode-shell-strategy
+	path = plugins/opencode-shell-strategy
 	url = https://github.com/JRedeker/opencode-shell-strategy
 [submodule "external/plugins/opencode-smart-title"]
-	path = external/plugins/opencode-smart-title
+	path = plugins/opencode-smart-title
 	url = https://github.com/Tarquinen/opencode-smart-title
 [submodule "external/plugins/opencode-type-inject"]
-	path = external/plugins/opencode-type-inject
+	path = plugins/opencode-type-inject
 	url = https://github.com/nick-vi/opencode-type-inject
 [submodule "external/plugins/opencode-wakatime"]
-	path = external/plugins/opencode-wakatime
+	path = plugins/opencode-wakatime
 	url = https://github.com/angristan/opencode-wakatime
 [submodule "external/plugins/opencode-websearch-cited"]
-	path = external/plugins/opencode-websearch-cited
+	path = plugins/opencode-websearch-cited
 	url = https://github.com/ghoulr/opencode-websearch-cited
 [submodule "external/plugins/opencode-zed-extension"]
-	path = external/plugins/opencode-zed-extension
+	path = plugins/opencode-zed-extension
 	url = https://github.com/sst/opencode-zed-extension
 [submodule "external/plugins/pickle-thinker"]
-	path = external/plugins/pickle-thinker
+	path = plugins/pickle-thinker
 	url = https://github.com/IgorWarzocha/Pickle-Thinker
 [submodule "external/plugins/shantur-opencode-gemini-auth"]
-	path = external/plugins/shantur-opencode-gemini-auth
+	path = plugins/shantur-opencode-gemini-auth
 	url = https://github.com/shantur/opencode-gemini-auth
 [submodule "external/research/OpenCodeEval"]
-	path = external/research/OpenCodeEval
+	path = research/OpenCodeEval
 	url = https://github.com/richardodliu/OpenCodeEval
 [submodule "external/research/OpenCoder-llm"]
-	path = external/research/OpenCoder-llm
+	path = research/OpenCoder-llm
 	url = https://github.com/OpenCoder-llm/OpenCoder-llm
 [submodule "external/research/opencoder"]
-	path = external/research/opencoder
+	path = research/opencoder
 	url = https://github.com/ducan-ne/opencoder
 [submodule "external/skills_repos/awesome-llm-skills"]
-	path = external/skills_repos/awesome-llm-skills
+	path = skills/external/awesome-llm-skills
 	url = https://github.com/Prat011/awesome-llm-skills
 [submodule "external/skills_repos/malhashemi-skills"]
-	path = external/skills_repos/malhashemi-skills
+	path = skills/external/malhashemi-skills
 	url = https://github.com/malhashemi/opencode-skills
 [submodule "external/skills_repos/opencode-agent-skills"]
-	path = external/skills_repos/opencode-agent-skills
+	path = skills/external/opencode-agent-skills
 	url = https://github.com/joshuadavidthomas/opencode-agent-skills
 [submodule "external/skills_repos/skills-example"]
-	path = external/skills_repos/skills-example
+	path = skills/external/skills-example
 	url = https://github.com/darrenhinde/Opencode-skills-example
 [submodule "external/skills_repos/swarm-tools"]
-	path = external/skills_repos/swarm-tools
+	path = skills/external/swarm-tools
 	url = https://github.com/joelhooks/swarm-tools
 [submodule "external/tools/OpenCodeRunner"]
-	path = external/tools/OpenCodeRunner
+	path = tools/OpenCodeRunner
 	url = https://github.com/sijieaaa/OpenCodeRunner
 [submodule "external/tools/convx"]
 	path = superai-cli/tools/convx
@@ -333,7 +333,7 @@
 	path = superai-cli/tools/occtx
 	url = https://github.com/hungthai1401/occtx
 [submodule "external/tools/opencode_tools"]
-	path = external/tools/opencode_tools
+	path = tools/opencode_tools
 	url = https://github.com/pigmej/opencode_tools
 [submodule "external/tools/poe-code"]
 	path = superai-cli/tools/poe-code
@@ -342,61 +342,61 @@
 	path = superai-cli/tools/splitrail
 	url = https://github.com/Piebald-AI/splitrail
 [submodule "external/web_repos/opencode-gui"]
-	path = external/web_repos/opencode-gui
+	path = web-ui/external/opencode-gui
 	url = https://github.com/saffron-health/opencode-gui
 [submodule "external/web_repos/opencode-web-chris-tse"]
-	path = external/web_repos/opencode-web-chris-tse
+	path = web-ui/external/opencode-web-chris-tse
 	url = https://github.com/chris-tse/opencode-web
 [submodule "external/web_repos/opencode-web-nihalshetty0"]
-	path = external/web_repos/opencode-web-nihalshetty0
+	path = web-ui/external/opencode-web-nihalshetty0
 	url = https://github.com/nihalshetty0/opencode-web
 [submodule "external/web_repos/opencodespace"]
-	path = external/web_repos/opencodespace
+	path = web-ui/external/opencodespace
 	url = https://github.com/ngramai/opencodespace
 [submodule "external/web_repos/opengui"]
-	path = external/web_repos/opengui
+	path = web-ui/external/opengui
 	url = https://github.com/ScriptedAlchemy/opengui
 [submodule "external/web_repos/portal"]
-	path = external/web_repos/portal
+	path = web-ui/external/portal
 	url = https://github.com/hosenur/portal
 [submodule "external/web_repos/superset"]
-	path = external/web_repos/superset
+	path = web-ui/external/superset
 	url = https://github.com/superset-sh/superset
 [submodule "external/config_repos/opencode-template"]
-	path = external/config_repos/opencode-template
+	path = config/opencode-template
 	url = https://github.com/julianromli/opencode-template
 [submodule "external/config_repos/opencode-plugin-template"]
-	path = external/config_repos/opencode-plugin-template
+	path = config/opencode-plugin-template
 	url = https://github.com/zenobi-us/opencode-plugin-template
 [submodule "external/opencode-bench"]
-	path = external/opencode-bench
+	path = benchmarks/opencode-bench
 	url = https://github.com/sst/opencode-bench
 [submodule "external/opencode-core"]
-	path = external/opencode-core
+	path = opencode-core
 	url = https://github.com/sst/opencode
 [submodule "external/opencode-sdk-go"]
-	path = external/opencode-sdk-go
+	path = sdks/opencode-sdk-go
 	url = https://github.com/sst/opencode-sdk-go
 [submodule "external/opencode-sdk-js"]
-	path = external/opencode-sdk-js
+	path = sdks/opencode-sdk-js
 	url = https://github.com/sst/opencode-sdk-js
 [submodule "external/opencode-sdk-python"]
-	path = external/opencode-sdk-python
+	path = sdks/opencode-sdk-python
 	url = https://github.com/sst/opencode-sdk-python
 [submodule "external/plugins/opencode-background"]
-	path = external/plugins/opencode-background
+	path = plugins/opencode-background
 	url = https://github.com/zenobi-us/opencode-background
 [submodule "references/agents/OpenHands-CLI"]
-	path = references/agents/OpenHands-CLI
+	path = agents/refs/OpenHands-CLI
 	url = https://github.com/OpenHands/OpenHands-CLI
 [submodule "references/agents/claude-code-subagents-collection"]
-	path = references/agents/claude-code-subagents-collection
+	path = agents/refs/claude-code-subagents-collection
 	url = https://github.com/davepoon/claude-code-subagents-collection
 [submodule "references/agents/devin.cursorrules"]
-	path = references/agents/devin.cursorrules
+	path = agents/refs/devin.cursorrules
 	url = https://github.com/grapeot/devin.cursorrules
 [submodule "references/agents/trae-agent"]
-	path = references/agents/trae-agent
+	path = agents/refs/trae-agent
 	url = https://github.com/bytedance/trae-agent
 [submodule "references/clis/fabric"]
 	path = superai-cli/clis-refs/fabric
@@ -419,151 +419,151 @@
 	url = https://github.com/Kilo-Org/kilocode
 
 [submodule "references/frameworks/Kode"]
-	path = references/frameworks/Kode
+	path = frameworks/Kode
 	url = https://github.com/shareAI-lab/Kode
 
 [submodule "references/frameworks/Switchboard"]
-	path = references/frameworks/Switchboard
+	path = frameworks/Switchboard
 	url = https://github.com/George5562/Switchboard
 
 [submodule "references/frameworks/Windows-Use"]
-	path = references/frameworks/Windows-Use
+	path = computer-use/Windows-Use
 	url = https://github.com/CursorTouch/Windows-Use
 
 [submodule "references/frameworks/code"]
-	path = references/frameworks/code
+	path = cli-harnesses/code
 	url = https://github.com/just-every/code
 
 [submodule "references/frameworks/codex-bridge"]
-	path = references/frameworks/codex-bridge
+	path = cli-harnesses/codex-bridge
 	url = https://github.com/eLyiN/codex-bridge
 
 [submodule "references/frameworks/crush"]
-	path = references/frameworks/crush
+	path = cli-harnesses/crush
 	url = https://github.com/charmbracelet/crush
 
 [submodule "references/frameworks/vibesdk"]
-	path = references/frameworks/vibesdk
+	path = frameworks/vibesdk
 	url = https://github.com/cloudflare/vibesdk
 
 [submodule "references/mcp_repos/awesome-mcp-servers-appcypher"]
-	path = references/mcp_repos/awesome-mcp-servers-appcypher
+	path = mcp-refs/awesome-mcp-servers-appcypher
 	url = https://github.com/appcypher/awesome-mcp-servers
 
 [submodule "references/mcp_repos/awesome-mcp-servers-wong2"]
-	path = references/mcp_repos/awesome-mcp-servers-wong2
+	path = mcp-refs/awesome-mcp-servers-wong2
 	url = https://github.com/wong2/awesome-mcp-servers
 
 [submodule "references/mcp_repos/chroma-mcp"]
-	path = references/mcp_repos/chroma-mcp
+	path = mcp-refs/chroma-mcp
 	url = https://github.com/chroma-core/chroma-mcp
 
 [submodule "references/mcp_repos/chrome-devtools-mcp"]
-	path = references/mcp_repos/chrome-devtools-mcp
+	path = mcp-refs/chrome-devtools-mcp
 	url = https://github.com/ChromeDevTools/chrome-devtools-mcp
 
 [submodule "references/mcp_repos/computer-control-mcp"]
-	path = references/mcp_repos/computer-control-mcp
+	path = mcp-refs/computer-control-mcp
 	url = https://github.com/AB498/computer-control-mcp
 
 [submodule "references/mcp_repos/gemini-mcp-tool"]
-	path = references/mcp_repos/gemini-mcp-tool
+	path = mcp-refs/gemini-mcp-tool
 	url = https://github.com/jamubc/gemini-mcp-tool
 
 [submodule "references/mcp_repos/inspector"]
-	path = references/mcp_repos/inspector
+	path = mcp-refs/inspector
 	url = https://github.com/MCPJam/inspector
 
 [submodule "references/mcp_repos/mcp-context-forge"]
-	path = references/mcp_repos/mcp-context-forge
+	path = mcp-refs/mcp-context-forge
 	url = https://github.com/IBM/mcp-context-forge
 
 [submodule "references/mcp_repos/mcp-easy-installer"]
-	path = references/mcp_repos/mcp-easy-installer
+	path = mcp-refs/mcp-easy-installer
 	url = https://github.com/onigetoc/mcp-easy-installer
 
 [submodule "references/mcp_repos/mcp-gearbox"]
-	path = references/mcp_repos/mcp-gearbox
+	path = mcp-refs/mcp-gearbox
 	url = https://github.com/rohitsoni007/mcp-gearbox
 
 [submodule "references/mcp_repos/mcp-gearbox-cli"]
-	path = references/mcp_repos/mcp-gearbox-cli
+	path = mcp-refs/mcp-gearbox-cli
 	url = https://github.com/rohitsoni007/mcp-gearbox-cli
 
 [submodule "references/mcp_repos/mcp-gearbox-js"]
-	path = references/mcp_repos/mcp-gearbox-js
+	path = mcp-refs/mcp-gearbox-js
 	url = https://github.com/rohitsoni007/mcp-gearbox-js
 
 [submodule "references/mcp_repos/mcp-mem0"]
-	path = references/mcp_repos/mcp-mem0
+	path = mcp-refs/mcp-mem0
 	url = https://github.com/coleam00/mcp-mem0
 
 [submodule "references/mcp_repos/mcp-proxy"]
-	path = references/mcp_repos/mcp-proxy
+	path = mcp-refs/mcp-proxy
 	url = https://github.com/TBXark/mcp-proxy
 
 [submodule "references/mcp_repos/mcp-server-deep-research"]
-	path = references/mcp_repos/mcp-server-deep-research
+	path = mcp-refs/mcp-server-deep-research
 	url = https://github.com/reading-plus-ai/mcp-server-deep-research
 
 [submodule "references/mcp_repos/mcp-server-gemini"]
-	path = references/mcp_repos/mcp-server-gemini
+	path = mcp-refs/mcp-server-gemini
 	url = https://github.com/aliargun/mcp-server-gemini
 
 [submodule "references/mcp_repos/mcp-toolz"]
-	path = references/mcp_repos/mcp-toolz
+	path = mcp-refs/mcp-toolz
 	url = https://github.com/taylorleese/mcp-toolz
 
 [submodule "references/mcp_repos/mcp-use"]
-	path = references/mcp_repos/mcp-use
+	path = mcp-refs/mcp-use
 	url = https://github.com/mcp-use/mcp-use
 
 [submodule "references/mcp_repos/mcpproxy"]
-	path = references/mcp_repos/mcpproxy
+	path = mcp-refs/mcpproxy
 	url = https://github.com/Dumbris/mcpproxy
 
 [submodule "references/mcp_repos/mem0-mcp"]
-	path = references/mcp_repos/mem0-mcp
+	path = mcp-refs/mem0-mcp
 	url = https://github.com/mem0ai/mem0-mcp
 
 [submodule "references/mcp_repos/meta-mcp-proxy"]
-	path = references/mcp_repos/meta-mcp-proxy
+	path = mcp-refs/meta-mcp-proxy
 	url = https://github.com/nullplatform/meta-mcp-proxy
 
 [submodule "references/mcp_repos/playwright-mcp"]
-	path = references/mcp_repos/playwright-mcp
+	path = mcp-refs/playwright-mcp
 	url = https://github.com/microsoft/playwright-mcp
 
 [submodule "references/mcp_repos/sourcerer-mcp"]
-	path = references/mcp_repos/sourcerer-mcp
+	path = mcp-refs/sourcerer-mcp
 	url = https://github.com/st3v3nmw/sourcerer-mcp
 
 [submodule "references/mcp_repos/ultra-mcp"]
-	path = references/mcp_repos/ultra-mcp
+	path = mcp-refs/ultra-mcp
 	url = https://github.com/RealMikeChong/ultra-mcp
 
 [submodule "references/mcp_repos/vibe-check-mcp-server"]
-	path = references/mcp_repos/vibe-check-mcp-server
+	path = mcp-refs/vibe-check-mcp-server
 	url = https://github.com/PV-Bhat/vibe-check-mcp-server
 
 [submodule "references/mcp_repos/youtube-video-summarizer-mcp"]
-	path = references/mcp_repos/youtube-video-summarizer-mcp
+	path = mcp-refs/youtube-video-summarizer-mcp
 	url = https://github.com/nabid-pf/youtube-video-summarizer-mcp
 
 [submodule "references/skills_repos/anthropic-skills"]
-	path = references/skills_repos/anthropic-skills
+	path = skills/refs-external/anthropic-skills
 	url = https://github.com/anthropics/skills
 
 [submodule "references/skills_repos/openai-skills"]
-	path = references/skills_repos/openai-skills
+	path = skills/refs-external/openai-skills
 	url = https://github.com/openai/skills
 
 [submodule "references/tools/autorouter-package"]
-	path = references/tools/autorouter-package
+	path = tools/refs/autorouter-package
 	url = https://github.com/Mikethebot44/autorouter-package
 
 [submodule "references/tools/context-portal"]
-	path = references/tools/context-portal
+	path = tools/refs/context-portal
 	url = https://github.com/GreatScottyMac/context-portal
 
 [submodule "submodules/Agent-MCP"]
@@ -579,7 +579,7 @@
 	url = https://github.com/router-for-me/CLIProxyAPI
 
 [submodule "submodules/DesktopCommanderMCP"]
-	path = submodules/DesktopCommanderMCP
+	path = computer-use/DesktopCommanderMCP
 	url = https://github.com/wonderwhy-er/DesktopCommanderMCP
 
 [submodule "submodules/Unified-MCP-Tool-Graph"]
@@ -669,7 +669,7 @@
 
 
 [submodule "external/research/OpenQode"]
-	path = external/research/OpenQode
+	path = research/OpenQode
 	url = https://github.com/roman-ryzenadvanced/OpenQode-Public-Alpha-GooseUltra-
 [submodule "openevolve"]
 	path = openevolve
@@ -681,7 +681,7 @@
 	path = OmniParser
 	url = https://github.com/microsoft/OmniParser
 [submodule "kapture"]
-	path = kapture
+	path = browser-use/kapture
 	url = https://github.com/williamkapke/kapture
 [submodule "submodules/vibe-kanban"]
 	path = submodules/vibe-kanban
@@ -855,7 +855,7 @@
 	path = computer-use/desktop/cua
 	url = https://github.com/trycua/cua
 [submodule "computer-use/browser/algonius-browser"]
-	path = computer-use/browser/algonius-browser
+	path = browser-use/algonius-browser
 	url = https://github.com/algonius/algonius-browser
 [submodule "code-sandbox/tools/cohere-terrarium"]
 	path = code-sandbox/tools/cohere-terrarium
@@ -903,7 +903,7 @@
 	path = code-indexing/tools/bloop
 	url = https://github.com/BloopAI/bloop.git
 [submodule "code-indexing/tools/aider"]
-	path = code-indexing/tools/aider
+	path = cli-tools/aider
 	url = https://github.com/aider-ai/aider.git
 [submodule "code-indexing/ast/ast-grep"]
 	path = code-indexing/ast/ast-grep
@@ -942,10 +942,10 @@
 	path = superai-cli/agents/crewai
 	url = https://github.com/crewAIInc/crewAI.git
 [submodule "computer-use/browser/playwright"]
-	path = computer-use/browser/playwright
+	path = browser-use/playwright
 	url = https://github.com/microsoft/playwright.git
 [submodule "computer-use/browser/stagehand"]
-	path = computer-use/browser/stagehand
+	path = browser-use/stagehand
 	url = https://github.com/browserbase/stagehand.git
 [submodule "code-sandbox/runtimes/dagger"]
 	path = code-sandbox/runtimes/dagger

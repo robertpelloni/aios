@@ -705,9 +705,6 @@
 [submodule "submodules/superpowers"]
 	path = tools/refs/superpowers
 	url = https://github.com/obra/superpowers
-[submodule "submodules/mcpm.sh"]
-	path = cli-tools/mcpm.sh
-	url = https://github.com/pathintegral-institute/mcpm.sh
 [submodule "submodules/Super-MCP"]
 	path = mcp-frameworks/Super-MCP
 	url = https://github.com/nspr-io/Super-MCP

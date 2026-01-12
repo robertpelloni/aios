@@ -74,3 +74,13 @@ export type {
   ErrorPattern,
   AnalyticsQuery,
 } from './ToolAnalyticsService.js';
+
+export { WorkflowService, getWorkflowService } from './WorkflowService.js';
+export type {
+  Workflow,
+  WorkflowStep,
+  WorkflowExecution,
+  WorkflowStatus,
+  ExecutionStatus,
+  StepType,
+} from './WorkflowService.js';

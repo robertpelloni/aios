@@ -5,7 +5,7 @@
 
 import { Hono } from 'hono';
 import { SupervisorCouncilManager, type ConsensusMode, type DevelopmentTask, type CouncilConfig } from '../managers/SupervisorCouncilManager.js';
-import type { SupervisorConfig } from '../supervisors/BaseSupervisor.js';
+import type { SupervisorConfig, SupervisorSpecialty } from '../supervisors/BaseSupervisor.js';
 
 export function createCouncilRoutes(): Hono {
   const router = new Hono();
@@ -78,6 +78,44 @@ export function createCouncilRoutes(): Hono {
 
     council.setSupervisorWeight(name, weight);
     return c.json({ status: 'updated', name, weight: council.getSupervisorWeight(name) });
+  });
+
+  router.put('/supervisors/:name/specialties', async (c) => {
+    const name = c.req.param('name');
+    const { specialties } = await c.req.json();
+    
+    const validSpecialties: SupervisorSpecialty[] = [
+      'security', 'performance', 'architecture', 'testing', 'code-quality',
+      'frontend', 'backend', 'database', 'devops', 'documentation', 'general'
+    ];
+
+    if (!Array.isArray(specialties)) {
+      return c.json({ error: 'specialties must be an array' }, 400);
+    }
+
+    const invalidSpecs = specialties.filter(s => !validSpecialties.includes(s));
+    if (invalidSpecs.length > 0) {
+      return c.json({ error: `Invalid specialties: ${invalidSpecs.join(', ')}. Valid: ${validSpecialties.join(', ')}` }, 400);
+    }
+
+    const supervisor = council.getSupervisor(name);
+    if (!supervisor) {
+      return c.json({ error: 'Supervisor not found' }, 404);
+    }
+
+    council.setSupervisorSpecialties(name, specialties);
+    return c.json({ status: 'updated', name, specialties: council.getSupervisorSpecialties(name) });
+  });
+
+  router.get('/supervisors/:name/specialties', async (c) => {
+    const name = c.req.param('name');
+    
+    const supervisor = council.getSupervisor(name);
+    if (!supervisor) {
+      return c.json({ error: 'Supervisor not found' }, 404);
+    }
+
+    return c.json({ name, specialties: council.getSupervisorSpecialties(name) });
   });
 
   router.put('/consensus-mode', async (c) => {
@@ -160,6 +198,50 @@ export function createCouncilRoutes(): Hono {
     } catch (err) {
       return c.json({ error: (err as Error).message }, 500);
     }
+  });
+
+  router.post('/debate/auto-select', async (c) => {
+    const task: DevelopmentTask = await c.req.json();
+    
+    if (!task.id || !task.description) {
+      return c.json({ error: 'id and description are required' }, 400);
+    }
+
+    if (!council.isEnabled()) {
+      return c.json({ 
+        approved: true, 
+        reasoning: 'Council is disabled - auto-approving',
+        votes: [],
+        consensus: 1.0,
+        weightedConsensus: 1.0,
+        dissent: [],
+        selectedTeam: []
+      });
+    }
+
+    try {
+      const decision = await council.debateWithAutoSelect(task);
+      return c.json(decision);
+    } catch (err) {
+      return c.json({ error: (err as Error).message }, 500);
+    }
+  });
+
+  router.post('/analyze-task', async (c) => {
+    const task: DevelopmentTask = await c.req.json();
+    
+    if (!task.description) {
+      return c.json({ error: 'description is required' }, 400);
+    }
+
+    const specialties = council.analyzeTaskSpecialties(task);
+    const optimalTeam = await council.selectOptimalTeam(task);
+
+    return c.json({
+      taskId: task.id,
+      detectedSpecialties: specialties,
+      optimalTeam: optimalTeam.map(s => s.name),
+    });
   });
 
   router.post('/chat', async (c) => {

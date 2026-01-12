@@ -55,6 +55,21 @@ interface ConsensusModeHandler {
   (votes: Vote[], config: CouncilConfig, leadVote?: Vote): { approved: boolean; reasoning: string };
 }
 
+// Keyword-to-specialty mapping for task analysis
+const SPECIALTY_KEYWORDS: Record<SupervisorSpecialty, string[]> = {
+  'security': ['security', 'vulnerability', 'injection', 'xss', 'csrf', 'auth', 'authentication', 'authorization', 'encrypt', 'hash', 'password', 'token', 'jwt', 'oauth', 'sanitize', 'escape', 'sql injection', 'privilege', 'access control'],
+  'performance': ['performance', 'optimize', 'latency', 'throughput', 'cache', 'memory', 'cpu', 'bottleneck', 'profil', 'benchmark', 'speed', 'slow', 'fast', 'efficient', 'load', 'scale', 'concurrent'],
+  'architecture': ['architecture', 'design', 'pattern', 'structure', 'refactor', 'modular', 'decouple', 'dependency', 'interface', 'abstract', 'layer', 'microservice', 'monolith', 'api design', 'schema'],
+  'testing': ['test', 'spec', 'assert', 'mock', 'stub', 'coverage', 'unit test', 'integration test', 'e2e', 'fixture', 'snapshot', 'regression', 'tdd', 'bdd'],
+  'code-quality': ['lint', 'format', 'style', 'clean code', 'readable', 'maintainable', 'smell', 'dead code', 'duplication', 'complexity', 'cyclomatic', 'solid', 'dry', 'kiss'],
+  'frontend': ['frontend', 'ui', 'ux', 'react', 'vue', 'angular', 'css', 'html', 'component', 'responsive', 'accessibility', 'a11y', 'dom', 'browser', 'animation', 'tailwind'],
+  'backend': ['backend', 'server', 'api', 'endpoint', 'rest', 'graphql', 'middleware', 'controller', 'service', 'route', 'request', 'response', 'http', 'websocket'],
+  'database': ['database', 'sql', 'query', 'orm', 'migration', 'schema', 'index', 'table', 'join', 'transaction', 'postgres', 'mysql', 'mongo', 'redis', 'sqlite'],
+  'devops': ['devops', 'deploy', 'ci', 'cd', 'docker', 'kubernetes', 'pipeline', 'infrastructure', 'terraform', 'ansible', 'monitoring', 'logging', 'alert'],
+  'documentation': ['document', 'readme', 'comment', 'jsdoc', 'typedoc', 'api doc', 'guide', 'tutorial', 'example', 'changelog'],
+  'general': [],
+};
+
 export class SupervisorCouncilManager {
   private static instance: SupervisorCouncilManager | null = null;
   
@@ -130,6 +145,186 @@ export class SupervisorCouncilManager {
 
   getSupervisorWeight(name: string): number {
     return this.supervisorWeights.get(name) ?? 1.0;
+  }
+
+  setSupervisorSpecialties(name: string, specialties: SupervisorSpecialty[]): void {
+    this.supervisorSpecialties.set(name, specialties);
+  }
+
+  getSupervisorSpecialties(name: string): SupervisorSpecialty[] {
+    return this.supervisorSpecialties.get(name) ?? ['general'];
+  }
+
+  analyzeTaskSpecialties(task: DevelopmentTask): SupervisorSpecialty[] {
+    const text = `${task.description} ${task.context ?? ''} ${task.files?.join(' ') ?? ''}`.toLowerCase();
+    const matched = new Set<SupervisorSpecialty>();
+
+    for (const [specialty, keywords] of Object.entries(SPECIALTY_KEYWORDS)) {
+      if (specialty === 'general') continue;
+      for (const keyword of keywords) {
+        if (text.includes(keyword.toLowerCase())) {
+          matched.add(specialty as SupervisorSpecialty);
+          break;
+        }
+      }
+    }
+
+    return matched.size > 0 ? Array.from(matched) : ['general'];
+  }
+
+  async selectOptimalTeam(task: DevelopmentTask): Promise<Supervisor[]> {
+    const taskSpecialties = this.analyzeTaskSpecialties(task);
+    const available = await this.getAvailableSupervisors();
+
+    if (available.length === 0) return [];
+
+    const scored = available.map(supervisor => {
+      const supervisorSpecs = this.getSupervisorSpecialties(supervisor.name);
+      const matchCount = taskSpecialties.filter(ts => 
+        supervisorSpecs.includes(ts) || supervisorSpecs.includes('general')
+      ).length;
+      const weight = this.getSupervisorWeight(supervisor.name);
+      return { supervisor, score: matchCount * weight };
+    });
+
+    scored.sort((a, b) => b.score - a.score);
+
+    const hasMatches = scored.some(s => s.score > 0);
+    if (!hasMatches) return available;
+
+    const topScore = scored[0].score;
+    return scored.filter(s => s.score >= topScore * 0.5).map(s => s.supervisor);
+  }
+
+  async debateWithAutoSelect(task: DevelopmentTask): Promise<CouncilDecision & { selectedTeam: string[] }> {
+    const team = await this.selectOptimalTeam(task);
+    const teamNames = team.map(s => s.name);
+
+    if (team.length === 0) {
+      return {
+        approved: true,
+        consensus: 1.0,
+        weightedConsensus: 1.0,
+        votes: [],
+        reasoning: 'No supervisors available - auto-approving',
+        dissent: [],
+        selectedTeam: [],
+      };
+    }
+
+    const decision = await this.debateWithTeam(task, team);
+    return { ...decision, selectedTeam: teamNames };
+  }
+
+  private async debateWithTeam(task: DevelopmentTask, team: Supervisor[]): Promise<CouncilDecision> {
+    const startTime = Date.now();
+
+    if (team.length === 0) {
+      return {
+        approved: true,
+        consensus: 1.0,
+        weightedConsensus: 1.0,
+        votes: [],
+        reasoning: 'No supervisors in team - auto-approving',
+        dissent: [],
+      };
+    }
+
+    const rounds = this.config.debateRounds || 2;
+    const votes: Vote[] = [];
+
+    const taskContext: CouncilMessage = {
+      role: 'user',
+      content: this.formatTaskForDebate(task),
+    };
+
+    const initialOpinions = await Promise.all(
+      team.map(async (supervisor) => {
+        try {
+          const response = await supervisor.chat([taskContext]);
+          return `**${supervisor.name}**: ${response}`;
+        } catch {
+          return `**${supervisor.name}**: [Unable to provide opinion]`;
+        }
+      })
+    );
+
+    let debateContext = taskContext.content + '\n\n**Initial Opinions:**\n' + initialOpinions.join('\n\n');
+
+    for (let round = 2; round <= rounds; round++) {
+      const roundOpinions = await Promise.all(
+        team.map(async (supervisor) => {
+          try {
+            const message: CouncilMessage = {
+              role: 'user',
+              content: debateContext + '\n\nConsidering the above opinions, provide your refined assessment.',
+            };
+            const response = await supervisor.chat([message]);
+            return `**${supervisor.name}**: ${response}`;
+          } catch {
+            return null;
+          }
+        })
+      );
+      const validOpinions = roundOpinions.filter((o): o is string => o !== null);
+      debateContext += '\n\n**Round ' + round + ' Opinions:**\n' + validOpinions.join('\n\n');
+    }
+
+    const voteResults = await Promise.all(
+      team.map(async (supervisor) => {
+        try {
+          const votePrompt: CouncilMessage = {
+            role: 'user',
+            content: debateContext +
+              '\n\nBased on all discussions, provide your FINAL VOTE:\n' +
+              '1. Vote: APPROVE or REJECT\n' +
+              '2. Confidence: A number between 0.0 and 1.0\n' +
+              '3. Brief reasoning (2-3 sentences)\n\n' +
+              'Format:\nVOTE: [APPROVE/REJECT]\nCONFIDENCE: [0.0-1.0]\nREASONING: [your reasoning]',
+          };
+          const response = await supervisor.chat([votePrompt]);
+          const approved = this.parseVote(response);
+          const confidence = this.parseConfidence(response);
+          const weight = this.getSupervisorWeight(supervisor.name);
+          return { supervisor: supervisor.name, approved, confidence, weight, comment: response };
+        } catch {
+          return {
+            supervisor: supervisor.name,
+            approved: false,
+            confidence: 0.5,
+            weight: this.getSupervisorWeight(supervisor.name),
+            comment: 'Failed to vote',
+          };
+        }
+      })
+    );
+
+    votes.push(...voteResults);
+
+    const approvals = votes.filter(v => v.approved).length;
+    const consensus = votes.length > 0 ? approvals / votes.length : 0;
+    const weightedConsensus = this.calculateWeightedConsensus(votes);
+    const dissent = this.extractDissent(votes);
+
+    const leadVote = this.config.leadSupervisor
+      ? votes.find(v => v.supervisor === this.config.leadSupervisor)
+      : undefined;
+
+    const mode = this.config.consensusMode;
+    const handler = this.consensusHandlers[mode];
+    const { approved, reasoning: modeReasoning } = handler(votes, this.config, leadVote);
+
+    const durationMs = Date.now() - startTime;
+    console.log(`[Council] Team debate completed in ${durationMs}ms with ${votes.length} votes`);
+
+    return {
+      approved,
+      consensus,
+      weightedConsensus,
+      votes,
+      reasoning: this.generateConsensusReasoning(votes, approved, weightedConsensus, dissent, mode, modeReasoning),
+      dissent,
+    };
   }
 
   setLeadSupervisor(name: string): void {

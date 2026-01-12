@@ -59,6 +59,8 @@ import { createProfileRoutes } from './routes/profileRoutesHono.js';
 import { createLLMGatewayRoutes } from './routes/llmGatewayRoutesHono.js';
 import { createAgentTemplateRoutes } from './routes/agentTemplateRoutesHono.js';
 import { createAnalyticsRoutes } from './routes/analyticsRoutesHono.js';
+import { createWorkflowRoutes } from './routes/workflowRoutesHono.js';
+import { createSchedulerRoutes } from './routes/schedulerRoutesHono.js';
 import { cliRegistry, cliSessionManager, smartPilotManager, vetoManager, debateHistoryManager, dynamicSelectionManager } from './managers/autopilot/index.js';
 import { LLMProviderRegistry, getLLMProviderRegistry } from './providers/LLMProviderRegistry.js';
 import { AuthMiddleware } from './middleware/AuthMiddleware.js';
@@ -272,6 +274,12 @@ this.conductorManager = new ConductorManager(rootDir);
 
     // Analytics Routes (tool usage tracking and metrics)
     this.app.route('/api/analytics', createAnalyticsRoutes());
+
+    // Workflow Routes (multi-step automation pipelines)
+    this.app.route('/api/workflows', createWorkflowRoutes());
+
+    // Scheduler Routes (cron-based task scheduling)
+    this.app.route('/api/scheduler', createSchedulerRoutes(this.schedulerManager));
 
     this.app.get('/api/system', (c) => {
         const versionPath = path.join(this.rootDir, '../..', 'VERSION');

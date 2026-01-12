@@ -84,3 +84,30 @@ export type {
   ExecutionStatus,
   StepType,
 } from './WorkflowService.js';
+
+export { NotificationService, getNotificationService } from './NotificationService.js';
+export type {
+  NotificationChannel,
+  NotificationPriority,
+  NotificationStatus,
+  EventType,
+  NotificationTemplate,
+  NotificationChannelConfig,
+  EventSubscription,
+  Notification,
+  NotificationBatch,
+  NotificationStats,
+} from './NotificationService.js';
+
+export { BudgetService, getBudgetService } from './BudgetService.js';
+export type {
+  BudgetScope,
+  BudgetPeriod,
+  BudgetStatus as BudgetStatusType,
+  AlertLevel,
+  CostEntry,
+  Budget,
+  BudgetAlert,
+  CostSummary,
+  ModelPricing,
+} from './BudgetService.js';

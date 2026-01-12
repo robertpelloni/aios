@@ -163,3 +163,29 @@ export type {
   QueueStats,
   QueueServiceConfig,
 } from './QueueService.js';
+
+export { SecretService, getSecretService, resetSecretService } from './SecretService.js';
+export type {
+  SecretType,
+  SecretScope,
+  Secret,
+  SecretAccessLog,
+  RotationPolicy,
+  SecretReference,
+  SecretConfig,
+} from './SecretService.js';
+
+export { FeatureFlagService, getFeatureFlagService, resetFeatureFlagService } from './FeatureFlagService.js';
+export type {
+  FlagType,
+  RolloutStrategy,
+  FeatureFlag,
+  EnvironmentConfig,
+  FlagRule,
+  RuleCondition,
+  RolloutConfig,
+  EvaluationContext,
+  EvaluationResult,
+  FlagStats,
+  FeatureFlagConfig,
+} from './FeatureFlagService.js';

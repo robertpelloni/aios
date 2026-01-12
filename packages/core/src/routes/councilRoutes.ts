@@ -4,7 +4,7 @@
  */
 
 import { Hono } from 'hono';
-import { SupervisorCouncilManager, type ConsensusMode, type DevelopmentTask, type CouncilConfig } from '../managers/SupervisorCouncilManager.js';
+import { SupervisorCouncilManager, type ConsensusMode, type DevelopmentTask, type CouncilConfig, type DebateTemplate } from '../managers/SupervisorCouncilManager.js';
 import type { SupervisorConfig, SupervisorSpecialty } from '../supervisors/BaseSupervisor.js';
 
 export function createCouncilRoutes(): Hono {
@@ -288,6 +288,115 @@ export function createCouncilRoutes(): Hono {
   router.post('/analytics/reset', (c) => {
     council.resetAnalytics();
     return c.json({ status: 'analytics reset' });
+  });
+
+  // ==================== TEMPLATE ENDPOINTS ====================
+
+  router.get('/templates', (c) => {
+    const templates = council.getTemplates();
+    return c.json({
+      templates: templates.map(t => ({
+        id: t.id,
+        name: t.name,
+        description: t.description,
+        requiredSpecialties: t.requiredSpecialties,
+        consensusMode: t.consensusMode,
+        debateRounds: t.debateRounds,
+        consensusThreshold: t.consensusThreshold,
+        isBuiltin: ['security-review', 'performance-audit', 'architecture-review', 'code-quality', 'api-design', 'frontend-ux'].includes(t.id),
+      })),
+    });
+  });
+
+  router.get('/templates/:id', (c) => {
+    const id = c.req.param('id');
+    const template = council.getTemplate(id);
+    
+    if (!template) {
+      return c.json({ error: 'Template not found' }, 404);
+    }
+
+    return c.json(template);
+  });
+
+  router.post('/templates', async (c) => {
+    const template: DebateTemplate = await c.req.json();
+    
+    if (!template.id || !template.name || !template.systemPrompt) {
+      return c.json({ error: 'id, name, and systemPrompt are required' }, 400);
+    }
+
+    // Validate required fields with defaults
+    const validatedTemplate: DebateTemplate = {
+      id: template.id,
+      name: template.name,
+      description: template.description || '',
+      requiredSpecialties: template.requiredSpecialties || ['general'],
+      consensusMode: template.consensusMode || 'simple-majority',
+      debateRounds: template.debateRounds || 2,
+      consensusThreshold: template.consensusThreshold || 0.5,
+      systemPrompt: template.systemPrompt,
+    };
+
+    try {
+      council.addCustomTemplate(validatedTemplate);
+      return c.json({ status: 'created', template: validatedTemplate });
+    } catch (err) {
+      return c.json({ error: (err as Error).message }, 400);
+    }
+  });
+
+  router.delete('/templates/:id', (c) => {
+    const id = c.req.param('id');
+    
+    // Check if it's a builtin template
+    const builtinIds = ['security-review', 'performance-audit', 'architecture-review', 'code-quality', 'api-design', 'frontend-ux'];
+    if (builtinIds.includes(id)) {
+      return c.json({ error: 'Cannot delete builtin templates' }, 400);
+    }
+
+    const removed = council.removeCustomTemplate(id);
+    
+    if (!removed) {
+      return c.json({ error: 'Template not found' }, 404);
+    }
+    
+    return c.json({ status: 'deleted', id });
+  });
+
+  router.post('/debate/template', async (c) => {
+    const { task, templateId } = await c.req.json();
+    
+    if (!task?.id || !task?.description) {
+      return c.json({ error: 'task.id and task.description are required' }, 400);
+    }
+    if (!templateId) {
+      return c.json({ error: 'templateId is required' }, 400);
+    }
+
+    const template = council.getTemplate(templateId);
+    if (!template) {
+      return c.json({ error: `Template '${templateId}' not found` }, 404);
+    }
+
+    if (!council.isEnabled()) {
+      return c.json({ 
+        approved: true, 
+        reasoning: 'Council is disabled - auto-approving',
+        votes: [],
+        consensus: 1.0,
+        weightedConsensus: 1.0,
+        dissent: [],
+        templateUsed: templateId
+      });
+    }
+
+    try {
+      const decision = await council.debateWithTemplate(task, templateId);
+      return c.json(decision);
+    } catch (err) {
+      return c.json({ error: (err as Error).message }, 500);
+    }
   });
 
   return router;

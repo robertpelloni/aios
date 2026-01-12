@@ -74,6 +74,80 @@ export interface CouncilAnalytics {
   supervisorStats: Record<string, SupervisorAnalytics>;
 }
 
+export interface DebateTemplate {
+  id: string;
+  name: string;
+  description: string;
+  requiredSpecialties: SupervisorSpecialty[];
+  consensusMode: ConsensusMode;
+  debateRounds: number;
+  consensusThreshold: number;
+  systemPrompt: string;
+}
+
+const BUILTIN_TEMPLATES: DebateTemplate[] = [
+  {
+    id: 'security-review',
+    name: 'Security Review',
+    description: 'Thorough security audit focusing on vulnerabilities, authentication, and data protection',
+    requiredSpecialties: ['security', 'backend'],
+    consensusMode: 'supermajority',
+    debateRounds: 3,
+    consensusThreshold: 0.75,
+    systemPrompt: 'You are reviewing code for security vulnerabilities. Focus on: SQL injection, XSS, CSRF, authentication flaws, authorization bypasses, sensitive data exposure, and insecure dependencies.',
+  },
+  {
+    id: 'performance-audit',
+    name: 'Performance Audit',
+    description: 'Analyze code for performance bottlenecks and optimization opportunities',
+    requiredSpecialties: ['performance', 'backend', 'database'],
+    consensusMode: 'simple-majority',
+    debateRounds: 2,
+    consensusThreshold: 0.6,
+    systemPrompt: 'You are reviewing code for performance issues. Focus on: N+1 queries, missing indexes, memory leaks, unnecessary computations, caching opportunities, and algorithm complexity.',
+  },
+  {
+    id: 'architecture-review',
+    name: 'Architecture Review',
+    description: 'Evaluate architectural decisions, patterns, and system design',
+    requiredSpecialties: ['architecture', 'backend', 'frontend'],
+    consensusMode: 'weighted',
+    debateRounds: 3,
+    consensusThreshold: 0.7,
+    systemPrompt: 'You are reviewing architectural decisions. Focus on: separation of concerns, coupling/cohesion, scalability, maintainability, SOLID principles, and design patterns.',
+  },
+  {
+    id: 'code-quality',
+    name: 'Code Quality Review',
+    description: 'Assess code readability, maintainability, and adherence to best practices',
+    requiredSpecialties: ['code-quality', 'testing'],
+    consensusMode: 'simple-majority',
+    debateRounds: 2,
+    consensusThreshold: 0.5,
+    systemPrompt: 'You are reviewing code quality. Focus on: naming conventions, code duplication, function length, complexity, error handling, and test coverage.',
+  },
+  {
+    id: 'api-design',
+    name: 'API Design Review',
+    description: 'Review API endpoints for RESTful design, consistency, and usability',
+    requiredSpecialties: ['backend', 'architecture', 'documentation'],
+    consensusMode: 'simple-majority',
+    debateRounds: 2,
+    consensusThreshold: 0.6,
+    systemPrompt: 'You are reviewing API design. Focus on: RESTful conventions, endpoint naming, request/response structure, error responses, versioning, and documentation.',
+  },
+  {
+    id: 'frontend-ux',
+    name: 'Frontend & UX Review',
+    description: 'Evaluate frontend code for accessibility, responsiveness, and user experience',
+    requiredSpecialties: ['frontend', 'code-quality'],
+    consensusMode: 'simple-majority',
+    debateRounds: 2,
+    consensusThreshold: 0.6,
+    systemPrompt: 'You are reviewing frontend code. Focus on: accessibility (a11y), responsive design, component reusability, state management, performance, and user experience.',
+  },
+];
+
 export class SupervisorCouncilManager {
   private static instance: SupervisorCouncilManager | null = null;
   
@@ -90,6 +164,7 @@ export class SupervisorCouncilManager {
   };
   private config: CouncilConfig;
   private fallbackIndex = 0;
+  private customTemplates: Map<string, DebateTemplate> = new Map();
 
   // Keyword-to-specialty mapping for task analysis
   private static readonly SPECIALTY_KEYWORDS: Record<SupervisorSpecialty, string[]> = {
@@ -765,6 +840,64 @@ export class SupervisorCouncilManager {
       avgConsensus: 0,
       supervisorStats: {},
     };
+  }
+
+  getTemplates(): DebateTemplate[] {
+    return [...BUILTIN_TEMPLATES, ...this.customTemplates.values()];
+  }
+
+  getTemplate(id: string): DebateTemplate | null {
+    const builtin = BUILTIN_TEMPLATES.find(t => t.id === id);
+    if (builtin) return builtin;
+    return this.customTemplates.get(id) ?? null;
+  }
+
+  addCustomTemplate(template: DebateTemplate): void {
+    if (BUILTIN_TEMPLATES.some(t => t.id === template.id)) {
+      throw new Error(`Cannot override builtin template: ${template.id}`);
+    }
+    this.customTemplates.set(template.id, template);
+  }
+
+  removeCustomTemplate(id: string): boolean {
+    return this.customTemplates.delete(id);
+  }
+
+  async debateWithTemplate(task: DevelopmentTask, templateId: string): Promise<CouncilDecision & { templateUsed: string }> {
+    const template = this.getTemplate(templateId);
+    if (!template) {
+      throw new Error(`Template not found: ${templateId}`);
+    }
+
+    const originalConfig = { ...this.config };
+
+    this.config.consensusMode = template.consensusMode;
+    this.config.debateRounds = template.debateRounds;
+    this.config.consensusThreshold = template.consensusThreshold;
+
+    const taskWithPrompt: DevelopmentTask = {
+      ...task,
+      context: `${template.systemPrompt}\n\n${task.context ?? ''}`,
+    };
+
+    const available = await this.getAvailableSupervisors();
+    const team = available.filter(s => {
+      const specs = this.getSupervisorSpecialties(s.name);
+      return template.requiredSpecialties.some(rs => specs.includes(rs) || specs.includes('general'));
+    });
+
+    const finalTeam = team.length > 0 ? team : available;
+
+    let decision: CouncilDecision;
+    if (finalTeam.length === available.length) {
+      decision = await this.debate(taskWithPrompt);
+    } else {
+      decision = await this.debateWithTeam(taskWithPrompt, finalTeam);
+    }
+
+    this.config = originalConfig;
+
+    return { ...decision, templateUsed: template.id };
   }
 
   private parseConfidence(response: string): number {

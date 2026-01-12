@@ -55,6 +55,7 @@ import { createMemoryRoutes } from './routes/memoryRoutesHono.js';
 import { createOrchestrationRoutes } from './routes/orchestrationRoutesHono.js';
 import { createToolSetRoutes } from './routes/toolSetRoutesHono.js';
 import { createCLIProxyRoutes } from './routes/cliProxyRoutesHono.js';
+import { createProfileRoutes } from './routes/profileRoutesHono.js';
 import { cliRegistry, cliSessionManager, smartPilotManager, vetoManager, debateHistoryManager, dynamicSelectionManager } from './managers/autopilot/index.js';
 import { LLMProviderRegistry, getLLMProviderRegistry } from './providers/LLMProviderRegistry.js';
 import { AuthMiddleware } from './middleware/AuthMiddleware.js';
@@ -256,6 +257,9 @@ this.conductorManager = new ConductorManager(rootDir);
 
     // CLI Proxy Routes (OAuth account management for AI providers)
     this.app.route('/api/cliproxy', createCLIProxyRoutes());
+
+    // Unified Profile Routes (accounts, API profiles, CLI proxy variants)
+    this.app.route('/api/profiles', createProfileRoutes());
 
     this.app.get('/api/system', (c) => {
         const versionPath = path.join(this.rootDir, '../..', 'VERSION');

@@ -55,20 +55,24 @@ interface ConsensusModeHandler {
   (votes: Vote[], config: CouncilConfig, leadVote?: Vote): { approved: boolean; reasoning: string };
 }
 
-// Keyword-to-specialty mapping for task analysis
-const SPECIALTY_KEYWORDS: Record<SupervisorSpecialty, string[]> = {
-  'security': ['security', 'vulnerability', 'injection', 'xss', 'csrf', 'auth', 'authentication', 'authorization', 'encrypt', 'hash', 'password', 'token', 'jwt', 'oauth', 'sanitize', 'escape', 'sql injection', 'privilege', 'access control'],
-  'performance': ['performance', 'optimize', 'latency', 'throughput', 'cache', 'memory', 'cpu', 'bottleneck', 'profil', 'benchmark', 'speed', 'slow', 'fast', 'efficient', 'load', 'scale', 'concurrent'],
-  'architecture': ['architecture', 'design', 'pattern', 'structure', 'refactor', 'modular', 'decouple', 'dependency', 'interface', 'abstract', 'layer', 'microservice', 'monolith', 'api design', 'schema'],
-  'testing': ['test', 'spec', 'assert', 'mock', 'stub', 'coverage', 'unit test', 'integration test', 'e2e', 'fixture', 'snapshot', 'regression', 'tdd', 'bdd'],
-  'code-quality': ['lint', 'format', 'style', 'clean code', 'readable', 'maintainable', 'smell', 'dead code', 'duplication', 'complexity', 'cyclomatic', 'solid', 'dry', 'kiss'],
-  'frontend': ['frontend', 'ui', 'ux', 'react', 'vue', 'angular', 'css', 'html', 'component', 'responsive', 'accessibility', 'a11y', 'dom', 'browser', 'animation', 'tailwind'],
-  'backend': ['backend', 'server', 'api', 'endpoint', 'rest', 'graphql', 'middleware', 'controller', 'service', 'route', 'request', 'response', 'http', 'websocket'],
-  'database': ['database', 'sql', 'query', 'orm', 'migration', 'schema', 'index', 'table', 'join', 'transaction', 'postgres', 'mysql', 'mongo', 'redis', 'sqlite'],
-  'devops': ['devops', 'deploy', 'ci', 'cd', 'docker', 'kubernetes', 'pipeline', 'infrastructure', 'terraform', 'ansible', 'monitoring', 'logging', 'alert'],
-  'documentation': ['document', 'readme', 'comment', 'jsdoc', 'typedoc', 'api doc', 'guide', 'tutorial', 'example', 'changelog'],
-  'general': [],
-};
+export interface SupervisorAnalytics {
+  totalVotes: number;
+  approvals: number;
+  rejections: number;
+  approvalRate: number;
+  avgConfidence: number;
+  totalResponseTimeMs: number;
+  avgResponseTimeMs: number;
+  lastVoteAt: string | null;
+}
+
+export interface CouncilAnalytics {
+  totalDebates: number;
+  totalApproved: number;
+  totalRejected: number;
+  avgConsensus: number;
+  supervisorStats: Record<string, SupervisorAnalytics>;
+}
 
 export class SupervisorCouncilManager {
   private static instance: SupervisorCouncilManager | null = null;
@@ -76,6 +80,14 @@ export class SupervisorCouncilManager {
   private registry: SupervisorRegistry;
   private supervisorWeights: Map<string, number> = new Map();
   private supervisorSpecialties: Map<string, SupervisorSpecialty[]> = new Map();
+  private supervisorAnalytics: Map<string, SupervisorAnalytics> = new Map();
+  private councilAnalytics: CouncilAnalytics = {
+    totalDebates: 0,
+    totalApproved: 0,
+    totalRejected: 0,
+    avgConsensus: 0,
+    supervisorStats: {},
+  };
   private config: CouncilConfig;
   private fallbackIndex = 0;
 
@@ -159,9 +171,9 @@ export class SupervisorCouncilManager {
     const text = `${task.description} ${task.context ?? ''} ${task.files?.join(' ') ?? ''}`.toLowerCase();
     const matched = new Set<SupervisorSpecialty>();
 
-    for (const [specialty, keywords] of Object.entries(SPECIALTY_KEYWORDS)) {
+    for (const [specialty, keywords] of Object.entries(SupervisorCouncilManager.SPECIALTY_KEYWORDS)) {
       if (specialty === 'general') continue;
-      for (const keyword of keywords) {
+      for (const keyword of keywords as string[]) {
         if (text.includes(keyword.toLowerCase())) {
           matched.add(specialty as SupervisorSpecialty);
           break;
@@ -316,6 +328,8 @@ export class SupervisorCouncilManager {
 
     const durationMs = Date.now() - startTime;
     console.log(`[Council] Team debate completed in ${durationMs}ms with ${votes.length} votes`);
+
+    this.recordDebateAnalytics(votes, approved, consensus, durationMs);
 
     return {
       approved,
@@ -521,6 +535,8 @@ export class SupervisorCouncilManager {
     const durationMs = Date.now() - startTime;
     console.log(`[Council] Debate completed in ${durationMs}ms with ${votes.length} votes`);
 
+    this.recordDebateAnalytics(votes, approved, consensus, durationMs);
+
     return {
       approved,
       consensus,
@@ -680,6 +696,75 @@ export class SupervisorCouncilManager {
     }
     
     return dissent;
+  }
+
+  private recordDebateAnalytics(votes: Vote[], approved: boolean, consensus: number, durationMs: number): void {
+    const perSupervisorTime = votes.length > 0 ? durationMs / votes.length : 0;
+    const now = new Date().toISOString();
+
+    for (const vote of votes) {
+      let stats = this.supervisorAnalytics.get(vote.supervisor);
+      if (!stats) {
+        stats = {
+          totalVotes: 0,
+          approvals: 0,
+          rejections: 0,
+          approvalRate: 0,
+          avgConfidence: 0,
+          totalResponseTimeMs: 0,
+          avgResponseTimeMs: 0,
+          lastVoteAt: null,
+        };
+      }
+
+      stats.totalVotes += 1;
+      if (vote.approved) {
+        stats.approvals += 1;
+      } else {
+        stats.rejections += 1;
+      }
+      stats.approvalRate = stats.approvals / stats.totalVotes;
+      stats.avgConfidence = ((stats.avgConfidence * (stats.totalVotes - 1)) + vote.confidence) / stats.totalVotes;
+      stats.totalResponseTimeMs += perSupervisorTime;
+      stats.avgResponseTimeMs = stats.totalResponseTimeMs / stats.totalVotes;
+      stats.lastVoteAt = now;
+
+      this.supervisorAnalytics.set(vote.supervisor, stats);
+    }
+
+    this.councilAnalytics.totalDebates += 1;
+    if (approved) {
+      this.councilAnalytics.totalApproved += 1;
+    } else {
+      this.councilAnalytics.totalRejected += 1;
+    }
+    const prevAvg = this.councilAnalytics.avgConsensus;
+    const totalDebates = this.councilAnalytics.totalDebates;
+    this.councilAnalytics.avgConsensus = ((prevAvg * (totalDebates - 1)) + consensus) / totalDebates;
+
+    this.councilAnalytics.supervisorStats = Object.fromEntries(this.supervisorAnalytics);
+  }
+
+  getAnalytics(): CouncilAnalytics {
+    return {
+      ...this.councilAnalytics,
+      supervisorStats: Object.fromEntries(this.supervisorAnalytics),
+    };
+  }
+
+  getSupervisorAnalytics(name: string): SupervisorAnalytics | null {
+    return this.supervisorAnalytics.get(name) ?? null;
+  }
+
+  resetAnalytics(): void {
+    this.supervisorAnalytics.clear();
+    this.councilAnalytics = {
+      totalDebates: 0,
+      totalApproved: 0,
+      totalRejected: 0,
+      avgConsensus: 0,
+      supervisorStats: {},
+    };
   }
 
   private parseConfidence(response: string): number {

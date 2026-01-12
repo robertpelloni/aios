@@ -269,5 +269,26 @@ export function createCouncilRoutes(): Hono {
     return c.json({ status: 'reset' });
   });
 
+  router.get('/analytics', (c) => {
+    const analytics = council.getAnalytics();
+    return c.json(analytics);
+  });
+
+  router.get('/analytics/:name', (c) => {
+    const name = c.req.param('name');
+    const analytics = council.getSupervisorAnalytics(name);
+    
+    if (!analytics) {
+      return c.json({ error: 'No analytics found for supervisor', name }, 404);
+    }
+
+    return c.json({ name, analytics });
+  });
+
+  router.post('/analytics/reset', (c) => {
+    council.resetAnalytics();
+    return c.json({ status: 'analytics reset' });
+  });
+
   return router;
 }

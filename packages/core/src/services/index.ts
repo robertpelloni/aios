@@ -122,3 +122,17 @@ export type {
   OAuthConfig,
   WebhookEvent,
 } from './IntegrationService.js';
+
+export { RateLimitService, getRateLimitService, resetRateLimitService } from './RateLimitService.js';
+export type {
+  RateLimitAlgorithm,
+  RateLimitScope,
+  RateLimitStatus,
+  TierLevel,
+  RateLimitRule,
+  RateLimitTier,
+  RateLimitEntry,
+  RateLimitResult,
+  RateLimitStats,
+  RateLimitConfig,
+} from './RateLimitService.js';

@@ -5,6 +5,7 @@ import { serve } from '@hono/node-server';
 import { createServer, type Server } from 'node:http';
 import { Socket, Server as SocketIOServer } from 'socket.io';
 import path from 'path';
+import fs from 'fs';
 import { HookManager } from './managers/HookManager.js';
 import { AgentManager } from './managers/AgentManager.js';
 import { SkillManager } from './managers/SkillManager.js';
@@ -53,7 +54,14 @@ import { SystemTrayManager } from './managers/SystemTrayManager.js';
 import { ConductorManager } from './managers/ConductorManager.js';
 import { VibeKanbanManager } from './managers/VibeKanbanManager.js';
 import { HardwareManager } from './managers/HardwareManager.js';
-import fs from 'fs';
+
+// Phase 11/12 Imports
+import { ArchitectMode } from './agents/ArchitectMode.js';
+import { createArchitectRoutes } from './routes/architectRoutesHono.js';
+import { createGitWorktreeRoutes } from './routes/gitWorktreeRoutesHono.js';
+import { createSupervisorPluginRoutes } from './routes/supervisorPluginRoutesHono.js';
+import { createSupervisorAnalyticsRoutes } from './routes/supervisorAnalyticsRoutesHono.js';
+import { createDebateTemplateRoutes } from './routes/debateTemplateRoutesHono.js';
 
 export class CoreService {
   private app = new Hono();
@@ -99,9 +107,12 @@ export class CoreService {
   private nodeManager: NodeManager;
   private authMiddleware: AuthMiddleware;
   private systemTrayManager: SystemTrayManager;
-private conductorManager: ConductorManager;
+  private conductorManager: ConductorManager;
   private vibeKanbanManager: VibeKanbanManager;
   private hardwareManager: HardwareManager;
+  
+  // Phase 11/12
+  private architectMode: ArchitectMode;
 
   constructor(
     private rootDir: string
@@ -164,9 +175,22 @@ private conductorManager: ConductorManager;
         this.mcpManager,
         this.rootDir
     );
-this.conductorManager = new ConductorManager(rootDir);
+    this.conductorManager = new ConductorManager(rootDir);
     this.vibeKanbanManager = new VibeKanbanManager(rootDir);
     this.hardwareManager = HardwareManager.getInstance();
+
+    // Initialize Architect Mode
+    this.architectMode = new ArchitectMode({
+      reasoningModel: 'o3-mini',
+      editingModel: 'gpt-4o',
+    });
+    this.architectMode.setChatFunction(async (model, messages) => {
+      const chatMessages = messages.map(m => ({ 
+        role: m.role as 'user' | 'assistant' | 'system', 
+        content: m.content 
+      }));
+      return this.modelGateway.chat(chatMessages, model);
+    });
 
     this.commandManager.on('updated', (commands) => {
         this.registerCommandsAsTools(commands);
@@ -558,7 +582,7 @@ this.conductorManager = new ConductorManager(rootDir);
         return c.json({ status: 'stopped' });
     });
 
-this.app.get('/api/vibekanban/status', (c) => {
+    this.app.get('/api/vibekanban/status', (c) => {
         return c.json(this.vibeKanbanManager.getStatus());
     });
 
@@ -605,6 +629,13 @@ this.app.get('/api/vibekanban/status', (c) => {
     this.app.get('/api/economy/balance', (c) => {
         return c.json(this.economyManager.getBalance());
     });
+
+    // Phase 11/12 Routes
+    this.app.route('/api/architect', createArchitectRoutes(this.architectMode));
+    this.app.route('/api/worktrees', createGitWorktreeRoutes({ baseDir: this.rootDir }));
+    this.app.route('/api/supervisor-plugins', createSupervisorPluginRoutes());
+    this.app.route('/api/supervisor-analytics', createSupervisorAnalyticsRoutes());
+    this.app.route('/api/debate-templates', createDebateTemplateRoutes());
 
     // SPA fallback - serve index.html for non-API routes
     this.app.notFound((c) => {
@@ -672,6 +703,18 @@ this.app.get('/api/vibekanban/status', (c) => {
     this.mcpManager.on('updated', (servers) => this.io.emit('mcp_updated', servers));
     this.marketplaceManager.on('updated', (pkgs) => this.io.emit('marketplace_updated', pkgs));
     this.profileManager.on('profileChanged', (p) => this.io.emit('profile_changed', p));
+
+    // ArchitectMode Event Bridging
+    this.architectMode.on('sessionStarted', (data) => this.io.emit('architect_session_started', data));
+    this.architectMode.on('reasoningComplete', (data) => this.io.emit('architect_reasoning_complete', data));
+    this.architectMode.on('planCreated', (data) => this.io.emit('architect_plan_created', data));
+    this.architectMode.on('planApproved', (data) => this.io.emit('architect_plan_approved', data));
+    this.architectMode.on('editingStarted', (data) => this.io.emit('architect_editing_started', data));
+    this.architectMode.on('fileEdited', (data) => this.io.emit('architect_file_edited', data));
+    this.architectMode.on('editingComplete', (data) => this.io.emit('architect_editing_complete', data));
+    this.architectMode.on('planRevised', (data) => this.io.emit('architect_plan_revised', data));
+    this.architectMode.on('planRejected', (data) => this.io.emit('architect_plan_rejected', data));
+    this.architectMode.on('error', (data) => this.io.emit('architect_error', data));
   }
 
   private async processHook(event: Record<string, unknown>) {

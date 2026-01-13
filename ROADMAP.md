@@ -111,3 +111,44 @@
 ### Documentation
 - [x] **API Reference:** docs/API_REFERENCE.md - REST, WebSocket, services documentation
 - [x] **Deployment Guide:** docs/DEPLOYMENT.md - Docker, Kubernetes, scaling, security
+
+## Phase 10: Multi-Node Orchestration (Completed)
+- [x] **Distributed Council:** Supervisors across multiple nodes.
+- [x] **A2A Mesh:** Peer-to-peer agent communication.
+- [x] **Marketplace:** Global registry for skills and agents.
+
+## Phase 11: Multi-Model AI Council (Completed)
+- [x] **Dynamic Supervisor Selection:** Historical performance & specialty weighting
+- [x] **Supervisor Analytics:** Performance tracking & rankings
+- [x] **Debate Templates:** Pre-configured consensus scenarios
+- [x] **Plugin Ecosystem:** Load external supervisors from npm/dir
+
+## Phase 12: TUI Orchestrator (Completed)
+- [x] **VS Code Extension:** IDE integration via Extension API (Council, Architect Mode, Analytics)
+- [x] **JetBrains Plugin:** IntelliJ Platform integration (Kotlin, Tool Window, Actions)
+- [x] **Zed Extension:** WASM-based extension for Zed editor (Rust, slash commands)
+- [x] **Neovim Plugin:** Lua plugin with Telescope integration (full implementation)
+- [x] **RAG System:** HNSW vector search + BM25 reranking (AIChat pattern)
+- [x] **Architect Mode:** Two-model reasoning+editing (Aider pattern)
+- [x] **Git Worktree Isolation:** Parallel agents in isolated checkouts (Claude-Squad pattern)
+
+## Phase 13: Enterprise & Ecosystem (Pending)
+### Advanced Governance & Security
+- [ ] **RBAC & SSO:** Role-based access control and Single Sign-On integration
+- [ ] **Audit Logging:** Comprehensive audit trails for all agent actions and council decisions
+- [ ] **Policy Engine:** Declarative policies for agent behavior and resource usage
+
+### Distributed Orchestration
+- [ ] **Multi-Node Council:** Distributed supervisor councils across different regions/nodes
+- [ ] **Agent-to-Agent (A2A) Mesh:** Secure communication protocol for autonomous agent cooperation
+- [ ] **Edge Deployment:** Lightweight AIOS runtime for edge devices
+
+### Developer Ecosystem
+- [ ] **AIOS Marketplace:** Registry for sharing supervisors, skills, and agent templates
+- [ ] **Visual Designer:** Low-code interface for designing agent workflows and council structures
+- [ ] **OpenAPI / SDK:** Formalized external API and multi-language SDKs (Python, Go, Rust)
+
+### Performance & Scalability
+- [ ] **GPU Acceleration:** Native support for local model acceleration (llama.cpp integration)
+- [ ] **Tiered Memory:** Advanced memory management with cold storage and semantic caching
+- [ ] **Batch Processing:** High-throughput task execution for large-scale operations

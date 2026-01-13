@@ -5,6 +5,7 @@ import { serve } from '@hono/node-server';
 import { createServer, type Server } from 'node:http';
 import { Socket, Server as SocketIOServer } from 'socket.io';
 import path from 'path';
+import fs from 'fs';
 import { HookManager } from './managers/HookManager.js';
 import { AgentManager } from './managers/AgentManager.js';
 import { SkillManager } from './managers/SkillManager.js';
@@ -48,6 +49,24 @@ import { LoopManager } from './agents/LoopManager.js';
 import { WebSearchTool } from './tools/WebSearchTool.js';
 import { EconomyManager } from './managers/EconomyManager.js';
 import { NodeManager } from './managers/NodeManager.js';
+import { GitUndoManager } from './managers/GitUndoManager.js';
+import { OidcManager } from './managers/OidcManager.js';
+import { ToolAnnotationManager } from './managers/ToolAnnotationManager.js';
+import { AuthMiddleware } from './middleware/AuthMiddleware.js';
+import { SystemTrayManager } from './managers/SystemTrayManager.js';
+import { ConductorManager } from './managers/ConductorManager.js';
+import { VibeKanbanManager } from './managers/VibeKanbanManager.js';
+import { HardwareManager } from './managers/HardwareManager.js';
+
+// Phase 11/12 Imports
+import { ArchitectMode } from './agents/ArchitectMode.js';
+import { createArchitectRoutes } from './routes/architectRoutesHono.js';
+import { createGitWorktreeRoutes } from './routes/gitWorktreeRoutesHono.js';
+import { createSupervisorPluginRoutes } from './routes/supervisorPluginRoutesHono.js';
+import { createSupervisorAnalyticsRoutes } from './routes/supervisorAnalyticsRoutesHono.js';
+import { createDebateTemplateRoutes } from './routes/debateTemplateRoutesHono.js';
+
+// Legacy Route Imports (if needed by existing code)
 import { createCouncilRoutes } from './routes/councilRoutes.js';
 import { createAutopilotRoutes } from './routes/autopilotRoutes.js';
 import { createSkillRoutes } from './routes/skillRoutes.js';
@@ -64,7 +83,6 @@ import { createSchedulerRoutes } from './routes/schedulerRoutesHono.js';
 import { createLspRoutes } from './routes/lspRoutesHono.js';
 import { createSessionShareRoutes } from './routes/sessionShareRoutesHono.js';
 import { createGitUndoRoutes } from './routes/gitUndoRoutesHono.js';
-import { GitUndoManager } from './managers/GitUndoManager.js';
 import { createFeatureFlagRoutes } from './routes/featureFlagRoutesHono.js';
 import { createSecretRoutes } from './routes/secretRoutesHono.js';
 import { createQueueRoutes } from './routes/queueRoutesHono.js';
@@ -74,22 +92,7 @@ import { createIntegrationRoutes } from './routes/integrationRoutesHono.js';
 import { createBudgetRoutes } from './routes/budgetRoutesHono.js';
 import { createNotificationRoutes } from './routes/notificationRoutesHono.js';
 import { createOidcRoutes } from './routes/oidcRoutesHono.js';
-import { OidcManager } from './managers/OidcManager.js';
 import { createToolAnnotationRoutes } from './routes/toolAnnotationRoutesHono.js';
-import { ToolAnnotationManager } from './managers/ToolAnnotationManager.js';
-import { createArchitectRoutes } from './routes/architectRoutesHono.js';
-import { createGitWorktreeRoutes } from './routes/gitWorktreeRoutesHono.js';
-import { createSupervisorAnalyticsRoutes } from './routes/supervisorAnalyticsRoutesHono.js';
-import { createDebateTemplateRoutes } from './routes/debateTemplateRoutesHono.js';
-import { createSupervisorPluginRoutes } from './routes/supervisorPluginRoutesHono.js';
-import { cliRegistry, cliSessionManager, smartPilotManager, vetoManager, debateHistoryManager, dynamicSelectionManager } from './managers/autopilot/index.js';
-import { LLMProviderRegistry, getLLMProviderRegistry } from './providers/LLMProviderRegistry.js';
-import { AuthMiddleware } from './middleware/AuthMiddleware.js';
-import { SystemTrayManager } from './managers/SystemTrayManager.js';
-import { ConductorManager } from './managers/ConductorManager.js';
-import { VibeKanbanManager } from './managers/VibeKanbanManager.js';
-import { HardwareManager } from './managers/HardwareManager.js';
-import fs from 'fs';
 
 export class CoreService {
   private app = new Hono();
@@ -135,12 +138,15 @@ export class CoreService {
   private nodeManager: NodeManager;
   private authMiddleware: AuthMiddleware;
   private systemTrayManager: SystemTrayManager;
-private conductorManager: ConductorManager;
+  private conductorManager: ConductorManager;
   private vibeKanbanManager: VibeKanbanManager;
   private hardwareManager: HardwareManager;
   private gitUndoManager: GitUndoManager;
   private oidcManager: OidcManager;
   private toolAnnotationManager: ToolAnnotationManager;
+  
+  // Phase 11/12
+  private architectMode: ArchitectMode;
 
   constructor(
     private rootDir: string
@@ -150,7 +156,7 @@ private conductorManager: ConductorManager;
 
     this.hookManager = new HookManager(path.join(rootDir, 'hooks'));
     this.agentManager = new AgentManager(rootDir);
-    this.skillManager = new SkillManager();
+    this.skillManager = new SkillManager(path.join(rootDir, 'skills'));
     this.promptManager = new PromptManager(path.join(rootDir, 'prompts'));
     this.contextManager = new ContextManager(path.join(rootDir, 'context'));
     this.commandManager = new CommandManager(path.join(rootDir, 'commands'));
@@ -206,9 +212,22 @@ private conductorManager: ConductorManager;
         this.mcpManager,
         this.rootDir
     );
-this.conductorManager = new ConductorManager(rootDir);
+    this.conductorManager = new ConductorManager(rootDir);
     this.vibeKanbanManager = new VibeKanbanManager(rootDir);
     this.hardwareManager = HardwareManager.getInstance();
+
+    // Initialize Architect Mode
+    this.architectMode = new ArchitectMode({
+      reasoningModel: 'o3-mini',
+      editingModel: 'gpt-4o',
+    });
+    this.architectMode.setChatFunction(async (model, messages) => {
+      const chatMessages = messages.map(m => ({ 
+        role: m.role as 'user' | 'assistant' | 'system', 
+        content: m.content 
+      }));
+      return this.modelGateway.chat(chatMessages, model);
+    });
 
     this.commandManager.on('updated', (commands) => {
         this.registerCommandsAsTools(commands);
@@ -269,47 +288,33 @@ this.conductorManager = new ConductorManager(rootDir);
     this.app.get('/health', (c) => c.json(this.healthService.getSystemStatus()));
     this.app.get('/api/doctor', async (c) => c.json(await this.systemDoctor.checkAll()));
 
-    // Council Routes (Multi-LLM debate/voting)
+    // Original Routes
     this.app.route('/api/council', createCouncilRoutes());
-
-    // Autopilot Routes (CLI sessions, smart pilot, veto, debate history)
     this.app.route('/api/autopilot', createAutopilotRoutes());
-
-    // Skill Routes (462 vibeship skills + local skills)
     this.app.route('/api/skills', createSkillRoutes(this.skillManager));
-
-    // Memory Routes (includes vibememo semantic memory)
     this.app.route('/api/memory', createMemoryRoutes(this.memoryManager));
-
-    // Orchestration Routes (debates, code review, memory compaction, providers)
     this.app.route('/api/orchestration', createOrchestrationRoutes());
-
-    // Tool Set Routes (tool collections)
     this.app.route('/api/toolsets', createToolSetRoutes());
-
-    // CLI Proxy Routes (OAuth account management for AI providers)
     this.app.route('/api/cliproxy', createCLIProxyRoutes());
-
-    // Unified Profile Routes (accounts, API profiles, CLI proxy variants)
     this.app.route('/api/profiles', createProfileRoutes());
-
-    // LLM Gateway Routes (unified multi-provider LLM access)
     this.app.route('/api/llm', createLLMGatewayRoutes(this.secretManager));
-
-    // Agent Template Routes (pre-configured agent templates)
     this.app.route('/api/templates', createAgentTemplateRoutes());
-
-    // Analytics Routes (tool usage tracking and metrics)
     this.app.route('/api/analytics', createAnalyticsRoutes());
-
-    // Workflow Routes (multi-step automation pipelines)
     this.app.route('/api/workflows', createWorkflowRoutes());
-
-    // Scheduler Routes (cron-based task scheduling)
     this.app.route('/api/scheduler', createSchedulerRoutes(this.schedulerManager));
-
-    // LSP Routes (Language Server Protocol auto-loading)
     this.app.route('/api/lsp', createLspRoutes());
+    this.app.route('/api/sessions/share', createSessionShareRoutes(this.sessionManager));
+    this.app.route('/api/git-undo', createGitUndoRoutes(this.gitUndoManager));
+    this.app.route('/api/feature-flags', createFeatureFlagRoutes());
+    this.app.route('/api/secrets', createSecretRoutes());
+    this.app.route('/api/queues', createQueueRoutes());
+    this.app.route('/api/audit-logs', createAuditLogRoutes());
+    this.app.route('/api/rate-limits', createRateLimitRoutes());
+    this.app.route('/api/integrations', createIntegrationRoutes());
+    this.app.route('/api/budgets', createBudgetRoutes());
+    this.app.route('/api/notifications', createNotificationRoutes());
+    this.app.route('/api/oidc', createOidcRoutes(this.oidcManager));
+    this.app.route('/api/tool-annotations', createToolAnnotationRoutes(this.toolAnnotationManager));
 
     this.app.get('/api/system', (c) => {
         const versionPath = path.join(this.rootDir, '../..', 'VERSION');
@@ -338,64 +343,12 @@ this.conductorManager = new ConductorManager(rootDir);
         return c.json({ session: this.sessionManager.loadSession(id) });
     });
 
-    // Session Share Routes (public share links)
-    this.app.route('/api/sessions/share', createSessionShareRoutes(this.sessionManager));
-
-    // Git Undo/Redo Routes (file change tracking with git integration)
-    this.app.route('/api/git-undo', createGitUndoRoutes(this.gitUndoManager));
-
-    // Feature Flag Routes
-    this.app.route('/api/feature-flags', createFeatureFlagRoutes());
-
-    // Secret Management Routes
-    this.app.route('/api/secrets', createSecretRoutes());
-
-    // Queue Routes
-    this.app.route('/api/queues', createQueueRoutes());
-
-    // Audit Log Routes
-    this.app.route('/api/audit-logs', createAuditLogRoutes());
-
-    // Rate Limit Routes
-    this.app.route('/api/rate-limits', createRateLimitRoutes());
-
-    // Integration Routes
-    this.app.route('/api/integrations', createIntegrationRoutes());
-
-    // Budget Routes
-    this.app.route('/api/budgets', createBudgetRoutes());
-
-    // Notification Routes
-    this.app.route('/api/notifications', createNotificationRoutes());
-
-    // OIDC Routes (OpenID Connect authentication)
-    this.app.route('/api/oidc', createOidcRoutes(this.oidcManager));
-
-    // Tool Annotation Routes (tool metadata and UI hints)
-    this.app.route('/api/tool-annotations', createToolAnnotationRoutes(this.toolAnnotationManager));
-
-    // Architect Mode Routes (two-model reasoning+editing)
-    const architectRoutes = createArchitectRoutes({
-      modelGateway: this.modelGateway,
-      secretManager: this.secretManager,
-    });
-    this.app.route('/api/architect', architectRoutes);
-
-    // Bridge ArchitectMode events to Socket.io
-    // Note: We need a way to get the architect instance. 
-    // Since architectRoutesHono exports createArchitectRoutes which has a local singleton,
-    // we should probably expose it or have a getter.
-    // For now, let's assume we can obtain it or bridge it inside setupRoutes if we refactor createArchitectRoutes.
-    
-    this.app.route('/api/worktrees', createGitWorktreeRoutes({
-      baseDir: this.rootDir,
-    }));
-
-    this.app.route('/api/supervisor-analytics', createSupervisorAnalyticsRoutes());
-
-    this.app.route('/api/debate-templates', createDebateTemplateRoutes());
-
+    // Phase 11/12 Routes
+    this.app.route('/api/architect', createArchitectRoutes(this.architectMode));
+    this.app.route('/api/worktrees', createGitWorktreeRoutes({ baseDir: this.rootDir }));
     this.app.route('/api/supervisor-plugins', createSupervisorPluginRoutes());
+    this.app.route('/api/supervisor-analytics', createSupervisorAnalyticsRoutes());
+    this.app.route('/api/debate-templates', createDebateTemplateRoutes());
 
     this.app.post('/api/inspector/replay', async (c) => {
         const { tool, args } = await c.req.json();
@@ -670,47 +623,6 @@ this.conductorManager = new ConductorManager(rootDir);
         return c.json({ submodules: this.submoduleManager.getSubmodules() });
     });
 
-    // --- Sessions Routes ---
-    this.app.get('/api/sessions', (c) => {
-        return c.json({ sessions: this.sessionManager.listSessions() });
-    });
-
-    this.app.get('/api/sessions/:id', (c) => {
-        const session = this.sessionManager.loadSession(c.req.param('id'));
-        if (!session) return c.json({ error: 'Session not found' }, 404);
-        return c.json(session);
-    });
-
-    this.app.delete('/api/sessions/:id', (c) => {
-        const success = this.sessionManager.deleteSession(c.req.param('id'));
-        return c.json({ success });
-    });
-
-    this.app.post('/api/sessions/:id/resume', async (c) => {
-        const session = this.sessionManager.loadSession(c.req.param('id'));
-        if (!session) return c.json({ error: 'Session not found' }, 404);
-        return c.json({ status: 'resumed', sessionId: session.id });
-    });
-
-    // --- Handoffs Routes ---
-    this.app.get('/api/handoffs', (c) => {
-        return c.json({ handoffs: this.handoffManager.getHandoffs() });
-    });
-
-    this.app.post('/api/handoffs', async (c) => {
-        const { description, context } = await c.req.json();
-        const id = await this.handoffManager.createHandoff(description, context);
-        return c.json({ id, status: 'created' });
-    });
-
-    this.app.post('/api/handoffs/:id/claim', async (c) => {
-        const handoffs = this.handoffManager.getHandoffs();
-        const handoff = handoffs.find(h => h.id === c.req.param('id'));
-        if (!handoff) return c.json({ error: 'Handoff not found' }, 404);
-        handoff.status = 'claimed';
-        return c.json({ status: 'claimed', handoff });
-    });
-
     // --- Conductor Routes ---
     this.app.get('/api/conductor/tasks', async (c) => {
         return c.json({ tasks: await this.conductorManager.listTasks() });
@@ -742,7 +654,7 @@ this.conductorManager = new ConductorManager(rootDir);
         return c.json({ status: 'stopped' });
     });
 
-this.app.get('/api/vibekanban/status', (c) => {
+    this.app.get('/api/vibekanban/status', (c) => {
         return c.json(this.vibeKanbanManager.getStatus());
     });
 
@@ -856,6 +768,18 @@ this.app.get('/api/vibekanban/status', (c) => {
     this.mcpManager.on('updated', (servers) => this.io.emit('mcp_updated', servers));
     this.marketplaceManager.on('updated', (pkgs) => this.io.emit('marketplace_updated', pkgs));
     this.profileManager.on('profileChanged', (p) => this.io.emit('profile_changed', p));
+
+    // ArchitectMode Event Bridging
+    this.architectMode.on('sessionStarted', (data) => this.io.emit('architect_session_started', data));
+    this.architectMode.on('reasoningComplete', (data) => this.io.emit('architect_reasoning_complete', data));
+    this.architectMode.on('planCreated', (data) => this.io.emit('architect_plan_created', data));
+    this.architectMode.on('planApproved', (data) => this.io.emit('architect_plan_approved', data));
+    this.architectMode.on('editingStarted', (data) => this.io.emit('architect_editing_started', data));
+    this.architectMode.on('fileEdited', (data) => this.io.emit('architect_file_edited', data));
+    this.architectMode.on('editingComplete', (data) => this.io.emit('architect_editing_complete', data));
+    this.architectMode.on('planRevised', (data) => this.io.emit('architect_plan_revised', data));
+    this.architectMode.on('planRejected', (data) => this.io.emit('architect_plan_rejected', data));
+    this.architectMode.on('error', (data) => this.io.emit('architect_error', data));
   }
 
   private async processHook(event: Record<string, unknown>) {
@@ -989,137 +913,6 @@ this.app.get('/api/vibekanban/status', (c) => {
         return await this.agentExecutor.run(agent, args.task, {}, `sub-${Date.now()}`);
     });
 
-    // Register Natural Language Agent Tool (run_agent)
-    // This tool enables agents to perform complex tasks via natural language
-    // without pre-defined tools - it generates and executes code dynamically
-    this.proxyManager.registerInternalTool({
-        name: "run_agent",
-        description: "Execute a complex task using natural language. This tool will generate and execute code to accomplish the task. Use for tasks that don't have a dedicated tool available.",
-        inputSchema: {
-            type: "object",
-            properties: {
-                task: { 
-                    type: "string", 
-                    description: "Natural language description of the task to perform" 
-                },
-                provider: { 
-                    type: "string", 
-                    description: "LLM provider to use (openai, anthropic, gemini, qwen, deepseek, groq). Defaults to openai.",
-                    enum: ["openai", "anthropic", "gemini", "qwen", "deepseek", "groq"]
-                },
-                model: { 
-                    type: "string", 
-                    description: "Model to use (e.g., gpt-4o, claude-sonnet-4-20250514). If not specified, uses provider default." 
-                },
-                context: {
-                    type: "object",
-                    description: "Optional context data to pass to the task"
-                }
-            },
-            required: ["task"]
-        }
-    }, async (args: { task: string; provider?: string; model?: string; context?: Record<string, unknown> }) => {
-        const providerId = args.provider || 'openai';
-        const llmRegistry = getLLMProviderRegistry();
-        
-        // Get API key from secrets
-        const apiKeyMap: Record<string, string> = {
-            openai: 'OPENAI_API_KEY',
-            anthropic: 'ANTHROPIC_API_KEY',
-            gemini: 'GOOGLE_AI_API_KEY',
-            qwen: 'QWEN_API_KEY',
-            deepseek: 'DEEPSEEK_API_KEY',
-            groq: 'GROQ_API_KEY'
-        };
-        
-        const apiKey = this.secretManager.getSecret(apiKeyMap[providerId] || 'OPENAI_API_KEY');
-        if (!apiKey) {
-            throw new Error(`API key not configured for provider ${providerId}. Set ${apiKeyMap[providerId]} in secrets.`);
-        }
-        
-        llmRegistry.setProviderConfig(providerId, { apiKey });
-        
-        // Get available tools for context
-        const availableTools = await this.proxyManager.getAllTools();
-        const toolNames = availableTools.slice(0, 50).map((t: { name: string; description?: string }) => 
-            `- ${t.name}: ${t.description?.slice(0, 100) || 'No description'}`
-        ).join('\n');
-        
-        const systemPrompt = `You are a code generation assistant. Generate executable TypeScript/JavaScript code to accomplish the user's task.
-
-Available MCP Tools (use via callTool function):
-${toolNames}
-
-Context provided:
-${args.context ? JSON.stringify(args.context, null, 2) : 'None'}
-
-IMPORTANT RULES:
-1. Generate ONLY executable code - no explanations, no markdown code blocks
-2. Use async/await for all tool calls
-3. The 'callTool' function is available: await callTool(toolName, args)
-4. Return results using 'return' statement
-5. Handle errors gracefully with try/catch
-6. Code should be self-contained and complete
-
-Example:
-async function main() {
-    const result = await callTool('read_file', { path: '/tmp/test.txt' });
-    return result;
-}
-return await main();`;
-
-        const model = args.model || llmRegistry.getModelForTier(providerId, 'sonnet');
-        
-        // Generate code using LLM
-        const completion = await llmRegistry.complete({
-            provider: providerId,
-            messages: [{ role: 'user', content: args.task }],
-            model,
-            apiKey,
-            systemPrompt,
-            temperature: 0.3,
-            maxTokens: 4096
-        });
-        
-        let generatedCode = completion.content;
-        
-        // Clean up code (remove markdown if present)
-        if (generatedCode.includes('```')) {
-            const codeMatch = generatedCode.match(/```(?:typescript|javascript|js|ts)?\n?([\s\S]*?)```/);
-            if (codeMatch) {
-                generatedCode = codeMatch[1];
-            }
-        }
-        generatedCode = generatedCode.trim();
-        
-        // Execute the generated code
-        try {
-            const result = await this.codeExecutionManager.execute(generatedCode, async (name, toolArgs) => {
-                return await this.proxyManager.callTool(name, toolArgs);
-            });
-            
-            return {
-                success: true,
-                task: args.task,
-                provider: providerId,
-                model,
-                generatedCode,
-                result,
-                usage: completion.usage
-            };
-        } catch (execError: unknown) {
-            return {
-                success: false,
-                task: args.task,
-                provider: providerId,
-                model,
-                generatedCode,
-                error: (execError as Error).message,
-                usage: completion.usage
-            };
-        }
-    });
-
     // Register Session Tools
     this.proxyManager.registerInternalTool({
         name: "list_sessions",
@@ -1163,11 +956,6 @@ return await main();`;
              return "Unknown tool";
         });
     });
-
-    // Initialize Autopilot System
-    await cliRegistry.detectAll();
-    await cliSessionManager.initialize();
-    console.log(`[Core] Autopilot system initialized - ${cliRegistry.getAvailableTools().length} CLI tools detected`);
     
     this.httpServer = createServer();
     this.io = new SocketIOServer(this.httpServer, {

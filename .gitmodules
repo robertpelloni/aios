@@ -56,7 +56,7 @@
 	path = misc/toon
 	url = https://github.com/toon-format/toon
 [submodule "references/memory/beads"]
-	path = memory/systems-refs/beads
+	path = references/memory/beads
 	url = https://github.com/steveyegge/beads
 [submodule "references/memory/txtai"]
 	path = memory/systems-refs/txtai
@@ -103,7 +103,6 @@
 [submodule "submodules/jules-app"]
 	path = submodules/jules-app
 	url = https://github.com/robertpelloni/jules-app
-
 [submodule "external/agents_repos/agent-sessions"]
 	path = agents/agent-sessions
 	url = https://github.com/jazzyalex/agent-sessions
@@ -389,265 +388,198 @@
 [submodule "references/clis/fabric"]
 	path = superai-cli/clis-refs/fabric
 	url = https://github.com/danielmiessler/fabric
-
 [submodule "references/clis/gemini-cli"]
 	path = superai-cli/clis-refs/gemini-cli
 	url = https://github.com/google-gemini/gemini-cli
-
 [submodule "references/clis/goose"]
 	path = superai-cli/clis-refs/goose
 	url = https://github.com/block/goose
-
 [submodule "references/clis/grok-cli"]
 	path = superai-cli/clis-refs/grok-cli
 	url = https://github.com/superagent-ai/grok-cli
-
 [submodule "references/clis/kilocode"]
 	path = superai-cli/clis-refs/kilocode
 	url = https://github.com/Kilo-Org/kilocode
-
 [submodule "references/frameworks/Kode"]
 	path = frameworks/Kode
 	url = https://github.com/shareAI-lab/Kode
-
 [submodule "references/frameworks/Switchboard"]
 	path = frameworks/Switchboard
 	url = https://github.com/George5562/Switchboard
-
 [submodule "references/frameworks/Windows-Use"]
 	path = computer-use/Windows-Use
 	url = https://github.com/CursorTouch/Windows-Use
-
 [submodule "references/frameworks/code"]
 	path = cli-harnesses/code
 	url = https://github.com/just-every/code
-
 [submodule "references/frameworks/codex-bridge"]
 	path = frameworks/codex-bridge
 	url = https://github.com/eLyiN/codex-bridge
-
 [submodule "references/frameworks/crush"]
 	path = cli-harnesses/crush
 	url = https://github.com/charmbracelet/crush
-
 [submodule "references/frameworks/vibesdk"]
 	path = frameworks/vibesdk
 	url = https://github.com/cloudflare/vibesdk
-
 [submodule "references/mcp_repos/awesome-mcp-servers-appcypher"]
 	path = misc/awesome-mcp-servers-appcypher
 	url = https://github.com/appcypher/awesome-mcp-servers
-
 [submodule "references/mcp_repos/awesome-mcp-servers-wong2"]
 	path = misc/awesome-mcp-servers-wong2
 	url = https://github.com/wong2/awesome-mcp-servers
-
 [submodule "references/mcp_repos/chroma-mcp"]
 	path = mcp-servers/memory/chroma-mcp
 	url = https://github.com/chroma-core/chroma-mcp
-
 [submodule "references/mcp_repos/chrome-devtools-mcp"]
 	path = mcp-servers/browser/chrome-devtools-mcp
 	url = https://github.com/ChromeDevTools/chrome-devtools-mcp
-
 [submodule "references/mcp_repos/computer-control-mcp"]
 	path = mcp-servers/browser/computer-control-mcp
 	url = https://github.com/AB498/computer-control-mcp
-
 [submodule "references/mcp_repos/gemini-mcp-tool"]
 	path = mcp-servers/ai/gemini-mcp-tool
 	url = https://github.com/jamubc/gemini-mcp-tool
-
 [submodule "references/mcp_repos/inspector"]
 	path = mcp-dev-tools/inspector
 	url = https://github.com/MCPJam/inspector
-
 [submodule "references/mcp_repos/mcp-context-forge"]
 	path = mcp-servers/memory/mcp-context-forge
 	url = https://github.com/IBM/mcp-context-forge
-
 [submodule "references/mcp_repos/mcp-easy-installer"]
 	path = mcp-servers/misc/mcp-easy-installer
 	url = https://github.com/onigetoc/mcp-easy-installer
-
 [submodule "references/mcp_repos/mcp-gearbox"]
 	path = mcp-dev-tools/mcp-gearbox
 	url = https://github.com/rohitsoni007/mcp-gearbox
-
 [submodule "references/mcp_repos/mcp-gearbox-cli"]
 	path = mcp-dev-tools/mcp-gearbox-cli
 	url = https://github.com/rohitsoni007/mcp-gearbox-cli
-
 [submodule "references/mcp_repos/mcp-gearbox-js"]
 	path = mcp-dev-tools/mcp-gearbox-js
 	url = https://github.com/rohitsoni007/mcp-gearbox-js
-
 [submodule "references/mcp_repos/mcp-mem0"]
 	path = mcp-servers/memory/mcp-mem0
 	url = https://github.com/coleam00/mcp-mem0
-
 [submodule "references/mcp_repos/mcp-proxy"]
 	path = mcp-routers/mcp-proxy
 	url = https://github.com/TBXark/mcp-proxy
-
 [submodule "references/mcp_repos/mcp-server-deep-research"]
 	path = mcp-servers/ai/mcp-server-deep-research
 	url = https://github.com/reading-plus-ai/mcp-server-deep-research
-
 [submodule "references/mcp_repos/mcp-server-gemini"]
 	path = mcp-servers/ai/mcp-server-gemini
 	url = https://github.com/aliargun/mcp-server-gemini
-
 [submodule "references/mcp_repos/mcp-toolz"]
 	path = mcp-servers/misc/mcp-toolz
 	url = https://github.com/taylorleese/mcp-toolz
-
 [submodule "references/mcp_repos/mcp-use"]
 	path = mcp-frameworks/mcp-use
 	url = https://github.com/mcp-use/mcp-use
-
 [submodule "references/mcp_repos/mcpproxy"]
 	path = mcp-routers/mcpproxy
 	url = https://github.com/Dumbris/mcpproxy
-
 [submodule "references/mcp_repos/mem0-mcp"]
 	path = mcp-servers/memory/mem0-mcp
 	url = https://github.com/mem0ai/mem0-mcp
-
 [submodule "references/mcp_repos/meta-mcp-proxy"]
 	path = mcp-routers/meta-mcp-proxy
 	url = https://github.com/nullplatform/meta-mcp-proxy
-
 [submodule "references/mcp_repos/playwright-mcp"]
 	path = mcp-servers/browser/playwright-mcp
 	url = https://github.com/microsoft/playwright-mcp
-
 [submodule "references/mcp_repos/sourcerer-mcp"]
 	path = mcp-servers/search/sourcerer-mcp
 	url = https://github.com/st3v3nmw/sourcerer-mcp
-
 [submodule "references/mcp_repos/ultra-mcp"]
 	path = mcp-servers/ai/ultra-mcp
 	url = https://github.com/RealMikeChong/ultra-mcp
-
 [submodule "references/mcp_repos/vibe-check-mcp-server"]
 	path = mcp-servers/oversight/vibe-check-mcp-server
 	url = https://github.com/PV-Bhat/vibe-check-mcp-server
-
 [submodule "references/mcp_repos/youtube-video-summarizer-mcp"]
 	path = mcp-servers/media/youtube-video-summarizer-mcp
 	url = https://github.com/nabid-pf/youtube-video-summarizer-mcp
-
 [submodule "references/skills_repos/anthropic-skills"]
 	path = skills/refs-external/anthropic-skills
 	url = https://github.com/anthropics/skills
-
 [submodule "references/skills_repos/openai-skills"]
 	path = skills/refs-external/openai-skills
 	url = https://github.com/openai/skills
-
 [submodule "references/tools/autorouter-package"]
 	path = tools/refs/autorouter-package
 	url = https://github.com/Mikethebot44/autorouter-package
-
 [submodule "references/tools/context-portal"]
 	path = tools/refs/context-portal
 	url = https://github.com/GreatScottyMac/context-portal
-
 [submodule "submodules/Agent-MCP"]
 	path = submodules/Agent-MCP
 	url = https://github.com/lastmile-ai/mcp-agent
-
 [submodule "submodules/CLIProxyAPI"]
 	path = submodules/CLIProxyAPI
 	url = https://github.com/router-for-me/CLIProxyAPI
-
 [submodule "submodules/DesktopCommanderMCP"]
 	path = computer-use/DesktopCommanderMCP
 	url = https://github.com/wonderwhy-er/DesktopCommanderMCP
-
 [submodule "submodules/Unified-MCP-Tool-Graph"]
 	path = submodules/Unified-MCP-Tool-Graph
 	url = https://github.com/pratikjadhav2726/Unified-MCP-Tool-Graph
-
 [submodule "submodules/Windows-MCP"]
 	path = submodules/Windows-MCP
 	url = https://github.com/CursorTouch/Windows-MCP
-
 [submodule "submodules/agent-client-protocol"]
 	path = submodules/agent-client-protocol
 	url = https://github.com/agentclientprotocol/agent-client-protocol
-
 [submodule "submodules/agentmux"]
 	path = submodules/agentmux
 	url = https://github.com/stevehuang0115/agentmux
-
 [submodule "submodules/ai-that-works"]
 	path = submodules/ai-that-works
 	url = https://github.com/ai-that-works/ai-that-works
-
 [submodule "submodules/browser-use"]
 	path = submodules/browser-use
 	url = https://github.com/browser-use/browser-use
-
 [submodule "submodules/claude-code"]
 	path = submodules/claude-code
 	url = https://github.com/anthropics/claude-code
-
 [submodule "submodules/copilot-cli"]
 	path = submodules/copilot-cli
 	url = https://github.com/github/copilot-cli
-
 [submodule "submodules/gemini-bridge"]
 	path = submodules/gemini-bridge
 	url = https://github.com/tkaufmann/claude-gemini-bridge
-
 [submodule "submodules/mcp-hub"]
 	path = mcp-hubs/mcphub
 	url = https://github.com/samanhappy/mcphub
-
 [submodule "submodules/mcp-manager"]
 	path = submodules/mcp-manager
 	url = https://github.com/timetime-software/mcp-manager
-
 [submodule "submodules/mcp-router"]
 	path = mcp-dev-tools/mcp-router
 	url = https://github.com/mcp-router/mcp-router
-
 [submodule "submodules/mcp-shark"]
 	path = submodules/mcp-shark
 	url = https://github.com/mcp-shark/mcp-shark
-
 [submodule "submodules/mcp-zen"]
 	path = mcp-servers/ai/mcp-zen
 	url = https://github.com/199-mcp/mcp-zen
-
 [submodule "submodules/mcpc"]
 	path = submodules/mcpc
 	url = https://github.com/apify/mcpc
-
 [submodule "submodules/opencode-autopilot"]
 	path = submodules/opencode-autopilot
 	url = https://github.com/robertpelloni/opencode-autopilot-council
-
 [submodule "submodules/plandex"]
 	path = submodules/plandex
 	url = https://github.com/plandex-ai/plandex
-
 [submodule "submodules/quotio"]
 	path = submodules/quotio
 	url = https://github.com/nguyenphutrong/quotio
-
 [submodule "submodules/qwen-code"]
 	path = cli-harnesses/qwen-code
 	url = https://github.com/QwenLM/qwen-code
-
 [submodule "submodules/software-agent-sdk"]
 	path = submodules/software-agent-sdk
 	url = https://github.com/OpenHands/software-agent-sdk
-
-
-
 [submodule "external/research/OpenQode"]
 	path = research/OpenQode
 	url = https://github.com/roman-ryzenadvanced/OpenQode-Public-Alpha-GooseUltra-
@@ -933,7 +865,6 @@
 [submodule "memory/systems/mem0"]
 	path = memory/systems/mem0
 	url = https://github.com/mem0ai/mem0.git
-
 [submodule "superai-cli/agents/langgraph"]
 	path = superai-cli/agents/langgraph
 	url = https://github.com/langchain-ai/langgraph.git
@@ -946,58 +877,39 @@
 [submodule "superai-cli/mcp-advanced/awesome-mcp-servers"]
 	path = superai-cli/mcp-advanced/awesome-mcp-servers
 	url = https://github.com/punkpeye/awesome-mcp-servers.git
-[submodule "agents/refs/smolagents"]
-	path = agents/refs/smolagents
-	url = https://github.com/huggingface/smolagents
-[submodule "tools/refs/pluggedin-app"]
-	path = tools/refs/pluggedin-app
-	url = https://github.com/VeriTeknik/pluggedin-app
-[submodule "testing/agentic-qe"]
-	path = testing/agentic-qe
-	url = https://github.com/proffesor-for-testing/agentic-qe
 [submodule "agents/refs/pydantic-ai"]
 	path = agents/refs/pydantic-ai
 	url = https://github.com/pydantic/pydantic-ai
-
 [submodule "submodules/mcp-cli"]
 	path = submodules/mcp-cli
 	url = https://github.com/apify/mcp-cli
-
 [submodule "submodules/mcp-launcher"]
 	path = submodules/mcp-launcher
 	url = https://github.com/moeru-ai/mcp-launcher
-
 [submodule "submodules/claude-lazy-loading"]
 	path = submodules/claude-lazy-loading
 	url = https://github.com/machjesusmoto/claude-lazy-loading
-
-
 [submodule "mcp-servers/memory/vibememo"]
 	path = mcp-servers/memory/vibememo
 	url = https://github.com/vibeforge1111/vibememo
-
 [submodule "external/plugins/vibeship/vibeship-plugin"]
 	path = external/plugins/vibeship/vibeship-plugin
 	url = https://github.com/vibeforge1111/vibeship-plugin
-
 [submodule "tools/security/vibeship-scanner"]
 	path = tools/security/vibeship-scanner
 	url = https://github.com/vibeforge1111/vibeship-scanner
-
 [submodule "agents/orchestration/vibeship-spawner"]
 	path = agents/orchestration/vibeship-spawner
 	url = https://github.com/vibeforge1111/vibeship-spawner
-
 [submodule "external/skills_repos/vibeship/vibeship-spawner-skills"]
 	path = external/skills_repos/vibeship/vibeship-spawner-skills
 	url = https://github.com/vibeforge1111/vibeship-spawner-skills
-
 [submodule "tools/misc/vibeship-idearater"]
 	path = tools/misc/vibeship-idearater
 	url = https://github.com/vibeforge1111/vibeship-idearater
-[submodule "agent-tools/mux"]
-	path = agent-tools/mux
-	url = https://github.com/coder/mux
 [submodule "research/OpenCoder-llm"]
 	path = research/OpenCoder-llm
 	url = https://github.com/OpenCoder-llm/OpenCoder-llm
+[submodule "testing/agentic-qe/cf-devpod"]
+	path = testing/agentic-qe/cf-devpod
+	url = https://github.com/cf-devpod/cf-devpod

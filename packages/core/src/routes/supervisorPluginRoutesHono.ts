@@ -3,6 +3,7 @@ import { SupervisorPluginManager } from '../managers/SupervisorPluginManager.js'
 
 export function createSupervisorPluginRoutes(): Hono {
   const app = new Hono();
+<<<<<<< HEAD
   const pluginManager = SupervisorPluginManager.getInstance();
 
   app.get('/', (c) => {
@@ -98,10 +99,29 @@ export function createSupervisorPluginRoutes(): Hono {
     }
 
     return c.json({ pluginId: result.pluginId }, 201);
+=======
+  const manager = SupervisorPluginManager.getInstance();
+
+  app.get('/', (c) => {
+    return c.json({ plugins: manager.listPlugins() });
+  });
+
+  app.get('/stats', (c) => {
+    return c.json(manager.getStats());
+  });
+
+  app.post('/register', async (c) => {
+    const { name, code, options } = await c.req.json<{ name: string; code: string; options?: any }>();
+    
+    // In a real implementation, we'd need a safe way to evaluate the code
+    // For now, let's assume registerInlinePlugin takes a chat function
+    return c.json({ error: 'Dynamic code registration not fully implemented' }, 501);
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
   });
 
   app.post('/:id/enable', (c) => {
     const id = c.req.param('id');
+<<<<<<< HEAD
     const enabled = pluginManager.enablePlugin(id);
     
     if (!enabled) {
@@ -109,10 +129,15 @@ export function createSupervisorPluginRoutes(): Hono {
     }
 
     return c.json({ status: 'enabled' });
+=======
+    manager.enablePlugin(id);
+    return c.json({ success: true });
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
   });
 
   app.post('/:id/disable', (c) => {
     const id = c.req.param('id');
+<<<<<<< HEAD
     const disabled = pluginManager.disablePlugin(id);
     
     if (!disabled) {
@@ -148,6 +173,10 @@ export function createSupervisorPluginRoutes(): Hono {
     }
     
     return c.json({ health });
+=======
+    manager.disablePlugin(id);
+    return c.json({ success: true });
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
   });
 
   return app;

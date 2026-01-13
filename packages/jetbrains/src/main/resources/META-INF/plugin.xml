@@ -1,5 +1,6 @@
 <idea-plugin>
     <id>com.aios.plugin</id>
+<<<<<<< HEAD
     <name>AIOS - AI Orchestration System</name>
     <vendor email="support@aios.dev" url="https://aios.dev">AIOS Team</vendor>
 
@@ -21,10 +22,15 @@
         <li>0.1.0 - Initial release with Council integration</li>
     </ul>
     ]]></change-notes>
+=======
+    <name>AIOS</name>
+    <vendor>OhMyOpenCode</vendor>
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
 
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+<<<<<<< HEAD
         <toolWindow id="AIOS" secondary="true" icon="AllIcons.Toolwindows.ToolWindowMessages"
                     anchor="right" factoryClass="com.aios.plugin.AiosToolWindowFactory"/>
         <projectService serviceImplementation="com.aios.plugin.AiosService"/>
@@ -58,5 +64,21 @@
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt D"/>
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </action>
+=======
+        <toolWindow id="AIOS" secondary="true" icon="AllIcons.General.Information" anchor="right"
+                    factoryClass="com.aios.plugin.AiosToolWindowFactory"/>
+    </extensions>
+
+    <actions>
+        <group id="AIOS.Menu" text="AIOS" description="AIOS Actions">
+            <add-to-group group-id="MainMenu" anchor="last"/>
+            <action id="AIOS.StartDebate" class="com.aios.plugin.actions.StartDebateAction" text="Start Council Debate"
+                    description="Starts a new AI Council debate">
+                <keyboard-shortcut keymap="$default" first-keystroke="control alt D"/>
+            </action>
+            <action id="AIOS.ArchitectMode" class="com.aios.plugin.actions.ArchitectModeAction" text="Open Architect Mode"
+                    description="Opens Architect Mode for complex tasks"/>
+        </group>
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
     </actions>
 </idea-plugin>

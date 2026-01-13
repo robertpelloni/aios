@@ -3,20 +3,43 @@ package com.aios.plugin
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
+<<<<<<< HEAD
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
+=======
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
 import com.intellij.ui.content.ContentFactory
 import java.awt.BorderLayout
 import javax.swing.*
 
 class AiosToolWindowFactory : ToolWindowFactory {
+<<<<<<< HEAD
     
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val panel = AiosToolWindowPanel(project)
+=======
+    override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+        val panel = JPanel(BorderLayout())
+        val textArea = JTextArea("AIOS Hub Status: Connected\n\nWaiting for activity...")
+        textArea.isEditable = false
+        
+        val scrollPane = JScrollPane(textArea)
+        panel.add(scrollPane, BorderLayout.CENTER)
+        
+        val bottomPanel = JPanel()
+        val refreshButton = JButton("Refresh")
+        refreshButton.addActionListener {
+            textArea.append("\nRefreshing state...")
+        }
+        bottomPanel.add(refreshButton)
+        panel.add(bottomPanel, BorderLayout.SOUTH)
+
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
         val content = ContentFactory.getInstance().createContent(panel, "", false)
         toolWindow.contentManager.addContent(content)
     }
 }
+<<<<<<< HEAD
 
 class AiosToolWindowPanel(private val project: Project) : JPanel(BorderLayout()) {
     
@@ -102,3 +125,5 @@ class AiosToolWindowPanel(private val project: Project) : JPanel(BorderLayout())
         outputArea.caretPosition = outputArea.document.length
     }
 }
+=======
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0

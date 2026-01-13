@@ -1,13 +1,17 @@
 package com.aios.plugin.actions
 
 import com.aios.plugin.AiosService
+<<<<<<< HEAD
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
+=======
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.ui.Messages
 
+<<<<<<< HEAD
 class ConnectAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
@@ -87,6 +91,20 @@ class StartDebateAction : AnAction() {
             )
         } else {
             Messages.showErrorDialog(project, "Debate failed", "AIOS")
+=======
+class StartDebateAction : AnAction() {
+    override fun actionPerformed(e: AnActionEvent) {
+        val project = e.project ?: return
+        val editor = e.getData(CommonDataKeys.EDITOR)
+        val selectedText = editor?.selectionModel?.selectedText ?: ""
+        
+        val topic = Messages.showInputDialog(project, "Enter debate topic:", "Council Debate", null)
+        if (topic != null) {
+            val service = project.getService(AiosService::class.java)
+            service.startDebate(topic, selectedText) { result ->
+                Messages.showInfoMessage(project, result, "Debate Result")
+            }
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
         }
     }
 }
@@ -94,6 +112,7 @@ class StartDebateAction : AnAction() {
 class ArchitectModeAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
+<<<<<<< HEAD
         val service = project.getService(AiosService::class.java)
         
         if (!service.isConnected()) {
@@ -175,3 +194,14 @@ class SearchMemoryAction : AnAction() {
         Messages.showInfoMessage(project, "Search Memory feature coming soon", "AIOS")
     }
 }
+=======
+        val task = Messages.showInputDialog(project, "Enter task for Architect:", "Architect Mode", null)
+        if (task != null) {
+            val service = project.getService(AiosService::class.java)
+            service.startArchitectSession(task) { result ->
+                Messages.showInfoMessage(project, result, "Architect Session Started")
+            }
+        }
+    }
+}
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0

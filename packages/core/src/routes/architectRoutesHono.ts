@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+<<<<<<< HEAD
 import { ArchitectMode, type ArchitectConfig, type ModelChatFn } from '../agents/ArchitectMode.js';
 import { ModelGateway } from '../gateway/ModelGateway.js';
 import { SecretManager } from '../managers/SecretManager.js';
@@ -85,6 +86,20 @@ export function createArchitectRoutes(deps: ArchitectDependencies): Hono {
     };
 
     const architect = getOrCreateArchitect(architectConfig, deps);
+=======
+import { ArchitectMode, type ArchitectConfig } from '../agents/ArchitectMode.js';
+
+export function createArchitectRoutes(architect: ArchitectMode): Hono {
+  const app = new Hono();
+
+  app.get('/config', (c) => {
+    return c.json({ configured: true, config: architect.getConfig() });
+  });
+
+  app.post('/sessions', async (c) => {
+    const { task } = await c.req.json<{ task: string }>();
+    if (!task) return c.json({ error: 'task is required' }, 400);
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
 
     try {
       const session = await architect.startSession(task);
@@ -100,6 +115,7 @@ export function createArchitectRoutes(deps: ArchitectDependencies): Hono {
   });
 
   app.get('/sessions', (c) => {
+<<<<<<< HEAD
     if (!architectInstance) {
       return c.json({ sessions: [] });
     }
@@ -130,10 +146,14 @@ export function createArchitectRoutes(deps: ArchitectDependencies): Hono {
     }));
     
     return c.json({ sessions });
+=======
+    return c.json({ sessions: architect.listSessions() });
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
   });
 
   app.get('/sessions/:id', (c) => {
     const id = c.req.param('id');
+<<<<<<< HEAD
     
     if (!architectInstance) {
       return c.json({ error: 'Architect not initialized' }, 404);
@@ -144,11 +164,16 @@ export function createArchitectRoutes(deps: ArchitectDependencies): Hono {
       return c.json({ error: 'Session not found' }, 404);
     }
 
+=======
+    const session = architect.getSession(id);
+    if (!session) return c.json({ error: 'Session not found' }, 404);
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
     return c.json({ session });
   });
 
   app.post('/sessions/:id/approve', async (c) => {
     const id = c.req.param('id');
+<<<<<<< HEAD
     
     if (!architectInstance) {
       return c.json({ error: 'Architect not initialized' }, 404);
@@ -160,11 +185,17 @@ export function createArchitectRoutes(deps: ArchitectDependencies): Hono {
     }
 
     return c.json({ status: 'approved', message: 'Edits are being executed' });
+=======
+    const approved = architect.approvePlan(id);
+    if (!approved) return c.json({ error: 'Cannot approve' }, 400);
+    return c.json({ status: 'approved' });
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
   });
 
   app.post('/sessions/:id/reject', async (c) => {
     const id = c.req.param('id');
     const { feedback } = await c.req.json<{ feedback?: string }>();
+<<<<<<< HEAD
     
     if (!architectInstance) {
       return c.json({ error: 'Architect not initialized' }, 404);
@@ -175,12 +206,17 @@ export function createArchitectRoutes(deps: ArchitectDependencies): Hono {
       return c.json({ error: 'Session not found' }, 404);
     }
 
+=======
+    const rejected = architect.rejectPlan(id, feedback);
+    if (!rejected) return c.json({ error: 'Cannot reject' }, 400);
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
     return c.json({ status: 'rejected' });
   });
 
   app.post('/sessions/:id/revise', async (c) => {
     const id = c.req.param('id');
     const { feedback } = await c.req.json<{ feedback: string }>();
+<<<<<<< HEAD
     
     if (!feedback) {
       return c.json({ error: 'feedback is required' }, 400);
@@ -197,11 +233,19 @@ export function createArchitectRoutes(deps: ArchitectDependencies): Hono {
       }
 
       return c.json({ status: 'revised', plan: revisedPlan });
+=======
+    if (!feedback) return c.json({ error: 'feedback is required' }, 400);
+    
+    try {
+      const plan = await architect.revisePlan(id, feedback);
+      return c.json({ status: 'revised', plan });
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
     } catch (error) {
       return c.json({ error: (error as Error).message }, 500);
     }
   });
 
+<<<<<<< HEAD
   app.post('/sessions/:id/execute', async (c) => {
     const id = c.req.param('id');
     
@@ -272,5 +316,7 @@ export function createArchitectRoutes(deps: ArchitectDependencies): Hono {
     );
   });
 
+=======
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
   return app;
 }

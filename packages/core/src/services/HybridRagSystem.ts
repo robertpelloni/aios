@@ -1,120 +1,135 @@
-import { EventEmitter } from 'events';
-import { HnswIndex, type SearchResult as HnswResult, type HnswConfig } from './HnswIndex.js';
-import { BM25Index, type BM25Result, type BM25Config } from './BM25Index.js';
+import { HnswIndex } from './HnswIndex.js';
+import { BM25Index } from './BM25Index.js';
+
+export interface RagConfig {
+  hnswWeight: number;
+  bm25Weight: number;
+  maxResults: number;
+  dimensions: number;
+}
 
 export interface RagDocument {
   id: string;
   content: string;
-  embedding?: number[];
   metadata?: Record<string, unknown>;
-  createdAt: number;
 }
 
 export interface RagSearchResult {
   id: string;
-  content: string;
   score: number;
   hnswScore?: number;
   bm25Score?: number;
   metadata?: Record<string, unknown>;
 }
 
-export interface HybridRagConfig {
-  hnswConfig?: Partial<HnswConfig>;
-  bm25Config?: Partial<BM25Config>;
-  hnswWeight?: number;
-  bm25Weight?: number;
-  minScore?: number;
-  maxResults?: number;
-  reranking?: boolean;
-}
+export class HybridRagSystem {
+  private hnsw: HnswIndex;
+  private bm25: BM25Index;
+  private config: RagConfig;
+  private embeddingFn: ((text: string) => Promise<number[]>) | null = null;
 
-export type EmbeddingFunction = (text: string) => Promise<number[]>;
-
-export class HybridRagSystem extends EventEmitter {
-  private hnswIndex: HnswIndex;
-  private bm25Index: BM25Index;
-  private documents: Map<string, RagDocument> = new Map();
-  private embeddingFn: EmbeddingFunction | null = null;
-  private config: Required<Omit<HybridRagConfig, 'hnswConfig' | 'bm25Config'>>;
-
-  constructor(config: HybridRagConfig = {}) {
-    super();
-    this.hnswIndex = new HnswIndex(config.hnswConfig);
-    this.bm25Index = new BM25Index(config.bm25Config);
+  constructor(config: Partial<RagConfig> = {}) {
     this.config = {
-      hnswWeight: config.hnswWeight ?? 0.7,
-      bm25Weight: config.bm25Weight ?? 0.3,
-      minScore: config.minScore ?? 0.1,
+      hnswWeight: config.hnswWeight ?? 0.5,
+      bm25Weight: config.bm25Weight ?? 0.5,
       maxResults: config.maxResults ?? 10,
-      reranking: config.reranking ?? true,
+      dimensions: config.dimensions ?? 1536,
     };
+
+    this.hnsw = new HnswIndex({ dimensions: this.config.dimensions });
+    this.bm25 = new BM25Index();
+    
+    this.normalizeWeights();
   }
 
-  setEmbeddingFunction(fn: EmbeddingFunction): void {
+  private normalizeWeights(): void {
+    const total = this.config.hnswWeight + this.config.bm25Weight;
+    if (total === 0) {
+      this.config.hnswWeight = 0.5;
+      this.config.bm25Weight = 0.5;
+    } else {
+      this.config.hnswWeight /= total;
+      this.config.bm25Weight /= total;
+    }
+  }
+
+  setWeights(hnswWeight: number, bm25Weight: number): void {
+    this.config.hnswWeight = hnswWeight;
+    this.config.bm25Weight = bm25Weight;
+    this.normalizeWeights();
+  }
+
+  setEmbeddingFunction(fn: (text: string) => Promise<number[]>): void {
     this.embeddingFn = fn;
   }
 
-  async addDocument(
-    id: string,
-    content: string,
-    embedding?: number[],
-    metadata?: Record<string, unknown>
-  ): Promise<void> {
-    let finalEmbedding = embedding;
-
-    if (!finalEmbedding && this.embeddingFn) {
-      finalEmbedding = await this.embeddingFn(content);
+  async addDocument(id: string, content: string, vector?: number[], metadata?: Record<string, unknown>): Promise<void> {
+    if (!vector && this.embeddingFn) {
+      vector = await this.embeddingFn(content);
     }
 
-    const document: RagDocument = {
-      id,
-      content,
-      embedding: finalEmbedding,
-      metadata,
-      createdAt: Date.now(),
-    };
-
-    this.documents.set(id, document);
-    this.bm25Index.add(id, content, metadata);
-
-    if (finalEmbedding) {
-      this.hnswIndex.add(id, finalEmbedding, metadata);
+    if (vector) {
+      this.hnsw.add(id, vector, metadata);
     }
-
-    this.emit('documentAdded', { id, hasEmbedding: !!finalEmbedding });
+    this.bm25.add(id, content, metadata);
   }
 
-  async addDocuments(
-    docs: Array<{ id: string; content: string; embedding?: number[]; metadata?: Record<string, unknown> }>
-  ): Promise<void> {
+  async addDocuments(docs: Array<RagDocument & { vector?: number[] }>): Promise<void> {
     for (const doc of docs) {
-      await this.addDocument(doc.id, doc.content, doc.embedding, doc.metadata);
+      await this.addDocument(doc.id, doc.content, doc.vector, doc.metadata);
     }
-    this.emit('bulkAdded', { count: docs.length });
   }
 
-  removeDocument(id: string): boolean {
-    const existed = this.documents.delete(id);
-    if (existed) {
-      this.bm25Index.remove(id);
-      this.hnswIndex.remove(id);
-      this.emit('documentRemoved', { id });
+  async search(query: string, options: { k?: number } = {}): Promise<RagSearchResult[]> {
+    const k = options.k ?? this.config.maxResults;
+    const bm25Results = this.bm25.search(query, k * 2);
+    
+    let hnswResults: any[] = [];
+    if (this.embeddingFn) {
+      const vector = await this.embeddingFn(query);
+      hnswResults = this.hnsw.search(vector, k * 2);
     }
-    return existed;
+
+    const allIds = new Set([...bm25Results.map(r => r.id), ...hnswResults.map(r => r.id)]);
+    const finalResults: RagSearchResult[] = [];
+
+    const normalizedBm25 = this.normalizeScores(bm25Results);
+    const normalizedHnsw = this.normalizeScores(hnswResults);
+
+    for (const id of allIds) {
+      const bScore = normalizedBm25.get(id) ?? 0;
+      const hScore = normalizedHnsw.get(id) ?? 0;
+      
+      const score = (hScore * this.config.hnswWeight) + (bScore * this.config.bm25Weight);
+      
+      if (score > 0) {
+        const metadata = this.bm25.getDocument(id)?.metadata || this.hnsw.getNode(id)?.data;
+        finalResults.push({
+          id,
+          score,
+          hnswScore: hScore,
+          bm25Score: bScore,
+          metadata: metadata as Record<string, unknown>,
+        });
+      }
+    }
+
+    return finalResults
+      .sort((a, b) => b.score - a.score)
+      .slice(0, k);
   }
 
   private normalizeScores(results: Array<{ id: string; score: number }>): Map<string, number> {
     if (results.length === 0) return new Map();
-
+    
     const scores = results.map(r => r.score);
-    const min = Math.min(...scores);
     const max = Math.max(...scores);
-    const range = max - min || 1;
+    const min = Math.min(...scores);
+    const range = max - min;
 
     const normalized = new Map<string, number>();
     for (const result of results) {
-      const normalizedScore = max === min 
+      const normalizedScore = range === 0 
         ? (result.score > 0 ? 1.0 : 0.0) 
         : (result.score - min) / range;
       normalized.set(result.id, normalizedScore);
@@ -122,152 +137,26 @@ export class HybridRagSystem extends EventEmitter {
     return normalized;
   }
 
-  async search(query: string, queryEmbedding?: number[]): Promise<RagSearchResult[]> {
-    let embedding = queryEmbedding;
-
-    if (!embedding && this.embeddingFn) {
-      embedding = await this.embeddingFn(query);
-    }
-
-    const bm25Results = this.bm25Index.search(query, this.config.maxResults * 2);
-
-    let hnswResults: HnswResult[] = [];
-    if (embedding) {
-      hnswResults = this.hnswIndex.search(embedding, this.config.maxResults * 2);
-    }
-
-    const bm25Normalized = this.normalizeScores(bm25Results);
-    const hnswNormalized = this.normalizeScores(hnswResults);
-
-    const allIds = new Set<string>([
-      ...bm25Results.map(r => r.id),
-      ...hnswResults.map(r => r.id),
-    ]);
-
-    const combinedResults: RagSearchResult[] = [];
-
-    for (const id of allIds) {
-      const document = this.documents.get(id);
-      if (!document) continue;
-
-      const bm25Score = bm25Normalized.get(id) ?? 0;
-      const hnswScore = hnswNormalized.get(id) ?? 0;
-
-      const combinedScore = 
-        (bm25Score * this.config.bm25Weight) + 
-        (hnswScore * this.config.hnswWeight);
-
-      if (combinedScore >= this.config.minScore) {
-        combinedResults.push({
-          id,
-          content: document.content,
-          score: combinedScore,
-          hnswScore: hnswResults.find(r => r.id === id)?.score,
-          bm25Score: bm25Results.find(r => r.id === id)?.score,
-          metadata: document.metadata,
-        });
-      }
-    }
-
-    combinedResults.sort((a, b) => b.score - a.score);
-
-    if (this.config.reranking && combinedResults.length > 1) {
-      return this.rerank(query, combinedResults.slice(0, this.config.maxResults));
-    }
-
-    return combinedResults.slice(0, this.config.maxResults);
+  async removeDocument(id: string): Promise<boolean> {
+    const h = this.hnsw.remove(id);
+    const b = this.bm25.remove(id);
+    return h || b;
   }
 
-  private rerank(query: string, results: RagSearchResult[]): RagSearchResult[] {
-    const queryTerms = new Set(query.toLowerCase().split(/\s+/));
-    
-    for (const result of results) {
-      const contentTerms = result.content.toLowerCase().split(/\s+/);
-      let termOverlap = 0;
-      let positionBonus = 0;
-
-      for (let i = 0; i < contentTerms.length; i++) {
-        if (queryTerms.has(contentTerms[i])) {
-          termOverlap++;
-          positionBonus += 1 / (i + 1);
-        }
-      }
-
-      const overlapScore = termOverlap / queryTerms.size;
-      const rerankBonus = (overlapScore * 0.1) + (positionBonus * 0.05);
-      result.score = Math.min(1, result.score + rerankBonus);
-    }
-
-    return results.sort((a, b) => b.score - a.score);
+  async clear(): Promise<void> {
+    this.hnsw.clear();
+    this.bm25.clear();
   }
 
-  async searchBM25Only(query: string, k?: number): Promise<RagSearchResult[]> {
-    const results = this.bm25Index.search(query, k ?? this.config.maxResults);
-    return results.map(r => {
-      const doc = this.documents.get(r.id);
-      return {
-        id: r.id,
-        content: doc?.content ?? '',
-        score: r.score,
-        bm25Score: r.score,
-        metadata: r.metadata,
-      };
-    });
-  }
-
-  async searchHnswOnly(queryEmbedding: number[], k?: number): Promise<RagSearchResult[]> {
-    const results = this.hnswIndex.search(queryEmbedding, k ?? this.config.maxResults);
-    return results.map(r => {
-      const doc = this.documents.get(r.id);
-      return {
-        id: r.id,
-        content: doc?.content ?? '',
-        score: r.score,
-        hnswScore: r.score,
-        metadata: r.data as Record<string, unknown>,
-      };
-    });
-  }
-
-  setWeights(hnswWeight: number, bm25Weight: number): void {
-    const total = hnswWeight + bm25Weight;
-    this.config.hnswWeight = hnswWeight / total;
-    this.config.bm25Weight = bm25Weight / total;
-  }
-
-  getDocument(id: string): RagDocument | null {
-    return this.documents.get(id) ?? null;
-  }
-
-  getAllDocuments(): RagDocument[] {
-    return Array.from(this.documents.values());
-  }
-
-  size(): number {
-    return this.documents.size;
-  }
-
-  clear(): void {
-    this.documents.clear();
-    this.hnswIndex.clear();
-    this.bm25Index.clear();
-    this.emit('cleared');
-  }
-
-  getStats(): {
-    documentCount: number;
-    hnswStats: ReturnType<HnswIndex['getStats']>;
-    bm25Stats: ReturnType<BM25Index['getStats']>;
-    weights: { hnsw: number; bm25: number };
-  } {
+  getStats(): any {
     return {
-      documentCount: this.documents.size,
-      hnswStats: this.hnswIndex.getStats(),
-      bm25Stats: this.bm25Index.getStats(),
+      documentCount: this.bm25.size(),
       weights: {
         hnsw: this.config.hnswWeight,
         bm25: this.config.bm25Weight,
       },
+      hnsw: this.hnsw.getStats(),
+      bm25: this.bm25.getStats(),
     };
   }
 }

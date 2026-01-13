@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+<<<<<<< HEAD
 import { GitWorktreeManager, type WorktreeConfig } from '../managers/GitWorktreeManager.js';
 
 interface WorktreeDependencies {
@@ -37,11 +38,21 @@ export function createGitWorktreeRoutes(deps: WorktreeDependencies): Hono {
 
   app.get('/', (c) => {
     const manager = getOrCreateManager(deps.baseDir);
+=======
+import { GitWorktreeManager } from '../managers/GitWorktreeManager.js';
+
+export function createGitWorktreeRoutes(config: { baseDir: string }): Hono {
+  const app = new Hono();
+  const manager = new GitWorktreeManager(config);
+
+  app.get('/', (c) => {
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
     return c.json({ worktrees: manager.listWorktrees() });
   });
 
   app.post('/', async (c) => {
     const { agentId } = await c.req.json<{ agentId?: string }>();
+<<<<<<< HEAD
     const manager = getOrCreateManager(deps.baseDir);
 
     try {
@@ -49,11 +60,19 @@ export function createGitWorktreeRoutes(deps: WorktreeDependencies): Hono {
       return c.json({ worktree }, 201);
     } catch (error) {
       return c.json({ error: (error as Error).message }, 400);
+=======
+    try {
+      const worktree = await manager.createWorktree(agentId);
+      return c.json(worktree);
+    } catch (error) {
+      return c.json({ error: (error as Error).message }, 500);
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
     }
   });
 
   app.get('/:id', (c) => {
     const id = c.req.param('id');
+<<<<<<< HEAD
     const manager = getOrCreateManager(deps.baseDir);
     
     const worktree = manager.getWorktree(id);
@@ -128,10 +147,16 @@ export function createGitWorktreeRoutes(deps: WorktreeDependencies): Hono {
     } catch (error) {
       return c.json({ error: (error as Error).message }, 500);
     }
+=======
+    const worktree = manager.getWorktree(id);
+    if (!worktree) return c.json({ error: 'Not found' }, 404);
+    return c.json(worktree);
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
   });
 
   app.delete('/:id', async (c) => {
     const id = c.req.param('id');
+<<<<<<< HEAD
     const force = c.req.query('force') === 'true';
     const manager = getOrCreateManager(deps.baseDir);
 
@@ -165,6 +190,16 @@ export function createGitWorktreeRoutes(deps: WorktreeDependencies): Hono {
     } catch (error) {
       return c.json({ error: (error as Error).message }, 400);
     }
+=======
+    await manager.removeWorktree(id);
+    return c.json({ success: true });
+  });
+
+  app.post('/:id/sync', async (c) => {
+    const id = c.req.param('id');
+    const result = await manager.syncWithMain(id);
+    return c.json(result);
+>>>>>>> a3fab027fd172b66d6a0ec76e91f86354afa48e0
   });
 
   return app;

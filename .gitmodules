@@ -1117,3 +1117,12 @@
 [submodule "mcp-servers/ai/consult-llm-mcp"]
 	path = mcp-servers/ai/consult-llm-mcp
 	url = https://github.com/raine/consult-llm-mcp
+[submodule "external/mcp-directories/metamcp"]
+	path = external/mcp-directories/metamcp
+	url = https://github.com/robertpelloni/metamcp
+[submodule "external/mcp-directories/awesome-mcp-servers"]
+	path = external/mcp-directories/awesome-mcp-servers
+	url = https://github.com/punkpeye/awesome-mcp-servers
+[submodule "external/mcp-directories/toolsdk-mcp-registry"]
+	path = external/mcp-directories/toolsdk-mcp-registry
+	url = https://github.com/toolsdk-ai/toolsdk-mcp-registry

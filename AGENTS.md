@@ -22,6 +22,11 @@ The AIOS is an operating system designed specifically for local AI tool manageme
 - **Recursive Reasoning:** Agents that can self-schedule and recurse indefinitely for complex feature development.
 - **Git Mastery:** Autonomous branch creation, worktree management, and merge resolution.
 
+### 4. Research Squad (`Librarian`)
+- **Submodule Analyst:** specialized in scraping, summarizing, and indexing external repositories added as submodules.
+- **Feature Mapper:** Maps features from external tools to AIOS feature parity requirements.
+- **Documentation Indexer:** Maintains `resources.json` with up-to-date capabilities of all integrated tools.
+
 ## WHERE TO LOOK
 | Component | Location | Responsibility |
 |------|----------|-------|

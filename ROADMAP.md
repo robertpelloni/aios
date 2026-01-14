@@ -1,11 +1,14 @@
 # aios Roadmap: The Ultimate SuperAI
 
-## Phase 13: Local AI Tool Governance (Completed)
+## Phase 13: Local AI Tool Governance (In Progress)
 - [x] **Tool Spreadsheet:** Dashboard inventory of local tools (Docker, Redis, etc.).
 - [x] **Status Detection:** Auto-discovery of installed CLI tools.
 - [x] **Process Monitor:** Watchdog for background services.
 - [x] **Hardware Stats:** Real-time resource monitoring.
 - [x] **Ecosystem Dashboard:** Auto-generated `SUBMODULES.md` tracking 200+ integrated tools.
+- [ ] **Massive Submodule Integration:** Import and categorize 100+ external tools into `external/`.
+- [ ] **Resource Indexing:** Create `resource-index.json` to track research status of all external tools.
+- [ ] **Unified Dashboarding:** Create UI pages for Jules, Opencode, and General Tool management.
 
 ## Phase 14: Deep Code Intelligence (The Foundation)
 **Goal:** Establish the robust indexing and execution layer required for high-fidelity coding.

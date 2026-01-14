@@ -29,12 +29,25 @@ A unified operating system for PC-based local AI tools. Manage everything from t
 - **Consensus Protocol:** Multi-model debate engine for verifying high-stakes decisions.
 - **Local-Remote Bridge:** Sync projects between local PCs and remote cloud environments.
 
+### 💾 Memory & Context Ecosystem
+- **Unified Memory:** `memory/` subdirectory containing integrations for Zep, Mem0, Letta, and local vector stores.
+- **Storage Backends:** Interchangeable support for Chroma, Qdrant, SQLite, and Filesystem.
+- **Knowledge Graph:** Auto-building knowledge graph of your development sessions.
+
+### 🖥️ CLI & TUI Power Tools
+- **SuperAI CLI:** `superai-cli/` consolidated directory for all external CLI tools.
+- **TUI Dashboard:** Interactive terminal UI (`aios tui`) for headless management.
+- **Submodule Management:** Automated tracking of 80+ AI tools and libraries.
+
 ## 📦 Installation
 
 ```bash
 # Clone the repository
 git clone https://github.com/OhMyOpenCode/aios.git
 cd aios
+
+# Initialize Submodules (Important!)
+git submodule update --init --recursive
 
 # Install dependencies (pnpm is required)
 pnpm install
@@ -45,24 +58,28 @@ pnpm run start:all
 
 ## 🏗️ Project Structure
 
-AIOS is a monorepo containing:
+AIOS is a monorepo organized into functional zones:
 
-- **`packages/core`**: The Node.js/Fastify backend service that manages agents and tools.
-- **`packages/ui`**: The Next.js dashboard for visual management.
-- **`packages/cli`**: The command-line interface for headless operation.
+- **`packages/core`**: The Node.js/Hono backend service (The Brain).
+- **`packages/ui`**: The Next.js web dashboard (The Control Center).
+- **`packages/cli`**: The command-line interface & TUI.
+- **`superai-cli/`**: Collection of external CLI tools and wrappers.
+- **`memory/`**: Memory systems, MCP servers, and vector store adapters.
+- **`mcp-servers/`**: General purpose MCP servers.
 - **`agents/`**: JSON definitions for autonomous agents.
 - **`skills/`**: Universal skill library.
 
 ## 📚 Documentation
 
+- [Submodule Ecosystem Dashboard](SUBMODULES.md) - **NEW!**
+- [Memory Architecture](memory/ARCHITECTURE.md) - **NEW!**
+- [Incoming Resources Queue](docs/INCOMING_RESOURCES.md)
 - [Vision & Philosophy](docs/VISION.md)
 - [Roadmap](ROADMAP.md)
-- [Submodule Ecosystem](SUBMODULES.md)
-- [Architecture](docs/project/STRUCTURE.md)
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see `CONTRIBUTING.md` for details on how to get started.
+We welcome contributions! Please see `CONTRIBUTING.md` for details.
 
 ## 📄 License
 

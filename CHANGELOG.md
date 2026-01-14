@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.2] - 2026-01-14
+
+### Major Pivot: The SuperAI Era
+Shifted focus from "Enterprise Wrapper" to "Best-in-Class AI Coding Harness" (SuperAI).
+
+### Added
+- **Traffic Inspection Service:** Real-time correlation, persistence, and filtering of MCP JSON-RPC traffic.
+- **Memory Plugin Architecture:** Unified `MemoryPluginManager` supporting `chroma`, `google-drive`, `mem0`.
+- **Tool Inventory Service:** Auto-discovery of installed CLI tools (Aider, Docker, Redis).
+- **Process Guardian:** Background service for monitoring and restarting critical AI processes.
+- **WebUI Dashboards:**
+  - `TrafficInspector`: High-fidelity visualization of MCP calls with request/response correlation.
+  - `ToolInventory`: Dashboard for tracking local tool status and versions.
+  - `InfrastructureDashboard`: Real-time monitoring of Redis, P2P Mesh, and Consensus.
+  
+### Changed
+- **Branding:** Renamed "JULES" to "SuperAI Engine" or "SuperAI Command".
+- **Documentation:** Massive reorganization of `SUBMODULES.md` into functional categories (Memory, CLI, Agents).
+- **Core:** Fully migrated from Fastify routes to Hono for better performance and type safety.
+
+### Removed
+- **Legacy Routes:** Deleted `contextRoutes.ts`, `ingestionRoutes.ts`, `memoryRoutes.ts` (Fastify versions).
+
 ## [0.5.0] - 2026-01-13
 
 ### Added

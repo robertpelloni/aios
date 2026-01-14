@@ -76,6 +76,7 @@ import { createTrafficRoutes } from './routes/trafficRoutesHono.js';
 
 
 import { createRbacRoutes } from './routes/rbacRoutesHono.js';
+import { ResourceIndexService } from './services/ResourceIndexService.js';
 
 // Legacy Route Imports
 import { createCouncilRoutes } from './routes/councilRoutes.js';
@@ -160,6 +161,7 @@ export class CoreService {
   private architectMode: ArchitectMode;
   private auditService: AuditService;
   private rbacService: RbacService;
+  private resourceIndexService: ResourceIndexService;
 
   constructor(
     private rootDir: string
@@ -193,6 +195,7 @@ export class CoreService {
     this.memoryManager = new MemoryManager(path.join(rootDir, 'data'), this.vectorStore);
     this.systemPromptManager = new SystemPromptManager(rootDir);
     this.contextGenerator = new ContextGenerator(rootDir);
+    this.resourceIndexService = new ResourceIndexService(rootDir);
 
     this.documentManager = new DocumentManager(path.join(rootDir, 'documents'), this.memoryManager);
     this.handoffManager = new HandoffManager(rootDir, this.memoryManager);
@@ -658,6 +661,10 @@ export class CoreService {
     // --- Submodules Route ---
     this.app.get('/api/submodules', (c) => {
         return c.json({ submodules: this.submoduleManager.getSubmodules() });
+    });
+
+    this.app.get('/api/resources', (c) => {
+        return c.json({ resources: this.resourceIndexService.getResources() });
     });
 
     // --- Conductor Routes ---

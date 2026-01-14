@@ -1126,3 +1126,21 @@
 [submodule "external/mcp-directories/toolsdk-mcp-registry"]
 	path = external/mcp-directories/toolsdk-mcp-registry
 	url = https://github.com/toolsdk-ai/toolsdk-mcp-registry
+[submodule "external/mcp-directories/awesome-ai-apps"]
+	path = external/mcp-directories/awesome-ai-apps
+	url = https://github.com/Arindam200/awesome-ai-apps
+[submodule "external/skills/dotfiles"]
+	path = external/skills/dotfiles
+	url = https://github.com/TheNoeTrevino/dotfiles
+[submodule "external/skills/skills"]
+	path = external/skills/skills
+	url = https://github.com/anthropics/skills
+[submodule "external/skills/gemini-claude-skills"]
+	path = external/skills/gemini-claude-skills
+	url = https://github.com/stared/gemini-claude-skills
+[submodule "external/skills/claude-code-tips"]
+	path = external/skills/claude-code-tips
+	url = https://github.com/ykdojo/claude-code-tips
+[submodule "external/orchestration/PocketFlow-Tutorial-Cursor"]
+	path = external/orchestration/PocketFlow-Tutorial-Cursor
+	url = https://github.com/The-Pocket/PocketFlow-Tutorial-Cursor

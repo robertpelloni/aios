@@ -1,35 +1,36 @@
 import { describe, test, expect, beforeEach, mock } from 'bun:test';
-import { ArchitectMode, type ArchitectSession, type EditPlan } from '../agents/ArchitectMode.js';
-
-// Mock the model chat function
-const mockChatFn = mock(async (model: string, messages: any[]) => {
-  const systemMessage = messages.find(m => m.role === 'system')?.content || '';
-  const userMessage = messages.find(m => m.role === 'user')?.content || '';
-  
-  if (systemMessage.includes('edit plan') || userMessage.toLowerCase().includes('create the edit plan as json')) {
-    return JSON.stringify({
-      description: 'Implementation plan',
-      estimatedComplexity: 'medium',
-      files: [
-        { path: 'src/file1.ts', action: 'modify', reasoning: 'Update logic' },
-        { path: 'src/file2.ts', action: 'modify', reasoning: 'Update styles' }
-      ],
-      steps: ['Step 1', 'Step 2'],
-      risks: ['Risk A']
-    });
-  }
-  
-  if (systemMessage.includes('code editor')) {
-    return '// Edited code content';
-  }
-  
-  return 'Architectural analysis and reasoning output.';
-});
+import { ArchitectMode, type ArchitectSession, type EditPlan } from '../../src/agents/ArchitectMode.ts';
 
 describe('ArchitectMode', () => {
   let architect: ArchitectMode;
+  let mockChatFn: any;
 
   beforeEach(() => {
+    // Define mock implementation inside beforeEach to ensure it's fresh for every test
+    mockChatFn = mock(async (model: string, messages: any[]) => {
+      const systemMessage = messages.find(m => m.role === 'system')?.content || '';
+      const userMessage = messages.find(m => m.role === 'user')?.content || '';
+      
+      if (systemMessage.includes('Implementation plan') || userMessage.toLowerCase().includes('create the edit plan as json')) {
+        return JSON.stringify({
+          description: 'Implementation plan',
+          estimatedComplexity: 'medium',
+          files: [
+            { path: 'src/file1.ts', action: 'modify', reasoning: 'Update logic' },
+            { path: 'src/file2.ts', action: 'modify', reasoning: 'Update styles' }
+          ],
+          steps: ['Step 1', 'Step 2'],
+          risks: ['Risk A']
+        });
+      }
+      
+      if (systemMessage.includes('precise code editor')) {
+        return '// Edited code content';
+      }
+      
+      return 'Architectural analysis and reasoning output.';
+    });
+
     architect = new ArchitectMode({
       reasoningModel: 'o3-mini',
       editingModel: 'gpt-4o',
@@ -37,7 +38,6 @@ describe('ArchitectMode', () => {
     architect.setChatFunction(mockChatFn as any);
     // Silence error events to prevent unhandled rejections during intentional failures
     architect.on('error', () => {});
-    mockChatFn.mockClear();
   });
 
   describe('Session Management', () => {
@@ -86,10 +86,16 @@ describe('ArchitectMode', () => {
     });
 
     test('should handle reasoning errors', async () => {
-      mockChatFn.mockRejectedValueOnce(new Error('Model timeout'));
+      // Temporarily override for this specific test
+      mockChatFn.mockImplementationOnce(async () => { throw new Error('Model timeout'); });
       
       const session = await architect.startSession('Will fail');
-      expect(session.status).toBe('error');
+      
+      // Wait for background reasoning to fail
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      const updated = architect.getSession(session.id);
+      expect(updated?.status).toBe('error');
     });
   });
 
@@ -105,11 +111,13 @@ describe('ArchitectMode', () => {
     test('should generate edits for planned files', async () => {
       const session = await architect.startSession('Multi-file task');
       
-      // Reset mock to track edit calls
-      mockChatFn.mockClear();
-      mockChatFn.mockResolvedValue('// Edited code');
+      // Wait for reasoning to complete
+      await new Promise(resolve => setTimeout(resolve, 100));
       
-      await architect.executeEdits(session.id);
+      architect.approvePlan(session.id);
+      
+      // Wait for editing to complete
+      await new Promise(resolve => setTimeout(resolve, 200));
       
       const updated = architect.getSession(session.id);
       expect(updated?.status).toBe('complete');
@@ -128,18 +136,22 @@ describe('ArchitectMode', () => {
     test('should revise plan with feedback', async () => {
       const session = await architect.startSession('Test task');
       
-      // Ensure we clear previous calls to mockChatFn
-      mockChatFn.mockClear();
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // The mock implementation returns JSON if 'json' or 'plan' is in the content.
+      // In revisePlan, the task is updated with 'Revision feedback'.
+      // We need to ensure the mock still returns JSON for this request.
       
       const revised = await architect.revisePlan(session.id, 'Use different pattern');
       
-      const updatedSession = architect.getSession(session.id);
-      if (updatedSession?.status === 'error') {
-        console.error('Revision failed error:', updatedSession.reasoningOutput);
-      }
+      await new Promise(resolve => setTimeout(resolve, 100));
       
+      const updated = architect.getSession(session.id);
+      if (updated?.status === 'error') {
+        console.log('Revision error:', updated.error);
+      }
       expect(revised).toBeDefined();
-      expect(updatedSession?.status).toBe('reviewing');
+      expect(updated?.status).toBe('reviewing');
     });
   });
 });

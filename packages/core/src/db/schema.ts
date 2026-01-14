@@ -129,6 +129,9 @@ export interface PolicyRule {
         timeRange?: { start: string; end: string };
         rateLimitPerMinute?: number;
         requireApiKey?: boolean;
+        maxTokensPerTask?: number;
+        blockedActions?: string[]; // e.g., ['delete', 'write', 'execute']
+        allowedAgents?: string[]; // e.g., ['researcher', 'architect']
     };
 }
 

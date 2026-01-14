@@ -104,4 +104,8 @@ export class RbacService extends EventEmitter {
   listRoles(): RoleDefinition[] {
     return Array.from(this.roles.values());
   }
+
+  listUsers(): { userId: string, role: UserRole }[] {
+    return Array.from(this.userRoles.entries()).map(([userId, role]) => ({ userId, role }));
+  }
 }

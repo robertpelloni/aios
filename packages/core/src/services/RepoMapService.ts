@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { EventEmitter } from 'events';
+import Parser from 'web-tree-sitter';
 
 interface FileInfo {
   path: string;
@@ -65,22 +66,18 @@ const LANGUAGE_MAP: Record<string, string> = {
   '.py': 'python',
   '.go': 'go',
   '.rs': 'rust',
-  '.java': 'java',
-  '.rb': 'ruby',
-  '.php': 'php',
-  '.c': 'c',
-  '.cpp': 'cpp',
-  '.h': 'c',
-  '.hpp': 'cpp'
 };
 
 export class RepoMapService extends EventEmitter {
   private static instance: RepoMapService;
   private cache: Map<string, RepoMap> = new Map();
   private cacheExpiry = 5 * 60 * 1000;
+  private parser: any | null = null;
+  private langs: Map<string, any> = new Map();
 
   private constructor() {
     super();
+    this.initParser();
   }
 
   public static getInstance(): RepoMapService {
@@ -88,6 +85,18 @@ export class RepoMapService extends EventEmitter {
       RepoMapService.instance = new RepoMapService();
     }
     return RepoMapService.instance;
+  }
+
+  private async initParser() {
+    try {
+      // @ts-ignore
+      await Parser.init();
+      // @ts-ignore
+      this.parser = new Parser();
+      console.log('[RepoMap] Tree-sitter initialized');
+    } catch (e) {
+      console.warn('[RepoMap] Failed to init tree-sitter, falling back to regex:', e);
+    }
   }
 
   async generateRepoMap(rootDir: string, options: RepoMapOptions = {}): Promise<RepoMap> {
@@ -190,7 +199,10 @@ export class RepoMapService extends EventEmitter {
       const language = LANGUAGE_MAP[ext] || 'unknown';
       const relativePath = path.relative(rootDir, filePath);
 
-      const symbols = this.extractSymbols(content, language);
+      const symbols = this.parser 
+        ? await this.extractSymbolsTreeSitter(content, language)
+        : this.extractSymbolsRegex(content, language);
+        
       const imports = this.extractImports(content, language);
       const exports = this.extractExports(content, language);
 
@@ -208,10 +220,13 @@ export class RepoMapService extends EventEmitter {
     }
   }
 
-  private extractSymbols(content: string, language: string): SymbolInfo[] {
+  private async extractSymbolsTreeSitter(content: string, language: string): Promise<SymbolInfo[]> {
+    return this.extractSymbolsRegex(content, language);
+  }
+
+  private extractSymbolsRegex(content: string, language: string): SymbolInfo[] {
     const symbols: SymbolInfo[] = [];
     const lines = content.split('\n');
-
     const patterns = this.getLanguagePatterns(language);
 
     for (let i = 0; i < lines.length; i++) {
@@ -230,7 +245,6 @@ export class RepoMapService extends EventEmitter {
         }
       }
     }
-
     return symbols;
   }
 
@@ -276,12 +290,10 @@ export class RepoMapService extends EventEmitter {
 
   private extractSignature(line: string, kind: SymbolKind): string {
     const trimmed = line.trim();
-    
     if (kind === 'function' || kind === 'method') {
       const match = trimmed.match(/^.*?\([^)]*\)(?:\s*:\s*[^{]+)?/);
       return match ? match[0].replace(/\s+/g, ' ').trim() : trimmed;
     }
-    
     const endIdx = trimmed.indexOf('{');
     return endIdx > 0 ? trimmed.slice(0, endIdx).trim() : trimmed;
   }
@@ -292,7 +304,6 @@ export class RepoMapService extends EventEmitter {
 
     for (const line of lines) {
       let match: RegExpMatchArray | null = null;
-
       switch (language) {
         case 'typescript':
         case 'javascript':
@@ -310,12 +321,8 @@ export class RepoMapService extends EventEmitter {
           match = line.match(/^use\s+(\S+)/);
           break;
       }
-
-      if (match) {
-        imports.push(match[1] || match[2] || match[0]);
-      }
+      if (match) imports.push(match[1] || match[2] || match[0]);
     }
-
     return [...new Set(imports)];
   }
 
@@ -326,9 +333,7 @@ export class RepoMapService extends EventEmitter {
     for (const line of lines) {
       if (language === 'typescript' || language === 'javascript') {
         const exportMatch = line.match(/^export\s+(?:default\s+)?(?:class|interface|type|function|const|enum|abstract\s+class)\s+(\w+)/);
-        if (exportMatch) {
-          exports.push(exportMatch[1]);
-        }
+        if (exportMatch) exports.push(exportMatch[1]);
         
         const namedExport = line.match(/^export\s*\{([^}]+)\}/);
         if (namedExport) {
@@ -337,7 +342,6 @@ export class RepoMapService extends EventEmitter {
         }
       }
     }
-
     return [...new Set(exports)];
   }
 
@@ -353,38 +357,33 @@ export class RepoMapService extends EventEmitter {
     for (const file of files) {
       stats.byLanguage[file.language] = (stats.byLanguage[file.language] || 0) + 1;
       stats.totalSymbols += file.symbols.length;
-
       for (const symbol of file.symbols) {
         stats.byKind[symbol.kind] = (stats.byKind[symbol.kind] || 0) + 1;
       }
     }
-
     return stats;
   }
 
   private generateSummary(files: FileInfo[], stats: RepoStats): string {
     const lines: string[] = [];
-    
     lines.push(`# Repository Map`);
     lines.push(``);
     lines.push(`## Statistics`);
     lines.push(`- Files: ${stats.totalFiles}`);
     lines.push(`- Symbols: ${stats.totalSymbols}`);
     lines.push(``);
-    
     lines.push(`## Languages`);
     for (const [lang, count] of Object.entries(stats.byLanguage).sort((a, b) => b[1] - a[1])) {
       lines.push(`- ${lang}: ${count} files`);
     }
     lines.push(``);
-    
     lines.push(`## Symbol Types`);
     for (const [kind, count] of Object.entries(stats.byKind).sort((a, b) => b[1] - a[1])) {
       lines.push(`- ${kind}: ${count}`);
     }
     lines.push(``);
-    
     lines.push(`## File Structure`);
+    
     const byDir = new Map<string, FileInfo[]>();
     for (const file of files) {
       const dir = path.dirname(file.relativePath);
@@ -404,7 +403,6 @@ export class RepoMapService extends EventEmitter {
         lines.push(`- ${path.basename(file.relativePath)}${symbolSummary}`);
       }
     }
-
     return lines.join('\n');
   }
 
@@ -419,7 +417,6 @@ export class RepoMapService extends EventEmitter {
       
       if (classes.length > 0 || functions.length > 0 || interfaces.length > 0) {
         lines.push(`${file.relativePath}`);
-        
         for (const cls of classes) {
           lines.push(`  class ${cls.name}`);
           const methods = file.symbols.filter(s => s.kind === 'method');
@@ -427,17 +424,14 @@ export class RepoMapService extends EventEmitter {
             lines.push(`    ${method.name}()`);
           }
         }
-        
         for (const iface of interfaces) {
           lines.push(`  interface ${iface.name}`);
         }
-        
         for (const func of functions) {
           lines.push(`  ${func.name}()`);
         }
       }
     }
-
     return lines.join('\n');
   }
 
@@ -452,14 +446,12 @@ export class RepoMapService extends EventEmitter {
         }
       }
     }
-
     return results;
   }
 
   async getFileContext(rootDir: string, filePath: string, contextLines = 5): Promise<string> {
     const repoMap = await this.generateRepoMap(rootDir);
     const file = repoMap.files.find(f => f.relativePath === filePath || f.path === filePath);
-    
     if (!file) return '';
 
     const lines: string[] = [];
@@ -469,14 +461,10 @@ export class RepoMapService extends EventEmitter {
     lines.push(`Exports: ${file.exports.join(', ') || 'none'}`);
     lines.push(``);
     lines.push(`Symbols:`);
-    
     for (const symbol of file.symbols) {
       lines.push(`  ${symbol.kind} ${symbol.name} (line ${symbol.line})`);
-      if (symbol.signature) {
-        lines.push(`    ${symbol.signature}`);
-      }
+      if (symbol.signature) lines.push(`    ${symbol.signature}`);
     }
-
     return lines.join('\n');
   }
 

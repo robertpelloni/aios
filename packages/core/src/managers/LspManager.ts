@@ -22,7 +22,9 @@ export interface LspServerInstance {
   error?: string;
   startedAt?: number;
   projectRoot?: string;
+  diagnostics: Map<string, any[]>; // File path -> diagnostics
 }
+
 
 export interface LspCapabilities {
   hover: boolean;
@@ -412,7 +414,9 @@ export class LspManager extends EventEmitter {
       status: 'starting',
       process: null,
       projectRoot,
+      diagnostics: new Map(),
     };
+
 
     this.servers.set(serverId, instance);
     this.emit('serverStatusChanged', { serverId, status: 'starting' });
@@ -442,9 +446,14 @@ export class LspManager extends EventEmitter {
         }
       });
 
+      proc.stdout?.on('data', (data) => {
+        this.handleServerOutput(serverId, data);
+      });
+
       proc.stderr?.on('data', (data) => {
         console.error(`[LSP:${serverId}] ${data.toString()}`);
       });
+
 
       await this.waitForServerReady(proc, serverId);
 
@@ -587,7 +596,41 @@ export class LspManager extends EventEmitter {
     };
   }
 
+  private handleServerOutput(serverId: string, data: Buffer): void {
+    const instance = this.servers.get(serverId);
+    if (!instance) return;
+
+    const content = data.toString();
+    // Very simple JSON-RPC parsing for diagnostics
+    try {
+      if (content.includes('textDocument/publishDiagnostics')) {
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const msg = JSON.parse(jsonMatch[0]);
+          if (msg.params?.uri && msg.params?.diagnostics) {
+            const filePath = msg.params.uri.replace('file://', '');
+            instance.diagnostics.set(filePath, msg.params.diagnostics);
+            this.emit('diagnostics', { serverId, filePath, diagnostics: msg.params.diagnostics });
+          }
+        }
+      }
+    } catch {}
+  }
+
+  async getDiagnostics(filePath: string): Promise<any[]> {
+    const config = this.getServerForFile(filePath);
+    if (!config) return [];
+
+    const instance = this.servers.get(config.id);
+    if (!instance) return [];
+
+    // Return cached diagnostics for the file
+    // In a real implementation, we might want to wait for a specific notification
+    return instance.diagnostics.get(filePath) || [];
+  }
+
   writeToServer(serverId: string, message: string): boolean {
+
     const instance = this.servers.get(serverId);
     if (!instance?.process?.stdin?.writable) {
       return false;

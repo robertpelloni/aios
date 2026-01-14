@@ -22,6 +22,10 @@ export function createRbacRoutes(): Hono<{ Variables: Variables }> {
     return c.json({ permissions: Array.from(allPermissions) });
   });
 
+  app.get('/users', (c) => {
+    return c.json({ users: rbac.listUsers() });
+  });
+
   app.get('/users/:id/role', (c) => {
     const userId = c.req.param('id');
     return c.json({ userId, role: rbac.getUserRole(userId) });

@@ -760,7 +760,36 @@ Replace X, Y, Z with the actual letters (A, B, C, etc.)`;
   }
 
   async getAvailableSupervisors(): Promise<Supervisor[]> {
-    return this.registry.getAvailable();
+    const local = await this.registry.getAvailable();
+    
+    // Add remote supervisors from other nodes
+    try {
+      const nodeManager = (await import('./CouncilNodeManager.js')).CouncilNodeManager.getInstance();
+      const nodes = nodeManager.getAllNodes().filter(n => n.status === 'online');
+      
+      const remotePromises = nodes.map(async node => {
+        try {
+          const remoteSups = await nodeManager.discoverRemoteSupervisors(node.id);
+          return remoteSups.map(config => {
+            // Create a wrapper or ensure it's treated as a RemoteSupervisor
+            return createSupervisor({
+              ...config,
+              provider: 'remote',
+              remoteUrl: node.url,
+              remoteToken: node.token,
+              remoteSupervisorName: config.name
+            });
+          });
+        } catch {
+          return [];
+        }
+      });
+
+      const remotes = (await Promise.all(remotePromises)).flat();
+      return [...local, ...remotes];
+    } catch {
+      return local;
+    }
   }
 
   async getNextFallbackSupervisor(): Promise<Supervisor | null> {

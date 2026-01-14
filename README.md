@@ -1,86 +1,69 @@
-# Super AI Plugin
+# AIOS: The Universal AI Operating System
 
-The Ultimate "Meta-Orchestrator" for the Model Context Protocol (MCP). It acts as a universal hub, proxy, and agentic runtime for your AI tools.
+A unified operating system for PC-based local AI tools. Manage everything from tool installation to autonomous multi-agent orchestration in a single, high-fidelity dashboard.
 
-## 🌟 Features
+![AIOS Dashboard](https://via.placeholder.com/1200x600?text=AIOS+Dashboard+Preview)
 
-*   **Universal Hub:** Aggregates tools from local MCP servers, remote MetaMCP instances, and internal capabilities.
-*   **Progressive Disclosure:** Solves context window limits by hiding tools until they are searched for and loaded.
-*   **Web Dashboard:** Manage everything via a unified web interface (`http://localhost:3000`).
-*   **Active Intelligence:**
-    *   **Agent Executor:** Run autonomous ReAct agents defined in `agents/`.
-    *   **Code Mode:** Secure sandboxed execution (TS/Python) for complex workflows.
-    *   **Scheduler:** Run tools and agents on a Cron schedule.
-    *   **Prompt Improver:** Optimize prompts using the configured LLM.
-*   **Ecosystem Integration:**
-    *   **MetaMCP:** Connects to the powerful Docker-based MetaMCP backend.
-    *   **Mcpenetes:** Auto-installs configuration to Claude Desktop and VSCode.
-*   **Memory & Context:**
-    *   **Native Memory:** `remember` and `recall` tools backed by local persistence.
-    *   **Document Ingestion:** Auto-ingest PDFs and text from `documents/` into memory.
-    *   **Context Injection:** Automatically exposes `skills/` and `prompts/` to the LLM.
-*   **Profiles:** Switch between different server configurations (e.g., "Coding", "Writing").
-*   **Observability:**
-    *   **Mcpshark:** Live traffic inspection with Replay capability.
-    *   **Dashboard:** Real-time UI for managing the entire stack.
+## 🚀 Key Features
 
-## 🚀 Getting Started
+### 🛠️ Ultimate Tool Dashboard
+- **Inventory Management:** Track installation status of local AI tools (Aider, Docker, Redis, Bun).
+- **One-Click Setup:** Automatically detect missing tools and generate install commands.
+- **Process Guardian:** Long-running service that monitors and restarts crashed background processes.
+- **Hardware Stats:** Real-time CPU, VRAM, RAM, and Disk usage monitoring.
 
-### Prerequisites
-*   Node.js v18+
-*   pnpm
-*   (Optional) Docker for MetaMCP backend
-*   (Optional) Go for building mcpenetes
+### 🧠 The "SuperAI" Coding Harness
+- **Architect Mode:** Two-model orchestration (Reasoning vs. Editing) for complex refactors.
+- **Visual Repo Map:** Interactive graph of your codebase's dependencies and symbols.
+- **Auto-Verification:** Zero-trust loop where every AI edit is verified by LSP diagnostics and tests.
+- **Diff Streaming:** Real-time visualization of code modifications.
 
-### Installation
+### 🔌 Universal MCP Control Plane
+- **Traffic Inspector:** Real-time monitoring of all Model Context Protocol (MCP) traffic.
+- **Universal Directory:** Discover and auto-install servers from the global ecosystem.
+- **Dynamic Routing:** Smart routing of prompts to the right tool based on semantic relevance.
+- **Proxy System:** Bridge remote MCP servers to local clients seamlessly.
 
-1.  **Clone & Install**
-    ```bash
-    git clone https://github.com/your-repo/super-ai-plugin.git
-    cd super-ai-plugin
-    pnpm install
-    ```
+### 🤖 Multi-Agent Orchestration
+- **Agent Squads:** specialized subagents for file picking, code review, and security auditing.
+- **Consensus Protocol:** Multi-model debate engine for verifying high-stakes decisions.
+- **Local-Remote Bridge:** Sync projects between local PCs and remote cloud environments.
 
-2.  **Start Everything**
-    ```bash
-    pnpm run start:all
-    ```
-    *   **Access Dashboard:** `http://localhost:3000`
-    *   **MCP Endpoint:** `http://localhost:3000/api/hub/sse`
+## 📦 Installation
 
-### Client Configuration
+```bash
+# Clone the repository
+git clone https://github.com/OhMyOpenCode/aios.git
+cd aios
 
-To automatically configure Claude Desktop to use this Hub:
+# Install dependencies (pnpm is required)
+pnpm install
 
-1.  Go to the Dashboard (`http://localhost:3000`).
-2.  Click **"Install to Clients"**.
-3.  Restart Claude Desktop.
+# Start the full stack (Core Service + UI Dashboard)
+pnpm run start:all
+```
 
-## 📂 Project Directory Structure
+## 🏗️ Project Structure
 
-The project is organized as a monorepo using `pnpm workspaces`.
+AIOS is a monorepo containing:
 
-*   **`packages/core`**: The "Brain" of the operation. Contains the Node.js Fastify server, Hub logic, Managers (Agents, Memory, Context), and MCP connection handling.
-*   **`packages/ui`**: The "Control Center". A React + Vite SPA that provides the Dashboard, Settings, and Inspector interfaces.
-*   **`packages/cli`**: A command-line interface (`super-ai`) for controlling the Hub from a terminal.
-*   **`packages/vscode`**: Skeleton code for the VSCode Extension client.
-*   **`packages/browser`**: Skeleton code for the Chrome Extension client.
-*   **`packages/adapters`**: Wrappers for external CLIs like Gemini and Claude.
-*   **`agents/`**: JSON definitions for autonomous agents.
-*   **`skills/`**: Markdown files defining AI skills.
-*   **`documents/`**: Drop zone for PDFs and text files for ingestion.
-*   **`commands/`**: Slash command definitions.
-*   **`mcp-servers/`**: Directory for managed local MCP servers (e.g., `git`, `postgres`).
-*   **`submodules/`**: Critical external integrations (`metamcp`, `mcpenetes`).
-*   **`references/`**: A library of 50+ ecosystem repositories used for capability expansion.
+- **`packages/core`**: The Node.js/Fastify backend service that manages agents and tools.
+- **`packages/ui`**: The Next.js dashboard for visual management.
+- **`packages/cli`**: The command-line interface for headless operation.
+- **`agents/`**: JSON definitions for autonomous agents.
+- **`skills/`**: Universal skill library.
 
-## 📖 Documentation
+## 📚 Documentation
 
-*   [Progressive Disclosure Strategy](docs/guides/PROGRESSIVE_DISCLOSURE.md)
-*   [Task Scheduling](docs/guides/SCHEDULING.md)
-*   [Memory Strategy](docs/MEMORY_STRATEGY.md)
-*   [Agent Standards](docs/AGENT_STANDARDS_STRATEGY.md)
+- [Vision & Philosophy](docs/VISION.md)
+- [Roadmap](ROADMAP.md)
+- [Submodule Ecosystem](SUBMODULES.md)
+- [Architecture](docs/project/STRUCTURE.md)
 
 ## 🤝 Contributing
 
-See `CONTRIBUTING.md` for details.
+We welcome contributions! Please see `CONTRIBUTING.md` for details on how to get started.
+
+## 📄 License
+
+MIT

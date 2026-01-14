@@ -3,11 +3,13 @@ import path from 'path';
 import { EventEmitter } from 'events';
 import { AgentManager } from './AgentManager.js';
 import { McpManager } from './McpManager.js';
+import { getWorkflowService, WorkflowService } from '../services/WorkflowService.js';
 
 // Default mock registry
 const MOCK_REGISTRY = [
     { name: "coder-agent", type: "agent", description: "An expert coding agent.", url: "https://example.com/coder.json" },
-    { name: "writer-skill", type: "skill", description: "Creative writing skill.", url: "https://example.com/writer.md" }
+    { name: "writer-skill", type: "skill", description: "Creative writing skill.", url: "https://example.com/writer.md" },
+    { name: "security-audit-wf", type: "workflow", description: "Enterprise security auditing pipeline.", url: "https://example.com/audit.wf.json" }
 ];
 
 export class MarketplaceManager extends EventEmitter {
@@ -15,13 +17,16 @@ export class MarketplaceManager extends EventEmitter {
     private registryUrl: string | null = null;
     private agentManager?: AgentManager;
     private mcpManager?: McpManager;
+    private workflowService?: WorkflowService;
 
     constructor(private rootDir: string) {
         super();
         this.registryUrl = process.env.MCP_MARKETPLACE_URL || null;
+        this.workflowService = getWorkflowService();
         // Load the local registry on startup
         this.loadLocalRegistry();
     }
+
 
     private loadLocalRegistry() {
         try {
@@ -112,11 +117,54 @@ export class MarketplaceManager extends EventEmitter {
         return this.packages;
     }
 
+    async publishWorkflow(workflowId: string) {
+        if (!this.workflowService) throw new Error("WorkflowService not initialized");
+        const workflow = this.workflowService.getWorkflow(workflowId);
+        if (!workflow) throw new Error(`Workflow ${workflowId} not found`);
+
+        const pkg = {
+            name: workflow.name.toLowerCase().replace(/\s+/g, '-'),
+            type: 'workflow',
+            description: workflow.description || `Workflow: ${workflow.name}`,
+            metadata: {
+                workflowId: workflow.id,
+                stepsCount: workflow.steps.length,
+                author: workflow.author
+            },
+            content: workflow // In a real scenario, this would be uploaded to a registry
+        };
+
+        // For local simulation, just add to packages list
+        this.packages.push(pkg);
+        this.emit('updated', this.packages);
+        return `Published workflow ${workflow.name} to local marketplace`;
+    }
+
     async installPackage(name: string) {
         const pkg = this.packages.find(p => p.name === name);
         if (!pkg) throw new Error(`Package ${name} not found`);
 
+        if (pkg.type === 'workflow') {
+            if (!this.workflowService) throw new Error("WorkflowService not initialized");
+            // If it's a workflow, we "install" by creating it in the service
+            const workflowData = pkg.content || {
+                name: pkg.name,
+                description: pkg.description,
+                steps: [],
+                status: 'draft'
+            };
+            
+            const newWf = this.workflowService.createWorkflow({
+                ...workflowData,
+                id: undefined, // Force new ID
+                createdAt: undefined,
+                updatedAt: undefined
+            });
+            return `Installed workflow ${newWf.name} with ID ${newWf.id}`;
+        }
+
         const targetDir = pkg.type === 'agent' ? 'agents' : 'skills';
+
         // For skills, we use the 'installed' subdirectory
         const installBase = pkg.type === 'skill' 
             ? path.join(this.rootDir, '../../skills/installed') 

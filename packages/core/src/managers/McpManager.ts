@@ -18,8 +18,10 @@ import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import { BridgeClient } from '@apify/mcpc/dist/lib/bridge-client.js';
 import * as BridgeManager from '@apify/mcpc/dist/lib/bridge-manager.js';
 import { DatabaseManager, McpServer, Tool, Namespace, Endpoint, McpServerType } from '../db/index.js';
+import { TappingTransport } from '../utils/transports/TappingTransport.js';
 
 // ============================================
+
 // Types
 // ============================================
 
@@ -264,6 +266,16 @@ export class McpManager extends EventEmitter {
             requestInit: { headers }
         });
 
+        const tappingTransport = new TappingTransport(transport);
+        tappingTransport.on('message', (event) => {
+            this.emit('traffic', { 
+                serverId: server.id, 
+                direction: event.direction, 
+                message: event.message, 
+                timestamp: event.timestamp 
+            });
+        });
+
         const client = new Client({
             name: 'aios-client',
             version: '1.0.0'
@@ -271,8 +283,9 @@ export class McpManager extends EventEmitter {
             capabilities: {}
         });
 
-        await client.connect(transport);
+        await client.connect(tappingTransport);
         connected.client = client as unknown as Client;
+
     }
 
     private async connectStreamableHTTP(server: McpServer, connected: ConnectedServer): Promise<void> {

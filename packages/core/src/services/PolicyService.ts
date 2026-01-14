@@ -32,6 +32,9 @@ export interface PolicyContext {
     endpointPath?: string;
     apiKeyId?: string;
     userId?: string;
+    agentId?: string;
+    taskTokens?: number;
+    actionType?: string; // 'read', 'write', 'delete', 'execute'
     timestamp?: number;
 }
 
@@ -103,6 +106,36 @@ export class PolicyService extends EventEmitter {
                             matchedPolicy: policy,
                             matchedRule: rule,
                             reason: apiKeyCheck.reason
+                        };
+                    }
+
+                    const tokenCheck = this.checkTokenLimit(context, rule);
+                    if (!tokenCheck.allowed) {
+                        return {
+                            allowed: false,
+                            matchedPolicy: policy,
+                            matchedRule: rule,
+                            reason: tokenCheck.reason
+                        };
+                    }
+
+                    const actionCheck = this.checkBlockedActions(context, rule);
+                    if (!actionCheck.allowed) {
+                        return {
+                            allowed: false,
+                            matchedPolicy: policy,
+                            matchedRule: rule,
+                            reason: actionCheck.reason
+                        };
+                    }
+
+                    const agentCheck = this.checkAllowedAgents(context, rule);
+                    if (!agentCheck.allowed) {
+                        return {
+                            allowed: false,
+                            matchedPolicy: policy,
+                            matchedRule: rule,
+                            reason: agentCheck.reason
                         };
                     }
 
@@ -238,6 +271,60 @@ export class PolicyService extends EventEmitter {
             return {
                 allowed: false,
                 reason: 'API key required but not provided'
+            };
+        }
+
+        return { allowed: true };
+    }
+
+    private checkTokenLimit(
+        context: PolicyContext,
+        rule: PolicyRule
+    ): { allowed: boolean; reason?: string } {
+        if (!rule.conditions?.maxTokensPerTask || context.taskTokens === undefined) {
+            return { allowed: true };
+        }
+
+        if (context.taskTokens > rule.conditions.maxTokensPerTask) {
+            return {
+                allowed: false,
+                reason: `Token limit exceeded: task uses ${context.taskTokens} tokens, limit is ${rule.conditions.maxTokensPerTask}`
+            };
+        }
+
+        return { allowed: true };
+    }
+
+    private checkBlockedActions(
+        context: PolicyContext,
+        rule: PolicyRule
+    ): { allowed: boolean; reason?: string } {
+        if (!rule.conditions?.blockedActions || !context.actionType) {
+            return { allowed: true };
+        }
+
+        if (rule.conditions.blockedActions.includes(context.actionType)) {
+            return {
+                allowed: false,
+                reason: `Action type '${context.actionType}' is blocked by policy`
+            };
+        }
+
+        return { allowed: true };
+    }
+
+    private checkAllowedAgents(
+        context: PolicyContext,
+        rule: PolicyRule
+    ): { allowed: boolean; reason?: string } {
+        if (!rule.conditions?.allowedAgents || !context.agentId) {
+            return { allowed: true };
+        }
+
+        if (!rule.conditions.allowedAgents.includes(context.agentId)) {
+            return {
+                allowed: false,
+                reason: `Agent '${context.agentId}' is not allowed by policy`
             };
         }
 

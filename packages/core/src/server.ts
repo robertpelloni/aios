@@ -69,8 +69,12 @@ import { createGitWorktreeRoutes } from './routes/gitWorktreeRoutesHono.js';
 import { createSupervisorPluginRoutes } from './routes/supervisorPluginRoutesHono.js';
 import { createSupervisorAnalyticsRoutes } from './routes/supervisorAnalyticsRoutesHono.js';
 import { createDebateTemplateRoutes } from './routes/debateTemplateRoutesHono.js';
+import { createInventoryRoutes } from './routes/inventoryRoutesHono.js';
+import { createTrafficRoutes } from './routes/trafficRoutesHono.js';
 
 // Phase 13 Routes
+
+
 import { createRbacRoutes } from './routes/rbacRoutesHono.js';
 
 // Legacy Route Imports
@@ -318,7 +322,10 @@ export class CoreService {
     this.app.route('/api/lsp', createLspRoutes());
     this.app.route('/api/sessions/share', createSessionShareRoutes(this.sessionManager));
     this.app.route('/api/git-undo', createGitUndoRoutes(this.gitUndoManager));
+    this.app.route('/api/inventory', createInventoryRoutes());
+    this.app.route('/api/traffic', createTrafficRoutes());
     this.app.route('/api/feature-flags', createFeatureFlagRoutes());
+
     
     // Permission Protected Routes
     this.app.use('/api/secrets/*', this.authMiddleware.requirePermission('secrets:manage'));

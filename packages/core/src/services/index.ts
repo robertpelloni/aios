@@ -175,7 +175,20 @@ export type {
   SecretConfig,
 } from './SecretService.js';
 
+export { BatchProcessingService } from './BatchProcessingService.js';
+export type { BatchJob } from './BatchProcessingService.js';
+
+export { TieredMemoryService } from './TieredMemoryService.js';
+export type { MemoryTier, ScoredVectorDocument } from './TieredMemoryService.js';
+
+export { GpuAccelerationService } from './GpuAccelerationService.js';
+export type { GpuStatus } from './GpuAccelerationService.js';
+
+export { OpenApiService, getOpenApiService } from './OpenApiService.js';
+export type { OpenApiSpec } from './OpenApiService.js';
+
 export { FeatureFlagService, getFeatureFlagService, resetFeatureFlagService } from './FeatureFlagService.js';
+
 export type {
   FlagType,
   RolloutStrategy,

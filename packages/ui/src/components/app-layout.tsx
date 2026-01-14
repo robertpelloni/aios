@@ -15,12 +15,13 @@ import { SessionKeeperLogPanel } from './session-keeper-log-panel';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { Menu, LogOut, Settings, BarChart3, MessageSquare, ChevronLeft, ChevronRight, Terminal as TerminalIcon, LayoutTemplate, Plus, Activity as ActivityIcon } from 'lucide-react';
+import { Menu, LogOut, Settings, BarChart3, MessageSquare, ChevronLeft, ChevronRight, Terminal as TerminalIcon, LayoutTemplate, Plus, Activity as ActivityIcon, ShieldCheck } from 'lucide-react';
 import { TerminalPanel } from './terminal-panel';
 import { useTerminalAvailable } from '@/hooks/use-terminal-available';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { CouncilDashboard } from './council-dashboard';
 import { SessionKeeperManager } from './session-keeper-manager';
+import { EnterpriseView } from './enterprise/EnterpriseView';
 
 export function AppLayout() {
   const { client, clearApiKey } = useJules();
@@ -28,7 +29,7 @@ export function AppLayout() {
   const router = useRouter();
   const { isAvailable: terminalAvailable } = useTerminalAvailable();
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
-  const [view, setView] = useState<'sessions' | 'analytics' | 'templates' | 'council'>('sessions');
+  const [view, setView] = useState<'sessions' | 'analytics' | 'templates' | 'council' | 'enterprise'>('sessions');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -232,6 +233,16 @@ export function AppLayout() {
               <span className="text-[10px] font-mono uppercase tracking-wider">Council</span>
             </Button>
 
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`h-8 px-3 hover:bg-white/5 ${view === 'enterprise' ? 'text-white' : 'text-white/60'}`}
+              onClick={() => setView('enterprise')}
+            >
+              <ShieldCheck className="h-3.5 w-3.5 mr-1.5" />
+              <span className="text-[10px] font-mono uppercase tracking-wider">Enterprise</span>
+            </Button>
+
             {terminalAvailable && (
               <Button
                 variant="ghost"
@@ -338,6 +349,12 @@ export function AppLayout() {
                       <TemplatesPage onStartSession={handleStartSessionFromTemplate} />
                     ) : view === 'council' ? (
                       <CouncilDashboard />
+                    ) : view === 'enterprise' ? (
+                      <div className="flex-1 overflow-auto bg-black">
+                        <div className="p-6">
+                           <EnterpriseView />
+                        </div>
+                      </div>
                     ) : selectedSession ? (
                       <ActivityFeed
                         key={selectedSession.id}

@@ -4,8 +4,9 @@ import { EventEmitter } from 'events';
 
 export interface Secret {
   key: string;
-  value: string; // Stored in memory, masked in API responses
+  value: string;
   lastModified: number;
+  scopes?: string[]; // Allowed scopes (e.g. ['agent:researcher', 'system:audit'])
 }
 
 export class SecretManager extends EventEmitter {
@@ -42,17 +43,27 @@ export class SecretManager extends EventEmitter {
     }
   }
 
-  public setSecret(key: string, value: string) {
+  public setSecret(key: string, value: string, scopes?: string[]) {
     this.secrets.set(key, {
       key,
       value,
-      lastModified: Date.now()
+      lastModified: Date.now(),
+      scopes
     });
     this.saveSecrets();
   }
 
-  public getSecret(key: string): string | undefined {
-    return this.secrets.get(key)?.value;
+  public getSecret(key: string, scope?: string): string | undefined {
+    const secret = this.secrets.get(key);
+    if (!secret) return undefined;
+
+    // If scope provided, verify permission
+    if (scope && secret.scopes && !secret.scopes.includes(scope) && !secret.scopes.includes('*')) {
+      console.warn(`[SecretManager] Access denied for secret ${key} in scope ${scope}`);
+      return undefined;
+    }
+
+    return secret.value;
   }
 
   public deleteSecret(key: string) {
@@ -65,14 +76,17 @@ export class SecretManager extends EventEmitter {
     return Array.from(this.secrets.values()).map(s => ({
       key: s.key,
       value: '********', // Masked
-      lastModified: s.lastModified
+      lastModified: s.lastModified,
+      scopes: s.scopes
     }));
   }
 
-  public getEnvVars(): Record<string, string> {
+  public getEnvVars(scope?: string): Record<string, string> {
     const env: Record<string, string> = {};
     for (const [key, secret] of this.secrets) {
-      env[key] = secret.value;
+      if (!scope || !secret.scopes || secret.scopes.includes(scope) || secret.scopes.includes('*')) {
+        env[key] = secret.value;
+      }
     }
     return env;
   }

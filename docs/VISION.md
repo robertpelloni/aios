@@ -1,44 +1,49 @@
-# Vision: AI Operating System
+# AIOS Vision: The Ultimate AI Coding Harness & Dashboard
+
+AIOS is a unified operating system for PC-based local AI tools. It aims to be the **definitive AI coding companion**, replacing the need for disparate CLI tools by offering a superset of their features in a cohesive, high-fidelity TUI and WebUI.
 
 ## Core Philosophy
-AIOS (AI Operating System) is a meta-orchestrator for AI tools and agents. It provides a unified hub connecting MCP servers, CLI tools, and agent frameworks into a cohesive intelligent system.
 
-## Technical Pillars
-1.  **Orchestration:** Universal hub for MCP tools, agents, and AI CLIs.
-2.  **Intelligence:** Agent execution, memory systems, and context management.
-3.  **Infrastructure:** Extensible plugin architecture with support for:
-    -   Local MCP servers
-    -   Remote service integrations
-    -   Hardware device connections
-4.  **Consensus:** Multi-model AI council for robust decision-making through debate.
+**"Don't Wrap—Replace."**
+Originally conceived as a plugin to orchestrate other tools, AIOS has evolved. We no longer just wrap tools like OpenCode or Aider; we aim to **be** the best-in-class CLI/TUI/WebUI harness that controls itself, offering feature parity with the entire ecosystem while providing superior orchestration and observability.
 
-## The Super AI Plugin Role
-This plugin acts as the software layer connecting AI tools and services.
--   **Core Service:** Manages agents, tools, memory, and orchestration.
--   **Clients (Browser/CLI):** Act as the interface for the user to interact with the AI system.
--   **Multi-Model Council:** Enables multiple AI supervisors to debate and vote on decisions.
+## Strategic Pillars
 
-## Multi-Model AI Council
+### 1. The SuperAI Coding Harness (CLI/TUI/WebUI)
+We aim for complete feature parity with leading AI coding tools, including:
+*   **Commercial:** Claude Code, Cursor, Copilot CLI, Gemini CLI, Grok Build, Trae CLI, Warp CLI.
+*   **Open Source:** Amp, Auggie, Codebuff, Codemachine, Codex, Crush, Factory Droid, Kilo Code, Kimi CLI, Mistral Vibe, OpenCode, Qwen Code.
 
-### The Problem
-Single-model code generation is fragile. LLMs hallucinate, miss context, and struggle with complex architectural reasoning. Developers spend more time verifying AI code than writing it.
+**Key Capabilities:**
+*   **Unified Interface:** A feature-complete WebUI that mirrors the TUI/CLI capabilities 1:1.
+*   **Remote Control:** Full access and control via mobile devices.
+*   **Architect Mode:** Advanced reasoning/editing loops (The "SuperAI Engine").
+*   **Self-Correction:** Autonomous linting, testing, and error fixing.
 
-### The Solution: Orchestration via Debate
-AIOS includes a Multi-Model Consensus Engine. Instead of trusting one model, we convene a "Council" of specialized Supervisors (GPT-4, Claude, Gemini, DeepSeek, Grok, Qwen, Kimi) to:
+### 2. Deep Code Intelligence
+The foundation for robust autonomy. We don't just "read" files; we understand the codebase structure deeply.
+*   **Robust Indexing:** Multi-strategy code parsing using ASTs (Tree-sitter), Vector Embeddings (RAG), and Symbol Graphs (SCIP/LSIF).
+*   **Repo Graph:** A live, interactive dependency graph visualizing how changes propagate.
+*   **Context Pinning:** Manual and automatic context curation to keep the agent focused.
 
-1. **Debate**: Models critique each other's proposed solutions
-2. **Refine**: Iterative rounds of improvement based on cross-model feedback
-3. **Decide**: A consensus mechanism acts as final arbiter, selecting the most robust solution
+### 3. The Universal Browser Extension
+A powerful bridge between your local AIOS context and web-based AI models.
+*   **MCP Provider:** Inject local MCP server functionality directly into web interfaces like ChatGPT, Claude.ai, Gemini, Grok, and DeepSeek.
+*   **Memory Bridge:** Record web browsing context, chat histories, and research directly into AIOS memory.
+*   **Browser Control:** Scrape pages, read debug consoles, access history, and manage email via MCP.
+*   **Dashboard Link:** Instant access to your local AIOS dashboard and billing stats from the browser toolbar.
 
-### Core Benefits
-- **No Single Point of Failure**: If one model hallucinates, others catch it
-- **Specialization**: Leverage Claude for architecture, GPT-4 for logic, Gemini for creativity
-- **Transparency**: The debate process provides a "reasoning trace" for final decisions
+### 4. Universal MCP Control Plane
+*   **Hub & Proxy:** Serve local tools to remote clients and vice versa.
+*   **Traffic Inspection:** Deep observability into every tool call.
+*   **Dynamic Orchestration:** Smart routing and progressive disclosure of tools.
 
-### Consensus Modes
-- Simple/Super/Unanimous majority voting
-- Weighted voting with confidence scores
-- CEO override/veto for lead supervisor authority
-- Ranked-choice for nuanced preference aggregation
+### 5. Secure Execution & Verification
+*   **Code Sandboxing:** Run untrusted code in ephemeral Docker containers or WASM isolates.
+*   **Auto-Verification:** Every AI edit is checked against LSP diagnostics and local tests before being committed.
+*   **Consensus Protocol:** Multi-model debate loops for verifying high-stakes architectural decisions.
 
-See [Council Documentation](./council/README.md) for full details.
+### 6. Local Resource Governance
+*   **Process Guardian:** Long-running service to manage tool lifecycles and restart crashed processes.
+*   **Hardware Monitor:** Real-time tracking of CPU, GPU, and network usage.
+*   **Inventory:** One-click installation and management of the entire AI toolchain.

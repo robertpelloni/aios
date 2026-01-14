@@ -161,7 +161,19 @@ export interface Workflow {
         logLevel?: 'debug' | 'info' | 'warn' | 'error';
     };
     
+    // UI Representation (React Flow)
+    uiConfig?: {
+        nodes: any[];
+        edges: any[];
+        viewport?: {
+            x: number;
+            y: number;
+            zoom: number;
+        };
+    };
+    
     // Metadata
+
     tags?: string[];
     author?: string;
     createdAt: string;

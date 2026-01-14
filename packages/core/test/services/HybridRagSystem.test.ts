@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach } from 'bun:test';
-import { HybridRagSystem } from '../services/HybridRagSystem.js';
+import { HybridRagSystem } from '../../src/services/HybridRagSystem.ts';
 
 describe('HybridRagSystem', () => {
   let ragSystem: HybridRagSystem;

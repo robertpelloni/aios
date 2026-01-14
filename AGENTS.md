@@ -1,73 +1,43 @@
-# PROJECT KNOWLEDGE BASE
+# AIOS AGENT KNOWLEDGE BASE
 
-**Generated:** 2026-01-08
-**Context:** Monorepo (pnpm) | Node.js v18+ | Fastify | Next.js | TypeScript
-**Version:** 0.3.0
+**Context:** The Ultimate AI Coding Harness & Tool Dashboard
+**Version:** 0.4.0 (Pivot)
 
 ## OVERVIEW
-The Super AI Plugin is a "Meta-Orchestrator" for the Model Context Protocol (MCP). It acts as a universal hub connecting tools, agents, and local servers to LLM clients (Claude Desktop, VSCode). Core stack: Fastify backend (`packages/core`), Next.js dashboard (`packages/ui`), and a CLI (`packages/cli`).
+The AIOS is an operating system designed specifically for local AI tool management and high-fidelity autonomous coding. It bridges Model Context Protocol (MCP) servers with specialized reasoning and editing agents.
 
-## STRUCTURE
-```
-.
-├── packages/
-│   ├── core/         # Backend: Fastify, Managers, Agent Executor
-│   ├── ui/           # Frontend: Next.js (Custom server), Dashboard
-│   ├── cli/          # Command line interface
-│   ├── adapters/     # Wrappers for external CLIs (claude, gemini)
-│   ├── types/        # Shared TypeScript definitions
-│   └── vscode/       # VSCode Extension source
-├── agents/           # JSON definitions for AI agents
-├── skills/           # Markdown-defined capabilities
-├── docs/             # Documentation (Consolidated)
-└── submodules/       # External dependencies (metamcp, mcpenetes)
-```
+## CORE AGENT SQUADS
 
-## CRITICAL RESOURCES
-*   **`SUBMODULES.md`**: Dashboard of all 70+ integrated submodules and their status.
-*   **`ROADMAP.md`**: Current strategic goals and timeline.
-*   **`CHANGELOG.md`**: History of project changes.
-*   **`CLAUDE.md`**: Legacy context instructions (superseded by this file but kept for reference).
+### 1. Architect Squad (`ArchitectMode.ts`)
+- **Reasoning Model:** Responsible for high-level planning, dependency analysis, and impact assessment.
+- **Implementation Model:** Responsible for precise SEARCH/REPLACE diff editing.
+- **Verification Loop:** Autonomous self-correction using LSP diagnostics and test runners.
+
+### 2. MCP Orchestrator Squad (`AgentExecutor.ts`)
+- **Meta-Tools:** `search_tools`, `load_tool`, `mcp_chain`.
+- **Progressive Disclosure:** Keeps context windows clean by exposing only relevant tools.
+- **Traffic Guard:** Full inspection and logging of MCP communications.
+
+### 3. Autopilot Squad (`LoopManager.ts`)
+- **Recursive Reasoning:** Agents that can self-schedule and recurse indefinitely for complex feature development.
+- **Git Mastery:** Autonomous branch creation, worktree management, and merge resolution.
 
 ## WHERE TO LOOK
-| Task | Location | Notes |
+| Component | Location | Responsibility |
 |------|----------|-------|
-| **Agent Logic** | `packages/core/src/agents/` | AgentExecutor, LoopManager |
-| **API Endpoints** | `packages/core/src/routes/` | Fastify routes |
-| **Dashboard UI** | `packages/ui/src/app/` | Next.js App Router |
-| **CLI Commands** | `packages/cli/src/commands/` | `start`, `status`, `run` |
-| **MCP Servers** | `mcp-servers/` | Managed local servers |
-| **Skills** | `skills/` | Markdown-based skill definitions |
-| **Docs** | `docs/` | See `STRUCTURE.md`, `VISION.md` |
+| **Coding Harness** | `packages/core/src/agents/ArchitectMode.ts` | Reasoning + Diff Editing logic |
+| **MCP Hub** | `packages/core/src/managers/McpProxyManager.ts` | Tool routing, disclosure, and proxying |
+| **Tool Inventory** | `packages/core/src/services/ToolInventoryService.ts` | Local tool status and installation |
+| **Repo Graph** | `packages/core/src/services/RepoGraphService.ts` | Codebase visualization and mapping |
+| **Dashboards** | `packages/ui/src/app/harness/` | TUI/WebUI for architect mode |
 
-## CONVENTIONS
-- **Monorepo**: Uses `pnpm` workspaces. Build all with `pnpm run start:all`.
-- **Backend**: Fastify for high-performance async I/O. Socket.io for real-time.
-- **Frontend**: Next.js (App Router). *Note*: Uses custom `server.js` (not standard `next start`).
-- **Memory**: `supermemory` tool for persistent context. Scopes: `project` vs `user`.
-- **Agents**: Defined in JSON schema (`agents/`). Follow `AgentDefinition`.
+## CORE CONVENTIONS
+- **Harness Priority:** Always prefer features that improve the developer experience (DX) and code quality.
+- **Model Orchestration:** Use O3-mini/DeepSeek-R1 for reasoning and GPT-4o/Claude-3.5-Sonnet for implementation.
+- **Diff Editing:** Strictly follow the `SEARCH/REPLACE` protocol for code modifications.
+- **LSP Feedback:** Never commit code without verifying it through the `LspManager` diagnostics.
 
-## ANTI-PATTERNS (THIS PROJECT)
-- **Security**: NEVER commit API keys, `.env`, or session tokens.
-- **Simulation**: DO NOT simulate actions. Actually call the tools.
-- **Types**: DO NOT use `any`. Use `unknown` and narrow types.
-- **Commits**: DO NOT revert changes unless explicitly requested.
-- **Docs**: DO NOT use unicode bullets or `\n` in DOCX generation.
-- **Deprecated**: Avoid `opencode-workflows` (use keystone) and GPT-5.0 models.
-
-## COMMANDS
-```bash
-# Development
-pnpm install            # Install dependencies
-pnpm run start:all      # Build & Start everything (Core + UI)
-pnpm --filter @aios/core dev  # Start Core only
-pnpm --filter @aios/ui dev    # Start UI only
-
-# Build
-pnpm run build          # Build all packages
-```
-
-## NOTES
-- **Mixed Lockfiles**: Project contains both `pnpm-lock.yaml` and `package-lock.json`. Use `pnpm`.
-- **UI Server**: `packages/ui` uses a custom `server.js`. Do not try to run with standard `next dev`.
-- **Submodules**: Always check `SUBMODULES.md` before assuming a submodule's state.
+## ANTI-PATTERNS
+- **Infra Bloat:** Avoid generic cloud-scale features unless they directly benefit the local coding harness.
+- **Context Pollution:** Never expose 100+ tools to an agent at once; use progressive disclosure.
+- **Blind Commits:** Don't let agents commit code without autonomous or human verification.

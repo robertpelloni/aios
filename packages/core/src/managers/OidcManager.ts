@@ -1,5 +1,7 @@
 import { EventEmitter } from 'events';
 import crypto from 'crypto';
+import { RbacService } from '../services/RbacService.js';
+
 
 export interface OidcProvider {
   id: string;
@@ -18,7 +20,9 @@ export interface OidcConfig {
   defaultProviderId?: string;
   sessionTimeout: number;
   allowedRedirectUrls: string[];
+  groupToRoleMapping?: Record<string, string>;
 }
+
 
 export interface OidcTokenSet {
   accessToken: string;
@@ -179,9 +183,27 @@ export class OidcManager extends EventEmitter {
       tokens,
       userInfo,
     });
+
+    // Auto-assign role based on groups if mapping exists
+    if (userInfo.groups && this.config.groupToRoleMapping) {
+      const rbac = RbacService.getInstance();
+      for (const group of userInfo.groups) {
+        const role = this.config.groupToRoleMapping[group];
+        if (role) {
+          try {
+            rbac.assignRole(userInfo.sub, role as any);
+            console.log(`[OIDC] Auto-assigned role ${role} to user ${userInfo.sub} from group ${group}`);
+          } catch (e) {
+            console.error(`[OIDC] Failed to auto-assign role ${role}:`, e);
+          }
+        }
+      }
+    }
+
     this.emit('sessionCreated', { sessionId, userId: userInfo.sub });
     return sessionId;
   }
+
 
   getSession(sessionId: string): { userId: string; userInfo: OidcUserInfo } | null {
     const session = this.sessions.get(sessionId);
@@ -214,6 +236,11 @@ export class OidcManager extends EventEmitter {
   setSessionTimeout(ms: number): void {
     this.config.sessionTimeout = ms;
   }
+
+  setGroupToRoleMapping(mapping: Record<string, string>): void {
+    this.config.groupToRoleMapping = mapping;
+  }
+
 
   getStatus(): {
     providerCount: number;

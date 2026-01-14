@@ -8,18 +8,24 @@ export type { Supervisor, SupervisorConfig, CouncilMessage } from './BaseSupervi
 export { OpenAISupervisor } from './OpenAISupervisor.js';
 export { AnthropicSupervisor } from './AnthropicSupervisor.js';
 export { GenericOpenAISupervisor } from './GenericOpenAISupervisor.js';
+export { RemoteSupervisor, type RemoteSupervisorConfig } from './RemoteSupervisor.js';
 
 import type { SupervisorConfig, Supervisor } from './BaseSupervisor.js';
 import { OpenAISupervisor } from './OpenAISupervisor.js';
 import { AnthropicSupervisor } from './AnthropicSupervisor.js';
 import { GenericOpenAISupervisor } from './GenericOpenAISupervisor.js';
+import { RemoteSupervisor, type RemoteSupervisorConfig } from './RemoteSupervisor.js';
 
 const OPENAI_PROVIDERS = ['openai', 'gpt'];
 const ANTHROPIC_PROVIDERS = ['anthropic', 'claude'];
 const GENERIC_PROVIDERS = ['deepseek', 'xai', 'grok', 'qwen', 'moonshot', 'kimi', 'gemini', 'google', 'custom'];
 
-export function createSupervisor(config: SupervisorConfig): Supervisor {
+export function createSupervisor(config: SupervisorConfig | RemoteSupervisorConfig): Supervisor {
   const provider = config.provider.toLowerCase();
+
+  if (provider === 'remote') {
+    return new RemoteSupervisor(config as RemoteSupervisorConfig);
+  }
 
   if (OPENAI_PROVIDERS.includes(provider)) {
     return new OpenAISupervisor(config);
@@ -33,7 +39,7 @@ export function createSupervisor(config: SupervisorConfig): Supervisor {
     return new GenericOpenAISupervisor(config);
   }
 
-  throw new Error(`Unknown supervisor provider: ${config.provider}. Supported: openai, anthropic, deepseek, xai, grok, qwen, moonshot, kimi, gemini, google, custom`);
+  throw new Error(`Unknown supervisor provider: ${config.provider}. Supported: remote, openai, anthropic, deepseek, xai, grok, qwen, moonshot, kimi, gemini, google, custom`);
 }
 
 export class SupervisorRegistry {

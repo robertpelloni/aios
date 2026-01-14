@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.1] - 2026-01-14
+
+### Massive Ecosystem Integration
+- **Submodule Expansion:** Integrated **229** submodules covering the entire AI coding landscape.
+  - **SuperAI CLI:** Added `superai-cli/` with wrappers for Codebuff, Kimi, Claude Code, and more.
+  - **Memory:** Added `memory/` ecosystem with LettA, Mem0, Zep, and local vector stores.
+  - **MCP Servers:** Added 36+ general purpose MCP servers (Financial, Browser, Search).
+  - **Computer Use:** Integrated `computer-use/` tools including Microsoft Fara and Magentic UI.
+- **Dashboard Generator:** Added `scripts/generate_dashboard.py` to automatically track and categorize all integrated submodules in `SUBMODULES.md`.
+
+### Added
+- **Submodules:**
+  - `agents/refs/agentapi`: Universal agent control API.
+  - `agents/workty`: Task management agent.
+  - `superai-cli/clis/codex-kaioken`: Advanced Codex wrapper.
+  - `tools/security/claude-code-safety-net`: Safety layer for AI agents.
+  - `tools/github/claude-code-gh-dash`: GitHub dashboard integration.
+  - `skills/external/ensue-skill`: Skill library integration.
+
+### Documentation
+- **SUBMODULES.md:** Fully populated ecosystem dashboard with categorized tables and version tracking.
+- **ROADMAP.md:** Updated to reflect the completion of Ecosystem Integration and new goals for Unified CLI Runner and Sandboxing.
+
 ## [0.5.0] - 2026-01-14
 
 ### Major Pivot: The SuperAI Era

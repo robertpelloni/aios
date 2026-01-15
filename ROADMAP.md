@@ -60,3 +60,25 @@
 - [ ] **Consensus Protocol:** Multi-model debate engine.
 - [ ] **Git Worktree Squads:** Parallel coding agents in isolated branches.
 - [ ] **Local-Remote Bridge:** Sync projects between local machine and cloud instances.
+
+## Phase 19: Enterprise & Ecosystem (Restored)
+### Advanced Governance & Security
+- [x] **RBAC Foundation:** Role-based access control service and middleware (admin, developer, operator, viewer)
+- [ ] **SSO integration:** OIDC/SAML foundation
+- [x] **Enhanced Audit Logging:** Comprehensive audit trails for agent, council, and architect actions
+- [ ] **Policy Engine:** Declarative policies for agent behavior and resource usage
+
+### Distributed Orchestration
+- [ ] **Multi-Node Council:** Distributed supervisor councils across different regions/nodes
+- [ ] **Agent-to-Agent (A2A) Mesh:** Secure communication protocol for autonomous agent cooperation
+- [ ] **Edge Deployment:** Lightweight AIOS runtime for edge devices
+
+### Developer Ecosystem
+- [ ] **AIOS Marketplace:** Registry for sharing supervisors, skills, and agent templates
+- [ ] **Visual Designer:** Low-code interface for designing agent workflows and council structures
+- [ ] **OpenAPI / SDK:** Formalized external API and multi-language SDKs (Python, Go, Rust)
+
+### Performance & Scalability
+- [ ] **GPU Acceleration:** Native support for local model acceleration (llama.cpp integration)
+- [ ] **Tiered Memory:** Advanced memory management with cold storage and semantic caching
+- [ ] **Batch Processing:** High-throughput task execution for large-scale operations

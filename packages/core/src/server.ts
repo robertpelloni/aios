@@ -117,6 +117,7 @@ import { createOidcRoutes } from './routes/oidcRoutesHono.js';
 import { createToolAnnotationRoutes } from './routes/toolAnnotationRoutesHono.js';
 
 import { IngestionManager } from './managers/IngestionManager.js';
+import { ToolDisclosureService } from './services/ToolDisclosureService.js';
 import { TrafficInspectionService } from './services/TrafficInspectionService.js';
 
 export class CoreService {
@@ -243,9 +244,15 @@ export class CoreService {
     this.proxyManager.setAgentDependencies(this.agentExecutor, this.agentManager);
     this.proxyManager.setToolAnnotationManager(this.toolAnnotationManager);
 
+    // Services
+    const toolSearchService = this.proxyManager['searchService']; // Access private service
+    const toolDisclosureService = new ToolDisclosureService(toolSearchService);
+
     // Ingestion & Document Management (Requires AgentExecutor)
     this.ingestionManager = new IngestionManager(this.memoryManager, this.agentExecutor);
     this.documentManager = new DocumentManager(path.join(rootDir, 'documents'), this.memoryManager, this.ingestionManager);
+
+    this.agentExecutor.setToolDisclosureService(toolDisclosureService);
 
     this.autopilotManager = new AutopilotManager(this.agentExecutor, this.agentManager);
 

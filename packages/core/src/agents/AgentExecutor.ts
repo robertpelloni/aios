@@ -4,9 +4,11 @@ import { ModelGateway } from '../gateway/ModelGateway.js';
 import { SystemPromptManager } from '../managers/SystemPromptManager.js';
 import { SessionManager } from '../managers/SessionManager.js';
 import { PolicyService } from '../services/PolicyService.js';
+import { ToolDisclosureService } from '../services/ToolDisclosureService.js';
 
 export class AgentExecutor {
     private modelGateway: ModelGateway;
+    private toolDisclosureService?: ToolDisclosureService;
 
     constructor(
         private proxyManager: McpProxyManager,
@@ -16,6 +18,10 @@ export class AgentExecutor {
         private policyService?: PolicyService
     ) {
         this.modelGateway = new ModelGateway(secretManager);
+    }
+
+    setToolDisclosureService(service: ToolDisclosureService) {
+        this.toolDisclosureService = service;
     }
 
     async run(agent: any, task: string, context: any = {}, sessionId: string) {
@@ -44,7 +50,19 @@ export class AgentExecutor {
         const globalSystem = this.systemPromptManager?.getPrompt() || "";
         const userInstructions = this.systemPromptManager?.getUserInstructions('default') || ""; // Todo: get active profile
 
-        const tools = await this.proxyManager.getAllTools();
+        let tools;
+        if (this.toolDisclosureService) {
+            // Dynamic Tool Disclosure
+            console.log(`[AgentExecutor] Using dynamic tool disclosure for task: ${task.substring(0, 50)}...`);
+            tools = await this.toolDisclosureService.getToolsForContext(task, {
+                maxTools: 20,
+                pinnedTools: ['remember', 'search_memory', 'recall_recent', 'save_handoff', 'run_subagent'] // Always available
+            });
+        } else {
+            // Fallback to all tools
+            tools = await this.proxyManager.getAllTools();
+        }
+
         const toolsPrompt = tools.map((t: any) => `- ${t.name}: ${t.description}`).join('\n');
 
         const systemPrompt = `

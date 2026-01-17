@@ -51,9 +51,9 @@
 - [ ] **History & Email:** Secure access to history and GMail via authenticated MCP servers.
 
 ## Phase 17: Universal MCP & Orchestration
-- [ ] **Traffic Inspector:** Real-time JSON-RPC inspection (Completed in Core).
-- [ ] **Dynamic Disclosure:** Hide tools until needed to save context.
-- [ ] **Semantic Reranking:** Optimize tool descriptions for model consumption.
+- [x] **Traffic Inspector:** Real-time JSON-RPC inspection (Completed in Core).
+- [x] **Dynamic Disclosure:** Hide tools until needed to save context.
+- [x] **Semantic Reranking:** Optimize tool descriptions for model consumption.
 - [ ] **Proxy System:** Bridge remote/local servers.
 
 ## Phase 18: Multi-Agent Squads

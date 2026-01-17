@@ -118,6 +118,7 @@ import { createToolAnnotationRoutes } from './routes/toolAnnotationRoutesHono.js
 
 import { IngestionManager } from './managers/IngestionManager.js';
 import { ToolDisclosureService } from './services/ToolDisclosureService.js';
+import { ToolDescriptionOptimizer } from './services/ToolDescriptionOptimizer.js';
 import { TrafficInspectionService } from './services/TrafficInspectionService.js';
 
 export class CoreService {
@@ -246,7 +247,8 @@ export class CoreService {
 
     // Services
     const toolSearchService = this.proxyManager['searchService']; // Access private service
-    const toolDisclosureService = new ToolDisclosureService(toolSearchService);
+    const toolOptimizer = new ToolDescriptionOptimizer(this.modelGateway);
+    const toolDisclosureService = new ToolDisclosureService(toolSearchService, toolOptimizer);
 
     // Ingestion & Document Management (Requires AgentExecutor)
     this.ingestionManager = new IngestionManager(this.memoryManager, this.agentExecutor);

@@ -1,13 +1,18 @@
 import { ToolSearchService, ToolDefinition } from './ToolSearchService.js';
+import { ToolDescriptionOptimizer } from './ToolDescriptionOptimizer.js';
 
 export interface DisclosureOptions {
     maxTools?: number;
     pinnedTools?: string[]; // Names of tools to always include
     context?: string; // The current conversation context/task
+    optimizeDescriptions?: boolean; // Whether to rewrite descriptions for the LLM
 }
 
 export class ToolDisclosureService {
-    constructor(private searchService: ToolSearchService) {}
+    constructor(
+        private searchService: ToolSearchService,
+        private optimizer?: ToolDescriptionOptimizer
+    ) {}
 
     /**
      * Selects the most relevant tools for the given context.
@@ -47,8 +52,15 @@ export class ToolDisclosureService {
                 .slice(0, searchLimit);
         }
 
-        // 3. Combine and Return
-        return [...pinnedTools, ...relevantTools];
+        // 3. Combine
+        let finalTools = [...pinnedTools, ...relevantTools];
+
+        // 4. Optimize Descriptions (Semantic Reranking/Optimization)
+        if (options.optimizeDescriptions && this.optimizer) {
+            finalTools = await this.optimizer.optimizeTools(finalTools);
+        }
+
+        return finalTools;
     }
 
     /**

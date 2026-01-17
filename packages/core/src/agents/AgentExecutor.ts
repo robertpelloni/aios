@@ -56,7 +56,8 @@ export class AgentExecutor {
             console.log(`[AgentExecutor] Using dynamic tool disclosure for task: ${task.substring(0, 50)}...`);
             tools = await this.toolDisclosureService.getToolsForContext(task, {
                 maxTools: 20,
-                pinnedTools: ['remember', 'search_memory', 'recall_recent', 'save_handoff', 'run_subagent'] // Always available
+                pinnedTools: ['remember', 'search_memory', 'recall_recent', 'save_handoff', 'run_subagent'], // Always available
+                optimizeDescriptions: true // Enable semantic optimization
             });
         } else {
             // Fallback to all tools

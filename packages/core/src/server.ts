@@ -936,7 +936,22 @@ export class CoreService {
     this.contextManager.on('updated', (context) => this.io.emit('context_updated', context));
     this.commandManager.on('updated', (commands) => this.io.emit('commands_updated', commands));
     this.mcpManager.on('updated', (servers) => this.io.emit('mcp_updated', servers));
+    this.mcpManager.on('traffic', (event) => {
+        const msg = event.message;
+        const method = msg?.method;
+        const id = msg?.id;
+        
+        TrafficInspectionService.getInstance().addFrame({
+            timestamp: event.timestamp,
+            direction: event.direction,
+            serverId: event.serverId,
+            method: method,
+            data: msg,
+            id: id ? String(id) : undefined
+        });
+    });
     this.marketplaceManager.on('updated', (pkgs) => this.io.emit('marketplace_updated', pkgs));
+
     this.profileManager.on('profileChanged', (p) => this.io.emit('profile_changed', p));
 
     // ArchitectMode Event Bridging

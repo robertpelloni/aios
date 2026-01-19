@@ -110,7 +110,7 @@
     "test": "echo \"No tests specified for vscode\" && exit 0"
   },
   "devDependencies": {
-    "@types/vscode": "^1.85.0",
+    "@types/vscode": "^1.108.1",
     "@types/node": "20.x",
     "typescript": "^5.3.3"
   },

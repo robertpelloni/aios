@@ -82,23 +82,28 @@ async function fetchJSON<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 export async function fetchCLITools(): Promise<CLITool[]> {
-  return fetchJSON<CLITool[]>('/api/autopilot/cli/tools');
+  const data = await fetchJSON<{ tools: CLITool[] }>('/api/autopilot/cli/tools');
+  return data.tools;
 }
 
+
 export async function refreshCLIDetection(): Promise<CLITool[]> {
-  return fetchJSON<CLITool[]>('/api/autopilot/cli/tools', { method: 'POST' });
+  return fetchJSON<CLITool[]>('/api/autopilot/cli/tools/refresh', { method: 'POST' });
 }
 
 export async function registerCustomTool(tool: Partial<CLITool>): Promise<CLITool> {
-  return fetchJSON<CLITool>('/api/autopilot/cli/tools/register', {
+  return fetchJSON<CLITool>('/api/autopilot/cli/tools/custom', {
     method: 'POST',
     body: JSON.stringify(tool),
   });
 }
 
+
 export async function fetchSessions(): Promise<CLISession[]> {
-  return fetchJSON<CLISession[]>('/api/autopilot/sessions');
+  const data = await fetchJSON<{ sessions: CLISession[] }>('/api/autopilot/sessions');
+  return data.sessions;
 }
+
 
 export async function createSession(data: { cliType: string; workingDirectory: string }): Promise<CLISession> {
   return fetchJSON<CLISession>('/api/autopilot/sessions', {
@@ -124,12 +129,17 @@ export async function deleteSession(id: string): Promise<void> {
 }
 
 export async function startAllSessions(): Promise<void> {
-  await fetchJSON<void>('/api/autopilot/sessions/start-all', { method: 'POST' });
+  // No "start all" endpoint in core right now.
+  // UI will fall back to starting sessions one-by-one.
+  return;
 }
 
 export async function stopAllSessions(): Promise<void> {
-  await fetchJSON<void>('/api/autopilot/sessions/stop-all', { method: 'POST' });
+  // No "stop all" endpoint in core right now.
+  // UI will fall back to stopping sessions one-by-one.
+  return;
 }
+
 
 export async function fetchSmartPilotStatus(): Promise<SmartPilotStatus> {
   return fetchJSON<SmartPilotStatus>('/api/autopilot/smart-pilot/status');
@@ -399,14 +409,34 @@ export function useAutopilot(): UseAutopilotReturn {
   }, []);
 
   const startAll = useCallback(async () => {
-    await startAllSessions();
+    // Core does not currently provide a bulk start endpoint.
+    // Start sequentially to avoid overwhelming the machine.
+    for (const session of sessions) {
+      if (session.status !== 'active') {
+        try {
+          await startSession(session.id);
+        } catch {
+          // ignore individual failures
+        }
+      }
+    }
     await loadSessions();
-  }, [loadSessions]);
-
+  }, [loadSessions, sessions]);
+ 
   const stopAll = useCallback(async () => {
-    await stopAllSessions();
+    // Core does not currently provide a bulk stop endpoint.
+    for (const session of sessions) {
+      if (session.status === 'active') {
+        try {
+          await stopSession(session.id);
+        } catch {
+          // ignore individual failures
+        }
+      }
+    }
     await loadSessions();
-  }, [loadSessions]);
+  }, [loadSessions, sessions]);
+
 
   const toggleSmartPilot = useCallback(async (enabled: boolean) => {
     const status = await updateSmartPilotStatus(enabled);

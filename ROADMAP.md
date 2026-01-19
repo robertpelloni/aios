@@ -6,9 +6,17 @@
 - [x] **Process Monitor:** Watchdog for background services.
 - [x] **Hardware Stats:** Real-time resource monitoring.
 - [x] **Ecosystem Dashboard:** Auto-generated `SUBMODULES.md` tracking 200+ integrated tools.
-- [ ] **Massive Submodule Integration:** Import and categorize 100+ external tools into `external/`.
-- [ ] **Resource Indexing:** Create `resource-index.json` to track research status of all external tools.
+- [x] **Massive Submodule Integration:** Import and categorize 100+ external tools into `external/`.
+- [x] **Resource Indexing:** `FEATURES_CATALOG.md` created with research status.
 - [ ] **Unified Dashboarding:** Create UI pages for Jules, Opencode, and General Tool management.
+
+## Phase 20: AIOS Core Implementation (New)
+**Goal:** Build the "Director + Swarm" Orchestrator.
+- [x] **Scaffolding:** Monorepo (Turborepo), Next.js Dashboard, Core Package initialized.
+- [x] **ModelSelector:** Quota management logic implemented.
+- [x] **Universal MCP Host:** Basic `MCPServer` wrapper created.
+- [x] **Router Logic:** Implement sub-MCP routing.
+- [x] **Dashboard UI:** Connect WebUI to Core via tRPC/WebSockets.
 
 ## Phase 14: Deep Code Intelligence (The Foundation)
 **Goal:** Establish the robust indexing and execution layer required for high-fidelity coding.

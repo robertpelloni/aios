@@ -3,11 +3,22 @@ import os
 import datetime
 
 def get_submodule_status():
-    """Gets status of registered submodules."""
+    """Gets status of registered top-level submodules."""
     try:
+        # NOTE: Do not use --recursive here.
+        # Some upstream submodules include broken nested gitlinks (missing .gitmodules),
+        # which causes recursive traversal to fail and truncates the dashboard.
         result = subprocess.run(
-            ["git", "submodule", "status", "--recursive"], capture_output=True, text=True, encoding="utf-8"
+            ["git", "submodule", "status"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
         )
+        if result.returncode != 0 and result.stderr.strip():
+            print(
+                f"Warning: git submodule status returned {result.returncode}: {result.stderr.strip()}"
+            )
+
         submodules = {}
         for line in result.stdout.splitlines():
             parts = line.strip().split()
@@ -93,7 +104,9 @@ def generate_dashboard():
         if category not in dashboard_data:
             dashboard_data[category] = []
 
-        desc = get_repo_description(path)
+        desc = "Not checked out."
+        if os.path.isdir(path):
+            desc = get_repo_description(path)
         name = os.path.basename(path)
         
         # Try to find a cleaner name (e.g. from git config?) 

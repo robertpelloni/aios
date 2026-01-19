@@ -1,0 +1,9 @@
+{
+    "name": "@aios/extension",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "build": "echo 'Building extension...'",
+        "dev": "echo 'Watching extension...'"
+    }
+}

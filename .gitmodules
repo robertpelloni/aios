@@ -2614,3 +2614,456 @@
 [submodule "external/forks/zhifac/gemini-cli-router"]
 	path = external/forks/zhifac/gemini-cli-router
 	url = https://github.com/zhifac/gemini-cli-router
+[submodule "skills/refs/skills-bkircher"]
+	path = skills/refs/skills-bkircher
+	url = https://github.com/bkircher/skills
+[submodule "cli-harnesses/code-assistant-manager"]
+	path = cli-harnesses/code-assistant-manager
+	url = https://github.com/Chat2AnyLLM/code-assistant-manager
+[submodule "superai-cli/proxies/gemini-openai-proxy-2"]
+	path = superai-cli/proxies/gemini-openai-proxy-2
+	url = https://github.com/zuisong/gemini-openai-proxy
+[submodule "cli-harnesses/CodeNomad"]
+	path = cli-harnesses/CodeNomad
+	url = https://github.com/NeuralNomadsAI/CodeNomad
+[submodule "cli-harnesses/claude-code-madapp"]
+	path = cli-harnesses/claude-code-madapp
+	url = https://github.com/MadAppGang/claude-code
+[submodule "superai-cli/proxies/openai-gemini-2"]
+	path = superai-cli/proxies/openai-gemini-2
+	url = https://github.com/PublicAffairs/openai-gemini
+[submodule "external/orchestration/a2a-main"]
+	path = external/orchestration/a2a-main
+	url = https://github.com/a2aproject/A2A
+[submodule "cli-harnesses/devin.cursorrules"]
+	path = cli-harnesses/devin.cursorrules
+	url = https://github.com/grapeot/devin.cursorrules
+[submodule "cli-harnesses/ccs"]
+	path = cli-harnesses/ccs
+	url = https://github.com/kaitranntt/ccs
+[submodule "cli-harnesses/cc-switch"]
+	path = cli-harnesses/cc-switch
+	url = https://github.com/farion1231/cc-switch
+[submodule "cli-harnesses/Lynkr"]
+	path = cli-harnesses/Lynkr
+	url = https://github.com/vishalveerareddy123/Lynkr
+[submodule "cli-harnesses/emdash"]
+	path = cli-harnesses/emdash
+	url = https://github.com/generalaction/emdash
+[submodule "cli-harnesses/kimi-cli"]
+	path = cli-harnesses/kimi-cli
+	url = https://github.com/MoonshotAI/kimi-cli
+[submodule "mcp-servers/browser/algonius-browser-2"]
+	path = mcp-servers/browser/algonius-browser-2
+	url = https://github.com/algonius/algonius-browser
+[submodule "mcp-routers/agent-mcp-gateway"]
+	path = mcp-routers/agent-mcp-gateway
+	url = https://github.com/roddutra/agent-mcp-gateway
+[submodule "mcp-tool-rag/lootbox"]
+	path = mcp-tool-rag/lootbox
+	url = https://github.com/jx-codes/lootbox
+[submodule "mcp-routers/ncp"]
+	path = mcp-routers/ncp
+	url = https://github.com/portel-dev/ncp
+[submodule "multi-agent/opus-agents"]
+	path = multi-agent/opus-agents
+	url = https://github.com/sathish316/opus_agents
+[submodule "frameworks/Kode-cli-2"]
+	path = frameworks/Kode-cli-2
+	url = https://github.com/shareAI-lab/Kode-cli
+[submodule "mcp-routers/microsoft-mcp-gateway-2"]
+	path = mcp-routers/microsoft-mcp-gateway-2
+	url = https://github.com/microsoft/mcp-gateway
+[submodule "mcp-servers/browser/algonius-browser-3"]
+	path = mcp-servers/browser/algonius-browser-3
+	url = https://github.com/algonius/algonius-browser
+[submodule "external/orchestration/ag-ui-protocol"]
+	path = external/orchestration/ag-ui-protocol
+	url = https://github.com/ag-ui-protocol/ag-ui
+[submodule "mcp-servers/misc/wot-mcp"]
+	path = mcp-servers/misc/wot-mcp
+	url = https://github.com/macc-n/wot-mcp
+[submodule "mcp-dev-tools/agent-console"]
+	path = mcp-dev-tools/agent-console
+	url = https://github.com/eqtylab/agent-console
+[submodule "mcp-servers/misc/wot-mcp-cli"]
+	path = mcp-servers/misc/wot-mcp-cli
+	url = https://github.com/macc-n/wot-mcp-cli
+[submodule "mcp-servers/misc/wot-mcp-examples"]
+	path = mcp-servers/misc/wot-mcp-examples
+	url = https://github.com/macc-n/wot-mcp-examples
+[submodule "memory/systems/memory-opensource"]
+	path = memory/systems/memory-opensource
+	url = https://github.com/Papr-ai/memory-opensource
+[submodule "memory/adapters/adk-js"]
+	path = memory/adapters/adk-js
+	url = https://github.com/google/adk-js
+[submodule "mcp-dev-tools/resterm"]
+	path = mcp-dev-tools/resterm
+	url = https://github.com/unkn0wn-root/resterm
+[submodule "mcp-servers/misc/chgpt-mcp-bridge"]
+	path = mcp-servers/misc/chgpt-mcp-bridge
+	url = https://github.com/smonux/chgpt-mcp-bridge
+[submodule "misc/inframind"]
+	path = misc/inframind
+	url = https://github.com/saikiranrallabandi/inframind
+[submodule "misc/tether-chat"]
+	path = misc/tether-chat
+	url = https://github.com/EJ-Tether/Tether-Chat
+[submodule "misc/MZaFaRM"]
+	path = misc/MZaFaRM
+	url = https://github.com/MZaFaRM/MZaFaRM
+[submodule "misc/Andrew6rant"]
+	path = misc/Andrew6rant
+	url = https://github.com/Andrew6rant/Andrew6rant
+[submodule "misc/bilgecan"]
+	path = misc/bilgecan
+	url = https://github.com/mokszr/bilgecan
+[submodule "misc/claude-limitline"]
+	path = misc/claude-limitline
+	url = https://github.com/tylergraydev/claude-limitline
+[submodule "memory/memora"]
+	path = memory/memora
+	url = https://github.com/agentic-mcp-tools/memora
+[submodule "memory/Claude-Matrix"]
+	path = memory/Claude-Matrix
+	url = https://github.com/ojowwalker77/Claude-Matrix
+[submodule "memory/mcp-obsidian-notes"]
+	path = memory/mcp-obsidian-notes
+	url = https://github.com/digit1024/mcp_obsidian_notes
+[submodule "memory/mcp-obsidian-notes-2"]
+	path = memory/mcp-obsidian-notes-2
+	url = https://github.com/digit1024/mcp_obsidian_notes
+[submodule "browsers/browser-tools-mcp"]
+	path = browsers/browser-tools-mcp
+	url = https://github.com/AgentDeskAI/browser-tools-mcp
+[submodule "browsers/mcp-chrome"]
+	path = browsers/mcp-chrome
+	url = https://github.com/hangwin/mcp-chrome
+[submodule "browsers/hyperbrowser-mcp"]
+	path = browsers/hyperbrowser-mcp
+	url = https://github.com/hyperbrowserai/mcp
+[submodule "browsers/mcpo-2"]
+	path = browsers/mcpo-2
+	url = https://github.com/open-webui/mcpo
+[submodule "misc/abanteai/spice"]
+	path = misc/abanteai/spice
+	url = https://github.com/AbanteAI/spice
+[submodule "misc/abanteai/tiktoken"]
+	path = misc/abanteai/tiktoken
+	url = https://github.com/AbanteAI/tiktoken
+[submodule "misc/abanteai/party"]
+	path = misc/abanteai/party
+	url = https://github.com/AbanteAI/party
+[submodule "misc/abanteai/gpt-generals"]
+	path = misc/abanteai/gpt-generals
+	url = https://github.com/AbanteAI/gpt-generals
+[submodule "misc/abanteai/repo-visualizer"]
+	path = misc/abanteai/repo-visualizer
+	url = https://github.com/AbanteAI/repo-visualizer
+[submodule "misc/abanteai/mentat-template-js"]
+	path = misc/abanteai/mentat-template-js
+	url = https://github.com/AbanteAI/mentat-template-js
+[submodule "misc/abanteai/websocket-demo"]
+	path = misc/abanteai/websocket-demo
+	url = https://github.com/AbanteAI/websocket-demo
+[submodule "misc/gemini-extensions/workspace"]
+	path = misc/gemini-extensions/workspace
+	url = https://github.com/gemini-cli-extensions/workspace
+[submodule "misc/gemini-extensions/firebase"]
+	path = misc/gemini-extensions/firebase
+	url = https://github.com/gemini-cli-extensions/firebase
+[submodule "misc/gemini-extensions/cloud-run-mcp"]
+	path = misc/gemini-extensions/cloud-run-mcp
+	url = https://github.com/GoogleCloudPlatform/cloud-run-mcp
+[submodule "misc/abanteai/vscode"]
+	path = misc/abanteai/vscode
+	url = https://github.com/AbanteAI/vscode
+[submodule "multi-agent/a2a-main"]
+	path = multi-agent/a2a-main
+	url = https://github.com/a2aproject/a2a
+[submodule "multi-agent/agentdepot-agents-2"]
+	path = multi-agent/agentdepot-agents-2
+	url = https://github.com/biagruot/agentdepot-agents
+[submodule "multi-agent/pydantic-deepagents-2"]
+	path = multi-agent/pydantic-deepagents-2
+	url = https://github.com/vstorm-co/pydantic-deepagents
+[submodule "mcp-servers/browser/algonius-browser-4"]
+	path = mcp-servers/browser/algonius-browser-4
+	url = https://github.com/algonius/algonius-browser
+[submodule "mcp-tool-rag/mcp-funnel"]
+	path = mcp-tool-rag/mcp-funnel
+	url = https://github.com/chris-schra/mcp-funnel
+[submodule "mcp-servers/orchestration/mcp-tool-chainer"]
+	path = mcp-servers/orchestration/mcp-tool-chainer
+	url = https://github.com/thirdstrandstudio/mcp-tool-chainer
+[submodule "mcp-routers/microsoft-mcp-gateway"]
+	path = mcp-routers/microsoft-mcp-gateway
+	url = https://github.com/microsoft/mcp-gateway
+[submodule "cli-harnesses/aichat"]
+	path = cli-harnesses/aichat
+	url = https://github.com/sigoden/aichat
+[submodule "mcp-hubs/awesome-mcp-servers-punkpeye"]
+	path = mcp-hubs/awesome-mcp-servers-punkpeye
+	url = https://github.com/punkpeye/awesome-mcp-servers
+[submodule "mcp-hubs/awesome-mcp-servers-appcypher"]
+	path = mcp-hubs/awesome-mcp-servers-appcypher
+	url = https://github.com/appcypher/awesome-mcp-servers
+[submodule "mcp-hubs/awesome-mcp-servers-wong2"]
+	path = mcp-hubs/awesome-mcp-servers-wong2
+	url = https://github.com/wong2/awesome-mcp-servers
+[submodule "mcp-hubs/toolsdk-mcp-registry"]
+	path = mcp-hubs/toolsdk-mcp-registry
+	url = https://github.com/toolsdk-ai/toolsdk-mcp-registry
+[submodule "mcp-hubs/awesome-ai-apps"]
+	path = mcp-hubs/awesome-ai-apps
+	url = https://github.com/Arindam200/awesome-ai-apps
+[submodule "skills/anthropics-skills"]
+	path = skills/anthropics-skills
+	url = https://github.com/anthropics/skills
+[submodule "skills/gemini-claude-skills"]
+	path = skills/gemini-claude-skills
+	url = https://github.com/stared/gemini-claude-skills
+[submodule "skills/bkircher-skills"]
+	path = skills/bkircher-skills
+	url = https://github.com/bkircher/skills
+[submodule "skills/ykdojo-claude-code-tips"]
+	path = skills/ykdojo-claude-code-tips
+	url = https://github.com/ykdojo/claude-code-tips
+[submodule "external/TheNoeTrevino-dotfiles"]
+	path = external/TheNoeTrevino-dotfiles
+	url = https://github.com/TheNoeTrevino/dotfiles
+[submodule "multi-agent/TaskSync"]
+	path = multi-agent/TaskSync
+	url = https://github.com/4regab/TaskSync
+[submodule "multi-agent/priyan-coder-multi-agent"]
+	path = multi-agent/priyan-coder-multi-agent
+	url = https://github.com/priyan-coder/multi-agent-orchestration
+[submodule "multi-agent/metamcp"]
+	path = multi-agent/metamcp
+	url = https://github.com/robertpelloni/metamcp
+[submodule "multi-agent/agentic-ray"]
+	path = multi-agent/agentic-ray
+	url = https://github.com/rayai-labs/agentic-ray
+[submodule "multi-agent/A2A"]
+	path = multi-agent/A2A
+	url = https://github.com/a2aproject/A2A
+[submodule "cli-harnesses/claude-code-madappgang"]
+	path = cli-harnesses/claude-code-madappgang
+	url = https://github.com/MadAppGang/claude-code
+[submodule "cli-harnesses/codemachine-cli"]
+	path = cli-harnesses/codemachine-cli
+	url = https://github.com/moazbuilds/CodeMachine-CLI
+[submodule "mcp-hubs/awesome-mcp-servers"]
+	path = mcp-hubs/awesome-mcp-servers
+	url = https://github.com/appcypher/awesome-mcp-servers
+[submodule "mcp-hubs/toolsdk-mcp-registry-toolsdk-ai"]
+	path = mcp-hubs/toolsdk-mcp-registry-toolsdk-ai
+	url = https://github.com/toolsdk-ai/toolsdk-mcp-registry
+[submodule "cli-harnesses/codebuff"]
+	path = cli-harnesses/codebuff
+	url = https://github.com/CodebuffAI/codebuff
+[submodule "multi-agent/OpenHands"]
+	path = multi-agent/OpenHands
+	url = https://github.com/OpenHands/OpenHands
+[submodule "multi-agent/langgraph"]
+	path = multi-agent/langgraph
+	url = https://github.com/langchain-ai/langgraph
+[submodule "mcp-hubs/awesome-ai-apps-Arindam200"]
+	path = mcp-hubs/awesome-ai-apps-Arindam200
+	url = https://github.com/Arindam200/awesome-ai-apps
+[submodule "skills/skills"]
+	path = skills/skills
+	url = https://github.com/anthropics/skills
+[submodule "skills/skills-openai"]
+	path = skills/skills-openai
+	url = https://github.com/openai/skills
+[submodule "skills/gemini-claude-skills-stared"]
+	path = skills/gemini-claude-skills-stared
+	url = https://github.com/stared/gemini-claude-skills
+[submodule "skills/skills-bkircher"]
+	path = skills/skills-bkircher
+	url = https://github.com/bkircher/skills
+[submodule "skills/claude-code-tips"]
+	path = skills/claude-code-tips
+	url = https://github.com/ykdojo/claude-code-tips
+[submodule "multi-agent/metamcp-robertpelloni"]
+	path = multi-agent/metamcp-robertpelloni
+	url = https://github.com/robertpelloni/metamcp
+[submodule "multi-agent/A2A-a2aproject"]
+	path = multi-agent/A2A-a2aproject
+	url = https://github.com/a2aproject/A2A
+[submodule "multi-agent/codev"]
+	path = multi-agent/codev
+	url = https://github.com/cluesmith/codev
+[submodule "multi-agent/1d3eeb46ddfda5257c08744972e0fc4c"]
+	path = multi-agent/1d3eeb46ddfda5257c08744972e0fc4c
+	url = https://gist.github.com/gc-victor/1d3eeb46ddfda5257c08744972e0fc4c
+[submodule "multi-agent/TaskSync-4regab"]
+	path = multi-agent/TaskSync-4regab
+	url = https://github.com/4regab/TaskSync
+[submodule "multi-agent/tasksync-mcp"]
+	path = multi-agent/tasksync-mcp
+	url = https://github.com/4regab/tasksync-mcp
+[submodule "multi-agent/agentic-ray-rayai-labs"]
+	path = multi-agent/agentic-ray-rayai-labs
+	url = https://github.com/rayai-labs/agentic-ray
+[submodule "multi-agent/agentdepot-agents"]
+	path = multi-agent/agentdepot-agents
+	url = https://github.com/biagruot/agentdepot-agents
+[submodule "multi-agent/agentic-playground"]
+	path = multi-agent/agentic-playground
+	url = https://github.com/denniszielke/agentic-playground
+[submodule "multi-agent/ag-ui"]
+	path = multi-agent/ag-ui
+	url = https://github.com/ag-ui-protocol/ag-ui
+[submodule "cli-harnesses/goose"]
+	path = cli-harnesses/goose
+	url = https://github.com/block/goose
+[submodule "multi-agent/CopilotKit"]
+	path = multi-agent/CopilotKit
+	url = https://github.com/CopilotKit/CopilotKit
+[submodule "multi-agent/a2a-ui"]
+	path = multi-agent/a2a-ui
+	url = https://github.com/a2anet/a2a-ui
+[submodule "multi-agent/Self-Learning-Agents"]
+	path = multi-agent/Self-Learning-Agents
+	url = https://github.com/omdivyatej/Self-Learning-Agents
+[submodule "cli-harnesses/claude-code-router"]
+	path = cli-harnesses/claude-code-router
+	url = https://github.com/musistudio/claude-code-router
+[submodule "cli-harnesses/ccs-kaitranntt"]
+	path = cli-harnesses/ccs-kaitranntt
+	url = https://github.com/kaitranntt/ccs
+[submodule "cli-harnesses/cc-switch-farion1231"]
+	path = cli-harnesses/cc-switch-farion1231
+	url = https://github.com/farion1231/cc-switch
+[submodule "cli-harnesses/emdash-generalaction"]
+	path = cli-harnesses/emdash-generalaction
+	url = https://github.com/generalaction/emdash
+[submodule "cli-harnesses/code-assistant-manager-Chat2AnyLLM"]
+	path = cli-harnesses/code-assistant-manager-Chat2AnyLLM
+	url = https://github.com/Chat2AnyLLM/code-assistant-manager
+[submodule "cli-harnesses/CodeNomad-NeuralNomadsAI"]
+	path = cli-harnesses/CodeNomad-NeuralNomadsAI
+	url = https://github.com/NeuralNomadsAI/CodeNomad
+[submodule "cli-harnesses/openai-gemini"]
+	path = cli-harnesses/openai-gemini
+	url = https://github.com/PublicAffairs/openai-gemini
+[submodule "cli-harnesses/gemini-openai-proxy"]
+	path = cli-harnesses/gemini-openai-proxy
+	url = https://github.com/zhu327/gemini-openai-proxy
+[submodule "cli-harnesses/gemini-openai-proxy-zuisong"]
+	path = cli-harnesses/gemini-openai-proxy-zuisong
+	url = https://github.com/zuisong/gemini-openai-proxy
+[submodule "cli-harnesses/vercel-ai-proxy"]
+	path = cli-harnesses/vercel-ai-proxy
+	url = https://github.com/Hk-Gosuto/vercel-ai-proxy
+[submodule "cli-harnesses/gemini-cli-router"]
+	path = cli-harnesses/gemini-cli-router
+	url = https://github.com/Jasonzhangf/gemini-cli-router
+[submodule "cli-harnesses/gemini-cli-router-zhifac"]
+	path = cli-harnesses/gemini-cli-router-zhifac
+	url = https://github.com/zhifac/gemini-cli-router
+[submodule "cli-harnesses/claude-code-openrouter"]
+	path = cli-harnesses/claude-code-openrouter
+	url = https://github.com/derek-larson14/claude-code-openrouter
+[submodule "cli-harnesses/gemini-router"]
+	path = cli-harnesses/gemini-router
+	url = https://github.com/takltc/gemini-router
+[submodule "cli-harnesses/ccproxy"]
+	path = cli-harnesses/ccproxy
+	url = https://github.com/starbased-co/ccproxy
+[submodule "cli-harnesses/GoogleGeminiRouter"]
+	path = cli-harnesses/GoogleGeminiRouter
+	url = https://github.com/Dhatchinamoorthy/GoogleGeminiRouter
+[submodule "cli-harnesses/cc-switch-cli"]
+	path = cli-harnesses/cc-switch-cli
+	url = https://github.com/SaladDay/cc-switch-cli
+[submodule "cli-harnesses/gemini-superclaude-mcp-server"]
+	path = cli-harnesses/gemini-superclaude-mcp-server
+	url = https://github.com/Dianel555/gemini-superclaude-mcp-server
+[submodule "cli-harnesses/splitrail"]
+	path = cli-harnesses/splitrail
+	url = https://github.com/Piebald-AI/splitrail
+[submodule "cli-harnesses/awesome-opencode"]
+	path = cli-harnesses/awesome-opencode
+	url = https://github.com/awesome-opencode/awesome-opencode
+[submodule "cli-harnesses/awesome-copilot"]
+	path = cli-harnesses/awesome-copilot
+	url = https://github.com/github/awesome-copilot
+[submodule "cli-harnesses/opencode-gui"]
+	path = cli-harnesses/opencode-gui
+	url = https://github.com/milisp/opencode-gui
+[submodule "cli-harnesses/opencode-web"]
+	path = cli-harnesses/opencode-web
+	url = https://github.com/chris-tse/opencode-web
+[submodule "cli-harnesses/amped"]
+	path = cli-harnesses/amped
+	url = https://github.com/slashtechno/amped
+[submodule "cli-harnesses/happy"]
+	path = cli-harnesses/happy
+	url = https://github.com/slopus/happy
+[submodule "cli-harnesses/schaltwerk"]
+	path = cli-harnesses/schaltwerk
+	url = https://github.com/2mawi2/schaltwerk
+[submodule "cli-harnesses/claude-code-mcp"]
+	path = cli-harnesses/claude-code-mcp
+	url = https://github.com/steipete/claude-code-mcp
+[submodule "cli-harnesses/claude-tools-mcp"]
+	path = cli-harnesses/claude-tools-mcp
+	url = https://github.com/brwse/claude-tools-mcp
+[submodule "cli-harnesses/multi-agent-orchestration"]
+	path = cli-harnesses/multi-agent-orchestration
+	url = https://github.com/priyan-coder/multi-agent-orchestration
+[submodule "cli-harnesses/amp-examples-and-guides"]
+	path = cli-harnesses/amp-examples-and-guides
+	url = https://github.com/sourcegraph/amp-examples-and-guides
+[submodule "cli-harnesses/awesome-amp-code"]
+	path = cli-harnesses/awesome-amp-code
+	url = https://github.com/jdorfman/awesome-amp-code
+[submodule "cli-harnesses/oh-my-opencode"]
+	path = cli-harnesses/oh-my-opencode
+	url = https://github.com/code-yeongyu/oh-my-opencode
+[submodule "cli-harnesses/claude-hooks"]
+	path = cli-harnesses/claude-hooks
+	url = https://github.com/TheNoeTrevino/claude-hooks
+[submodule "cli-harnesses/llxprt-code"]
+	path = cli-harnesses/llxprt-code
+	url = https://github.com/vybestack/llxprt-code
+[submodule "cli-harnesses/OpenQode-Public-Alpha-GooseUltra-"]
+	path = cli-harnesses/OpenQode-Public-Alpha-GooseUltra-
+	url = https://github.com/roman-ryzenadvanced/OpenQode-Public-Alpha-GooseUltra-
+[submodule "cli-harnesses/grok-cli"]
+	path = cli-harnesses/grok-cli
+	url = https://github.com/superagent-ai/grok-cli
+[submodule "cli-harnesses/qwen-code"]
+	path = cli-harnesses/qwen-code
+	url = https://github.com/QwenLM/qwen-code
+[submodule "cli-harnesses/code"]
+	path = cli-harnesses/code
+	url = https://github.com/just-every/code
+[submodule "cli-harnesses/opencode"]
+	path = cli-harnesses/opencode
+	url = https://github.com/sst/opencode
+[submodule "cli-harnesses/crush"]
+	path = cli-harnesses/crush
+	url = https://github.com/charmbracelet/crush
+[submodule "cli-harnesses/factory"]
+	path = cli-harnesses/factory
+	url = https://github.com/factory-ai/factory
+[submodule "cli-harnesses/codebuff-CodebuffAI"]
+	path = cli-harnesses/codebuff-CodebuffAI
+	url = https://github.com/CodebuffAI/codebuff
+[submodule "cli-harnesses/CodeMachine-CLI-moazbuilds"]
+	path = cli-harnesses/CodeMachine-CLI-moazbuilds
+	url = https://github.com/moazbuilds/CodeMachine-CLI
+[submodule "cli-harnesses/codex"]
+	path = cli-harnesses/codex
+	url = https://github.com/openai/codex
+[submodule "cli-harnesses/kimi-cli-MoonshotAI"]
+	path = cli-harnesses/kimi-cli-MoonshotAI
+	url = https://github.com/MoonshotAI/kimi-cli
+[submodule "cli-harnesses/goose-block"]
+	path = cli-harnesses/goose-block
+	url = https://github.com/block/goose

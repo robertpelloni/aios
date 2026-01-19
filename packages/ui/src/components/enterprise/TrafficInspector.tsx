@@ -15,7 +15,8 @@ import {
   Trash2, 
   Filter, 
   Activity,
-  AlertCircle
+  AlertCircle,
+  Search
 } from 'lucide-react';
 
 interface TrafficFrame {

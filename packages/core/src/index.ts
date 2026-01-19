@@ -1,18 +1,32 @@
-import { CoreService } from './server.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
-// Resolve root directory correctly regardless of CWD
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// Dist is ./dist, so package root is ../
-const ROOT_DIR = path.resolve(__dirname, '..');
+import express from 'express';
+import cors from 'cors';
+import { createExpressMiddleware } from '@trpc/server/adapters/express';
+import { appRouter } from './trpc.js';
+export type { AppRouter } from './trpc.js';
+import { MCPServer } from './MCPServer.js';
 
-console.log(`[Core] Starting aios Hub from ${ROOT_DIR}`);
+export const name = "@aios/core";
+console.log(`Hello from ${name}`);
 
-const service = new CoreService(ROOT_DIR);
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3002;
+const app = express();
+app.use(cors());
 
-service.start(PORT).catch(err => {
-    console.error('Failed to start server:', err);
-    process.exit(1);
+// tRPC Middleware
+app.use(
+    '/trpc',
+    createExpressMiddleware({
+        router: appRouter,
+        createContext: () => ({}),
+    })
+);
+
+// MCP Server Setup
+const mcp = new MCPServer();
+mcp.start().catch((err) => console.error("Failed to start MCP server:", err));
+
+const PORT = 4000;
+app.listen(PORT, () => {
+    console.log(`AIOS Core running on http://localhost:${PORT}`);
+    console.log(`tRPC endpoint active at http://localhost:${PORT}/trpc`);
 });

@@ -41,7 +41,8 @@
       "https://github.com/ag-ui-protocol/ag-ui",
       "https://github.com/CopilotKit/CopilotKit",
       "https://github.com/a2anet/a2a-ui",
-      "https://github.com/omdivyatej/Self-Learning-Agents"
+      "https://github.com/omdivyatej/Self-Learning-Agents",
+      "https://github.com/microsoft/promptflow"
     ]
   },
   {
@@ -102,7 +103,9 @@
       "https://github.com/sigoden/aichat",
       "https://github.com/plandex-ai/plandex",
       "https://github.com/shareAI-lab/Kode-cli",
-      "https://github.com/augmentcode"
+      "https://github.com/augmentcode",
+      "https://github.com/tzachbon/smart-ralph",
+      "https://github.com/jshchnz/claude-code-scheduler"
     ]
   },
   {
@@ -291,7 +294,9 @@
       "https://github.com/ChromeDevTools/chrome-devtools-mcp",
       "https://github.com/algonius/algonius-browser",
       "https://github.com/williamkapke/kapture",
-      "https://github.com/puppeteer/puppeteer"
+      "https://github.com/puppeteer/puppeteer",
+      "https://github.com/Jinketomy-Masheldia/uPhone",
+      "https://github.com/cosinusalpha/webctl"
     ]
   },
   {
@@ -373,6 +378,7 @@
       "https://github.com/simoninithomas/awesome-ai-tools-for-game-dev",
       "https://github.com/Shubhamsaboo/awesome-llm-apps",
       "https://github.com/OpenHands/OpenHands",
+      "https://github.com/ZeframLou/call-me",
       "https://github.com/smallcloudai/refact",
       "https://github.com/cloudflare/vibesdk",
       "https://github.com/AnandChowdhary/continuous-claude",
@@ -597,6 +603,56 @@
       "https://github.com/xpipe-io/xpipe",
       "https://github.com/zenobi-us/opencode-plugin-template",
       "https://github.com/zenobi-us/opencode-skillful"
+    ]
+  },
+  {
+    "category": "web",
+    "path": "external/web",
+    "links": [
+      "https://www.openproject.org/docs/release-notes/17-0-0/",
+      "https://www.reddit.com/r/claude/comments/1qbpczt/a_useful_cheatsheet_for_understanding_claude/",
+      "https://www.reddit.com/r/ChatGPTCoding/comments/1qbl5em/which_ai_dev_tools_are_actually_worth_using_my/",
+      "https://www.reddit.com/r/ClaudeAI/comments/1qcj27k/what_is_the_most_recommended_website_for_browsing/",
+      "https://vercel.com/robertpelloni/~/ai?period=1h",
+      "https://opencode.ai/docs/zen/#privacy",
+      "https://vercel.com/robertpelloni/~/ai/model-list",
+      "https://www.google.com/search?q=opus+4.5+vs+gpt+5.2+vs+Gemini+3+pro&oq=opus+4.5+vs+gpt+5.2+vs+Gemini+3+pro&gs_lcrp=EghlZGdlX2lvcyoGCAAQRRg5MgYIABBFGDmoAgCwAgE&hl=en-US&sourceid=chrome-mobile&ie=UTF-8",
+      "https://opencode.ai/zen",
+      "https://www.google.com/search?q=chatgpt+plus+vs+claude+pro&oq=chatgpt+plus+vs+claude+pro&gs_lcrp=EghlZGdlX2lvcyoGCAAQRRg5MgYIABBFGDmoAgCwAgE&hl=en-US&sourceid=chrome-mobile&ie=UTF-8",
+      "https://chatgpt.com/",
+      "https://openai.com/",
+      "https://platform.openai.com/settings/organization/billing/overview",
+      "https://workspace.google.com/products/docs/",
+      "https://x.com/mntruell/status/2011562190286045552",
+      "https://www.wsj.com/tech/ai/openai-forges-multibillion-dollar-computing-partnership-with-cerebras-746a20e4",
+      "https://cursor.com/blog/scaling-agents",
+      "https://news.ycombinator.com/item?id=46624541",
+      "https://www.definite.app/blog/claude-code-search-skill",
+      "https://techcrunch.com/2026/01/14/ai-models-are-starting-to-crack-high-level-math-problems/",
+      "https://news.ycombinator.com/item?id=46625561",
+      "https://www.reddit.com/r/ClaudeAI/comments/1qcqdar/is_it_just_me_or_is_openai_codex_52_better_than/",
+      "https://www.reddit.com/r/codex/",
+      "https://www.reddit.com/r/codex/comments/1pq0s5c/gpt52codex_feedback_thread/",
+      "https://www.reddit.com/r/codex/comments/1q59qme/i_feel_bad_for_gpt52/",
+      "https://www.reddit.com/r/codex/comments/1pk591w/gpt_52_is_here_and_they_cooked/",
+      "https://www.reddit.com/r/codex/comments/1qcogqp/appreciation_post_plus_plan_is_generous/",
+      "https://www.reddit.com/r/codex/comments/1q7jta5/gpt52_is_so_cute/",
+      "https://www.reddit.com/r/codex/comments/1qc3x5b/codex_manager_v100_desktop_app_to_manage_openai/",
+      "https://www.reddit.com/r/codex/comments/1qawxee/fyi_gpt52codexxhigh_appears_likely_bugged_or/",
+      "https://www.reddit.com/r/codex/comments/1qboj3v/what_the_hell_is_up_with_gpt52codex_xhigh_in_the/",
+      "https://www.reddit.com/r/codex/comments/1qbirpl/52_xhigh_finally_nerfed/",
+      "https://www.reddit.com/r/codex/comments/1qbbby9/zeroshot_now_supports_codex/",
+      "https://www.reddit.com/r/opencodeCLI/comments/1qcsm90/opencode_black_is_now_generallyavailable/",
+      "https://www.reddit.com/r/notebooklm/comments/1qcups2/notebooklm_doesnt_deserve_to_be_called_notebooklm/",
+      "https://www.reddit.com/r/mcp/comments/1qcyrzk/followup-from-yesterdays-code-mode-post_mcp_setup/",
+      "https://www.reddit.com/r/opencodeCLI/comments/1qcy1pf/suggestion_dont_use_the_github_copilot/",
+      "https://www.reddit.com/r/ClaudeCode/comments/1qczhgd/tool_search_now_available_in_cc/",
+      "https://www.reddit.com/r/ClaudeAI/comments/1qcwckg/the_complete_guide_to_claude_code_v2_claudemd_mcp/",
+      "https://www.reddit.com/r/google_antigravity/comments/1qcuc8u/i_aggregated_58_skills_for_antigravity_into_one/",
+      "https://www.reddit.com/r/codex/comments/1qcrg95/this_codex_skills_repo_is_kind_of_insane/",
+      "https://www.reddit.com/r/GithubCopilot/comments/1qd5mbg/github_copilot_cli_new_features_from_latedecember/",
+      "https://www.reddit.com/r/Bard/comments/1qd0dc2/google_separates_raises_gemini_3_thinking_and_pro/",
+      "https://www.reddit.com/r/codex/comments/1qcwgsu/use_chatgptcom_pro_from_codex/"
     ]
   }
 ]

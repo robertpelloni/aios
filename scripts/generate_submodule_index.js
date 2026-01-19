@@ -6,7 +6,9 @@ const outputFile = path.join(__dirname, '../docs/SUBMODULE_INDEX.csv');
 
 try {
   console.log('Fetching submodule status...');
-  const statusOutput = execSync('git submodule status --recursive').toString();
+  // NOTE: Avoid --recursive due to some upstream submodules containing broken nested gitlinks
+  // (e.g. OpenQode has a qwen-code-reference gitlink with no .gitmodules mapping).
+  const statusOutput = execSync('git submodule status').toString();
   console.log(`Fetching submodule status... (Length: ${statusOutput.length})`);
   
   const submodules = [];

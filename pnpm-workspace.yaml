@@ -1,5 +1,7 @@
 packages:
+  - 'apps/*'
   - 'packages/*'
+  - 'cli/*'
   - 'mcp-servers/*'
   - 'packages/adapters/*'
   - 'submodules/mcpenetes'

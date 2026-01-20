@@ -1,6 +1,6 @@
-
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { ListToolsResult, CallToolResult, Tool } from "@modelcontextprotocol/sdk/types.js";
 
 export interface RouterConfig {
     defaultProvider?: string;
@@ -40,20 +40,38 @@ export class Router {
         return client;
     }
 
-    async route(toolName: string): Promise<string> {
-        if (toolName.startsWith("filesystem_")) {
-            // Ensure connection exists (lazy load)
-            if (!this.clients.has('filesystem')) {
-                // Assuming installed globally or via npx, but here we expect local node_modules resolving
-                // For now, we return the server NAME, and the MCPServer class will handle the actual call delegating to the client instance from this Router.
-                // Wait, the Router should probably manage the clients.
+    async listTools(): Promise<Tool[]> {
+        const allTools: Tool[] = [];
+        for (const [name, client] of this.clients.entries()) {
+            try {
+                const result = await client.listTools();
+                // Simple namespacing: if tool is "read_file", keep it as is for now
+                // In future: prefix with `${name}__` if needed
+                allTools.push(...result.tools);
+            } catch (e) {
+                console.error(`Failed to list tools from ${name}`, e);
             }
-            return "filesystem";
         }
-        if (toolName.startsWith("github_")) {
-            return "github";
+        return allTools;
+    }
+
+    async callTool(name: string, args: any): Promise<CallToolResult> {
+        // Naive routing: broadcast to all clients or find owner (inefficent but simple for v1)
+        // Better: Maintain a tool->client map in listTools()
+
+        // Strategy: Try to find which client has this tool
+        // Optimization: Cache this mapping later
+        for (const [clientName, client] of this.clients.entries()) {
+            try {
+                const tools = await client.listTools();
+                if (tools.tools.find(t => t.name === name)) {
+                    return (await client.callTool({ name, arguments: args })) as unknown as CallToolResult;
+                }
+            } catch (e) {
+                // Continue searching
+            }
         }
-        return "local";
+        throw new Error(`Tool ${name} not found in any connected MCP server.`);
     }
 
     getClient(name: string): Client | undefined {

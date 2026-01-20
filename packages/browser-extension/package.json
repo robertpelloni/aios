@@ -1,7 +1,7 @@
 {
-  "name": "@aios/browser-extension",
+  "name": "@borg/browser-extension-pkg",
   "version": "0.0.1",
-  "description": "aios Browser Extension for Hub Connectivity",
+  "description": "Borg Browser Extension for Hub Connectivity",
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch"

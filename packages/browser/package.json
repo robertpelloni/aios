@@ -1,5 +1,5 @@
 {
-  "name": "@aios/browser-extension",
+  "name": "@borg/browser-legacy",
   "version": "0.1.0-skeleton",
   "scripts": {
     "build": "webpack --config webpack.config.js"

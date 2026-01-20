@@ -1,7 +1,7 @@
 {
-  "name": "@aios/webui-mcp-router-cli",
+  "name": "@borg/webui-mcp-router-cli",
   "version": "1.0.0",
-  "description": "AIOS MCP Router WebUI CLI Orchestrator",
+  "description": "Borg MCP Router WebUI CLI Orchestrator",
   "type": "module",
   "main": "dist/page.js",
   "types": "dist/page.d.ts",

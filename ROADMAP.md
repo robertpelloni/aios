@@ -10,10 +10,17 @@
 - [x] **Resource Indexing:** `FEATURES_CATALOG.md` created with research status.
 - [ ] **Unified Dashboarding:** Create UI pages for Jules, Opencode, and General Tool management.
 
+## Phase X: Deep Research & Absorption (Continuous)
+**Goal:** Achieve feature parity with the "Definitive AIOS Resource Index" (432 tools).
+- [ ] **Ingest:** Process `reference/aios_master_index.csv`.
+- [ ] **Analyze:** Sub-agents to scrape and summarize every tool.
+- [ ] **Absorb:** Re-implement key features into AIOS Core.
+- [ ] **Submodules:** Add all relevant repos as upstream references.
+
 ## Phase 20: AIOS Core Implementation (New)
 **Goal:** Build the "Director + Swarm" Orchestrator.
 - [x] **Scaffolding:** Monorepo (Turborepo), Next.js Dashboard, Core Package initialized.
-- [x] **ModelSelector:** Quota management logic implemented.
+- [x] **ModelSelector:** Quota management logic and **Automatic Fallback** (Priority).
 - [x] **Universal MCP Host:** Basic `MCPServer` wrapper created.
 - [x] **Router Logic:** Implement sub-MCP routing.
 - [x] **Dashboard UI:** Connect WebUI to Core via tRPC/WebSockets.
@@ -22,8 +29,8 @@
 **Goal:** Establish the robust indexing and execution layer required for high-fidelity coding.
 
 ### Robust Indexing
-- [ ] **Vector Integration:** Enhance `RepoMapService` to use vector embeddings for semantic search (RAG).
-- [ ] **Tree-sitter Deep Dive:** Upgrade symbol extraction to support full call graphs and type hierarchies.
+- [x] **Vector Integration:** Enhance `RepoMapService` to use vector embeddings for semantic search (RAG).
+- [x] **Tree-sitter Deep Dive:** Upgrade symbol extraction to support full call graphs and type hierarchies.
 - [ ] **Graph Service:** Finalize `RepoGraphService` to visualize import/export dependencies.
 
 ### Secure Execution
@@ -34,8 +41,8 @@
 **Goal:** Match and exceed the capabilities of Amp, Auggie, Claude Code, Codebuff, and OpenCode.
 
 ### Core Engine
-- [ ] **Unified CLI Runner:** Create `aios cli` wrapper to transparently invoke any integrated CLI (`superai-cli/`).
-- [ ] **Unified TUI/WebUI:** Ensure 100% feature parity between terminal and web interfaces.
+- [x] **Unified CLI Runner:** Create `aios cli` wrapper to transparently invoke any integrated CLI (`superai-cli/`).
+- [x] **Unified TUI/WebUI:** Ensure 100% feature parity between terminal and web interfaces.
 - [ ] **Mobile Remote Control:** Responsive mobile UI for monitoring and intervening in agent sessions.
 - [ ] **Shell Integration:** Deep shell history integration and context awareness (Warp-style).
 
@@ -62,7 +69,7 @@
 - [x] **Traffic Inspector:** Real-time JSON-RPC inspection (Completed in Core).
 - [x] **Dynamic Disclosure:** Hide tools until needed to save context.
 - [x] **Semantic Reranking:** Optimize tool descriptions for model consumption.
-- [ ] **Proxy System:** Bridge remote/local servers.
+- [x] **Proxy System:** Bridge remote/local servers.
 
 ## Phase 18: Multi-Agent Squads
 - [ ] **Consensus Protocol:** Multi-model debate engine.

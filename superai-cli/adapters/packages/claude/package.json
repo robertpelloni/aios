@@ -1,9 +1,9 @@
 {
-  "name": "@aios/claude-adapter",
+  "name": "@borg/claude-adapter",
   "version": "0.1.0-skeleton",
   "main": "dist/index.js",
   "bin": {
-    "aios-claude": "./dist/index.js"
+    "borg-claude": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",

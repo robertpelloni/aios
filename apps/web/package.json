@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@aios/core": "workspace:*",
+    "@borg/core": "workspace:*",
     "@tanstack/react-query": "^5.90.19",
     "@trpc/client": "^11.8.1",
     "@trpc/react-query": "^11.8.1",

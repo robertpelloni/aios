@@ -1,5 +1,5 @@
 {
-    "name": "@aios/tsconfig",
+    "name": "@borg/tsconfig",
     "version": "0.1.0",
     "private": true,
     "files": [

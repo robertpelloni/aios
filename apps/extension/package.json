@@ -1,9 +1,18 @@
 {
-    "name": "@aios/extension",
+    "name": "@borg/extension",
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "build": "echo 'Building extension...'",
-        "dev": "echo 'Watching extension...'"
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "lint": "eslint src/"
+    },
+    "dependencies": {
+        "zod": "^3.22.4"
+    },
+    "devDependencies": {
+        "@types/chrome": "^0.0.260",
+        "tsup": "^8.0.2",
+        "typescript": "^5.3.3"
     }
 }

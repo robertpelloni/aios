@@ -1,5 +1,5 @@
 {
-  "name": "@aios/supervisor-plugin",
+  "name": "@borg/supervisor-plugin",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",

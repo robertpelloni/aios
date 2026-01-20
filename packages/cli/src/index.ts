@@ -7,22 +7,24 @@ import { App } from './ui/App.js';
 const program = new Command();
 
 program
-  .name("aios")
-  .description("The Ultimate AI Operating System CLI")
+  .name("borg")
+  .description("The Ultimate Borg Operating System CLI")
   .version("0.1.0");
 
 program
   .command("start")
-  .description("Start the AIOS Orchestrator")
-  .action(() => {
-    // Logic to spawn the core server or just connect
+  .description("Start the Borg Orchestrator")
+  .action(async () => {
     console.log("Starting Orchestrator...");
-    // For now, assume core is running or start it via child_process
+    const { startOrchestrator } = await import('@borg/core');
+    await startOrchestrator();
+    // Keep process alive
+    await new Promise(() => { });
   });
 
 program
   .command("status")
-  .description("Check AIOS Status")
+  .description("Check Borg Status")
   .action(async () => {
     render(React.createElement(App, { view: 'status' }));
   });

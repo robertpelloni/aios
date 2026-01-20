@@ -1,7 +1,7 @@
 {
-  "name": "@aios/mcp-router-cli",
+  "name": "@borg/mcp-router-cli",
   "version": "1.0.0",
-  "description": "AIOS MCP Router CLI - Manage MCP servers, configurations, and sessions",
+  "description": "Borg MCP Router CLI - Manage MCP servers, configurations, and sessions",
   "type": "module",
   "bin": {
     "mcp-router": "./mcp-router-cli.ts"
@@ -14,6 +14,6 @@
   },
   "dependencies": {
     "commander": "^12.1.0",
-    "@aios/core": "workspace:*"
+    "@borg/core": "workspace:*"
   }
 }

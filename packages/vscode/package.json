@@ -1,14 +1,23 @@
 {
-  "name": "aios-vscode",
-  "displayName": "AIOS Plugin",
+  "name": "borg-vscode",
+  "displayName": "Borg Plugin",
   "version": "0.2.0",
-  "description": "Connect VS Code to AIOS Hub for AI agent orchestration, memory management, and tool invocation",
-  "publisher": "aios",
+  "description": "Connect VS Code to Borg Hub for AI agent orchestration, memory management, and tool invocation",
+  "publisher": "borg",
   "engines": {
     "vscode": "^1.85.0"
   },
-  "categories": ["Other", "Machine Learning"],
-  "keywords": ["ai", "agents", "mcp", "orchestration", "memory"],
+  "categories": [
+    "Other",
+    "Machine Learning"
+  ],
+  "keywords": [
+    "ai",
+    "agents",
+    "mcp",
+    "orchestration",
+    "memory"
+  ],
   "main": "./dist/extension.js",
   "activationEvents": [
     "onStartupFinished"
@@ -51,26 +60,26 @@
         "command": "aios.openDashboard",
         "title": "AIOS: Open Dashboard"
       },
-{
-      "command": "aios.showLogs",
-      "title": "AIOS: Show Logs"
-    },
-    {
-      "command": "aios.startDebate",
-      "title": "AIOS: Start Council Debate"
-    },
-    {
-      "command": "aios.viewAnalytics",
-      "title": "AIOS: View Supervisor Analytics"
-    },
-    {
-      "command": "aios.listDebateTemplates",
-      "title": "AIOS: List Debate Templates"
-    },
-    {
-      "command": "aios.architectMode",
-      "title": "AIOS: Architect Mode (Two-Model)"
-    }
+      {
+        "command": "aios.showLogs",
+        "title": "AIOS: Show Logs"
+      },
+      {
+        "command": "aios.startDebate",
+        "title": "AIOS: Start Council Debate"
+      },
+      {
+        "command": "aios.viewAnalytics",
+        "title": "AIOS: View Supervisor Analytics"
+      },
+      {
+        "command": "aios.listDebateTemplates",
+        "title": "AIOS: List Debate Templates"
+      },
+      {
+        "command": "aios.architectMode",
+        "title": "AIOS: Architect Mode (Two-Model)"
+      }
     ],
     "configuration": {
       "title": "AIOS",

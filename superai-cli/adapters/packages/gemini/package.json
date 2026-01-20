@@ -1,9 +1,9 @@
 {
-  "name": "@aios/gemini-adapter",
+  "name": "@borg/gemini-adapter",
   "version": "0.1.0-skeleton",
   "main": "dist/index.js",
   "bin": {
-    "aios-gemini": "./dist/index.js"
+    "borg-gemini": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",

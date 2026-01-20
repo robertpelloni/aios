@@ -5,14 +5,14 @@ import {
     ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { Installer } from './installer.js';
-// import psList from 'ps-list'; 
-// Note: ps-list might need dynamic import in ESM or proper build handling. 
-// For now we'll stub it or use child_process if ps-list causes issues.
+import { ProcessManager } from './process_manager.js';
 
 class SupervisorServer {
     private server: Server;
+    private processManager: ProcessManager;
 
     constructor() {
+        this.processManager = new ProcessManager();
         this.server = new Server(
             {
                 name: "borg-supervisor",
@@ -47,8 +47,19 @@ class SupervisorServer {
                     },
                     {
                         name: "list_processes",
-                        description: "List active processes (Stubbed for now)",
+                        description: "List active system processes",
                         inputSchema: { type: "object", properties: {} }
+                    },
+                    {
+                        name: "kill_process",
+                        description: "Kill a process by PID",
+                        inputSchema: {
+                            type: "object",
+                            properties: {
+                                pid: { type: "number", description: "Process ID" }
+                            },
+                            required: ["pid"]
+                        }
                     }
                 ]
             };
@@ -65,13 +76,21 @@ class SupervisorServer {
             }
 
             if (request.params.name === "list_processes") {
-                // TODO: Implement real process listing
+                const processes = await this.processManager.listProcesses();
                 return {
-                    content: [{ type: "text", text: "Process listing not yet implemented." }]
+                    content: [{ type: "text", text: JSON.stringify(processes, null, 2) }]
                 };
             }
 
-            throw new Error("Tool not found");
+            if (request.params.name === "kill_process") {
+                const pid = request.params.arguments?.pid as number;
+                const result = await this.processManager.killProcess(pid);
+                return {
+                    content: [{ type: "text", text: result }]
+                };
+            }
+
+            throw new Error(`Tool ${request.params.name} not found`);
         });
     }
 

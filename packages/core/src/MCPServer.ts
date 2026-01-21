@@ -14,6 +14,11 @@ import { CodeChunk } from "./indexing/VectorStore.js";
 import { WebSocketServer } from 'ws';
 import { WebSocketServerTransport } from './transports/WebSocketServerTransport.js';
 import http from 'http';
+import { SkillRegistry } from "./skills/SkillRegistry.js";
+import { FileSystemTools } from "./tools/FileSystemTools.js";
+import { TerminalTools } from "./tools/TerminalTools.js";
+import { MemoryTools } from "./tools/MemoryTools.js";
+import { TunnelTools } from "./tools/TunnelTools.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,11 +29,16 @@ export class MCPServer {
     private router: Router;
     private indexer: Indexer;
     private modelSelector: ModelSelector;
+    private skillRegistry: SkillRegistry;
 
     constructor() {
         this.router = new Router();
         this.modelSelector = new ModelSelector();
         this.indexer = new Indexer(process.cwd());
+        this.skillRegistry = new SkillRegistry([
+            path.join(process.cwd(), '.borg', 'skills'),
+            path.join(process.env.HOME || process.env.USERPROFILE || '', '.borg', 'skills')
+        ]);
 
         // Standard Server (Stdio)
         this.server = this.createServerInstance();
@@ -65,15 +75,31 @@ export class MCPServer {
                 }
             ];
 
+            // Standard Library Tools (FS, Terminal, Memory, Tunnel)
+            const standardTools = [...FileSystemTools, ...TerminalTools, ...MemoryTools, ...TunnelTools].map(t => ({
+                name: t.name,
+                description: t.description,
+                inputSchema: t.inputSchema
+            }));
+
+            // Skills
+            const skillTools = this.skillRegistry.getSkillTools();
+
             // Aggregation: Fetch tools from all connected sub-MCPs
             const externalTools = await this.router.listTools();
 
             return {
-                tools: [...internalTools, ...externalTools],
+                tools: [
+                    ...internalTools,
+                    ...standardTools,
+                    ...skillTools,
+                    ...externalTools
+                ],
             };
         });
 
         serverInstance.setRequestHandler(CallToolRequestSchema, async (request) => {
+            // 1. Check Internal Status Tools
             if (request.params.name === "router_status") {
                 return {
                     content: [{ type: "text", text: "Borg Router is active." }],
@@ -93,7 +119,22 @@ export class MCPServer {
                 };
             }
 
-            // Delegation: Forward to sub-MCPs via Router
+            // 2. Check Standard Library
+            const standardTool = [...FileSystemTools, ...TerminalTools, ...MemoryTools, ...TunnelTools].find(t => t.name === request.params.name);
+            if (standardTool) {
+                // @ts-ignore
+                return standardTool.handler(request.params.arguments);
+            }
+
+            // 3. Check Skills
+            if (request.params.name === "list_skills") {
+                return this.skillRegistry.listSkills();
+            }
+            if (request.params.name === "read_skill") {
+                return this.skillRegistry.readSkill(request.params.arguments?.skillName as string);
+            }
+
+            // 4. Delegation: Forward to sub-MCPs via Router
             try {
                 return await this.router.callTool(request.params.name, request.params.arguments);
             } catch (e: any) {
@@ -103,6 +144,9 @@ export class MCPServer {
     }
 
     async start() {
+        // Initialize systems
+        await this.skillRegistry.loadSkills();
+
         // 1. Start Stdio (for local CLI usage)
         const stdioTransport = new StdioServerTransport();
         await this.server.connect(stdioTransport);
@@ -119,13 +163,5 @@ export class MCPServer {
         });
 
         await this.wsServer.connect(wsTransport);
-
-        // 3. Connect Filesystem MCP (Sub-MCP example)
-        try {
-            await this.router.connectToServer('filesystem', 'npx', ['-y', '@modelcontextprotocol/server-filesystem', '.']);
-            console.error("Filesystem MCP connected");
-        } catch (e) {
-            console.error("Failed to connect to Filesystem MCP", e);
-        }
     }
 }

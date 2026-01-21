@@ -1,5 +1,6 @@
 import ConnectionStatus from "../components/ConnectionStatus";
 import IndexingStatus from "../components/IndexingStatus";
+import RemoteAccessCard from "../components/RemoteAccessCard";
 
 export default function Home() {
   return (
@@ -7,6 +8,7 @@ export default function Home() {
       <main className="flex flex-col items-center gap-8 w-full max-w-2xl px-4">
         <h1 className="text-4xl font-bold">Borg Mission Control</h1>
         <ConnectionStatus />
+        <RemoteAccessCard />
         <IndexingStatus />
       </main>
     </div>

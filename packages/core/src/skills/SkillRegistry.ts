@@ -3,7 +3,6 @@ import glob from 'fast-glob';
 import fs from 'fs/promises';
 import path from 'path';
 import matter from 'gray-matter';
-import os from 'os';
 
 export interface Skill {
     id: string;
@@ -15,26 +14,22 @@ export interface Skill {
 
 export class SkillRegistry {
     private skills: Map<string, Skill> = new Map();
-    private workspaceRoot: string;
+    private searchPaths: string[];
 
-    constructor(workspaceRoot: string) {
-        this.workspaceRoot = workspaceRoot;
+    constructor(searchPaths: string[]) {
+        this.searchPaths = searchPaths;
     }
 
     async loadSkills() {
         this.skills.clear();
-        const locations = [
-            path.join(os.homedir(), '.borg', 'skills'), // Global
-            path.join(this.workspaceRoot, '.borg', 'skills') // Local
-        ];
 
-        for (const loc of locations) {
+        for (const loc of this.searchPaths) {
             try {
                 // Find all SKILL.md files
                 const entries = await glob('**/SKILL.md', {
                     cwd: loc,
                     absolute: true,
-                    deep: 2
+                    deep: 3 // Go deeper just in case
                 });
 
                 for (const file of entries) {
@@ -44,7 +39,7 @@ export class SkillRegistry {
                 // Ignore missing directories
             }
         }
-        console.log(`Loaded ${this.skills.size} skills.`);
+        console.log(`Borg Core: Loaded ${this.skills.size} skills.`);
     }
 
     private async parseSkill(filePath: string) {
@@ -52,6 +47,7 @@ export class SkillRegistry {
             const raw = await fs.readFile(filePath, 'utf-8');
             const { data, content } = matter(raw);
 
+            // Use 'name' from frontmatter or folder name
             const id = data.name || path.basename(path.dirname(filePath));
 
             const skill: Skill = {
@@ -68,11 +64,54 @@ export class SkillRegistry {
         }
     }
 
-    listSkills(): Skill[] {
-        return Array.from(this.skills.values());
+    getSkillTools() {
+        return [
+            {
+                name: "list_skills",
+                description: "List all available skills (runbooks)",
+                inputSchema: { type: "object", properties: {} }
+            },
+            {
+                name: "read_skill",
+                description: "Read the content/instructions of a specific skill",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        skillName: { type: "string" }
+                    },
+                    required: ["skillName"]
+                }
+            }
+        ];
     }
 
-    getSkill(id: string): Skill | undefined {
-        return this.skills.get(id);
+    async listSkills() {
+        const skillList = Array.from(this.skills.values()).map(s => ({
+            name: s.name,
+            description: s.description
+        }));
+
+        return {
+            content: [{
+                type: "text",
+                text: JSON.stringify(skillList, null, 2)
+            }]
+        };
+    }
+
+    async readSkill(skillName: string) {
+        const skill = this.skills.get(skillName);
+        if (!skill) {
+            return {
+                content: [{ type: "text", text: `Skill '${skillName}' not found.` }]
+            };
+        }
+
+        return {
+            content: [{
+                type: "text",
+                text: skill.content
+            }]
+        };
     }
 }

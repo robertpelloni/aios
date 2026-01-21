@@ -25,14 +25,12 @@ export class MCPServer {
     private server: Server; // Stdio Server
     private wsServer: Server; // WebSocket Server
     private router: Router;
-    private indexer: Indexer;
     private modelSelector: ModelSelector;
     private skillRegistry: SkillRegistry;
 
     constructor() {
         this.router = new Router();
         this.modelSelector = new ModelSelector();
-        this.indexer = new Indexer(process.cwd());
         this.skillRegistry = new SkillRegistry([
             path.join(process.cwd(), '.borg', 'skills'),
             path.join(process.env.HOME || process.env.USERPROFILE || '', '.borg', 'skills')

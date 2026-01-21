@@ -8,9 +8,7 @@ import {
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { Router } from "./Router.js";
-import { Indexer } from './indexing/Indexer.js';
 import { ModelSelector } from './ModelSelector.js';
-import { CodeChunk } from "./indexing/VectorStore.js";
 import { WebSocketServer } from 'ws';
 import { WebSocketServerTransport } from './transports/WebSocketServerTransport.js';
 import http from 'http';
@@ -63,15 +61,6 @@ export class MCPServer {
                     name: "router_status",
                     description: "Check the status of the Borg Router",
                     inputSchema: { type: "object", properties: {} },
-                },
-                {
-                    name: "search_codebase",
-                    description: "Semantic search over the codebase",
-                    inputSchema: {
-                        type: "object",
-                        properties: { query: { type: "string" } },
-                        required: ["query"]
-                    },
                 }
             ];
 
@@ -103,19 +92,6 @@ export class MCPServer {
             if (request.params.name === "router_status") {
                 return {
                     content: [{ type: "text", text: "Borg Router is active." }],
-                };
-            }
-            if (request.params.name === "search_codebase") {
-                const query = request.params.arguments?.query as string;
-                const results = await this.indexer.search(query);
-                return {
-                    content: [{
-                        type: "text",
-                        text: JSON.stringify(results.map((r: CodeChunk) => ({
-                            path: r.file_path,
-                            preview: r.content.substring(0, 200) + "..."
-                        })), null, 2),
-                    }],
                 };
             }
 

@@ -28,6 +28,10 @@ import { PermissionManager, AutonomyLevel } from "./security/PermissionManager.j
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
+import { VectorStore } from './memory/VectorStore.js';
+import { Indexer } from './memory/Indexer.js';
+
 export class MCPServer {
     private server: Server; // Stdio Server
     private wsServer: Server; // WebSocket Server
@@ -37,6 +41,8 @@ export class MCPServer {
     private director: Director;
     private council: Council;
     private permissionManager: PermissionManager;
+    private vectorStore: VectorStore;
+    private indexer: Indexer;
     private pendingRequests: Map<string, (response: any) => void> = new Map();
     public wssInstance: any; // WebSocket.Server
 
@@ -50,6 +56,11 @@ export class MCPServer {
         this.director = new Director(this);
         this.council = new Council(this.modelSelector);
         this.permissionManager = new PermissionManager('low'); // Default safety
+
+        // Memory System
+        const dbPath = path.join(process.cwd(), '.borg', 'db');
+        this.vectorStore = new VectorStore(dbPath);
+        this.indexer = new Indexer(this.vectorStore);
 
         // @ts-ignore
         global.mcpServerInstance = this;
@@ -339,6 +350,28 @@ export class MCPServer {
             else if (name === "read_skill") {
                 result = this.skillRegistry.readSkill(args?.skillName as string);
             }
+            else if (name === "index_codebase") {
+                const dir = args?.path || process.cwd();
+                console.log(`[Borg Core] Indexing codebase at ${dir}...`);
+                const count = await this.indexer.indexDirectory(dir);
+                result = {
+                    content: [{ type: "text", text: `Indexed ${count} documents/chunks from ${dir}.` }]
+                };
+            }
+            else if (name === "search_codebase") {
+                const query = args?.query as string;
+                console.log(`[Borg Core] Semantic Searching for: ${query}`);
+                const matches = await this.vectorStore.search(query);
+
+                let text = `Searching for: "${query}"\n\n`;
+                matches.forEach((m, i) => {
+                    text += `${i + 1}. [${m.file_path}]\n${m.content.substring(0, 200)}...\n\n`;
+                });
+
+                result = {
+                    content: [{ type: "text", text: text }]
+                };
+            }
             else {
                 // Check Standard Library
                 const standardTool = [...FileSystemTools, ...TerminalTools, ...MemoryTools, ...TunnelTools, ...LogTools, ...ConfigTools, ...SearchTools, ...ReaderTools].find(t => t.name === name);
@@ -517,6 +550,27 @@ export class MCPServer {
                     name: "vscode_submit_chat",
                     description: "Submit the current text in the chat input (Simulates Enter)",
                     inputSchema: { type: "object", properties: {} }
+                },
+                {
+                    name: "index_codebase",
+                    description: "Scan code files and populate the semantic memory (vector store)",
+                    inputSchema: {
+                        type: "object",
+                        properties: {
+                            path: { type: "string", description: "Root directory to index (defaults to cwd)" }
+                        }
+                    }
+                },
+                {
+                    name: "search_codebase",
+                    description: "Semantically search the codebase for relevant snippets",
+                    inputSchema: {
+                        type: "object",
+                        properties: {
+                            query: { type: "string", description: "Natural language query (e.g. 'Where is authentication?')" }
+                        },
+                        required: ["query"]
+                    }
                 }
             ];
 
@@ -617,3 +671,4 @@ export class MCPServer {
         }
     }
 }
+

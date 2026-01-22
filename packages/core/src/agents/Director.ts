@@ -97,21 +97,29 @@ export class Director {
                 console.error("[Director] Watchdog Read Failed:", e);
             }
 
-            // 3. Blind Heuristic (The "Blue Button" Auto-Clicker)
-            // Even if we can't read the terminal, the Host UI might be showing a prompt.
-            // We blindly press 'Tab' then 'Enter' occasionally to catch these.
-            // User explicitly requested: "I want both of these buttons to always be clicked automatically."
+            // 3. Precise UI Interaction (VS Code API)
+            // Instead of blind keys, we try to execute specific VS Code commands 
+            // that trigger "Accept" or "Run" actions for inline chat / terminal.
             try {
-                // Try straight Enter (Accept default)
-                await this.server.executeTool('native_input', { keys: 'enter' });
+                // Inline Chat Accept (Ctrl+Enter / Blue Button)
+                await this.server.executeTool('vscode_execute_command', { command: 'inlineChat.accept' });
 
-                // Try Alt+Enter (Run Command / Quick Fix) if supported, or just Enter again
-                // We don't know if 'native_input' supports 'alt+enter' string parsing, 
-                // but we can try sending it if the underlying tool handles it.
-                // If not, we rely on the previous Enter.
+                // Terminal Quick Fix / Run
+                await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.terminal.chat.accept' });
+
+                // Standard Chat Submit (if pending)
+                // await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.chat.submit' });
             } catch (e) {
-                // Ignore input errors
+                // Ignore failure if command not available
             }
+
+            // Fallback: Try "Enter" key for modal dialogs that aren't API accessible
+            // DISABLED per user request (too disruptive)
+            /*
+            try {
+                 await this.server.executeTool('native_input', { keys: 'enter' });
+            } catch (e) {}
+            */
 
             // Wait 2 seconds (More aggressive than 5s)
             await new Promise(resolve => setTimeout(resolve, 2000));

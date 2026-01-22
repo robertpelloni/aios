@@ -166,6 +166,10 @@ export class Director {
             return { action: 'CONTINUE', toolName: 'vscode_read_selection', params: {}, reasoning: "Reading editor selection." };
         }
 
+        if (goal.includes("watchdog")) {
+            return { action: 'CONTINUE', toolName: 'start_watchdog', params: { maxCycles: 100 }, reasoning: "Starting supervisor watchdog." };
+        }
+
         // 5. Default: List Files (Safety Fallback)
         if (!lastEntry) {
             return {

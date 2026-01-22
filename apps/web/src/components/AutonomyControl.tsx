@@ -1,28 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { trpc } from "../trpc";
+import { trpc } from "../utils/trpc";
 
 export function AutonomyControl() {
-    const [level, setLevel] = useState<'low' | 'medium' | 'high'>('low');
+    const utils = trpc.useUtils();
 
     // Queries
+    const getAutonomyQuery = trpc.autonomy.getLevel.useQuery(undefined, {
+        refetchInterval: 5000,
+    });
+
     const setAutonomyMutation = trpc.autonomy.setLevel.useMutation({
         onSuccess: (data) => {
             alert(`Autonomy set to: ${data}`);
+            utils.autonomy.getLevel.invalidate();
         }
     });
 
-    const getAutonomyQuery = trpc.autonomy.getLevel.useQuery(undefined, {
-        refetchInterval: 5000,
-        onSuccess: (data) => {
-            // @ts-ignore
-            setLevel(data);
-        }
-    });
+    // Use server data or default to 'low'
+    // @ts-ignore
+    const level = getAutonomyQuery.data || 'low';
 
     const handleSetLevel = (newLevel: 'low' | 'medium' | 'high') => {
-        setLevel(newLevel);
         setAutonomyMutation.mutate({ level: newLevel });
     };
 
@@ -33,8 +33,8 @@ export function AutonomyControl() {
                     🤖 Autopilot Control
                 </h2>
                 <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${level === 'high' ? 'bg-red-900 text-red-100 animate-pulse' :
-                        level === 'medium' ? 'bg-yellow-900 text-yellow-100' :
-                            'bg-green-900 text-green-100'
+                    level === 'medium' ? 'bg-yellow-900 text-yellow-100' :
+                        'bg-green-900 text-green-100'
                     }`}>
                     {level} Autonomy
                 </span>
@@ -48,8 +48,8 @@ export function AutonomyControl() {
                 <button
                     onClick={() => handleSetLevel('low')}
                     className={`p-4 rounded-lg border text-center transition-all ${level === 'low'
-                            ? 'bg-green-500/20 border-green-500 text-green-200'
-                            : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:bg-zinc-700'
+                        ? 'bg-green-500/20 border-green-500 text-green-200'
+                        : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:bg-zinc-700'
                         }`}
                 >
                     <div className="font-bold mb-1">Low</div>
@@ -59,8 +59,8 @@ export function AutonomyControl() {
                 <button
                     onClick={() => handleSetLevel('medium')}
                     className={`p-4 rounded-lg border text-center transition-all ${level === 'medium'
-                            ? 'bg-yellow-500/20 border-yellow-500 text-yellow-200'
-                            : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:bg-zinc-700'
+                        ? 'bg-yellow-500/20 border-yellow-500 text-yellow-200'
+                        : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:bg-zinc-700'
                         }`}
                 >
                     <div className="font-bold mb-1">Medium</div>
@@ -70,8 +70,8 @@ export function AutonomyControl() {
                 <button
                     onClick={() => handleSetLevel('high')}
                     className={`p-4 rounded-lg border text-center transition-all ${level === 'high'
-                            ? 'bg-red-500/20 border-red-500 text-red-200 shadow-[0_0_15px_rgba(239,68,68,0.5)]'
-                            : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:bg-zinc-700'
+                        ? 'bg-red-500/20 border-red-500 text-red-200 shadow-[0_0_15px_rgba(239,68,68,0.5)]'
+                        : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:bg-zinc-700'
                         }`}
                 >
                     <div className="font-bold mb-1">High (Autopilot)</div>

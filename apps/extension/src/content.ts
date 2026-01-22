@@ -52,6 +52,46 @@ chrome.runtime.onMessage.addListener((message) => {
             console.error('[Borg Bridge] Could not find chat input.');
         }
     }
+
+    if (message.type === 'SUBMIT_CHAT') {
+        const input = document.querySelector('div[contenteditable="true"]') || document.querySelector('textarea');
+        if (input) {
+            console.log('[Borg Bridge] Submitting chat...');
+            const enterEvent = new KeyboardEvent('keydown', {
+                key: 'Enter',
+                code: 'Enter',
+                keyCode: 13,
+                which: 13,
+                bubbles: true,
+                cancelable: true
+            });
+            input.dispatchEvent(enterEvent);
+        }
+    }
+
+    if (message.type === 'CLICK_ELEMENT') {
+        const targetText = message.target as string;
+        console.log(`[Borg Bridge] Attempting to click element with text: "${targetText}"`);
+
+        // Find by text content (XPath-like manually)
+        // We prioritize buttons, then links, then generic divs with role=button
+        const allElements = Array.from(document.querySelectorAll('button, a, div[role="button"], span[role="button"]'));
+
+        const match = allElements.find(el => {
+            // Check direct text or aria-label
+            const text = (el.textContent || '').toLowerCase().trim();
+            const label = (el.getAttribute('aria-label') || '').toLowerCase().trim();
+            const search = targetText.toLowerCase().trim();
+            return text === search || label === search || text.includes(search);
+        });
+
+        if (match) {
+            (match as HTMLElement).click();
+            console.log('[Borg Bridge] Clicked:', match);
+        } else {
+            console.warn('[Borg Bridge] No matching element found.');
+        }
+    }
 });
 
 // 2. Messaging Bridge (Web Page <-> Extension)

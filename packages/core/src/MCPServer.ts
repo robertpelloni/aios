@@ -33,7 +33,6 @@ export class MCPServer {
     private modelSelector: ModelSelector;
     private skillRegistry: SkillRegistry;
     private director: Director;
-    private director: Director;
     private permissionManager: PermissionManager;
     public wssInstance: any; // WebSocket.Server
 
@@ -44,7 +43,6 @@ export class MCPServer {
             path.join(process.cwd(), '.borg', 'skills'),
             path.join(process.env.HOME || process.env.USERPROFILE || '', '.borg', 'skills')
         ]);
-        this.director = new Director(this.router, this.modelSelector);
         this.director = new Director(this.router, this.modelSelector);
         this.permissionManager = new PermissionManager('low'); // Default safety
 

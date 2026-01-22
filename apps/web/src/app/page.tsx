@@ -4,6 +4,7 @@ import RemoteAccessCard from "../components/RemoteAccessCard";
 import ConfigEditor from "../components/ConfigEditor";
 import { TraceViewer } from "../components/TraceViewer";
 import { CommandRunner } from "../components/CommandRunner";
+import { AutonomyControl } from "../components/AutonomyControl";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
           <ConnectionStatus />
           <RemoteAccessCard />
         </div>
+        <AutonomyControl />
         <IndexingStatus />
         <ConfigEditor />
         <CommandRunner />

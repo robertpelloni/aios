@@ -2,6 +2,8 @@ import ConnectionStatus from "../components/ConnectionStatus";
 import IndexingStatus from "../components/IndexingStatus";
 import RemoteAccessCard from "../components/RemoteAccessCard";
 import ConfigEditor from "../components/ConfigEditor";
+import { TraceViewer } from "../components/TraceViewer";
+import { CommandRunner } from "../components/CommandRunner";
 
 export default function Home() {
   return (
@@ -14,6 +16,8 @@ export default function Home() {
         </div>
         <IndexingStatus />
         <ConfigEditor />
+        <CommandRunner />
+        <TraceViewer />
       </main>
     </div>
   );

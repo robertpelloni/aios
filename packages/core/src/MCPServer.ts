@@ -17,6 +17,9 @@ import { FileSystemTools } from "./tools/FileSystemTools.js";
 import { TerminalTools } from "./tools/TerminalTools.js";
 import { MemoryTools } from "./tools/MemoryTools.js";
 import { TunnelTools } from "./tools/TunnelTools.js";
+import { ConfigTools } from "./tools/ConfigTools.js";
+import { LogTools } from "./tools/LogTools.js";
+import { SearchTools } from "./tools/SearchTools.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -62,8 +65,8 @@ export class MCPServer {
                 }
             ];
 
-            // Standard Library Tools (FS, Terminal, Memory, Tunnel)
-            const standardTools = [...FileSystemTools, ...TerminalTools, ...MemoryTools, ...TunnelTools].map(t => ({
+            // Standard Library Tools
+            const standardTools = [...FileSystemTools, ...TerminalTools, ...MemoryTools, ...TunnelTools, ...LogTools, ...ConfigTools, ...SearchTools].map(t => ({
                 name: t.name,
                 description: t.description,
                 inputSchema: t.inputSchema
@@ -94,7 +97,7 @@ export class MCPServer {
             }
 
             // 2. Check Standard Library
-            const standardTool = [...FileSystemTools, ...TerminalTools, ...MemoryTools, ...TunnelTools].find(t => t.name === request.params.name);
+            const standardTool = [...FileSystemTools, ...TerminalTools, ...MemoryTools, ...TunnelTools, ...LogTools, ...ConfigTools, ...SearchTools].find(t => t.name === request.params.name);
             if (standardTool) {
                 // @ts-ignore
                 return standardTool.handler(request.params.arguments);
@@ -127,7 +130,7 @@ export class MCPServer {
         console.error("Borg Core: Stdio Transport Active");
 
         // 2. Start WebSocket (for Extension/Web usage)
-        const PORT = 3000;
+        const PORT = 3001;
         const httpServer = http.createServer();
         const wss = new WebSocketServer({ server: httpServer });
         const wsTransport = new WebSocketServerTransport(wss);

@@ -8,6 +8,8 @@ import { Installer } from './installer.js';
 import { ProcessManager } from './process_manager.js';
 import { InputManager } from './input_manager.js';
 
+import { logger } from './logger.js';
+
 class SupervisorServer {
     private server: Server;
     private processManager: ProcessManager;
@@ -83,48 +85,59 @@ class SupervisorServer {
         });
 
         this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-            if (request.params.name === "install_supervisor") {
-                const configPath = request.params.arguments?.configPath as string | undefined;
-                const installer = new Installer(configPath);
-                const result = await installer.install();
-                return {
-                    content: [{ type: "text", text: result }]
-                };
-            }
+            logger.info(`Executing tool: ${request.params.name}`, request.params.arguments);
 
-            if (request.params.name === "list_processes") {
-                const processes = await this.processManager.listProcesses();
-                return {
-                    content: [{ type: "text", text: JSON.stringify(processes, null, 2) }]
-                };
-            }
+            try {
+                if (request.params.name === "install_supervisor") {
+                    const configPath = request.params.arguments?.configPath as string | undefined;
+                    const installer = new Installer(configPath);
+                    const result = await installer.install();
+                    logger.info("Install Result", { result });
+                    return {
+                        content: [{ type: "text", text: result }]
+                    };
+                }
 
-            if (request.params.name === "kill_process") {
-                const pid = request.params.arguments?.pid as number;
-                const result = await this.processManager.killProcess(pid);
-                return {
-                    content: [{ type: "text", text: result }]
-                };
-            }
+                if (request.params.name === "list_processes") {
+                    const processes = await this.processManager.listProcesses();
+                    return {
+                        content: [{ type: "text", text: JSON.stringify(processes, null, 2) }]
+                    };
+                }
 
-            if (request.params.name === "simulate_input") {
-                const keys = request.params.arguments?.keys as string;
-                const result = await this.inputManager.sendKeys(keys);
-                return {
-                    content: [{ type: "text", text: result }]
-                };
-            }
+                if (request.params.name === "kill_process") {
+                    const pid = request.params.arguments?.pid as number;
+                    const result = await this.processManager.killProcess(pid);
+                    logger.warn("Process Killed", { pid, result });
+                    return {
+                        content: [{ type: "text", text: result }]
+                    };
+                }
 
-            throw new Error(`Tool ${request.params.name} not found`);
+                if (request.params.name === "simulate_input") {
+                    const keys = request.params.arguments?.keys as string;
+                    const result = await this.inputManager.sendKeys(keys);
+                    logger.info("Input Simulated", { keys, result });
+                    return {
+                        content: [{ type: "text", text: result }]
+                    };
+                }
+
+                throw new Error(`Tool ${request.params.name} not found`);
+            } catch (err: any) {
+                logger.error(`Tool Execution Failed: ${request.params.name}`, { error: err.message });
+                throw err;
+            }
         });
     }
 
     async start() {
+        logger.info("Borg Supervisor Starting...");
         const transport = new StdioServerTransport();
         await this.server.connect(transport);
-        console.error("Borg Supervisor running on Stdio");
+        logger.info("Borg Supervisor Connected to Stdio");
     }
 }
 
 const server = new SupervisorServer();
-server.start().catch(console.error);
+server.start().catch((err: any) => logger.error("Fatal Error", err));

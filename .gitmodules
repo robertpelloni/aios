@@ -1104,7 +1104,7 @@
 	url = https://github.com/agentify-sh/safeexec
 [submodule "agents/workty"]
 	path = agents/workty
-	url = https://github.com/binbandit/workty
+	url = https://github.com/brianbandit/workty
 [submodule "tools/github/claude-code-gh-dash"]
 	path = tools/github/claude-code-gh-dash
 	url = https://github.com/jakozloski/claude-code-gh-dash
@@ -3067,3 +3067,6 @@
 [submodule "cli-harnesses/goose-block"]
 	path = cli-harnesses/goose-block
 	url = https://github.com/block/goose
+[submodule "agents/refs/smolagents"]
+	path = agents/refs/smolagents
+	url = https://github.com/huggingface/smolagents

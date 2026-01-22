@@ -50,6 +50,20 @@ export const appRouter = t.router({
             const result = await ConfigTools[1].handler({ content: input.content });
             return result.content[0].text;
         })
+    }),
+    logs: t.router({
+        read: t.procedure.input(z.object({ lines: z.number().optional() })).query(async ({ input }) => {
+            const { LogTools } = await import('./tools/LogTools.js');
+            // @ts-ignore
+            const result = await LogTools[0].handler({ lines: input.lines });
+            return result.content[0].text;
+        })
+    }),
+    runCommand: t.procedure.input(z.object({ command: z.string() })).mutation(async ({ input }) => {
+        const { TerminalTools } = await import('./tools/TerminalTools.js');
+        // @ts-ignore
+        const result = await TerminalTools[0].handler({ command: input.command, cwd: process.cwd() });
+        return result.content[0].text;
     })
 });
 

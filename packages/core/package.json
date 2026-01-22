@@ -27,6 +27,7 @@
     "gray-matter": "^4.0.3",
     "untun": "^0.1.3",
     "vectordb": "^0.21.2",
+    "vscode-ripgrep": "^1.13.2",
     "ws": "^8.19.0",
     "zod": "^3.22.4"
   },

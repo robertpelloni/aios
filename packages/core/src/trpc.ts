@@ -59,6 +59,34 @@ export const appRouter = t.router({
             return result.content[0].text;
         })
     }),
+    autonomy: t.router({
+        setLevel: t.procedure.input(z.object({ level: z.enum(['low', 'medium', 'high']) })).mutation(async ({ input }) => {
+            const { MCPServer } = await import('./MCPServer.js'); // Circular dependency risk? No, MCPServer exports class.
+            // Actually, we need to call the tool handler.
+            // Since we don't have a direct reference to the running server instance easily here without a singleton,
+            // we will simulate calling the tool handler logic if exported, OR we rely on the fact that tools are handlers.
+            // Is `set_autonomy` a standard tool? No, it's internal.
+            // Quick fix: We need a way to message the running server.
+            // If running in same process (which it IS for `pnpm start`), we can maybe export a singleton.
+            // USE GLOBAL singleton for now to bridge tRPC -> MCPServer instance.
+
+            // @ts-ignore
+            if (global.mcpServerInstance) {
+                // @ts-ignore
+                global.mcpServerInstance.permissionManager.setAutonomyLevel(input.level);
+                return input.level;
+            }
+            throw new Error("MCPServer instance not found global");
+        }),
+        getLevel: t.procedure.query(() => {
+            // @ts-ignore
+            if (global.mcpServerInstance) {
+                // @ts-ignore
+                return global.mcpServerInstance.permissionManager.autonomyLevel;
+            }
+            return 'low';
+        })
+    }),
     runCommand: t.procedure.input(z.object({ command: z.string() })).mutation(async ({ input }) => {
         const { TerminalTools } = await import('./tools/TerminalTools.js');
         // @ts-ignore

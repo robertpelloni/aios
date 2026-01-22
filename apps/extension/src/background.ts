@@ -1,6 +1,6 @@
 
 // Background Service Worker
-const CORE_URL = 'ws://localhost:3000'; // AIOS Core URL
+const CORE_URL = 'ws://localhost:3001'; // AIOS Core URL
 let socket: WebSocket | null = null;
 const pendingRequests = new Map<string, (response: any) => void>();
 
@@ -18,6 +18,18 @@ function connect() {
         console.log('Message from Core:', event.data);
         try {
             const data = JSON.parse(event.data);
+
+            // Handle Direct Commands (like INSERT_TEXT)
+            if (data.type === 'INSERT_TEXT') {
+                // Find active tab and send message
+                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    if (tabs[0]?.id) {
+                        chrome.tabs.sendMessage(tabs[0].id, data);
+                    }
+                });
+                return;
+            }
+
             // Handle JSON-RPC Responses
             if (data.id && pendingRequests.has(data.id)) {
                 const resolver = pendingRequests.get(data.id);

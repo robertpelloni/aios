@@ -28,6 +28,32 @@ badge.style.cssText = `
 badge.innerText = 'AI';
 document.body.appendChild(badge);
 
+// Handle INSERT_TEXT from Background Script
+chrome.runtime.onMessage.addListener((message) => {
+    if (message.type === 'INSERT_TEXT') {
+        const text = message.text;
+        console.log('[Borg Bridge] Inserting Text:', text);
+
+        // Strategy: Try common selectors for AI chat inputs
+        // 1. Google AI Studio / Gemini: `div[contenteditable="true"]`
+        // 2. Generic: `textarea`
+        const input = document.querySelector('div[contenteditable="true"]') || document.querySelector('textarea');
+
+        if (input) {
+            input.focus();
+
+            // Simulating typing is hard due to React/Frameworks.
+            // Best effort: ExecCommand or value set + event dispatch.
+            document.execCommand('insertText', false, text);
+
+            // Dispatch input events to trigger Autosave/React state
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        } else {
+            console.error('[Borg Bridge] Could not find chat input.');
+        }
+    }
+});
+
 // 2. Messaging Bridge (Web Page <-> Extension)
 window.addEventListener('message', (event) => {
     // Only accept messages from the page itself (trusted page scripts)

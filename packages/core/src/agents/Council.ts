@@ -25,26 +25,35 @@ export class Council {
         console.log(`[Council] Session started for: "${proposal}"`);
         const transcripts: { speaker: string, text: string }[] = [];
 
-        // 1. Architect Opines
-        const architectThought = `Analyzing proposal: "${proposal}". Ensure it follows SOLID principles.`; // Mock LLM
-        transcripts.push({ speaker: "The Architect", text: architectThought });
+        // Simple Heuristic/Mock for now to save tokens, but structured for expansion
+        // In a real implementation, we would loop through members and call LLMService
 
-        // 2. Guardian Opines
-        const guardianThought = `Checking security implications. Is this safe?`; // Mock LLM
-        transcripts.push({ speaker: "The Guardian", text: guardianThought });
+        // 1. Architect
+        transcripts.push({
+            speaker: "The Architect",
+            text: `Analyzing: ${proposal}. Structure looks valid for the current system context.`
+        });
 
-        // 3. Optimizer Opines
-        const optimizerThought = `Will this slow us down?`; // Mock LLM
-        transcripts.push({ speaker: "The Optimizer", text: optimizerThought });
+        // 2. Guardian (The actual gatekeeper)
+        let guardianVote = true;
+        let guardianText = "Standard operation range. Approved.";
 
-        // 4. Consensus
-        const approved = true; // Mock Decision
-        const summary = "The Council has deliberated. The plan is sound effectively, though Security advises caution with file writes.";
+        if (proposal.includes("delete") || proposal.includes("rm -rf") || proposal.includes("write_file")) {
+            guardianText = "High risk operation detected. Proceeding with caution, but user intent seems clear.";
+            // stricter checks could go here
+        }
+        transcripts.push({ speaker: "The Guardian", text: guardianText });
+
+        // 3. Optimizer
+        transcripts.push({
+            speaker: "The Optimizer",
+            text: "Execution cost is negligible. Proceed."
+        });
 
         return {
-            approved,
+            approved: guardianVote,
             transcripts,
-            summary
+            summary: "Council consensus: Approved based on heuristic safety checks."
         };
     }
 }

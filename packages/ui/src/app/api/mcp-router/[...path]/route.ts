@@ -16,7 +16,7 @@ async function spawnCLI(args: string[]): Promise<CLIResult> {
   return new Promise((resolve) => {
     const proc = spawn('node', [CLI_PATH, ...args], {
       cwd: path.join(process.cwd(), '../../'),
-      stdio: ['pipe', 'pipe', 'inherit']
+      stdio: ['pipe', 'pipe', 'pipe']
     });
 
     let stdout = '';

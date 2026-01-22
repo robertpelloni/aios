@@ -4,7 +4,7 @@ export type AutonomyLevel = 'low' | 'medium' | 'high';
 export class PermissionManager {
     public autonomyLevel: AutonomyLevel;
 
-    constructor(autonomyLevel: AutonomyLevel = 'low') {
+    constructor(autonomyLevel: AutonomyLevel = 'high') {
         this.autonomyLevel = autonomyLevel;
     }
 
@@ -14,23 +14,25 @@ export class PermissionManager {
 
     /**
      * Determines if a tool call requires user approval.
-     * @returns true if approved, false if approval required.
      */
-    checkPermission(toolName: string, args: any): boolean {
-        // High Autonomy (Autopilot): Trust the agent completely.
+    checkPermission(toolName: string, args: any): 'APPROVED' | 'DENIED' | 'NEEDS_CONSULTATION' {
+        // High Autonomy: Trust completely
         if (this.autonomyLevel === 'high') {
-            return true;
+            return 'APPROVED';
         }
 
         const risk = this.assessRisk(toolName, args);
 
         if (this.autonomyLevel === 'medium') {
-            // Medium: Allow low/medium risk, block high risk
-            return risk !== 'high';
+            // Medium: Allow low/medium, consult on high
+            if (risk === 'high') return 'NEEDS_CONSULTATION';
+            return 'APPROVED';
         }
 
-        // Low Autonomy: Block everything except very safe info tools
-        return risk === 'low';
+        // Low Autonomy: Block high, consult on medium, allow low
+        if (risk === 'high') return 'DENIED';
+        if (risk === 'medium') return 'NEEDS_CONSULTATION';
+        return 'APPROVED';
     }
 
     private assessRisk(toolName: string, args: any): 'low' | 'medium' | 'high' {
@@ -46,7 +48,7 @@ export class PermissionManager {
         }
 
         // Medium Risk (Read-only but potentially sensitive, or minor mods)
-        if (toolName.includes('read_file') || toolName.includes('list_directory')) {
+        if (toolName.includes('read_file') || toolName.includes('list_directory') || toolName.includes('read_page')) {
             return 'medium';
         }
 

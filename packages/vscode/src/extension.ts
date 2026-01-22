@@ -112,6 +112,19 @@ async function handleMessage(msg: any) {
         }
     }
 
+    if (msg.type === 'SUBMIT_CHAT_HOOK') {
+        // Try to submit the chat
+        try {
+            // Focus chat first
+            await vscode.commands.executeCommand('workbench.action.chat.open');
+            // Submit
+            await vscode.commands.executeCommand('workbench.action.chat.submit');
+            log('Executed: Chat Submit');
+        } catch (e: any) {
+            log(`Failed to submit chat: ${e.message}`);
+        }
+    }
+
     if (msg.type === 'GET_STATUS') {
         const activeTerminal = vscode.window.activeTerminal;
         const status = {
@@ -164,7 +177,12 @@ async function handleMessage(msg: any) {
             await vscode.commands.executeCommand('workbench.action.terminal.copySelection');
             await vscode.commands.executeCommand('workbench.action.terminal.clearSelection');
 
-            const content = await vscode.env.clipboard.readText();
+            let content = await vscode.env.clipboard.readText();
+            content = content.trim();
+
+            if (!content) {
+                content = "(Terminal is empty)";
+            }
 
             if (socket) {
                 socket.send(JSON.stringify({

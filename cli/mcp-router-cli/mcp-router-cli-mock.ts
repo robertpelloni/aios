@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * AIOS MCP Router CLI - Simplified Mock Version
+ * borg MCP Router CLI - Simplified Mock Version
  *
  * Temporary implementation using in-memory mock registry
  * Bypasses database dependency to unblock development

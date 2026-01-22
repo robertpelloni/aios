@@ -1,5 +1,5 @@
 /**
- * AIOS MCP Session Service
+ * borg MCP Session Service
  *
  * Enhanced session lifecycle management for MCP servers:
  * - Auto-start servers on system boot

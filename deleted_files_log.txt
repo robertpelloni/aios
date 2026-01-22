@@ -19,7 +19,7 @@ commit 59c347fa258b1444f922e20cb3be5cdfbf58ae76
 Author: Robert Pelloni <pelloni.robert@gmail.com>
 Date:   Fri Jan 2 12:18:20 2026 -0500
 
-    Add majority of submodules to AIOS
+    Add majority of submodules to borg
 
  delete mode 160000 external/config_repos/oh-my-opencode
 
@@ -29,7 +29,7 @@ Date:   Wed Dec 31 21:55:57 2025 -0500
 
     Revise LLM and agent instructions, add handoff doc
     
-    Updated AGENTS.md, CLAUDE.md, GEMINI.md, GPT.md, and copilot-instructions.md to clarify core directives and project specifics for each model. Expanded docs/LLM_INSTRUCTIONS.md with model-specific and version control protocols. Added a session handoff summary for AIOS Core Phase 3 in docs/handoffs/session_handoff_2025_12_31.md. Bumped version to 0.4.3 and removed core_log.txt. Updated submodule and build artifacts.
+    Updated AGENTS.md, CLAUDE.md, GEMINI.md, GPT.md, and copilot-instructions.md to clarify core directives and project specifics for each model. Expanded docs/LLM_INSTRUCTIONS.md with model-specific and version control protocols. Added a session handoff summary for borg Core Phase 3 in docs/handoffs/session_handoff_2025_12_31.md. Bumped version to 0.4.3 and removed core_log.txt. Updated submodule and build artifacts.
 
  delete mode 100644 core_log.txt
 

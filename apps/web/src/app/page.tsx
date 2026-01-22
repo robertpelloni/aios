@@ -6,6 +6,9 @@ import { TraceViewer } from "../components/TraceViewer";
 import { CommandRunner } from "../components/CommandRunner";
 import { AutonomyControl } from "../components/AutonomyControl";
 import { DirectorChat } from "../components/DirectorChat";
+import { TrafficInspector } from "../components/TrafficInspector";
+import { SkillsViewer } from "../components/SkillsViewer";
+import { PageReaderTester } from "../components/PageReaderTester";
 
 export default function Home() {
   return (
@@ -14,14 +17,25 @@ export default function Home() {
         <h1 className="text-4xl font-bold">Borg Mission Control</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
           <ConnectionStatus />
-          <RemoteAccessCard />
+          <IndexingStatus />
         </div>
+
         <AutonomyControl />
         <DirectorChat />
-        <IndexingStatus />
+
+        <SkillsViewer />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+          <PageReaderTester />
+          <RemoteAccessCard />
+        </div>
+
         <ConfigEditor />
         <CommandRunner />
-        <TraceViewer />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+          <TraceViewer />
+          <TrafficInspector />
+        </div>
       </main>
     </div>
   );

@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "AIOS Bridge",
+    "name": "borg Bridge",
     "version": "0.1.0",
-    "description": "Connects web-based AI agents to your local AIOS Core.",
+    "description": "Connects web-based AI agents to your local borg Core.",
     "permissions": [
         "activeTab",
         "scripting",

@@ -13,7 +13,12 @@ export function AutonomyControl() {
 
     const setAutonomyMutation = trpc.autonomy.setLevel.useMutation({
         onSuccess: (data) => {
-            alert(`Autonomy set to: ${data}`);
+            utils.autonomy.getLevel.invalidate();
+        }
+    });
+
+    const activateMutation = trpc.autonomy.activateFullAutonomy.useMutation({
+        onSuccess: () => {
             utils.autonomy.getLevel.invalidate();
         }
     });
@@ -80,11 +85,30 @@ export function AutonomyControl() {
             </div>
 
             {level === 'high' && (
-                <div className="mt-4 p-3 bg-red-950/50 border border-red-900/50 rounded text-red-200 text-xs flex gap-2 items-center">
+                <div className="mt-4 p-3 bg-red-950/50 border border-red-900/50 rounded text-red-200 text-xs flex gap-2 items-center animate-pulse">
                     <span className="text-lg">⚠️</span>
-                    Warning: The agent will execute file writes and commands without stopping. Monitor the Trace Viewer closely.
+                    <strong>Supervisor Active:</strong> The agent will execute file writes and commands autonomously.
                 </div>
             )}
+
+            <div className="mt-6 border-t border-zinc-800 pt-4">
+                <h3 className="text-sm font-bold text-white mb-2">🚀 One-Click Activation</h3>
+                <button
+                    onClick={() => activateMutation.mutate()}
+                    disabled={activateMutation.isPending}
+                    className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold rounded-lg shadow-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                >
+                    {activateMutation.isPending ? "Activating..." : "Enable Intelligent Supervisor (Full Autonomy)"}
+                </button>
+                <p className="text-zinc-500 text-xs mt-2 text-center">
+                    System will auto-accept tools, watch the IDE chat, and monitor process health.
+                </p>
+                {activateMutation.data && (
+                    <div className="mt-2 text-green-400 text-xs text-center font-bold">
+                        ✅ {activateMutation.data}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

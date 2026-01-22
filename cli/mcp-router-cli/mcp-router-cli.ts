@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * AIOS MCP Router CLI
+ * borg MCP Router CLI
  *
  * A simple CLI to interact with the Ultimate MCP Router services.
  * This provides immediate access to all 4 core services without requiring
@@ -33,7 +33,7 @@ program
 
 const dataDir = program.opts().dataDir || './data';
 
-console.log('Initializing AIOS MCP Router...');
+console.log('Initializing borg MCP Router...');
 console.log(`Data directory: ${dataDir}`);
 
 const registry = MCPRegistryService.getInstance(dataDir);

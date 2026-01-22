@@ -61,15 +61,6 @@ export const appRouter = t.router({
     }),
     autonomy: t.router({
         setLevel: t.procedure.input(z.object({ level: z.enum(['low', 'medium', 'high']) })).mutation(async ({ input }) => {
-            const { MCPServer } = await import('./MCPServer.js'); // Circular dependency risk? No, MCPServer exports class.
-            // Actually, we need to call the tool handler.
-            // Since we don't have a direct reference to the running server instance easily here without a singleton,
-            // we will simulate calling the tool handler logic if exported, OR we rely on the fact that tools are handlers.
-            // Is `set_autonomy` a standard tool? No, it's internal.
-            // Quick fix: We need a way to message the running server.
-            // If running in same process (which it IS for `pnpm start`), we can maybe export a singleton.
-            // USE GLOBAL singleton for now to bridge tRPC -> MCPServer instance.
-
             // @ts-ignore
             if (global.mcpServerInstance) {
                 // @ts-ignore
@@ -85,6 +76,23 @@ export const appRouter = t.router({
                 return global.mcpServerInstance.permissionManager.autonomyLevel;
             }
             return 'low';
+        }),
+        activateFullAutonomy: t.procedure.mutation(async () => {
+            // @ts-ignore
+            const mcp = global.mcpServerInstance;
+            if (mcp) {
+                // 1. Set Autonomy High
+                mcp.permissionManager.setAutonomyLevel('high');
+
+                // 2. Start Director Chat Daemon
+                mcp.director.startChatDaemon();
+
+                // 3. Start Watchdog (Long)
+                mcp.director.startWatchdog(100);
+
+                return "Autonomous Supervisor Activated (High Level + Chat Daemon + Watchdog)";
+            }
+            throw new Error("MCPServer instance not found");
         })
     }),
     director: t.router({
@@ -116,6 +124,43 @@ export const appRouter = t.router({
         // @ts-ignore
         const result = await TerminalTools[0].handler({ command: input.command, cwd: process.cwd() });
         return result.content[0].text;
+    }),
+    skills: t.router({
+        list: t.procedure.query(async () => {
+            // @ts-ignore
+            if (global.mcpServerInstance) {
+                // @ts-ignore
+                const mcp = global.mcpServerInstance;
+                // @ts-ignore
+                const skills = await mcp.skillRegistry.listSkills();
+                return skills;
+            }
+            return { tools: [] };
+        }),
+        read: t.procedure.input(z.object({ name: z.string() })).query(async ({ input }) => {
+            // @ts-ignore
+            if (global.mcpServerInstance) {
+                // @ts-ignore
+                return await global.mcpServerInstance.skillRegistry.readSkill(input.name);
+            }
+            return { content: [{ type: "text", text: "Error: No Server" }] };
+        })
+    }),
+    executeTool: t.procedure.input(z.object({
+        name: z.string(),
+        args: z.any()
+    })).mutation(async ({ input }) => {
+        // @ts-ignore
+        if (global.mcpServerInstance) {
+            // @ts-ignore
+            const result = await global.mcpServerInstance.executeTool(input.name, input.args);
+            // Result is { content: ... }
+            // @ts-ignore
+            if (result.isError) throw new Error(result.content[0].text);
+            // @ts-ignore
+            return result.content[0].text;
+        }
+        throw new Error("MCPServer not found");
     })
 });
 

@@ -1,5 +1,5 @@
 /**
- * AIOS MCP Configuration Service
+ * borg MCP Configuration Service
  *
  * Manages MCP server configurations:
  * - Auto-detection of .mcp.json, .aios.json config files
@@ -263,7 +263,7 @@ export class ConfigurationService extends EventEmitter {
         };
     }
     /**
-     * Normalize AIOS format server
+     * Normalize borg format server
      */
     normalizeAIOSServer(raw) {
         return {

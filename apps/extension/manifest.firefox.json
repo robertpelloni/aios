@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "AIOS Bridge (Firefox)",
+    "name": "borg Bridge (Firefox)",
     "version": "0.1.0",
-    "description": "Connects web-based AI agents to your local AIOS Core.",
+    "description": "Connects web-based AI agents to your local borg Core.",
     "permissions": [
         "activeTab",
         "scripting",
@@ -37,7 +37,7 @@
     },
     "browser_specific_settings": {
         "gecko": {
-            "id": "borg-bridge@aios.io",
+            "id": "borg-bridge@borg.io",
             "strict_min_version": "109.0"
         }
     },

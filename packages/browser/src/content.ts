@@ -1,5 +1,5 @@
 // Content script to scrape page details
-console.log('AIOS Content Script Loaded');
+console.log('borg Content Script Loaded');
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'read_page') {

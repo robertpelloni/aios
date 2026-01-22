@@ -1,15 +1,15 @@
 
 // Background Service Worker
-const CORE_URL = 'ws://localhost:3001'; // AIOS Core URL
+const CORE_URL = 'ws://localhost:3001'; // borg Core URL
 let socket: WebSocket | null = null;
 const pendingRequests = new Map<string, (response: any) => void>();
 
 function connect() {
-    console.log('Connecting to AIOS Core...');
+    console.log('Connecting to borg Core...');
     socket = new WebSocket(CORE_URL);
 
     socket.onopen = () => {
-        console.log('Connected to AIOS Core');
+        console.log('Connected to borg Core');
         chrome.action.setBadgeText({ text: 'ON' });
         chrome.action.setBadgeBackgroundColor({ color: '#4caf50' });
     };
@@ -45,7 +45,7 @@ function connect() {
     };
 
     socket.onclose = () => {
-        console.log('Disconnected from AIOS Core');
+        console.log('Disconnected from borg Core');
         chrome.action.setBadgeText({ text: 'OFF' });
         chrome.action.setBadgeBackgroundColor({ color: '#f44336' });
         setTimeout(connect, 5000); // Reconnect
@@ -69,7 +69,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 function executeTool(payload: any, sendResponse: (response: any) => void) {
     if (!socket || socket.readyState !== 1) {
-        sendResponse({ error: 'AIOS Core Disconnected' });
+        sendResponse({ error: 'borg Core Disconnected' });
         return;
     }
 

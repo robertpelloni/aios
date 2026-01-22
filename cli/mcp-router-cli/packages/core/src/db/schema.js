@@ -1,5 +1,5 @@
 /**
- * AIOS Database Schema
+ * borg Database Schema
  * Migrated from MetaMCP PostgreSQL/Drizzle to SQLite/better-sqlite3
  *
  * Tables:

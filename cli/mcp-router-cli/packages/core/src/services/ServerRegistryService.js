@@ -1,5 +1,5 @@
 /**
- * AIOS Server Registry Service
+ * borg Server Registry Service
  *
  * Complements McpManager by providing:
  * - Installation of new MCP servers from registries (GitHub, npm)

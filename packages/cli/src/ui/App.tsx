@@ -16,7 +16,7 @@ export const App = ({ view }: { view: string }) => {
     if (view === 'status') {
         return (
             <Box borderStyle="round" borderColor="cyan" flexDirection="column" padding={1}>
-                <Text bold color="green">AIOS Orchestrator Status</Text>
+                <Text bold color="green">borg Orchestrator Status</Text>
                 <Text>State: {status}</Text>
             </Box>
         );

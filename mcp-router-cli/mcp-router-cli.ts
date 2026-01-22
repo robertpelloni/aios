@@ -17,7 +17,7 @@ program
 
 const dataDir = program.opts().dataDir || './data';
 
-console.log('Initializing AIOS MCP Router...');
+console.log('Initializing borg MCP Router...');
 console.log(`Data directory: ${dataDir}`);
 
 const registry = MCPRegistryService.getInstance(dataDir);

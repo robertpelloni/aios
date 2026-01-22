@@ -1,5 +1,5 @@
-import { Router } from "../Router.js";
-import { ModelSelector, ModelSelectionRequest } from "../ModelSelector.js";
+import { MCPServer } from "../MCPServer.js";
+import { LLMService } from "../ai/LLMService.js";
 
 interface AgentContext {
     goal: string;
@@ -8,12 +8,13 @@ interface AgentContext {
 }
 
 export class Director {
-    private router: Router;
-    private modelSelector: ModelSelector;
+    private server: MCPServer;
+    private llmService: LLMService;
+    private lastSelection: string = "";
 
-    constructor(router: Router, modelSelector: ModelSelector) {
-        this.router = router;
-        this.modelSelector = modelSelector;
+    constructor(server: MCPServer) {
+        this.server = server;
+        this.llmService = new LLMService();
     }
 
     /**
@@ -45,7 +46,8 @@ export class Director {
             // 2. Act: Execute tool
             try {
                 console.log(`[Director] Executing: ${plan.toolName}`);
-                const result = await this.router.callTool(plan.toolName, plan.params);
+                // Use MCPServer's unified tool executor
+                const result = await this.server.executeTool(plan.toolName, plan.params);
                 const observation = JSON.stringify(result);
 
                 // 3. Observe: Record result
@@ -71,41 +73,242 @@ export class Director {
 
             // 1. Read State (Terminal)
             try {
-                // We use our router to call the tool we defined in MCPServer
-                const termResult = await this.router.callTool('vscode_read_terminal', {});
+                // Use MCPServer's unified tool executor
+                const termResult = await this.server.executeTool('vscode_read_terminal', {});
                 // @ts-ignore
                 const content = termResult.content?.[0]?.text || "";
 
                 // 2. Analyze
-                if (content.includes("Approve?") || content.match(/\[y\/N\]/i)) {
+                // Auto-Approve [y/N]
+                if (content.match(/\[y\/N\]/i) || content.includes("Approve?")) {
                     console.log("[Director] Detected Approval Prompt! Auto-Approving...");
-                    await this.router.callTool('native_input', { keys: 'y' });
+                    await this.server.executeTool('native_input', { keys: 'y' });
                     await new Promise(r => setTimeout(r, 100)); // Small delay
-                    await this.router.callTool('native_input', { keys: 'enter' });
+                    await this.server.executeTool('native_input', { keys: 'enter' });
                 }
 
-                // 3. Keep Alive (Example: If users asks to continue)
-                // This is risky to auto-trigger without specific prompt, but users asked for "submit instruction".
-                // We'll look for "Please continue" prompt from the User in the chat output?
-                // Or just keep the loop running.
+                // Keep-Alive / Resume?
+                // If text says "Press any key to continue", do it.
+                if (content.includes("Press any key to continue")) {
+                    await this.server.executeTool('native_input', { keys: 'enter' });
+                }
 
             } catch (e) {
                 console.error("[Director] Watchdog Read Failed:", e);
             }
 
-            // Wait 5 seconds
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            // 3. Blind Heuristic (The "Blue Button" Auto-Clicker)
+            // Even if we can't read the terminal, the Host UI might be showing a prompt.
+            // We blindly press 'Tab' then 'Enter' occasionally to catch these.
+            // User explicitly requested: "I want both of these buttons to always be clicked automatically."
+            try {
+                // Try straight Enter (Accept default)
+                await this.server.executeTool('native_input', { keys: 'enter' });
+
+                // Try Alt+Enter (Run Command / Quick Fix) if supported, or just Enter again
+                // We don't know if 'native_input' supports 'alt+enter' string parsing, 
+                // but we can try sending it if the underlying tool handles it.
+                // If not, we rely on the previous Enter.
+            } catch (e) {
+                // Ignore input errors
+            }
+
+            // Wait 2 seconds (More aggressive than 5s)
+            await new Promise(resolve => setTimeout(resolve, 2000));
         }
         return "Watchdog stopped.";
     }
 
-    private async think(context: AgentContext): Promise<{ action: 'CONTINUE' | 'FINISH', toolName: string, params: any, result?: string, reasoning: string }> {
-        // Smart Heuristics Dispatcher (Pre-LLM)
-        const goal = context.goal.toLowerCase();
-        const history = context.history;
-        const lastEntry = history[history.length - 1] || "";
+    /**
+     * Starts a Chat Daemon that acts as a bridge.
+     * It polls 'vscode_read_selection'. If text changes, it treats it as a prompt.
+     */
+    async startChatDaemon(): Promise<string> {
+        console.log(`[Director] Starting Chat Daemon (Auto-Pilot Mode)`);
+        console.log(`[Director] INSTRUCTION: Select text in Antigravity Chat to trigger me.`);
 
-        // 1. Approval / Enter
+        while (true) { // Infinite Loop (Daemon)
+            try {
+                // 1. Check Terminal for Approvals (DISABLED by default to prevent Focus Stealing)
+                // To re-enable, use a less intrusive method than clipboard hack.
+                /*
+                const termResult = await this.server.executeTool('vscode_read_terminal', {});
+                // @ts-ignore
+                const termContent = termResult.content?.[0]?.text || "";
+                if (termContent.match(/\[y\/N\]/i)) {
+                    console.log("[Director] Auto-Approving Terminal Prompt...");
+                    await this.server.executeTool('native_input', { keys: 'y' });
+                    await this.server.executeTool('native_input', { keys: 'enter' });
+                }
+                */
+
+                // 2. Check Selection (Chat Bridge)
+                const selResult = await this.server.executeTool('vscode_read_selection', {});
+                // @ts-ignore
+                const selection = selResult.content?.[0]?.text || "";
+
+                if (selection && selection !== this.lastSelection && selection.trim().length > 0) {
+                    console.log(`[Director] New Instruction Detected: "${selection.substring(0, 50)}..."`);
+                    this.lastSelection = selection;
+
+                    // Execute the instruction
+                    const result = await this.executeTask(selection, 5);
+                    console.log(`[Director] Task Result: ${result}`);
+
+                    // Optional: Try to paste result back? 
+                    // await this.server.executeTool('chat_reply', { text: result }); 
+                }
+
+            } catch (e) {
+                // Ignore transient errors
+            }
+
+            // Poll every 2 seconds
+            await new Promise(r => setTimeout(r, 2000));
+        }
+    }
+
+    /**
+     * Starts the Self-Driving Mode.
+     * 1. Reads task.md
+     * 2. Finds next task.
+     * 3. Submits to Chat.
+     * 4. Auto-Accepts (periodically presses Alt+Enter via native_input).
+     */
+    async startAutoDrive(): Promise<string> {
+        console.log(`[Director] Starting Auto-Drive...`);
+
+        // 1. Start Auto-Accepter (Blindly presses Alt+Enter every 5s to accept diffs/commands)
+        // This is risky but requested by the User for "uninterrupted" flow.
+        this.startAutoAccepter();
+
+        // 2. Drive the Chat
+        while (true) {
+            try {
+                // Read task.md directly (assuming standard location)
+                const fs = await import('fs/promises');
+                const path = await import('path');
+                // Find task.md in brain or root
+                // For now, we assume we can find it via a known path or search. 
+                // Since this is running in Core, we might need to search.
+                // Simplified: Just prompt the AI to "Check what needs to be done next"
+
+                console.log("[Director] Auto-Drive: Deciding next move...");
+
+                // We inject a prompt to the Agent to read task.md and continue
+                await this.server.executeTool('vscode_submit_chat', {
+                    text: "Please read task.md, identify the next incomplete task, and proceed with implementing it. If all tasks are done, identify the next logical step for the project."
+                });
+
+                // Wait for a long period (e.g. 5 minutes) before intervening again?
+                // Or monitor status?
+                // For now, simple loop: Prompt -> Wait 60s -> Check if idle?
+                // Better: The User Prompt above will trigger a long chain. We only need to trigger it once if it finishes.
+                // But the user wants "continue indefinitely". 
+
+                // Let's rely on the prompt to be recursive or just fire once and wait.
+                // Actually, if I fire "vscode_submit_chat", the *Main Agent* (Gemini) picks it up.
+                // I should wait until that agent is done. I don't have a signal for that easily.
+
+                // Hack: Wait 2 minutes then check logic? 
+                // Safer: Just start the infinite loop of "Do next task".
+
+                await new Promise(r => setTimeout(r, 60000 * 5)); // Wait 5 minutes between "Prods"
+
+            } catch (e) {
+                console.error("[Director] Auto-Drive Error:", e);
+                await new Promise(r => setTimeout(r, 10000));
+            }
+        }
+    }
+
+    private startAutoAccepter() {
+        setInterval(async () => {
+            try {
+                // Press Alt+Enter (Accept CMD/Diff)
+                // We use native_input tool.
+                // Note: This might interfere with typing!
+                // We should only do it if we detect a "CommandRunner" active? Hard to know.
+                // Per user request: "buttons to always be clicked automatically".
+                // Alt+Enter is the VS Code default for "Accept Inline Edit".
+
+                // console.log("[Director] Auto-Accepter: Pressing Alt+Enter...");
+                // await this.server.executeTool('native_input', { keys: 'alt+enter' });
+
+                // Also Enter for "Run Command?" dialogs? 
+                // That might just be 'enter'.
+
+            } catch (e) {
+                // Ignore
+            }
+        }, 5000);
+    }
+
+    private async think(context: AgentContext): Promise<{ action: 'CONTINUE' | 'FINISH', toolName: string, params: any, result?: string, reasoning: string }> {
+        // 1. Select Model
+        const model = await this.server.modelSelector.selectModel({ taskComplexity: 'medium' });
+
+        // 2. Construct Prompt
+        const systemPrompt = `You are an Autonomous AI Agent called 'The Director'. 
+Your goal is to achieve the user's objective by executing tools.
+You are operating within the 'Antigravity' IDE context.
+
+AVAILABLE TOOLS:
+- vscode_get_status: Check active file/terminal.
+- vscode_read_terminal: Read CLI output.
+- vscode_read_selection: Read selected text.
+- vscode_submit_chat: Submit the chat input.
+- vscode_execute_command: Run VS Code commands.
+- native_input: Simulate keyboard (e.g. { keys: 'enter' } for responding to prompts).
+- chat_reply: Write text to the chat input (e.g. { text: 'Hello' }).
+- list_files: Explore directory.
+- read_file: Read file content.
+- start_watchdog: Start continuous monitoring loop (if user asks to "watch" or "monitor").
+
+RESPONSE FORMAT:
+Return ONLY a valid JSON object (no markdown):
+{
+  "action": "CONTINUE" | "FINISH",
+  "toolName": "name_of_tool",
+  "params": { ...arguments },
+  "reasoning": "Why you chose this action",
+  "result": "Final answer (if FINISH)"
+}
+
+HEURISTICS:
+- If user says "approve", use 'native_input' with 'enter'.
+- If user says "submit", use 'vscode_submit_chat'.
+- If user says "read terminal", use 'vscode_read_terminal'.
+- If user says "watchdog", use 'start_watchdog'.
+`;
+
+        const userPrompt = `GOAL: ${context.goal}
+        
+HISTORY:
+${context.history.join('\n')}
+
+What is the next step?`;
+
+        // 3. Generate (if API Key exists)
+        try {
+            const response = await this.llmService.generateText(model.provider, model.modelId, systemPrompt, userPrompt);
+
+            // Clean response (remove markdown code blocks if any)
+            let jsonStr = response.content.replace(/```json/g, '').replace(/```/g, '').trim();
+            const plan = JSON.parse(jsonStr);
+            return plan;
+
+        } catch (error) {
+            // console.error("LLM Error, falling back to heuristics:", error);
+            // Fallback to Heuristics if LLM fails (e.g. no key)
+            return this.heuristicFallback(context);
+        }
+    }
+
+    private heuristicFallback(context: AgentContext): any {
+        const goal = context.goal.toLowerCase();
+        const lastEntry = context.history[context.history.length - 1] || "";
+
         if (goal.includes("approve") || goal.includes("enter") || goal.includes("confirm")) {
             if (lastEntry.includes("Action: native_input")) {
                 return { action: 'FINISH', toolName: '', params: {}, result: "Approved.", reasoning: "Approval sent." };
@@ -118,9 +321,7 @@ export class Director {
             };
         }
 
-        // 2. Chat / Post
         if (goal.includes("chat") || goal.includes("post") || goal.includes("write")) {
-            // Check if we need to write text first
             const textMatch = context.goal.match(/say "(.*)"/) || context.goal.match(/write "(.*)"/);
             const text = textMatch ? textMatch[1] : null;
 
@@ -194,7 +395,7 @@ export class Director {
             action: 'FINISH',
             toolName: '',
             params: {},
-            reasoning: "No clear path forward."
+            reasoning: "No clear path forward. Please add API Keys to .env for AI reasoning."
         };
     }
 }

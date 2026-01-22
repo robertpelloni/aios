@@ -1,4 +1,4 @@
-$gitModulesPath = "C:\Users\hyper\workspace\.git\modules\AIOS\modules"
+$gitModulesPath = "C:\Users\hyper\workspace\.git\modules\borg\modules"
 
 Get-ChildItem -Path $gitModulesPath -Recurse -Filter "config" | ForEach-Object {
     $configPath = $_.FullName

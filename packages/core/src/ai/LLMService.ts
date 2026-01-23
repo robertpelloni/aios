@@ -136,6 +136,31 @@ export class LLMService {
                 };
             }
 
+            if (provider === 'lmstudio') {
+                // LM Studio (OpenAI Compatible)
+                // Assumes running on localhost:1234
+                const lmClient = new OpenAI({
+                    apiKey: 'lm-studio', // Not used usually, but required by SDK
+                    baseURL: 'http://localhost:1234/v1'
+                });
+
+                const completion = await lmClient.chat.completions.create({
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: userPrompt }
+                    ],
+                    model: modelId || 'local-model', // LM Studio often ignores model name or uses the loaded one
+                });
+
+                return {
+                    content: completion.choices[0].message.content || "",
+                    usage: {
+                        inputTokens: completion.usage?.prompt_tokens || 0,
+                        outputTokens: completion.usage?.completion_tokens || 0
+                    }
+                };
+            }
+
             throw new Error(`Unsupported provider: ${provider}`);
         } catch (error: any) {
             console.error(`[LLMService] Error from ${provider}:`, error.message, error.response?.data || error);

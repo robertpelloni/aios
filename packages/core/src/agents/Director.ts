@@ -100,10 +100,11 @@ export class Director {
                 // Auto-Approve [y/N], [Y/n], or specific keywords
                 const approvalRegex = /(?:approve\?|continue\?|\[y\/n\]|\[yes\/no\]|do you want to run this command\?)/i;
                 if (approvalRegex.test(content) || content.includes("Approve?") || content.includes("Do you want to continue?")) {
-                    console.log("[Director] Detected Approval Prompt! Auto-Approving...");
-                    await this.server.executeTool('native_input', { keys: 'y' });
-                    await new Promise(r => setTimeout(r, 100)); // Small delay
-                    await this.server.executeTool('native_input', { keys: 'enter' });
+                    console.log("[Director] Detected Approval Prompt! Auto-Approving... (DISABLED due to focus issues)");
+                    // DISABLED: Causing 'okIt...' typing loops in PowerShell.
+                    // await this.server.executeTool('native_input', { keys: 'y' });
+                    // await new Promise(r => setTimeout(r, 100)); // Small delay
+                    // await this.server.executeTool('native_input', { keys: 'enter' });
                 }
 
                 // Keep-Alive / Resume?
@@ -206,8 +207,8 @@ export class Director {
         console.log(`[Director] Starting Auto-Drive...`);
 
         // 1. Start Auto-Accepter (Focuses Chat & Hits Alt+Enter)
-        // DISABLED (Step 5689): User reported annoying focus stealing.
-        // this.startAutoAccepter();
+        // RE-ENABLED per user request (User wants autonomy, accepts focus stealing risk)
+        this.startAutoAccepter();
 
         // 2. Drive the Chat (Infinite Loop)
         while (true) {
@@ -224,9 +225,16 @@ export class Director {
 
                 // Consult Council for the handoff message
                 const debate = await this.council.startDebate(`Task finished with result: "${result.substring(0, 100)}...". What should I tell the Chat to do next?`);
-                const nextInstruction = debate.summary.replace("Council Advice: ", "") || "Proceed to the next item in task.md.";
 
-                const message = `Task Complete. Council Advice: ${nextInstruction}. Continuing...`;
+                // IRC MODE formatting strategy:
+                // If the debate has multiple opinions, we format them as a chat log.
+                // Assuming debate.summary contains "The Architect: ... | The Guardian: ..."
+                // We typically get a summary string. Let's make it look like IRC.
+                const ircLog = debate.summary
+                    .replace(/ \| /g, '\n') // Newlines for each member
+                    .replace(/The (\w+):/g, '**$1**:'); // Bold Names
+
+                const message = `\n-- 🏛️ COUNCIL CHAT --\n${ircLog}\n\n**Director**: Execution Complete. Proceeding...`;
 
                 console.log(`[Director] Typing into Chat: "${message}"`);
 
@@ -234,8 +242,10 @@ export class Director {
                 await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.chat.open' });
                 // 2. Type Message
                 await this.server.executeTool('chat_reply', { text: message });
-                // 3. Submit (Hit Enter)
+                // 3. Submit
                 await this.server.executeTool('vscode_submit_chat', {});
+                // 4. Force Enter
+                await this.server.executeTool('native_input', { keys: 'enter' });
 
                 // Small rest to let the Chat Agent react (if any)
                 await new Promise(r => setTimeout(r, 5000));
@@ -261,6 +271,9 @@ export class Director {
                 await this.server.executeTool('native_input', { keys: 'alt+enter' });
                 // 3. Try standard Enter just in case
                 await this.server.executeTool('native_input', { keys: 'enter' });
+
+                // 4. Try "Accept Changes" (hypothetical command)
+                await this.server.executeTool('vscode_execute_command', { command: 'editor.action.inlineSuggest.commit' });
 
             } catch (e) {
                 // Ignored.

@@ -102,3 +102,32 @@ function StatusBadge({ status }: { status: string }) {
         </span>
     );
 }
+
+function HealButton() {
+    const [healing, setHealing] = useState(false);
+
+    const handleHeal = async () => {
+        setHealing(true);
+        try {
+            const res = await healSubmodulesAction();
+            if (res.success) {
+                alert("Submodules Healed! Refreshing page...");
+                window.location.reload();
+            } else {
+                alert("Heal Failed: " + res.message);
+            }
+        } catch (e) {
+            alert("Error: " + e);
+        } finally {
+            setHealing(false);
+        }
+    };
+
+    return (
+        <Button onClick={handleHeal} disabled={healing} variant="default">
+            {healing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
+            {healing ? "Healing..." : "Heal Submodules"}
+        </Button>
+    );
+}
+

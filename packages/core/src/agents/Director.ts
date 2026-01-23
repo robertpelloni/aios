@@ -249,7 +249,7 @@ export class Director {
     private startAutoAccepter() {
         // Re-enabled per user request to handle "Accept" / "Allow" prompts automatically.
         // KEY CHANGE: We must FOCUS the Chat Panel before sending keys to avoid typing in the Terminal.
-        console.log("[Director] Auto-Accepter active (Interval: 10s). Focusing Chat -> Alt+Enter.");
+        console.log("[Director] Auto-Accepter active (Interval: 3s). Focusing Chat -> Alt+Enter.");
 
         setInterval(async () => {
             try {
@@ -258,11 +258,13 @@ export class Director {
 
                 // 2. Send "Alt+Enter" (Common shortcut to Accept/Allow in many MCP UIs)
                 await this.server.executeTool('native_input', { keys: 'alt+enter' });
+                // 3. Try standard Enter just in case
+                await this.server.executeTool('native_input', { keys: 'enter' });
 
             } catch (e) {
                 // Ignored.
             }
-        }, 10000);
+        }, 3000);
     }
 
     private async think(context: AgentContext): Promise<{ action: 'CONTINUE' | 'FINISH', toolName: string, params: any, result?: string, reasoning: string }> {

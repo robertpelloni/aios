@@ -14,3 +14,21 @@ export async function fetchSubmodulesAction(): Promise<SubmoduleInfo[]> {
     console.log("Scanning submodules in:", root);
     return await getSubmodules(root);
 }
+
+export async function healSubmodulesAction(): Promise<{ success: boolean, message: string }> {
+    const root = path.resolve(process.cwd(), '../../');
+    const { exec } = await import('child_process');
+    const { promisify } = await import('util');
+    const execAsync = promisify(exec);
+
+    try {
+        console.log("Healing submodules in:", root);
+        // This command initializes and updates all submodules, fixing "missing" or "empty" states.
+        // We use --remote to fetch latest if desired, but standard update is safer for stability.
+        await execAsync('git submodule update --init --recursive', { cwd: root });
+        return { success: true, message: "Submodule heal command executed successfully." };
+    } catch (e: any) {
+        console.error("Heal failed:", e);
+        return { success: false, message: `Failed to heal submodules: ${e.message}` };
+    }
+}

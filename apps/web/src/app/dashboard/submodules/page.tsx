@@ -2,8 +2,10 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useEffect, useState } from "react";
-import { fetchSubmodulesAction } from "./actions";
+import { fetchSubmodulesAction, healSubmodulesAction } from "./actions";
 import { SubmoduleInfo } from "@/lib/git";
+import { Button } from "@/components/ui/button";
+import { Loader2, RefreshCw } from "lucide-react";
 
 export default function SubmodulesPage() {
     const [submodules, setSubmodules] = useState<SubmoduleInfo[]>([]);
@@ -25,6 +27,7 @@ export default function SubmodulesPage() {
         <div className="p-8 space-y-8">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold tracking-tight">Submodule Status</h1>
+                <HealButton />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

@@ -12,6 +12,10 @@ export class PermissionManager {
         this.autonomyLevel = level;
     }
 
+    getAutonomyLevel(): AutonomyLevel {
+        return this.autonomyLevel;
+    }
+
     /**
      * Determines if a tool call requires user approval.
      */

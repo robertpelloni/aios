@@ -12,62 +12,44 @@ A unified operating system for PC-based local AI tools. Manage everything from t
 - **Process Guardian:** Long-running service that monitors and restarts crashed background processes.
 - **Hardware Stats:** Real-time CPU, VRAM, RAM, and Disk usage monitoring.
 
-### 🧠 The "SuperAI" Coding Harness
-- **Architect Mode:** Two-model orchestration (Reasoning vs. Editing) for complex refactors.
-- **Visual Repo Map:** Interactive graph of your codebase's dependencies and symbols.
-- **Auto-Verification:** Zero-trust loop where every AI edit is verified by LSP diagnostics and tests.
-- **Diff Streaming:** Real-time visualization of code modifications.
+### 🧠 The "Director" Autonomous Agent
+- **Auto-Drive:** Fully autonomous development loop that reads `task.md`, plans next steps, and executes them.
+- **Council Consensus:** Multi-persona LLM debate engine (Architect, Guardian, Optimizer) that reviews high-stakes decisions.
+- **Memory RAG:** Vector-based code indexing and semantic search for context-aware coding.
 
 ### 🔌 Universal MCP Control Plane
-- **Traffic Inspector:** Real-time monitoring of all Model Context Protocol (MCP) traffic.
-- **Universal Directory:** Discover and auto-install servers from the global ecosystem.
-- **Dynamic Routing:** Smart routing of prompts to the right tool based on semantic relevance.
-- **Proxy System:** Bridge remote MCP servers to local clients seamlessly.
+- **Core Server:** Central orchestrator connecting Native IDE, Web Dashboard, and Browser Extension.
+- **Dynamic Routing:** Smart routing of prompts to specific tools (Native vs Web).
+- **Skill Registry:** Expandable skill plugins for specialized tasks.
 
-### 🤖 Multi-Agent Orchestration
-- **Agent Squads:** specialized subagents for file picking, code review, and security auditing.
-- **Consensus Protocol:** Multi-model debate engine for verifying high-stakes decisions.
-- **Local-Remote Bridge:** Sync projects between local PCs and remote cloud environments.
-
-### 💾 Memory & Context Ecosystem
-- **Unified Memory:** `memory/` subdirectory containing integrations for Zep, Mem0, Letta, and local vector stores.
-- **Storage Backends:** Interchangeable support for Chroma, Qdrant, SQLite, and Filesystem.
-- **Knowledge Graph:** Auto-building knowledge graph of your development sessions.
-
-### 🖥️ CLI & TUI Power Tools
-- **SuperAI CLI:** `superai-cli/` consolidated directory for all external CLI tools.
-- **TUI Dashboard:** Interactive terminal UI (`borg tui`) for headless management.
-- **Submodule Management:** Automated tracking of 80+ AI tools and libraries.
+### 🖥️ High-Fidelity Dashboard
+- **Mission Control:** Process monitoring, auto-restarts, and system status.
+- **Skills UI:** Browse and manage installed capabilities.
+- **Reader UI:** Test the web scraper/page reader.
+- **Submodule Manager:** Visual git submodule health check and healing.
 
 ## 📦 Installation
-
 ```bash
-# Clone the repository
+# Clone
 git clone https://github.com/OhMyOpenCode/borg.git
 cd borg
 
-# Initialize Submodules (Important!)
-git submodule update --init --recursive
-
-# Install dependencies (pnpm is required)
+# Install
 pnpm install
 
-# Start the full stack (Core Service + UI Dashboard)
-pnpm run start:all
+# Start (Core + Web + Supervisor)
+pnpm start
 ```
 
 ## 🏗️ Project Structure
 
-Borg is a monorepo organized into functional zones:
+- **`packages/core`**: The Brain (Node.js + MCP Server + Director Agent).
+- **`packages/cli`**: The Entrypoint (`borg-cli`) hosting the Core.
+- **`apps/web`**: Next.js Dashboard (Mission Control).
+- **`apps/extension`**: Browser Extension (Chrome/Edge Bridge).
+- **`packages/borg-supervisor`**: Native System Bridge (VS Code Automation).
+- **`packages/vscode`**: VS Code Extension (Observer).
 
-- **`packages/core`**: The Node.js/Hono backend service (The Brain).
-- **`packages/ui`**: The Next.js web dashboard (The Control Center).
-- **`packages/cli`**: The command-line interface & TUI.
-- **`superai-cli/`**: Collection of external CLI tools and wrappers.
-- **`memory/`**: Memory systems, MCP servers, and vector store adapters.
-- **`mcp-servers/`**: General purpose MCP servers.
-- **`agents/`**: JSON definitions for autonomous agents.
-- **`skills/`**: Universal skill library.
 
 ## 📚 Documentation
 

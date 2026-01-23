@@ -39,6 +39,18 @@ export function Navigation() {
                     >
                         Council
                     </Link>
+                    <Link
+                        href="/dashboard/skills"
+                        className={`text-sm font-medium transition-colors hover:text-green-500 ${isActive('/dashboard/skills') ? 'text-green-500' : 'text-zinc-500 dark:text-zinc-400'}`}
+                    >
+                        Skills
+                    </Link>
+                    <Link
+                        href="/dashboard/reader"
+                        className={`text-sm font-medium transition-colors hover:text-orange-500 ${isActive('/dashboard/reader') ? 'text-orange-500' : 'text-zinc-500 dark:text-zinc-400'}`}
+                    >
+                        Reader
+                    </Link>
                 </div>
             </div>
             <div className="text-xs text-zinc-400">

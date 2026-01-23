@@ -49,7 +49,12 @@ export class Director {
 
             // 1b. COUNCIL ADVICE (Advisory Only)
             // If the action is significant (not just reading), consult the Council for optimization/insight.
-            if (!plan.toolName.startsWith('vscode_read') && !plan.toolName.startsWith('list_')) {
+            // 1b. COUNCIL ADVICE (Advisory Only)
+            // If the action is significant (not just reading), consult the Council for optimization/insight.
+            // SKIP if Autonomy is High (Full Self-Driving)
+            const isHighAutonomy = this.server.permissionManager.getAutonomyLevel() === 'high';
+
+            if (!isHighAutonomy && !plan.toolName.startsWith('vscode_read') && !plan.toolName.startsWith('list_')) {
                 const debate = await this.council.startDebate(`Action: ${plan.toolName}(${JSON.stringify(plan.params)}). Reasoning: ${plan.reasoning}`);
 
                 // We add the Council's wisdom to the context history so the Agent can see it for the NEXT step.
@@ -57,6 +62,8 @@ export class Director {
                 context.history.push(`Council Advice for '${plan.toolName}': ${debate.summary}`);
 
                 console.log(`[Director] 🛡️ Council Advice: ${debate.summary}`);
+            } else if (isHighAutonomy) {
+                console.log(`[Director] ⚡ High Autonomy: Skipping Council Debate for ${plan.toolName}`);
             }
 
             // 2. Act: Execute tool
@@ -204,55 +211,36 @@ export class Director {
      * 4. Auto-Accepts (periodically presses Alt+Enter via native_input).
      */
     async startAutoDrive(): Promise<string> {
-        console.log(`[Director] Starting Auto-Drive...`);
+        console.log(`[Director] Starting Auto-Drive (Manager Mode)...`);
 
-        // 1. Start Auto-Accepter (Focuses Chat & Hits Alt+Enter)
-        // RE-ENABLED per user request (User wants autonomy, accepts focus stealing risk)
+        // 1. Start continuous Auto-Accepter (The "Clicker")
         this.startAutoAccepter();
 
-        // 2. Drive the Chat (Infinite Loop)
+        // 2. Management Loop
         while (true) {
             try {
-                console.log("[Director] Auto-Drive: Deciding next move...");
+                // A. Prompt the Agent
+                // We assume the Agent (You) has the context.
+                const prompt = "⚠️ DIRECTOR INTERVENTION: Please check `task.md`. Find the next unchecked item in **Phase 27 (Dashboard Polish)** or **Phase 31**. Implement it immediately. I am auto-accepting your changes.";
 
-                // A. Execute the task INTERNALLY (Headless Autonomy)
-                console.log("[Director] Executing task internally...");
-                const result = await this.executeTask("Read task.md, identify the next incomplete task, and proceed with implementing it.", 20);
+                console.log(`[Director] Directing Agent: "${prompt}"`);
 
-                // B. POST-TASK HANDOFF (The "Supervisor" Step)
-                // The task is done. Now we must type into the chat to prompt the NEXT cycle.
-                console.log("[Director] Task Finished. Consulting Council for Handoff...");
-
-                // Consult Council for the handoff message
-                const debate = await this.council.startDebate(`Task finished with result: "${result.substring(0, 100)}...". What should I tell the Chat to do next?`);
-
-                // IRC MODE formatting strategy:
-                // If the debate has multiple opinions, we format them as a chat log.
-                // Assuming debate.summary contains "The Architect: ... | The Guardian: ..."
-                // We typically get a summary string. Let's make it look like IRC.
-                const ircLog = debate.summary
-                    .replace(/ \| /g, '\n') // Newlines for each member
-                    .replace(/The (\w+):/g, '**$1**:'); // Bold Names
-
-                const message = `\n-- 🏛️ COUNCIL CHAT --\n${ircLog}\n\n**Director**: Execution Complete. Proceeding...`;
-
-                console.log(`[Director] Typing into Chat: "${message}"`);
-
-                // 1. Focus Chat
+                // Focus Chat & Send
                 await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.chat.open' });
-                // 2. Type Message
-                await this.server.executeTool('chat_reply', { text: message });
-                // 3. Submit
+                await this.server.executeTool('chat_reply', { text: prompt });
+
+                // Double tap enter/submit
                 await this.server.executeTool('vscode_submit_chat', {});
-                // 4. Force Enter
                 await this.server.executeTool('native_input', { keys: 'enter' });
 
-                // Small rest to let the Chat Agent react (if any)
-                await new Promise(r => setTimeout(r, 5000));
+                // B. Wait / Supervise (Run for 3 minutes before re-prompting)
+                // The Auto-Accepter is running in the background every 1s.
+                console.log("[Director] Supervising development block (180s)...");
+                await new Promise(r => setTimeout(r, 180000));
 
             } catch (e: any) {
-                console.error("[Director] Auto-Drive Error:", e.message);
-                await new Promise(r => setTimeout(r, 10000)); // Backoff
+                console.error("[Director] Manager Error:", e.message);
+                await new Promise(r => setTimeout(r, 10000));
             }
         }
     }
@@ -260,21 +248,20 @@ export class Director {
     private startAutoAccepter() {
         // Re-enabled per user request to handle "Accept" / "Allow" prompts automatically.
         // KEY CHANGE: We must FOCUS the Chat Panel before sending keys to avoid typing in the Terminal.
-        console.log("[Director] Auto-Accepter active (Interval: 3s). Focusing Chat -> Alt+Enter.");
+        console.log("[Director] Auto-Accepter active (Interval: 1s). Scanning for 'Accept' triggers...");
 
         setInterval(async () => {
             try {
-                // 1. Focus the Chat Panel (Crucial!)
-                await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.chat.open' });
+                // 1. Focus Chat (Ensure we target the right window)
+                // await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.chat.open' });
 
                 // 2. Click "Accept" / "Submit" button via Command
-                // This is clearer and less error-prone than Alt+Enter
                 await this.server.executeTool('vscode_submit_chat', {});
 
-                // 3. Try "Accept Changes" for Inline Chat
-                // Blue "Accept" button
+                // 3. Try "Accept Changes" for Inline Chat / Refactoring
                 await this.server.executeTool('vscode_execute_command', { command: 'inlineChat.accept' });
                 await this.server.executeTool('vscode_execute_command', { command: 'editor.action.inlineSuggest.commit' });
+                await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.terminal.chat.accept' });
 
                 // 4. Fallback: Native Keys (Alt+Enter)
                 // Use only if commands fail or for non-command dialogs
@@ -283,10 +270,25 @@ export class Director {
             } catch (e) {
                 // Ignored.
             }
-        }, 3000);
+        }, 1000);
     }
 
     private async think(context: AgentContext): Promise<{ action: 'CONTINUE' | 'FINISH', toolName: string, params: any, result?: string, reasoning: string }> {
+        // 0. Memory Recall (RAG)
+        let memoryContext = "";
+        try {
+            // @ts-ignore
+            const memoryResult = await this.server.executeTool("search_codebase", { query: context.goal });
+            // @ts-ignore
+            const memoryText = memoryResult.content?.[0]?.text || "";
+            if (memoryText && !memoryText.includes("No matches")) {
+                memoryContext = `\nRELEVANT CODEBASE CONTEXT:\n${memoryText.substring(0, 2000)}\n`;
+                console.log(`[Director] 🧠 Recalled ${memoryText.length} chars of context.`);
+            }
+        } catch (e) {
+            // Ignore memory errors
+        }
+
         // 1. Select Model
         const model = await this.server.modelSelector.selectModel({ taskComplexity: 'medium' });
 
@@ -306,6 +308,7 @@ AVAILABLE TOOLS:
 - list_files: Explore directory.
 - read_file: Read file content.
 - start_watchdog: Start continuous monitoring loop (if user asks to "watch" or "monitor").
+- search_codebase: Search for code definitions.
 
 RESPONSE FORMAT:
 Return ONLY a valid JSON object (no markdown):
@@ -325,7 +328,8 @@ HEURISTICS:
 `;
 
         const userPrompt = `GOAL: ${context.goal}
-        
+${memoryContext}
+
 HISTORY:
 ${context.history.join('\n')}
 

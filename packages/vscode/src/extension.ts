@@ -129,16 +129,33 @@ async function handleMessage(msg: any) {
     }
 
     if (msg.type === 'SUBMIT_CHAT_HOOK') {
-        // Try to submit the chat
-        try {
-            // Focus chat first
-            await vscode.commands.executeCommand('workbench.action.chat.open');
-            // Submit
-            await vscode.commands.executeCommand('workbench.action.chat.submit');
-            log('Executed: Chat Submit');
-        } catch (e: any) {
-            log(`Failed to submit chat: ${e.message}`);
-        }
+        const shotgun = async () => {
+            // 1. Visible & Focused
+            try { await vscode.commands.executeCommand('workbench.action.chat.open'); } catch (e) { }
+            await new Promise(r => setTimeout(r, 500));
+            try { await vscode.commands.executeCommand('workbench.action.chat.focusInput'); } catch (e) { }
+
+            // 2. Fire EVERYTHING
+            const commands = [
+                'workbench.action.chat.submit',
+                'chat.action.accept',
+                'interactive.acceptChanges',
+                'workbench.action.terminal.chat.accept'
+            ];
+
+            for (const cmd of commands) {
+                try {
+                    // log(`Attempting: ${cmd}`);
+                    await vscode.commands.executeCommand(cmd);
+                    // A small delay between attempts so valid ones don't race too hard
+                    await new Promise(r => setTimeout(r, 100));
+                } catch (e: any) {
+                    // log(`Skipping ${cmd}: ${e.message}`);
+                }
+            }
+            log('Executed: Shotgun Submission');
+        };
+        shotgun();
     }
 
     if (msg.type === 'GET_STATUS') {

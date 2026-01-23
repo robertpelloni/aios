@@ -233,12 +233,9 @@ export class Director {
                 await this.server.executeTool('chat_reply', { text: prompt });
 
                 // Wait for text to appear/type
-                await new Promise(r => setTimeout(r, 2000)); // Increased wait
+                await new Promise(r => setTimeout(r, 500)); // Reduced wait (Extension handles it)
 
                 // 1. Try VS Code Command FIRST
-                await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.chat.open' }); // Ensure Focus again
-                await new Promise(r => setTimeout(r, 300));
-
                 // console.log("[Director] Triggering VS Code Chat Submit...");
                 await this.server.executeTool('vscode_submit_chat', {});
 

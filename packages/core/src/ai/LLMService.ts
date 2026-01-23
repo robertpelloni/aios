@@ -49,7 +49,7 @@ export class LLMService {
                 if (!this.anthropicClient) throw new Error("Anthropic API Key not configured.");
                 const msg = await this.anthropicClient.messages.create({
                     model: modelId,
-                    max_tokens: 4096,
+                    max_tokens: 1024,
                     system: systemPrompt,
                     messages: [{ role: "user", content: userPrompt }]
                 });
@@ -82,7 +82,7 @@ export class LLMService {
 
             throw new Error(`Unsupported provider: ${provider}`);
         } catch (error: any) {
-            console.error(`[LLMService] Error from ${provider}:`, error.message);
+            console.error(`[LLMService] Error from ${provider}:`, error.message, error.response?.data || error);
             throw error;
         }
     }

@@ -27,7 +27,7 @@ const MODEL_CHAINS = {
     ],
     // Intelligence-heavy models for planning/review
     supervisor: [
-        { provider: 'anthropic', modelId: 'claude-3-opus-20240229' }, // "Opus 4.5"
+        { provider: 'google', modelId: 'gemini-2.0-flash-exp' }, // High IQ, Fast, Free-tier friendly
         { provider: 'openai', modelId: 'gpt-4o' },
         { provider: 'anthropic', modelId: 'claude-3-5-sonnet-20240620' }
     ]

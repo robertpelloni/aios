@@ -1,75 +1,53 @@
 
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { WebSocketClientTransport } from "@modelcontextprotocol/sdk/client/websocket.js";
+import WebSocket from "ws"; // Requires 'ws' package or global in Node 22+
 
-async function main() {
-    console.log("Initializing Autonomous Supervisor...");
+async function run() {
+    console.log("Connecting to Borg Core via WebSocket...");
 
-    // Connect to Core Stdio
-    const transport = new StdioClientTransport({
-        command: "node",
-        args: ["c:/Users/hyper/workspace/borg/packages/core/dist/server-stdio.js"]
-    });
+    // Create a WebSocket transport (Core runs on 3001 for WS)
+    // Note: We need to ensure global WebSocket is available if the SDK expects it, 
+    // or pass the implementation if the transport supports it.
+    // The official SDK 'websocket.js' usually expects a URL.
+
+    // Polyfill for Node environment if needed
+    // @ts-ignore
+    global.WebSocket = WebSocket;
+
+    const transport = new WebSocketClientTransport(new URL("ws://localhost:3001"));
 
     const client = new Client(
         { name: "autonomous-trigger", version: "1.0.0" },
         { capabilities: {} }
     );
 
-    await client.connect(transport);
-    console.log("Connected to Borg Core.");
-
     try {
-        // 1. Set Autonomy to High
-        console.log("Setting Autonomy Level to HIGH...");
-        await client.callTool({
-            name: "set_autonomy",
-            arguments: { level: "high" }
-        });
+        await client.connect(transport);
+        console.log("Connected to Borg Core!");
 
-        // 2. Start Chat Daemon (Director Loop)
-        console.log("Starting Director Chat Daemon...");
-        await client.callTool({
-            name: "start_chat_daemon",
+        // Trigger Auto-Drive
+        console.log("Starting Auto-Drive...");
+        const result = await client.callTool({
+            name: "start_auto_drive",
             arguments: {}
         });
 
-        // 3. Start Watchdog (Process Monitor)
-        console.log("Starting Supervisor Watchdog...");
-        await client.callTool({
-            name: "start_watchdog",
-            arguments: { maxCycles: 100 } // Long running
-        });
+        console.log("Auto-Drive Started:", result);
 
-        console.log("✅ Autonomous Mode Active.");
-        console.log("The Supervisor is now watching your IDE and will auto-approve requests.");
-        console.log("Keep this process running to maintain the connection.");
+        // Keep process alive to receive logs/events if we subscribed? 
+        // Auto-drive is a fire-and-forget toggle in the Director, 
+        // but we might want to listen for 'chat_reply' or status updates.
 
-    } catch (e: any) {
-        console.error("Failed to activate autonomous mode:", e.message);
+        // For now, just exit after triggering, as the Server (pnpm start) handles the loop.
+        // process.exit(0);
+
+        // Actually, let's keep it open to see if we get messages back
+        console.log("Listening for events... (Press Ctrl+C to stop)");
+
+    } catch (e) {
+        console.error("Connection Failed:", e);
     }
-
-    // Keep alive? Actually config commands might be persistent in memory, 
-    // but the Daemon loop resides in the Server process.
-    // If we disconnect Stdio, the server *might* shut down if it's the only transport.
-    // But here we are connecting TO the existing server? 
-    // No, StdioClientTransport spawns a NEW server instance usually.
-    // WE NEED TO CONNECT TO THE RUNNING SERVER via WebSocket or HTTP?
-    // Core supports WebSocket on 3001. We should use that for control if we want to affect the main instance.
-    // BUT the main instance is running via `pnpm start` in CLI?
-    // If the user hasn't started the CLI, this script starts a standalone one.
-
-    // Ideally, we send a command to the EXISTING Core.
-    // If using Stdio transport here, we create an ISOLATED instance.
-    // This Isolated instance has its own Director/PermissionManager.
-    // It WON'T affect the "Extension" unless they share state (they don't, in memory).
-
-    // DATA Mismatch:
-    // The Extension connects to `ws://localhost:3001`.
-    // We need to configure THAT specific server instance.
-    // So this script should connect via WebSocket to port 3001.
-
-    process.exit(0);
 }
 
-// We need a WebSocket Client version of this script.
+run();

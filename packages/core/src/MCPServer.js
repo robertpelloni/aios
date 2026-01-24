@@ -702,24 +702,24 @@ export class MCPServer {
             console.log("[MCPServer] Skipping WebSocket (No wsServer instance).");
         }
         // 3. Connect to Supervisor (Native Automation)
+        // 3. Connect to Supervisor (Native Automation)
         console.log("[MCPServer] Connecting to Supervisor...");
-        // Use __dirname to find sibling package reliably, regardless of CWD
-        const supervisorPath = path.resolve(__dirname, '..', '..', 'borg-supervisor', 'dist', 'index.js');
         try {
-            console.log(`[MCPServer] Supervisor Path: ${supervisorPath}`);
-            // Check if file exists first? Router will fail if node can't find it.
-            // As this is "Execution", we want to be robust.
-            // But we assume monorepo structure:
-            // root/packages/core
-            // root/packages/borg-supervisor
-            // CWD is packages/core usually.
-            // Actually, best to use absolute path based on __dirname source knowledge or relative to CWD
-            // If CWD is `packages/core`
-            await this.router.connectToServer('borg-supervisor', 'node', [supervisorPath]);
-            console.error(`Borg Core: Connected to Supervisor at ${supervisorPath}`);
+            console.log(`[MCPServer] DEBUG __dirname: ${__dirname}`);
+            const rootDir = this.findMonorepoRoot(__dirname);
+            console.log(`[MCPServer] DEBUG rootDir: ${rootDir}`);
+            if (rootDir) {
+                const supervisorPath = path.join(rootDir, 'packages', 'borg-supervisor', 'dist', 'index.js');
+                console.log(`[MCPServer] Supervisor Path Resolved: ${supervisorPath}`);
+                await this.router.connectToServer('borg-supervisor', 'node', [supervisorPath]);
+                console.error(`Borg Core: Connected to Supervisor at ${supervisorPath}`);
+            }
+            else {
+                console.error("[MCPServer] Failed to locate Monorepo Root. Skipping Supervisor.");
+            }
         }
         catch (e) {
-            console.error("Borg Core: Failed to connect to Supervisor. Native automation disabled.", e);
+            console.error("Borg Core: Failed to connect to Supervisor. Native automation disabled.", e.message);
         }
         if (this.wsServer && this.wssInstance) {
             console.log("[MCPServer] Connecting internal WS transport...");
@@ -727,5 +727,17 @@ export class MCPServer {
             await this.wsServer.connect(wsTransport);
         }
         console.log("[MCPServer] Start Complete.");
+    }
+    findMonorepoRoot(startDir) {
+        const fs = require('fs');
+        let current = startDir;
+        const root = path.parse(current).root;
+        while (current !== root) {
+            if (fs.existsSync(path.join(current, 'turbo.json'))) {
+                return current;
+            }
+            current = path.dirname(current);
+        }
+        return null;
     }
 }

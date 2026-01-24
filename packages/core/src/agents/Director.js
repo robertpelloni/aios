@@ -309,15 +309,30 @@ class ConversationMonitor {
             `;
             const response = await this.llmService.generateText(model.provider, model.modelId, "Council", prompt);
             const msg = response.content.trim();
-            // Robust Regex: Matches "DIRECTIVE: ..." or "DIRECTIVE: "..." 
-            // Captures rest of line
-            const directiveMatch = msg.match(/DIRECTIVE:\s*"?([^"\n]+)"?/i) || msg.match(/DIRECTIVE:\s*(.*)/i);
-            const directive = directiveMatch ? directiveMatch[1].trim() : null;
-            // 1. Log Dialogue to Console (Safe, no UI interferance)
+            // ROBUST REGEX: Capture EVERYTHING after "DIRECTIVE:" until end of line or string
+            const directiveMatch = msg.match(/DIRECTIVE:\s*(.*)/i);
+            // Remove surrounding quotes if they exist, but keep internal quotes
+            let directive = directiveMatch ? directiveMatch[1].trim() : null;
+            if (directive && directive.startsWith('"') && directive.endsWith('"')) {
+                directive = directive.slice(1, -1);
+            }
+            // 1. Log Dialogue to Console (Safe, no UI interference)
             console.error(`\n\n🏛️ **COUNCIL HALL** 🏛️\n------------------------\n${msg}\n------------------------\n`);
+            // 1b. Broadcast Council Summary to Chat
+            try {
+                // @ts-ignore
+                await this.server.executeTool('chat_reply', { text: `🏛️ [Council]: ${directive || 'Deliberating...'}` });
+            }
+            catch (e) { }
             if (directive) {
                 // 2. EXECUTE DIRECTLY
                 await this.director.executeTask(directive);
+                // 3. Broadcast Completion
+                try {
+                    // @ts-ignore
+                    await this.server.executeTool('chat_reply', { text: `✅ [Director]: Task completed.` });
+                }
+                catch (e) { }
             }
             else {
                 console.error("[Director] No directive found in Council output.");

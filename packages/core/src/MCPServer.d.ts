@@ -30,5 +30,6 @@ export declare class MCPServer {
     executeTool(name: string, args: any): Promise<any>;
     private setupHandlers;
     start(): Promise<void>;
+    private findMonorepoRoot;
 }
 //# sourceMappingURL=MCPServer.d.ts.map

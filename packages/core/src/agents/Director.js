@@ -72,6 +72,13 @@ export class Director {
         }
         this.isAutoDriveActive = true;
         this.currentStatus = 'DRIVING';
+        // Init Live Feed
+        try {
+            const fs = await import('fs');
+            const path = await import('path');
+            fs.writeFileSync(path.join(process.cwd(), 'DIRECTOR_LIVE.md'), '# 🎬 Director Live Feed\nWaiting for action...\n');
+        }
+        catch (e) { }
         console.error(`[Director] Starting Auto-Drive (Internal Loop)...`);
         await this.broadcast("⚡ **Auto-Drive Engaged**\nI am now operating autonomously. The Council will direct the workflow.");
         // Start Monitor to handle Idle states by triggering Council
@@ -97,8 +104,25 @@ export class Director {
     }
     // --- Helpers ---
     async broadcast(message) {
-        // SAFE MODE: Console Log only. No chat_reply.
+        // SAFE MODE: Console Log for Terminal
         console.error(`\n📢 [Director]: ${message}\n`);
+        // LIVE FEED: Write to DIRECTOR_LIVE.md for IDE Visibility
+        try {
+            const fs = await import('fs');
+            const path = await import('path');
+            const feedPath = path.join(process.cwd(), 'DIRECTOR_LIVE.md');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `\n### [${timestamp}] Director\n${message}\n`;
+            // Append to file
+            fs.appendFileSync(feedPath, logEntry);
+        }
+        catch (e) { }
+        // LIVE FEED: Paste to Chat Window (User Request)
+        // This utilizes the VS Code Extension Bridge via 'chat_reply'
+        try {
+            await this.server.executeTool('chat_reply', { text: `[Director]: ${message}` });
+        }
+        catch (e) { }
     }
     async think(context) {
         // ... (Existing Think Logic with RAG) ...
@@ -292,15 +316,4 @@ class ConversationMonitor {
                 // 2. EXECUTE DIRECTLY
                 await this.director.executeTask(directive);
             }
-            else {
-                console.error("[Director] No directive found in Council output.");
-            }
-        }
-        catch (e) {
-            console.error("Council Error:", e);
-        }
-        finally {
-            this.isRunningTask = false;
-        }
-    }
-}
+            

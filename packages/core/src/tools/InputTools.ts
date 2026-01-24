@@ -8,6 +8,37 @@ export class InputTools {
     async sendKeys(keys: string, forceFocus: boolean = false) {
         console.error(`[InputTools] ⌨️ Sending keys: ${keys} (Focus: ${forceFocus})`);
 
+        // 1. Try Direct Injection (The "God Mode" Fix)
+        try {
+            // @ts-ignore
+            const { ProcessRegistry } = await import("../os/ProcessRegistry.js");
+            const process = ProcessRegistry.getLatest();
+            if (process && process.stdin) {
+                console.error(`[InputTools] 💉 Injecting '${keys}' directly into Process Stdin`);
+                // Normalize Keys for Stdin
+                let input = keys;
+                if (keys.toLowerCase() === 'y') input = 'y';
+                if (keys.toLowerCase() === 'n') input = 'n';
+                if (keys.toLowerCase().includes('enter')) input = '\n';
+
+                // If it's a combo like 'y' then 'enter' (which usually comes separate), just write it.
+                // But Director sends 'y', then 'enter'.
+                // If keys is just 'y', we write 'y'.
+                // If keys is 'enter', we write '\n'.
+
+                process.stdin.write(input);
+                if (input !== '\n' && input !== '\r') {
+                    // Auto-flush?? stream writes are usually buffered or flush immediately.
+                }
+                return `Injected: ${keys}`;
+            }
+        } catch (e) {
+            console.error(`[InputTools] Injection Failed (ignoring):`, e);
+        }
+
+        // 2. Fallback to VBScript (if no active process or injection failed)
+        console.error(`[InputTools] 📺 Fallback to VBScript...`);
+
         // Map keys to VBScript SendKeys format
         const vbMap: Record<string, string> = {
             'ctrl+r': '^r',

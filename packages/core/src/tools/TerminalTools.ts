@@ -1,3 +1,4 @@
+
 import { exec } from "child_process";
 import util from "util";
 
@@ -17,18 +18,28 @@ export const TerminalTools = [
         },
         handler: async (args: { command: string, cwd?: string }) => {
             const { spawn } = await import("child_process");
+            // @ts-ignore
+            const { ProcessRegistry } = await import("../os/ProcessRegistry.js");
 
             return new Promise((resolve) => {
                 // Use spawn to allow finer control
-                // stdio: [stdin, stdout, stderr]
-                // inherit stdin so user/simulator can type into the process
+                // stdio: ['pipe', 'pipe', 'pipe'] allows us to write to stdin via code
+                // BUT we also want user to type?
+                // We pipe parent stdin to child stdin.
                 const child = spawn(args.command, {
                     cwd: args.cwd,
                     shell: true,
-                    stdio: ['inherit', 'pipe', 'pipe']
+                    stdio: ['pipe', 'pipe', 'pipe']
                 });
 
-                // Track process for Direct Input Injection
+                // Pipe Parent Stdin (User keys) to Child Stdin
+                if (process.stdin && child.stdin) {
+                    process.stdin.pipe(child.stdin);
+                    // Do not close child stdin on parent end? 
+                    // process.stdin.on('end', () => child.stdin.end());
+                }
+
+                // Track process for Direct Input Injection (Agent keys)
                 ProcessRegistry.register('latest', child);
 
                 let stdoutData = "";
@@ -48,5 +59,13 @@ export const TerminalTools = [
                 child.on('close', (code) => {
                     // @ts-ignore
                     ProcessRegistry.unregister('latest');
+                    // Unpipe to prevent leak?
+                    if (process.stdin) process.stdin.unpipe(child.stdin);
+
                     const output = stdoutData + (stderrData ? `\nSTDERR:\n${stderrData}` : "");
-                    resolve({ content: [{ type: "text", tex
+                    resolve({ content: [{ type: "text", text: output.trim() || `Command exited with code ${code}` }] });
+                });
+            });
+        }
+    }
+];

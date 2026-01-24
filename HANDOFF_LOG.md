@@ -31,9 +31,15 @@ This session focused on hardening the Agentic Framework (`@borg/core`) and compl
     -   Resolved "Missing Production Build" error by cleaning `.next` and running a fresh `pnpm build`.
 
 ### 📂 Project State
-- **Version:** `1.4.0` (Core Feature Set + Phase 11 Integrations).
-- **Build Status:** Clean (`@borg/web` verified with `.next` artifacts).
-- **Backlog:** Phase 11 (Submodules, Dashboards) is COMPLETE.
+- **Version:** `1.4.0` (Core Feature Set + Phase 12 Skills/Orchestration).
+- **Build Status:** Clean (`@borg/web` verified).
+- **Backlog:** Phase 12 (Skills/Orchestration) is COMPLETE.
+
+### 🌟 New in Phase 12
+1.  **Skill Ingestion:** Importer script (`scripts/import-skills.ts`) created and run.
+2.  **Registry:** `mcp_registry.json` now includes `git_expert` and `react_architect` skills.
+3.  **Meta-Orchestrator:** Stubbed `MetaOrchestrator.ts` and `AgentCommunication.ts` (A2A).
+4.  **Autonomous Council:** Fully active in `Director.ts` (providing chat-based steering).
 
 ### 🌟 New in v1.4.0
 1.  **Submodules:** `jules-autopilot`, `opencode-autopilot`, `awesome-mcp` added.

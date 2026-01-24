@@ -577,8 +577,27 @@ class ConversationMonitor {
             await this.server.executeTool('chat_reply', { text: `🏛️ **Council Hall**\n\n${dialogue}` });
             await new Promise(r => setTimeout(r, 1500));
 
-            // Force the Agent to wake up and process this
+            // AUTO-DRIVE: We must simulate User Input to trigger the next turn.
+            // 1. Focus Chat
+            try { await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.chat.open' }); } catch (e) { }
+            await new Promise(r => setTimeout(r, 500));
+
+            // 2. Type "Proceed" into Input Box (Native Input)
+            // Note: This relies on Chat having focus.
+            console.log("[Director] 🤖 Auto-Typing 'Proceed'...");
+            try { await this.server.executeTool('native_input', { keys: 'P' }); } catch (e) { }
+            try { await this.server.executeTool('native_input', { keys: 'r' }); } catch (e) { }
+            try { await this.server.executeTool('native_input', { keys: 'o' }); } catch (e) { }
+            try { await this.server.executeTool('native_input', { keys: 'c' }); } catch (e) { }
+            try { await this.server.executeTool('native_input', { keys: 'e' }); } catch (e) { }
+            try { await this.server.executeTool('native_input', { keys: 'e' }); } catch (e) { }
+            try { await this.server.executeTool('native_input', { keys: 'd' }); } catch (e) { }
+            await new Promise(r => setTimeout(r, 200));
+
+            // 3. Submit
             await this.server.executeTool('vscode_submit_chat', {});
+            // Fallback Enter
+            await this.server.executeTool('native_input', { keys: 'enter' });
 
         } catch (e: any) {
             // Fallback

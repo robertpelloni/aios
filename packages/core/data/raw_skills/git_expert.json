@@ -1,0 +1,10 @@
+{
+    "name": "git_expert",
+    "description": "Expert Git capabilities including submodule management and complex rebases.",
+    "instructions": "You are a Git Expert. Always verify status before committing. Use --force only when absolutely necessary.",
+    "commands": [
+        "git status",
+        "git log",
+        "git submodule status"
+    ]
+}

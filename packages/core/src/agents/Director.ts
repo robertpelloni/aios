@@ -240,14 +240,29 @@ export class Director {
                 await this.server.executeTool('chat_reply', { text: prompt });
                 await new Promise(r => setTimeout(r, 500));
 
-                // 1. Try VS Code Command FIRST
+                // 1. Focus Input Explicitly
+                try { await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.chat.focusInput' }); } catch (e) { }
+                await new Promise(r => setTimeout(r, 200));
+
+                // 2. Type "Proceed" to allow Submit
+                console.log("[Director] 🤖 Auto-Typing 'Proceed'...");
+                try { await this.server.executeTool('native_input', { keys: 'P' }); } catch (e) { }
+                try { await this.server.executeTool('native_input', { keys: 'r' }); } catch (e) { }
+                try { await this.server.executeTool('native_input', { keys: 'o' }); } catch (e) { }
+                try { await this.server.executeTool('native_input', { keys: 'c' }); } catch (e) { }
+                try { await this.server.executeTool('native_input', { keys: 'e' }); } catch (e) { }
+                try { await this.server.executeTool('native_input', { keys: 'e' }); } catch (e) { }
+                try { await this.server.executeTool('native_input', { keys: 'd' }); } catch (e) { }
+                await new Promise(r => setTimeout(r, 200));
+
+                // 3. Try VS Code Command FIRST
                 await this.server.executeTool('vscode_submit_chat', {});
 
-                // 2. Fallback: Native Enter
+                // 4. Fallback: Native Enter
                 await new Promise(r => setTimeout(r, 500));
                 await this.server.executeTool('native_input', { keys: 'enter' });
 
-                // 3. Force Submit (Ctrl+Enter)
+                // 5. Force Submit (Ctrl+Enter)
                 await new Promise(r => setTimeout(r, 200));
                 await this.server.executeTool('native_input', { keys: 'control+enter' });
 

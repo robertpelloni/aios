@@ -252,12 +252,12 @@ export class Director {
         // 2. Construct Prompt
         const systemPrompt = DIRECTOR_SYSTEM_PROMPT;
         const userPrompt = `GOAL: ${context.goal}
-${memoryContext}
-
-HISTORY:
-${context.history.join('\n')}
-
-What is the next step?`;
+306: ${memoryContext}
+307: 
+308: HISTORY:
+309: ${context.history.join('\n')}
+310: 
+311: What is the next step?`;
         // 3. Generate (if API Key exists)
         try {
             const response = await this.llmService.generateText(model.provider, model.modelId, systemPrompt, userPrompt);
@@ -430,61 +430,87 @@ class ConversationMonitor {
         return 'AI_WORKING';
     }
     async respondToState(state) {
-        // Always try safe interactions first
+        // 1. Universal "Yes/Accept" Spam (Safe-ish)
+        // Try to hit "Accept" or "Run" buttons wherever they might be
         try {
             await this.server.executeTool('vscode_execute_command', { command: 'interactive.acceptChanges' });
         }
         catch (e) { }
+        try {
+            await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.terminal.chat.accept' });
+        }
+        catch (e) { }
+        try {
+            await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.chat.acceptInput' });
+        }
+        catch (e) { }
         if (state === 'NEEDS_APPROVAL') {
             const idleTime = Date.now() - this.lastActivityTime;
-            // Debounce: Don't spam enter. 
-            console.log("[Director] 🟢 Approval Needed -> Alt+Enter");
+            console.log("[Director] 🟢 Approval Needed -> Validating...");
+            // Try specific "Run" actions
             try {
                 await this.server.executeTool('native_input', { keys: 'alt+enter' });
             }
             catch (e) { }
-            this.lastActivityTime = Date.now(); // Reset to prevent rapid firing
+            try {
+                await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.terminal.chat.runCommand' });
+            }
+            catch (e) { }
+            this.lastActivityTime = Date.now();
         }
         else if (state === 'NEEDS_STEER') {
-            console.log("[Director] 🔵 Session Finished/Idle -> Generating Smart Steering...");
-            await this.sendSteer();
+            console.log("[Director] 🔵 Session Idle -> Summoning Council...");
+            await this.runSupervisorLoop();
             this.lastActivityTime = Date.now();
         }
         else if (state === 'IDLE') {
-            // Passive monitoring only. Do NOT poke the chat randomly.
-            // This prevents focus stealing when user is typing.
+            // Passive
         }
     }
-    async sendSteer() {
-        // SMART STEERING: Suggest next task
+    async runSupervisorLoop() {
+        // AUTONOMOUS COUNCIL: Simulates a team discussion to steer the agent
         try {
-            // 1. Read Task List (Heuristic path, hard to dynamic find, so generic fallback)
-            // const taskContent = ... 
-            console.log(`[Director] 🤖 Generating Smart Steering via LLM...`);
+            console.log(`[Director] 🤖 Convening Council of Supervisors...`);
             // 1. Get Model
-            const model = await this.server.modelSelector.selectModel({ taskComplexity: 'low' }); // Fast model is fine
-            // 2. Prompt
-            const prompt = `You are the Project Director. The user (and their AI agent) have been idle for over 90 seconds. 
-            Your goal is to gently nudge them to continue progress. 
+            const model = await this.server.modelSelector.selectModel({ taskComplexity: 'high' });
+            // 2. Prompt for "Chatroom" style direction
+            const prompt = `You are the Supervisor Council for the 'Borg' project.
+            The developer agent is idle. Review the situation and generate a brief chatroom dialogue between supervisors to decide the next step.
             
-            Check the task.md status conceptually (assume we are working on 'borg' agentic framework).
-            Generate a short, encouraging, 1-sentence prompt to get them back on track. 
-            Examples: "Status check? Are we ready for the next task?", "Shall we review the pending items in task.md?", "System is idle. Awaiting next command."
+            Personas:
+            - [Architect]: Focuses on structure, patterns, and stability.
+            - [Product]: Focuses on user requirements (dashboards, features).
+            - [Critic]: Checks for regressions and reliability.
             
-            Output ONLY the message string.`;
-            const response = await this.llmService.generateText(model.provider, model.modelId, "You are a helpful AI Director.", prompt);
-            let msg = response.content.trim().replace(/^"|"$/g, ''); // Remove quotes
-            if (!msg)
-                msg = "Status check? Ready for next instruction.";
-            console.log(`[Director] 🤖 Steering: "${msg}"`);
-            await this.server.executeTool('chat_reply', { text: msg });
-            await new Promise(r => setTimeout(r, 500));
-            // Auto-submit
+            Goal: Read 'task.md' conceptually. Decide what implementation or verification is next.
+            Output format: A short dialogue (2-3 lines) followed by a final command.
+            
+            Example Output:
+            [Architect]: We need to verify the Git Submodules are syncing correctly.
+            [Product]: Agreed, the Dashboard needs that data.
+            [Critic]: Let's run a verification script first.
+            
+            DIRECTIVE: "Check git submodule status."
+            `;
+            const response = await this.llmService.generateText(model.provider, model.modelId, "You are the Council.", prompt);
+            let msg = response.content.trim();
+            console.log(`[Director] 🤖 Council Deliberation:\n${msg}`);
+            // Send messages to chat
+            const lines = msg.split('\n');
+            let dialogue = "";
+            for (const line of lines) {
+                if (line.trim()) {
+                    dialogue += `${line}\n`;
+                }
+            }
+            // Inject the dialogue as a context message from the system (Council)
+            await this.server.executeTool('chat_reply', { text: `🏛️ **Council Hall**\n\n${dialogue}` });
+            await new Promise(r => setTimeout(r, 1500));
+            // Force the Agent to wake up and process this
             await this.server.executeTool('vscode_submit_chat', {});
         }
         catch (e) {
-            // console.error("Steering failed:", e.message);
-            // Fallback quietly to avoid spamming the console when offline
+            // Fallback
             const fallback = "Status check? System idle.";
             try {
                 await this.server.executeTool('chat_reply', { text: fallback });

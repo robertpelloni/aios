@@ -251,11 +251,21 @@ class ConversationMonitor {
 
     private async respondToState(state: string) {
         if (state === 'NEEDS_APPROVAL') {
-            console.error("[Director] 🟢 Auto-Approving...");
-            // Try all acceptance methods, NO Typing in Chat.
+            console.error("[Director] 🟢 Auto-Approving (Sending 'y' + Enter + Alt-Enter)...");
+
+            // 1. CLI Terminal Approval (The most likely culprit)
+            try { await this.server.executeTool('native_input', { keys: 'y' }); } catch (e) { }
+            await new Promise(r => setTimeout(r, 100));
+            try { await this.server.executeTool('native_input', { keys: 'enter' }); } catch (e) { }
+
+            // 2. VS Code UI Approval (Fallback)
+            await new Promise(r => setTimeout(r, 200));
             try { await this.server.executeTool('native_input', { keys: 'alt+enter' }); } catch (e) { }
+
+            // 3. Command Palette / Inline Chat
             try { await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.terminal.chat.accept' }); } catch (e) { }
             try { await this.server.executeTool('vscode_execute_command', { command: 'interactive.acceptChanges' }); } catch (e) { }
+
             this.lastActivityTime = Date.now();
         }
         else if (state === 'IDLE') {

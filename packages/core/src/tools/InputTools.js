@@ -18,20 +18,31 @@ export class InputTools {
         };
         const command = keyMap[keys.toLowerCase()] || keys;
         // PowerShell script to use WScript.Shell SendKeys
-        // FORCE FOCUS: Try to activate VS Code first (Process or Title)
+        // FORCE FOCUS: Try multiple titles
         const psCommand = `
             $wshell = New-Object -ComObject wscript.shell;
-            if ($wshell.AppActivate('Visual Studio Code')) {
-                Start-Sleep -Milliseconds 100;
-                $wshell.SendKeys('${command}')
-            } elseif ($wshell.AppActivate('Code')) {
-                Start-Sleep -Milliseconds 100;
-                $wshell.SendKeys('${command}')
-            } else {
-                # Fallback: Just send keys
-                $wshell.SendKeys('${command}')
+            $titles = @('Code - Insiders', 'Visual Studio Code', 'Code', 'borg', 'Terminal', 'Debug', 'Test');
+            
+            $focused = $false;
+            foreach ($t in $titles) {
+                if ($wshell.AppActivate($t)) {
+                    $focused = $true;
+                    break;
+                }
             }
+            
+            # Audible Cue that we are acting
+            [console]::beep(800, 100);
+
+            Start-Sleep -Milliseconds 200;
+            $wshell.SendKeys('${command}')
         `;
         try {
             await execAsync(`powershell -Command "${psCommand}"`);
-            return `Suc
+            return `Successfully sent keys: ${keys}`;
+        }
+        catch (error) {
+            return `Error sending keys: ${error.message}`;
+        }
+    }
+}

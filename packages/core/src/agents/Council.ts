@@ -97,6 +97,3 @@ Then provide a detailed explanation or suggestion in the following paragraph.
         }
     }
 }
-
-// Helper to avoid crazy undefined errors if I used a variable
-function CONTENT_OFFSET_LIMIT(s: string) { return s.indexOf('\n') + 1 || 0; }

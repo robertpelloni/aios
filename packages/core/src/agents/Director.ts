@@ -1,4 +1,4 @@
-import { MCPServer } from "../MCPServer.js";
+import type { MCPServer } from "../MCPServer.js";
 import { LLMService } from "../ai/LLMService.js";
 import { Council } from "./Council.js";
 
@@ -203,6 +203,29 @@ export class Director {
         }
     }
 
+    private isAutoDriveActive: boolean = false;
+    private currentStatus: 'IDLE' | 'THINKING' | 'DRIVING' = 'IDLE';
+
+    /**
+     * Stops the Auto-Drive loop.
+     */
+    stopAutoDrive() {
+        console.log("[Director] Stopping Auto-Drive...");
+        this.isAutoDriveActive = false;
+        this.currentStatus = 'IDLE';
+    }
+
+    /**
+     * Gets the current operational status.
+     */
+    getStatus() {
+        return {
+            active: this.isAutoDriveActive,
+            status: this.currentStatus,
+            goal: this.lastSelection // Re-using this field for now or add a new one
+        };
+    }
+
     /**
      * Starts the Self-Driving Mode.
      * 1. Reads task.md
@@ -211,13 +234,19 @@ export class Director {
      * 4. Auto-Accepts (periodically presses Alt+Enter via native_input).
      */
     async startAutoDrive(): Promise<string> {
+        if (this.isAutoDriveActive) {
+            return "Auto-Drive is already active.";
+        }
+        this.isAutoDriveActive = true;
+        this.currentStatus = 'DRIVING';
+
         console.log(`[Director] Starting Auto-Drive (Manager Mode)...`);
 
         // 1. Start continuous Auto-Accepter (The "Clicker")
         this.startAutoAccepter();
 
         // 2. Management Loop
-        while (true) {
+        while (this.isAutoDriveActive) {
             try {
                 // A. Prompt the Agent
                 // We assume the Agent (You) has the context.
@@ -229,6 +258,8 @@ export class Director {
                 await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.chat.open' });
                 // Give it a moment to open
                 await new Promise(r => setTimeout(r, 500));
+
+                if (!this.isAutoDriveActive) break;
 
                 await this.server.executeTool('chat_reply', { text: prompt });
 
@@ -251,13 +282,21 @@ export class Director {
                 // B. Wait / Supervise (Run for 3 minutes before re-prompting)
                 // The Auto-Accepter is running in the background every 1s.
                 console.log("[Director] Supervising development block (180s)...");
-                await new Promise(r => setTimeout(r, 180000));
+
+                // Active Wait (Check flag every 1s)
+                for (let i = 0; i < 180; i++) {
+                    if (!this.isAutoDriveActive) break;
+                    await new Promise(r => setTimeout(r, 1000));
+                }
 
             } catch (e: any) {
                 console.error("[Director] Manager Error:", e.message);
                 await new Promise(r => setTimeout(r, 10000));
             }
         }
+
+        console.log("[Director] Auto-Drive Stopped.");
+        return "Auto-Drive Stopped.";
     }
 
     private startAutoAccepter() {

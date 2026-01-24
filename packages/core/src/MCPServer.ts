@@ -1,4 +1,5 @@
 
+
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
@@ -603,21 +604,29 @@ export class MCPServer {
     }
 
     async start() {
+        console.log("[MCPServer] Loading Skills...");
         // Initialize systems
         await this.skillRegistry.loadSkills();
+        console.log("[MCPServer] Skills Loaded.");
 
         // 1. Start Stdio (for local CLI usage)
+        console.log("[MCPServer] Connecting Stdio...");
         const stdioTransport = new StdioServerTransport();
         await this.server.connect(stdioTransport);
         console.error("Borg Core: Stdio Transport Active");
 
         // 2. Start WebSocket (for Extension/Web usage)
         if (this.wsServer) {
+            console.log("[MCPServer] Starting WebSocket Server...");
             const PORT = 3001;
             const httpServer = http.createServer();
             const wss = new WebSocketServer({ server: httpServer });
             this.wssInstance = wss;
             const wsTransport = new WebSocketServerTransport(wss);
+
+            httpServer.on('error', (err: any) => {
+                console.error(`[Borg Core] ❌ WebSocket Server Error (Port ${PORT}):`, err.message);
+            });
 
             httpServer.listen(PORT, () => {
                 console.error(`Borg Core: WebSocket Transport Active on ws://localhost:${PORT}`);
@@ -641,15 +650,17 @@ export class MCPServer {
                 });
             });
         } else {
-            // Needed for variable scope in try-catch if using let, but here wsTransport is local
-            // We just skip the block.
+            console.log("[MCPServer] Skipping WebSocket (No wsServer instance).");
         }
 
         // 3. Connect to Supervisor (Native Automation)
+        console.log("[MCPServer] Connecting to Supervisor...");
         // We assume we are running from the monorepo root
         const supervisorPath = path.resolve(process.cwd(), 'packages/borg-supervisor/dist/index.js');
+        //const supervisorPath = 'C:\\Users\\hyper\\workspace\\borg\\packages\\borg-supervisor\\dist\\index.js'; // Hardcoded check?
 
         try {
+            console.log(`[MCPServer] Supervisor Path: ${supervisorPath}`);
             // Check if file exists first? Router will fail if node can't find it.
             // As this is "Execution", we want to be robust.
             // But we assume monorepo structure:
@@ -666,9 +677,11 @@ export class MCPServer {
         }
 
         if (this.wsServer && this.wssInstance) {
+            console.log("[MCPServer] Connecting internal WS transport...");
             const wsTransport = new WebSocketServerTransport(this.wssInstance);
             await this.wsServer.connect(wsTransport);
         }
+        console.log("[MCPServer] Start Complete.");
     }
 }
 

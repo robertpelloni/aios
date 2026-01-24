@@ -1,19 +1,5 @@
 
 import { CallToolRequestSchema } from "@modelcontextprotocol/sdk/types.js";
-import TurndownService from 'turndown';
-import { JSDOM } from 'jsdom';
-
-const turndownService = new TurndownService({
-    headingStyle: 'atx',
-    codeBlockStyle: 'fenced'
-});
-
-// Configure Turndown to drop scripts, styles, etc.
-turndownService.remove('script');
-turndownService.remove('style');
-turndownService.remove('noscript');
-turndownService.remove('iframe');
-
 export const ReaderTools = [
     {
         name: "read_page",
@@ -37,6 +23,21 @@ export const ReaderTools = [
             }
 
             try {
+                // Lazy Load Heavy Dependencies
+                const { default: TurndownService } = await import('turndown');
+                const { JSDOM } = await import('jsdom');
+
+                const turndownService = new TurndownService({
+                    headingStyle: 'atx',
+                    codeBlockStyle: 'fenced'
+                });
+
+                // Configure Turndown
+                turndownService.remove('script');
+                turndownService.remove('style');
+                turndownService.remove('noscript');
+                turndownService.remove('iframe');
+
                 console.log(`[Borg Reader] Fetching ${url}...`);
                 const response = await fetch(url, {
                     headers: {

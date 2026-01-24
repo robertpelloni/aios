@@ -1,32 +1,34 @@
 #!/usr/bin/env node
-import { Command } from "commander";
-import React from 'react';
-import { render } from 'ink';
-import { App } from './ui/App.js';
 
-const program = new Command();
+console.log("[CLI] Bare Metal Startup..."); // Debug log
 
-program
-  .name("borg")
-  .description("The Ultimate Borg Operating System CLI")
-  .version("0.1.0");
+// Emulate 'start' command being default
+const args = process.argv.slice(2);
+const command = args[0] || 'start';
 
-program
-  .command("start")
-  .description("Start the Borg Orchestrator")
-  .action(async () => {
-    console.log("Starting Orchestrator...");
-    const { startOrchestrator } = await import('@borg/core');
-    await startOrchestrator();
-    // Keep process alive
-    await new Promise(() => { });
-  });
-
-program
-  .command("status")
-  .description("Check Borg Status")
-  .action(async () => {
+if (command === 'start') {
+  (async () => {
+    try {
+      console.log("[CLI] Importing @borg/core...");
+      // Dynamic import to avoid top-level side effects
+      const { startOrchestrator } = await import('@borg/core');
+      console.log("[CLI] Core Imported. Launching...");
+      await startOrchestrator();
+    } catch (e) {
+      console.error("[CLI] FATAL:", e);
+      process.exit(1);
+    }
+  })();
+} else if (command === 'status') {
+  // Lazy Load UI for status
+  console.log("[CLI] Loading UI for status...");
+  (async () => {
+    const React = (await import('react')).default;
+    const { render } = await import('ink');
+    const { App } = await import('./ui/App.js');
     render(React.createElement(App, { view: 'status' }));
-  });
-
-program.parse(process.argv);
+  })();
+} else {
+  console.log("Unknown command. Usage: borg [start|status]");
+  process.exit(1);
+}

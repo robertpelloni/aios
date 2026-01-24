@@ -106,6 +106,35 @@ export const appRouter = t.router({
                 return result;
             }
             throw new Error("MCPServer instance not found");
+        }),
+        status: t.procedure.query(async () => {
+            // @ts-ignore
+            if (global.mcpServerInstance) {
+                // @ts-ignore
+                return global.mcpServerInstance.director.getStatus();
+            }
+            return { active: false, status: 'UNKNOWN' };
+        }),
+        stopAutoDrive: t.procedure.mutation(async () => {
+            // @ts-ignore
+            if (global.mcpServerInstance) {
+                // @ts-ignore
+                global.mcpServerInstance.director.stopAutoDrive();
+                return "Stopped";
+            }
+            throw new Error("MCPServer instance not found");
+        }),
+        startAutoDrive: t.procedure.mutation(async () => {
+            // @ts-ignore
+            if (global.mcpServerInstance) {
+                // @ts-ignore
+                // Running valid tool so it logs properly
+                // But we can call direct: mcp.director.startAutoDrive()
+                // Let's use executeTool to keep consistency
+                global.mcpServerInstance.executeTool('start_auto_drive', {});
+                return "Started";
+            }
+            throw new Error("MCPServer instance not found");
         })
     }),
     council: t.router({

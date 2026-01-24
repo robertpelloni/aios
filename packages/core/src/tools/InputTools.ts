@@ -4,11 +4,18 @@ import util from 'util';
 
 const execAsync = util.promisify(exec);
 
+
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+
 export class InputTools {
     async sendKeys(keys: string) {
-        // Map common keys to SendKeys format
-        const keyMap: Record<string, string> = {
-            'ctrl+r': '^{r}',
+        console.error(`[InputTools] ⌨️ Sending keys: ${keys}`);
+
+        // Map keys to VBScript SendKeys format
+        const vbMap: Record<string, string> = {
+            'ctrl+r': '^r',
             'f5': '{F5}',
             'enter': '{ENTER}',
             'esc': '{ESC}',
@@ -16,38 +23,37 @@ export class InputTools {
             'ctrl+enter': '^{ENTER}',
             'shift+enter': '+{ENTER}',
             'alt+enter': '%{ENTER}',
-            'alt': '%',
-            'tab': '{TAB}'
+            'y': 'y'
         };
 
-        const command = keyMap[keys.toLowerCase()] || keys;
+        const command = vbMap[keys.toLowerCase()] || keys;
 
-        // PowerShell script to use WScript.Shell SendKeys
-        // FORCE FOCUS: Try multiple titles
-        const psCommand = `
-            $wshell = New-Object -ComObject wscript.shell;
-            $titles = @('Code - Insiders', 'Visual Studio Code', 'Code', 'borg', 'Terminal', 'Debug', 'Test');
-            
-            $focused = $false;
-            foreach ($t in $titles) {
-                if ($wshell.AppActivate($t)) {
-                    $focused = $true;
-                    break;
-                }
-            }
-            
-            # Audible Cue that we are acting
-            [console]::beep(800, 100);
+        // Create VBScript file
+        const vbsContent = `
+Set WshShell = WScript.CreateObject("WScript.Shell")
+' Try to focus commonly used windows
+On Error Resume Next
+WshShell.AppActivate "Code - Insiders"
+WshShell.AppActivate "Visual Studio Code"
+WshShell.AppActivate "Code"
+WshShell.AppActivate "borg"
+WshShell.AppActivate "Terminal"
+On Error GoTo 0
+WScript.Sleep 100
+WshShell.SendKeys "${command}"
+`;
 
-            Start-Sleep -Milliseconds 200;
-            $wshell.SendKeys('${command}')
-        `;
+        const tempFile = path.join(os.tmpdir(), `borg_input_${Date.now()}.vbs`);
 
         try {
-            await execAsync(`powershell -Command "${psCommand}"`);
-            return `Successfully sent keys: ${keys}`;
+            fs.writeFileSync(tempFile, vbsContent);
+            await execAsync(`cscript //Nologo "${tempFile}"`);
+            fs.unlinkSync(tempFile);
+            return `Sent keys via VBS: ${keys}`;
         } catch (error: any) {
+            console.error(`[InputTools] VBS Error: ${error.message}`);
             return `Error sending keys: ${error.message}`;
         }
     }
 }
+

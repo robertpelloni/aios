@@ -9,6 +9,9 @@ const command = args[0] || 'start';
 if (command === 'start') {
   (async () => {
     try {
+      // CLI MARKER
+      const fs = await import('fs');
+      fs.writeFileSync('.cli_startup_marker', 'CLI Started at ' + new Date().toISOString());
       console.log("[CLI] Importing @borg/core/orchestrator...");
       // Dynamic import to avoid top-level side effects
       const { startOrchestrator } = await import('@borg/core/orchestrator');

@@ -1,4 +1,5 @@
 console.log("[MCPServer] Starting imports...");
+import './debug_marker.js';
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema, } from "@modelcontextprotocol/sdk/types.js";
@@ -77,8 +78,16 @@ export class MCPServer {
         // Standard Server (Stdio)
         this.server = this.createServerInstance();
         // BOOTSTRAP: Start Auto-Drive immediately for true autonomy
-        setTimeout(() => {
-            console.log("[MCPServer] 🚀 Bootstrapping Auto-Drive...");
+        console.error("[MCPServer] 🕒 Scheduling Auto-Drive Start in 5s..."); // DEBUG
+        setTimeout(async () => {
+            console.error("[MCPServer] 🚀 Bootstrapping Auto-Drive NOW... BEEP!");
+            import('fs').then(fs => fs.writeFileSync('.borg_boot_check', 'BOOTED ' + Date.now())).catch(() => { }); // FS Marker
+            try {
+                // @ts-ignore
+                const { exec } = await import('child_process');
+                exec('powershell -c [console]::beep(1000, 500)');
+            }
+            catch (e) { }
             this.director.startAutoDrive().catch(e => console.error("Auto-Drive Boot Failed:", e));
         }, 5000); // Wait 5s for connections to settle
         // WebSocket Server (Extension Bridge)
@@ -715,8 +724,4 @@ export class MCPServer {
         if (this.wsServer && this.wssInstance) {
             console.log("[MCPServer] Connecting internal WS transport...");
             const wsTransport = new WebSocketServerTransport(this.wssInstance);
-            await this.wsServer.connect(wsTransport);
-        }
-        console.log("[MCPServer] Start Complete.");
-    }
-}
+            await this.wsServer.connect(wsTransport)

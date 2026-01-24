@@ -167,6 +167,7 @@ class ConversationMonitor {
         this.interval = null;
     }
     async checkAndAct() {
+        console.error(`[Director] ❤️ Monitor Heartbeat (Active: ${this.director.getIsActive()})`); // DEBUG
         if (!this.director.getIsActive()) {
             this.stop();
             return;
@@ -224,18 +225,24 @@ class ConversationMonitor {
             try {
                 await this.server.executeTool('native_input', { keys: 'y' });
             }
-            catch (e) { }
+            catch (e) {
+                console.error(`[Auto-Approve] 'y' failed: ${e.message}`);
+            }
             await new Promise(r => setTimeout(r, 100));
             try {
                 await this.server.executeTool('native_input', { keys: 'enter' });
             }
-            catch (e) { }
+            catch (e) {
+                console.error(`[Auto-Approve] 'enter' failed: ${e.message}`);
+            }
             // 2. VS Code UI Approval (Fallback)
             await new Promise(r => setTimeout(r, 200));
             try {
                 await this.server.executeTool('native_input', { keys: 'alt+enter' });
             }
-            catch (e) { }
+            catch (e) {
+                console.error(`[Auto-Approve] 'alt+enter' failed: ${e.message}`);
+            }
             // 3. Command Palette / Inline Chat
             try {
                 await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.terminal.chat.accept' });

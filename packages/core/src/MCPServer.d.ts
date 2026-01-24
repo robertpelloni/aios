@@ -1,3 +1,4 @@
+import './debug_marker.js';
 import { ModelSelector } from './ModelSelector.js';
 import { PermissionManager } from "./security/PermissionManager.js";
 export declare class MCPServer {

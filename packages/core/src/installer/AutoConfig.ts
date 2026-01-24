@@ -25,10 +25,28 @@ export class AutoConfig {
         const env = await this.detectEnvironment();
         console.log(`[AutoConfig] Detected Environment: ${env}`);
 
-        // TODO: Generate mcp_settings.json based on env
-        return {
-            environment: env,
-            serverUrl: env === 'local' ? 'http://localhost:3000' : 'http://borg-service:3000'
+        const config = {
+            mcpServers: {
+                borg: {
+                    command: "node",
+                    args: ["packages/core/dist/index.js"],
+                    env: process.env
+                }
+            },
+            ui: {
+                theme: env === 'k8s' ? 'dark-enterprise' : 'dark-modern',
+                logs: env === 'local' ? 'verbose' : 'json'
+            }
         };
+
+        if (env === 'k8s') {
+            // In K8s, we might communicate via Service DNS
+            config.mcpServers.borg = {
+                url: "http://borg.default.svc.cluster.local:3000/sse",
+                transport: "sse"
+            } as any;
+        }
+
+        return config;
     }
 }

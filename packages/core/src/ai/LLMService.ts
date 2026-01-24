@@ -200,7 +200,12 @@ export class LLMService {
             return response;
 
         } catch (error: any) {
-            console.error(`[LLMService] Error from ${provider}:`, error.message, error.response?.data || error);
+            const isConnectionError = error.cause?.code === 'ECONNREFUSED' || error.message.includes('fetch failed');
+            if (isConnectionError) {
+                console.warn(`[LLMService] Connection failed for ${provider} (Is it running?).`);
+            } else {
+                console.error(`[LLMService] Error from ${provider}:`, error.message);
+            }
             throw error;
         }
     }

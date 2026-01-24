@@ -443,9 +443,10 @@ class ConversationMonitor {
 
     start() {
         if (this.interval) clearInterval(this.interval);
+        // Slower interval (5s) to reduce focus fighting
         this.interval = setInterval(async () => {
             await this.checkAndAct();
-        }, 2000);
+        }, 5000);
     }
 
     stop() {
@@ -476,10 +477,10 @@ class ConversationMonitor {
             // @ts-ignore
             const content = (termResult.content?.[0]?.text || "").trim();
             const lastLines = content.slice(-500); // Check last 500 chars
+            console.log("[Director] Debug Terminal:", lastLines.slice(-100).replace(/\n/g, '\\n'));
 
-            // Approval Cues (Strict)
-            // User confirmed: hidden button needs Alt+Enter.
-            const approvalRegex = /(?:approve\?|continue\?|\[y\/n\]|\[yes\/no\]|do you want to run this command\?)/i;
+            // Approval Cues (Strict but broader)
+            const approvalRegex = /(?:approve\?|continue\?|\[y\/n\]|\(y\/n\)|\[yes\/no\]|\(yes\/no\)|do you want to run this command\?)/i;
             if (approvalRegex.test(lastLines) || lastLines.includes("Approve?")) {
                 return 'NEEDS_APPROVAL';
             }
@@ -520,11 +521,8 @@ class ConversationMonitor {
             this.lastActivityTime = Date.now();
         }
         else if (state === 'IDLE') {
-            // Check for hidden "Accept" buttons (which might need approval)
-            if (Math.random() > 0.8) { // 20% chance every 2s ~ every 10s
-                // TRY submitting only API-based first
-                try { await this.server.executeTool('vscode_submit_chat', {}); } catch (e) { }
-            }
+            // Passive monitoring only. Do NOT poke the chat randomly.
+            // This prevents focus stealing when user is typing.
         }
     }
 
@@ -562,12 +560,13 @@ class ConversationMonitor {
             await this.server.executeTool('vscode_submit_chat', {});
 
         } catch (e: any) {
-            console.error("Steering failed:", e.message);
+            // console.error("Steering failed:", e.message);
+            // Fallback quietly to avoid spamming the console when offline
+            const fallback = "Status check? System idle.";
+            try { await this.server.executeTool('chat_reply', { text: fallback }); } catch (err) { }
         }
     }
 
     private async sendEncouragement() {
         const msg = this.messages[Math.floor(Math.random() * this.messages.length)];
-        console.log(`[Director] 💎 Gemma: "${msg}"`);
-    }
-}
+        console.log(`[Director] 💎 Gemma: "

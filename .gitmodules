@@ -3064,3 +3064,12 @@
 [submodule "agents/refs/smolagents"]
 	path = agents/refs/smolagents
 	url = https://github.com/huggingface/smolagents
+[submodule "external/jules-autopilot"]
+	path = external/jules-autopilot
+	url = https://github.com/robertpelloni/jules-autopilot
+[submodule "external/opencode-autopilot"]
+	path = external/opencode-autopilot
+	url = https://github.com/robertpelloni/opencode-autopilot
+[submodule "references/awesome-mcp-servers"]
+	path = references/awesome-mcp-servers
+	url = https://github.com/punkpeye/awesome-mcp-servers

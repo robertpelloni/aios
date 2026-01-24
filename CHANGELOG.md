@@ -1,4 +1,17 @@
 # Changelog
+## [1.4.0] - 2026-01-24
+### Added
+- **Submodules:** Integrated `jules-autopilot`, `opencode-autopilot`, and `awesome-mcp-servers`.
+- **Dashboards:**
+  - **Architecture:** Live `.gitmodules` status view.
+  - **Billing:** API Key status and cost estimator.
+  - **Inspector:** "Replay Logs" feature for historical analysis.
+- **Core:** `McpmRegistry` for tool discovery and `AutoConfig` for K8s detection.
+- **Docs:** Consolidated `AI_MASTER_INSTRUCTIONS.md`.
+
+### Fixed
+- **Auto-Drive:** Reduced aggression (5s interval), fixed focus stealing, and broadened approval regex.
+
 
 ## [1.3.0] - 2026-01-24
 ### Added

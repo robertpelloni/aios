@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from 'react';
+import { trpc } from '@/utils/trpc';
 
 interface Packet {
     id: string;
@@ -58,9 +59,36 @@ export function TrafficInspector() {
 
     const addPacket = (packet: Packet) => {
         setPackets(prev => {
-            const newPackets = [packet, ...prev].slice(0, 50); // Keep last 50
+            // Avoid duplicates
+            if (prev.some(p => p.id === packet.id && p.type === packet.type)) return prev;
+            const newPackets = [packet, ...prev].slice(0, 50);
             return newPackets;
         });
+    };
+
+    // Replay Logic
+    const utils = trpc.useContext();
+    const handleReplay = async () => {
+        try {
+            const result = await utils.client.logs.read.query({ lines: 100 });
+            // Parse heuristic logs
+            // Log format: [Director] Executing: toolName
+            const lines = result.split('\n');
+            lines.forEach(line => {
+                const match = line.match(/\[Director\] Executing: (\w+)/);
+                if (match) {
+                    addPacket({
+                        id: Math.random().toString(36).substr(2, 9),
+                        type: 'TOOL_CALL_START',
+                        tool: match[1],
+                        args: { _replayed: true, raw: line },
+                        timestamp: Date.now() // Approximation
+                    });
+                }
+            });
+        } catch (e) {
+            console.error("Replay fail", e);
+        }
     };
 
     return (
@@ -71,12 +99,20 @@ export function TrafficInspector() {
                     <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
                     <h2 className="font-mono font-bold text-zinc-300">NETWORK TRAFFIC (MCP)</h2>
                 </div>
-                <button
-                    onClick={() => setPackets([])}
-                    className="text-xs text-zinc-500 hover:text-white"
-                >
-                    CLEAR
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={handleReplay}
+                        className="text-xs px-2 py-1 bg-blue-900/30 text-blue-400 hover:bg-blue-900/50 rounded"
+                    >
+                        REPLAY LOGS
+                    </button>
+                    <button
+                        onClick={() => setPackets([])}
+                        className="text-xs text-zinc-500 hover:text-white"
+                    >
+                        CLEAR
+                    </button>
+                </div>
             </div>
 
             {/* Packet Stream */}

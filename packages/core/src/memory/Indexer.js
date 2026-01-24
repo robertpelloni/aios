@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
+import { CodeSplitter } from './CodeSplitter.js';
 import crypto from 'crypto';
 // Basic list of extensions to index
 const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.md', '.json', '.css', '.html']);
@@ -24,7 +25,7 @@ export class Indexer {
                 // For MVP, we overwrite or just append. 
                 // Real impl should check hash in DB. (Skipped for speed in MVP)
                 // Chunking
-                const chunks = this.chunkText(content, 1000); // 1000 chars ~ 200 tokens
+                const chunks = CodeSplitter.split(content, path.extname(file));
                 chunks.forEach((chunk, index) => {
                     codeDocs.push({
                         id: `${relPath}#${index}`,
@@ -72,12 +73,5 @@ export class Indexer {
         }
         catch (e) { /* ignore access errors */ }
         return results;
-    }
-    chunkText(text, size) {
-        const chunks = [];
-        for (let i = 0; i < text.length; i += size) {
-            chunks.push(text.slice(i, i + size));
-        }
-        return chunks;
     }
 }

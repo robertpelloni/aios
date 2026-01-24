@@ -5,6 +5,5 @@ export declare class Indexer {
     constructor(vectorStore: VectorStore);
     indexDirectory(rootDir: string): Promise<number>;
     private walk;
-    private chunkText;
 }
 //# sourceMappingURL=Indexer.d.ts.map

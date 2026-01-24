@@ -36,10 +36,12 @@ This session focused on hardening the Agentic Framework (`@borg/core`) and compl
 - **Backlog:** Phases 1-10 in `task.md` are effectively COMPLETE or STUBBED.
 
 ### 🔮 Next Steps (Incoming Agent)
-1.  **Process User's Massive Link/Instruction Dump (Step 9168):**
-    -   Merge feature branches (if any exist).
-    -   Update submodules (many links provided).
-    -   Create dashboards for Billing/API Keys.
+1.  **Process Massive Directive Inbox (See `docs/USER_DIRECTIVES_INBOX.md`):**
+    -   The user provided 200+ links and specific "dashboarding" instructions.
+    -   **Action:** Systematically review `docs/USER_DIRECTIVES_INBOX.md`.
+    -   **Submodules:** Initialize `git submodule add` for key repos like `jules-autopilot`.
+    -   **Dashboards:** Expand `apps/web/src/app/dashboard/architecture/page.tsx` to read real git submodule data.
+
 2.  **Universal Client:** Flesh out `AutoConfig.ts` with real `mcpenetes` logic.
 3.  **Graph Memory:** Integrate `GraphMemory.ts` with a real DB (Neo4j or FalkorDB).
 

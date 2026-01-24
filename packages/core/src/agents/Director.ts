@@ -276,7 +276,7 @@ export class Director {
     private startAutoAccepter() {
         console.log("[Director] 🧠 Starting Smart Auto-Accepter (State-Aware)...");
         // Pass callback to check active state
-        this.monitor = new ConversationMonitor(this.server, () => this.isAutoDriveActive);
+        this.monitor = new ConversationMonitor(this.server, this.llmService, () => this.isAutoDriveActive);
         this.monitor.start();
     }
 
@@ -427,6 +427,7 @@ What is the next step?`;
  */
 class ConversationMonitor {
     private server: MCPServer;
+    private llmService: LLMService;
     private isActive: () => boolean;
     private interval: NodeJS.Timeout | null = null;
     private lastActivityTime: number = Date.now();
@@ -434,8 +435,9 @@ class ConversationMonitor {
     // Encouragement messages from "The Investor"
     private messages = GEMMA_ENCOURAGEMENT_MESSAGES;
 
-    constructor(server: MCPServer, isActive: () => boolean) {
+    constructor(server: MCPServer, llmService: LLMService, isActive: () => boolean) {
         this.server = server;
+        this.llmService = llmService;
         this.isActive = isActive;
     }
 
@@ -532,19 +534,31 @@ class ConversationMonitor {
             // 1. Read Task List (Heuristic path, hard to dynamic find, so generic fallback)
             // const taskContent = ... 
 
-            const msgs = [
-                "It seems we are idle. Shall we review the next item in task.md?",
-                "Task appears complete. Ready for new instructions.",
-                "Standing by. What is the next objective?",
-                "System is idle. Please confirm next phase."
-            ];
-            const msg = msgs[Math.floor(Math.random() * msgs.length)];
+            console.log(`[Director] 🤖 Generating Smart Steering via LLM...`);
 
-            console.log(`[Director] 🤖 Smart Steering: "${msg}"`);
+            // 1. Get Model
+            const model = await this.server.modelSelector.selectModel({ taskComplexity: 'low' }); // Fast model is fine
+
+            // 2. Prompt
+            const prompt = `You are the Project Director. The user (and their AI agent) have been idle for over 90 seconds. 
+            Your goal is to gently nudge them to continue progress. 
+            
+            Check the task.md status conceptually (assume we are working on 'borg' agentic framework).
+            Generate a short, encouraging, 1-sentence prompt to get them back on track. 
+            Examples: "Status check? Are we ready for the next task?", "Shall we review the pending items in task.md?", "System is idle. Awaiting next command."
+            
+            Output ONLY the message string.`;
+
+            const response = await this.llmService.generateText(model.provider, model.modelId, "You are a helpful AI Director.", prompt);
+            let msg = response.content.trim().replace(/^"|"$/g, ''); // Remove quotes
+
+            if (!msg) msg = "Status check? Ready for next instruction.";
+
+            console.log(`[Director] 🤖 Steering: "${msg}"`);
 
             await this.server.executeTool('chat_reply', { text: msg });
             await new Promise(r => setTimeout(r, 500));
-            // Auto-submit suggestion as requested
+            // Auto-submit
             await this.server.executeTool('vscode_submit_chat', {});
 
         } catch (e: any) {

@@ -1,0 +1,3066 @@
+[submodule "submodules/mcpenetes"]
+	path = submodules/mcpenetes
+	url = https://github.com/robertpelloni/mcpenetes
+[submodule "submodules/claude-mem"]
+	path = memory/plugins/claude-mem
+	url = https://github.com/robertpelloni/claude-mem
+[submodule "references/opencode"]
+	path = references-core/opencode
+	url = https://github.com/opencode-ai/opencode
+[submodule "references/prompt-eng-tutorial"]
+	path = prompts/tutorials/prompt-eng-tutorial
+	url = https://github.com/anthropics/prompt-eng-interactive-tutorial
+[submodule "references/awesome-llm-apps"]
+	path = misc/awesome-llm-apps
+	url = https://github.com/Shubhamsaboo/awesome-llm-apps
+[submodule "references/agents-md"]
+	path = agents/agents-md
+	url = https://github.com/agentsmd/agents.md
+[submodule "references/claude-code-infrastructure-showcase"]
+	path = misc/claude-code-infrastructure-showcase
+	url = https://github.com/diet103/claude-code-infrastructure-showcase
+[submodule "references/prompts/gemini-cli-tips"]
+	path = prompts/gemini-cli-tips
+	url = https://github.com/addyosmani/gemini-cli-tips
+[submodule "references/prompts/thoughtbox"]
+	path = prompts/thoughtbox
+	url = https://github.com/Kastalien-Research/thoughtbox
+[submodule "references/prompts/claude-code-system-prompts"]
+	path = prompts/claude-code-system-prompts
+	url = https://github.com/Piebald-AI/claude-code-system-prompts
+[submodule "references/config/claude-code-config"]
+	path = config/claude-code-config
+	url = https://github.com/drewipson/claude-code-config
+[submodule "references/arch/spec-kit"]
+	path = architecture/spec-kit
+	url = https://github.com/github/spec-kit
+[submodule "references/arch/CodeMachine-CLI"]
+	path = architecture/CodeMachine-CLI
+	url = https://github.com/moazbuilds/CodeMachine-CLI
+[submodule "references/skills/dev-browser"]
+	path = skills/refs/dev-browser
+	url = https://github.com/SawyerHood/dev-browser
+[submodule "references/arch/claude-code-router"]
+	path = architecture/claude-code-router
+	url = https://github.com/musistudio/claude-code-router
+[submodule "references/agents/BMAD-METHOD"]
+	path = agents/refs/BMAD-METHOD
+	url = https://github.com/bmad-code-org/BMAD-METHOD
+[submodule "references/skills/oai-skills"]
+	path = skills/refs/oai-skills
+	url = https://github.com/eliasjudin/oai-skills
+[submodule "references/skills/skrills"]
+	path = skills/refs/skrills
+	url = https://github.com/athola/skrills
+[submodule "references/toon"]
+	path = misc/toon
+	url = https://github.com/toon-format/toon
+[submodule "references/memory/beads"]
+	path = references/memory/beads
+	url = https://github.com/steveyegge/beads
+[submodule "references/memory/txtai"]
+	path = memory/systems-refs/txtai
+	url = https://github.com/neuml/txtai
+[submodule "references/memory/letta"]
+	path = memory/systems-refs/letta
+	url = https://github.com/letta-ai/letta
+[submodule "references/memory/cognee"]
+	path = memory/systems-refs/cognee
+	url = https://github.com/topoteretes/cognee
+[submodule "references/orchestration/laddr"]
+	path = orchestration/laddr
+	url = https://github.com/AgnetLabs/laddr
+[submodule "references/agents/OpenHands"]
+	path = agents/refs/OpenHands
+	url = https://github.com/OpenHands/OpenHands
+[submodule "references/agents/amplifier"]
+	path = agents/refs/agents/amplifier
+	url = https://github.com/microsoft/amplifier
+[submodule "references/agents/magentic-ui"]
+	path = computer-use/desktop/magentic-ui
+	url = https://github.com/microsoft/magentic-ui
+[submodule "references/agents/autogen"]
+	path = agents/refs/agents/autogen
+	url = https://github.com/microsoft/autogen
+[submodule "references/agents/agent-zero"]
+	path = agents/refs/agent-zero
+	url = https://github.com/agent0ai/agent-zero
+[submodule "references/agents/openagents"]
+	path = agents/refs/agents/openagents
+	url = https://github.com/openagents-org/openagents
+[submodule "references/frameworks/CopilotKit"]
+	path = frameworks/CopilotKit
+	url = https://github.com/CopilotKit/CopilotKit
+[submodule "references/orchestration/claude-orchestration"]
+	path = orchestration/claude-orchestration
+	url = https://github.com/mbruhler/claude-orchestration
+[submodule "references/testing/agentic-qe"]
+	path = testing/agentic-qe
+	url = https://github.com/proffesor-for-testing/agentic-qe
+[submodule "submodules/metamcp"]
+	path = mcp-hubs/metamcp
+	url = https://github.com/metatool-ai/metamcp
+[submodule "submodules/jules-app"]
+	path = submodules/jules-app
+	url = https://github.com/sbhavani/jules-app
+[submodule "external/agents_repos/agent-sessions"]
+	path = agents/agent-sessions
+	url = https://github.com/jazzyalex/agent-sessions
+[submodule "external/agents_repos/agentic"]
+	path = agents/agentic
+	url = https://github.com/Cluster444/agentic
+[submodule "external/agents_repos/humanlayer"]
+	path = agents/humanlayer
+	url = https://github.com/humanlayer/humanlayer
+[submodule "external/agents_repos/maestro"]
+	path = agents/maestro
+	url = https://github.com/pedramamini/Maestro
+[submodule "external/agents_repos/mark-hingston-workflows"]
+	path = agents/mark-hingston-workflows
+	url = https://github.com/mark-hingston/opencode-workflows
+[submodule "external/agents_repos/open-agents"]
+	path = agents/open-agents
+	url = https://github.com/darrenhinde/OpenAgents
+[submodule "external/agents_repos/openchamber"]
+	path = agents/openchamber
+	url = https://github.com/btriapitsyn/openchamber
+[submodule "external/agents_repos/opencode-agents"]
+	path = agents/opencode-agents
+	url = https://github.com/veschin/opencode-agents
+[submodule "external/agents_repos/opencode-elf"]
+	path = agents/opencode-elf
+	url = https://github.com/mark-hingston/opencode-elf
+[submodule "external/agents_repos/opencode-maestro"]
+	path = agents/opencode-maestro
+	url = https://github.com/lleewwiiss/opencode-maestro
+[submodule "external/agents_repos/opencode-parallel-agents"]
+	path = agents/opencode-parallel-agents
+	url = https://github.com/aptdnfapt/opencode-parallel-agents
+[submodule "external/agents_repos/opencodetisan"]
+	path = agents/opencodetisan
+	url = https://github.com/opencodetisan/opencodetisan
+[submodule "external/agents_repos/personal-agent-systems"]
+	path = agents/personal-agent-systems
+	url = https://github.com/darrenhinde/personal-agent-systems
+[submodule "external/agents_repos/rse-agents"]
+	path = agents/rse-agents
+	url = https://github.com/uw-ssec/rse-agents
+[submodule "external/agents_repos/subagents"]
+	path = agents/subagents
+	url = https://github.com/RichardHightower/subagents
+[submodule "external/auth/anthropic"]
+	path = auth/anthropic
+	url = https://github.com/sst/opencode-anthropic-auth
+[submodule "external/auth/copilot"]
+	path = auth/copilot
+	url = https://github.com/sst/opencode-copilot-auth
+[submodule "external/auth/gemini"]
+	path = auth/gemini
+	url = https://github.com/jenslys/opencode-gemini-auth
+[submodule "external/auth/openai-codex"]
+	path = auth/openai-codex
+	url = https://github.com/numman-ali/opencode-openai-codex-auth
+[submodule "external/auth/opencode-antigravity-auth"]
+	path = auth/opencode-antigravity-auth
+	url = https://github.com/NoeFabris/opencode-antigravity-auth
+[submodule "external/auth/opencode-google-antigravity-auth"]
+	path = auth/opencode-google-antigravity-auth
+	url = https://github.com/shekohex/opencode-google-antigravity-auth
+[submodule "external/config_repos/Setup_Ultimate_OpenCode"]
+	path = config/Setup_Ultimate_OpenCode
+	url = https://github.com/FadhliRajwaa/Setup_Ultimate_OpenCode
+[submodule "external/config_repos/opencode-config-joelhooks"]
+	path = config/opencode-config-joelhooks
+	url = https://github.com/joelhooks/opencode-config
+[submodule "external/config_repos/opencode-config-nexxeln"]
+	path = config/opencode-config-nexxeln
+	url = https://github.com/nexxeln/opencode-config
+[submodule "external/config_repos/opencode-flake"]
+	path = config/opencode-flake
+	url = https://github.com/AodhanHayter/opencode-flake
+[submodule "external/config_repos/opencode-manager"]
+	path = config/opencode-manager
+	url = https://github.com/chriswritescode-dev/opencode-manager
+[submodule "external/misc/OpenCode-Hrishikesh"]
+	path = misc/OpenCode-Hrishikesh
+	url = https://github.com/Hrishikesh332/OpenCode
+[submodule "external/misc/awesome-opencode"]
+	path = misc/awesome-opencode
+	url = https://github.com/awesome-opencode/awesome-opencode
+[submodule "external/misc/hephaestus"]
+	path = misc/hephaestus
+	url = https://github.com/opencodenitr/hephaestus
+[submodule "external/misc/ocmonitor-share"]
+	path = misc/ocmonitor-share
+	url = https://github.com/Shlomob/ocmonitor-share
+[submodule "external/misc/oh-my-opencode"]
+	path = misc/oh-my-opencode
+	url = https://github.com/code-yeongyu/oh-my-opencode
+[submodule "external/misc/openMode"]
+	path = misc/openMode
+	url = https://github.com/easychen/openMode
+[submodule "external/misc/openapi-ts"]
+	path = misc/openapi-ts
+	url = https://github.com/hey-api/openapi-ts
+[submodule "external/misc/opencode-box"]
+	path = misc/opencode-box
+	url = https://github.com/filipesoccol/opencode-box
+[submodule "external/misc/opencode-context-analysis"]
+	path = misc/opencode-context-analysis
+	url = https://github.com/IgorWarzocha/Opencode-Context-Analysis-Plugin
+[submodule "external/misc/opencode-intersystems"]
+	path = misc/opencode-intersystems
+	url = https://github.com/intersystems-ib/OpenCode
+[submodule "external/misc/opencode-mobile"]
+	path = misc/opencode-mobile
+	url = https://github.com/DRNKNDev/opencode-mobile
+[submodule "external/misc/opencode-pty"]
+	path = misc/opencode-pty
+	url = https://github.com/shekohex/opencode-pty
+[submodule "external/misc/opencode-roadmap"]
+	path = misc/opencode-roadmap
+	url = https://github.com/IgorWarzocha/Opencode-Roadmap
+[submodule "external/misc/opencode-sessions"]
+	path = misc/opencode-sessions
+	url = https://github.com/malhashemi/opencode-sessions
+[submodule "external/misc/opencode-supermemory"]
+	path = memory/plugins/opencode-supermemory
+	url = https://github.com/supermemoryai/opencode-supermemory
+[submodule "external/misc/opencode-tokenscope"]
+	path = misc/opencode-tokenscope
+	url = https://github.com/ramtinJ95/opencode-tokenscope
+[submodule "external/misc/opencode-vibe"]
+	path = misc/opencode-vibe
+	url = https://github.com/joelhooks/opencode-vibe
+[submodule "external/misc/opencode-wrapped"]
+	path = misc/opencode-wrapped
+	url = https://github.com/moddi3/opencode-wrapped
+[submodule "external/misc/tokscale"]
+	path = misc/tokscale
+	url = https://github.com/junhoyeo/tokscale
+[submodule "external/plugins/ericc-ch-opencode-plugins"]
+	path = plugins/ericc-ch-opencode-plugins
+	url = https://github.com/ericc-ch/opencode-plugins
+[submodule "external/plugins/opencode-codex-plugin"]
+	path = plugins/opencode-codex-plugin
+	url = https://github.com/sting8k/opencode-codex-plugin
+[submodule "external/plugins/opencode-codex-provider"]
+	path = plugins/opencode-codex-provider
+	url = https://github.com/withakay/opencode-codex-provider
+[submodule "external/plugins/opencode-dynamic-context-pruning"]
+	path = plugins/opencode-dynamic-context-pruning
+	url = https://github.com/Opencode-DCP/opencode-dynamic-context-pruning
+[submodule "external/plugins/opencode-google-ai-search"]
+	path = plugins/opencode-google-ai-search
+	url = https://github.com/IgorWarzocha/Opencode-Google-AI-Search-Plugin
+[submodule "external/plugins/opencode-md-table-formatter"]
+	path = plugins/opencode-md-table-formatter
+	url = https://github.com/franlol/opencode-md-table-formatter
+[submodule "external/plugins/opencode-morph-fast-apply"]
+	path = plugins/opencode-morph-fast-apply
+	url = https://github.com/JRedeker/opencode-morph-fast-apply
+[submodule "external/plugins/opencode-notificator"]
+	path = plugins/opencode-notificator
+	url = https://github.com/panta82/opencode-notificator
+[submodule "external/plugins/opencode-notifier"]
+	path = plugins/opencode-notifier
+	url = https://github.com/mohak34/opencode-notifier
+[submodule "external/plugins/opencode-shell-strategy"]
+	path = plugins/opencode-shell-strategy
+	url = https://github.com/JRedeker/opencode-shell-strategy
+[submodule "external/plugins/opencode-smart-title"]
+	path = plugins/opencode-smart-title
+	url = https://github.com/Tarquinen/opencode-smart-title
+[submodule "external/plugins/opencode-type-inject"]
+	path = plugins/opencode-type-inject
+	url = https://github.com/nick-vi/opencode-type-inject
+[submodule "external/plugins/opencode-wakatime"]
+	path = plugins/opencode-wakatime
+	url = https://github.com/angristan/opencode-wakatime
+[submodule "external/plugins/opencode-websearch-cited"]
+	path = plugins/opencode-websearch-cited
+	url = https://github.com/ghoulr/opencode-websearch-cited
+[submodule "external/plugins/opencode-zed-extension"]
+	path = plugins/opencode-zed-extension
+	url = https://github.com/sst/opencode-zed-extension
+[submodule "external/plugins/pickle-thinker"]
+	path = plugins/pickle-thinker
+	url = https://github.com/IgorWarzocha/Pickle-Thinker
+[submodule "external/plugins/shantur-opencode-gemini-auth"]
+	path = plugins/shantur-opencode-gemini-auth
+	url = https://github.com/shantur/opencode-gemini-auth
+[submodule "external/research/OpenCodeEval"]
+	path = research/OpenCodeEval
+	url = https://github.com/richardodliu/OpenCodeEval
+[submodule "external/research/OpenCoder-llm"]
+	path = research/OpenCoder-llm
+	url = https://github.com/OpenCoder-llm/OpenCoder-llm
+[submodule "external/research/opencoder"]
+	path = research/opencoder
+	url = https://github.com/ducan-ne/opencoder
+[submodule "external/skills_repos/awesome-llm-skills"]
+	path = skills/external/awesome-llm-skills
+	url = https://github.com/Prat011/awesome-llm-skills
+[submodule "external/skills_repos/malhashemi-skills"]
+	path = skills/external/malhashemi-skills
+	url = https://github.com/malhashemi/opencode-skills
+[submodule "external/skills_repos/opencode-agent-skills"]
+	path = skills/external/opencode-agent-skills
+	url = https://github.com/joshuadavidthomas/opencode-agent-skills
+[submodule "external/skills_repos/skills-example"]
+	path = skills/external/skills-example
+	url = https://github.com/darrenhinde/Opencode-skills-example
+[submodule "external/skills_repos/swarm-tools"]
+	path = skills/external/swarm-tools
+	url = https://github.com/joelhooks/swarm-tools
+[submodule "external/tools/OpenCodeRunner"]
+	path = tools/OpenCodeRunner
+	url = https://github.com/sijieaaa/OpenCodeRunner
+[submodule "external/tools/convx"]
+	path = superai-cli/tools/convx
+	url = https://github.com/dnakov/convx
+[submodule "external/tools/cupcake"]
+	path = superai-cli/tools/cupcake
+	url = https://github.com/eqtylab/cupcake
+[submodule "external/tools/lunaroute"]
+	path = superai-cli/tools/lunaroute
+	url = https://github.com/erans/lunaroute
+[submodule "external/tools/occtx"]
+	path = superai-cli/tools/occtx
+	url = https://github.com/hungthai1401/occtx
+[submodule "external/tools/opencode_tools"]
+	path = tools/opencode_tools
+	url = https://github.com/pigmej/opencode_tools
+[submodule "external/tools/poe-code"]
+	path = superai-cli/tools/poe-code
+	url = https://github.com/poe-platform/poe-code
+[submodule "external/tools/splitrail"]
+	path = superai-cli/tools/splitrail
+	url = https://github.com/Piebald-AI/splitrail
+[submodule "external/web_repos/opencode-gui"]
+	path = web-ui/external/opencode-gui
+	url = https://github.com/saffron-health/opencode-gui
+[submodule "external/web_repos/opencode-web-chris-tse"]
+	path = web-ui/external/opencode-web-chris-tse
+	url = https://github.com/chris-tse/opencode-web
+[submodule "external/web_repos/opencode-web-nihalshetty0"]
+	path = web-ui/external/opencode-web-nihalshetty0
+	url = https://github.com/nihalshetty0/opencode-web
+[submodule "external/web_repos/opencodespace"]
+	path = web-ui/external/opencodespace
+	url = https://github.com/ngramai/opencodespace
+[submodule "external/web_repos/opengui"]
+	path = web-ui/external/opengui
+	url = https://github.com/ScriptedAlchemy/opengui
+[submodule "external/web_repos/portal"]
+	path = web-ui/external/portal
+	url = https://github.com/hosenur/portal
+[submodule "external/web_repos/superset"]
+	path = web-ui/external/superset
+	url = https://github.com/superset-sh/superset
+[submodule "external/config_repos/opencode-template"]
+	path = config/opencode-template
+	url = https://github.com/julianromli/opencode-template
+[submodule "external/config_repos/opencode-plugin-template"]
+	path = config/opencode-plugin-template
+	url = https://github.com/zenobi-us/opencode-plugin-template
+[submodule "external/opencode-bench"]
+	path = benchmarks/opencode-bench
+	url = https://github.com/sst/opencode-bench
+[submodule "external/opencode-core"]
+	path = opencode-core
+	url = https://github.com/sst/opencode
+[submodule "external/plugins/opencode-background"]
+	path = plugins/opencode-background
+	url = https://github.com/zenobi-us/opencode-background
+[submodule "references/agents/OpenHands-CLI"]
+	path = agents/refs/OpenHands-CLI
+	url = https://github.com/OpenHands/OpenHands-CLI
+[submodule "references/agents/claude-code-subagents-collection"]
+	path = agents/refs/agents/claude-code-subagents-collection
+	url = https://github.com/davepoon/claude-code-subagents-collection
+[submodule "references/agents/devin.cursorrules"]
+	path = agents/refs/agents/devin.cursorrules
+	url = https://github.com/grapeot/devin.cursorrules
+[submodule "references/agents/trae-agent"]
+	path = agents/refs/agents/trae-agent
+	url = https://github.com/bytedance/trae-agent
+[submodule "references/clis/fabric"]
+	path = superai-cli/clis-refs/fabric
+	url = https://github.com/danielmiessler/fabric
+[submodule "references/clis/gemini-cli"]
+	path = superai-cli/clis-refs/gemini-cli
+	url = https://github.com/google-gemini/gemini-cli
+[submodule "references/clis/goose"]
+	path = superai-cli/clis-refs/goose
+	url = https://github.com/block/goose
+[submodule "references/clis/grok-cli"]
+	path = superai-cli/clis-refs/grok-cli
+	url = https://github.com/superagent-ai/grok-cli
+[submodule "references/clis/kilocode"]
+	path = superai-cli/clis-refs/kilocode
+	url = https://github.com/Kilo-Org/kilocode
+[submodule "references/frameworks/Kode"]
+	path = frameworks/Kode
+	url = https://github.com/shareAI-lab/Kode
+[submodule "references/frameworks/Switchboard"]
+	path = frameworks/Switchboard
+	url = https://github.com/George5562/Switchboard
+[submodule "references/frameworks/Windows-Use"]
+	path = computer-use/Windows-Use
+	url = https://github.com/CursorTouch/Windows-Use
+[submodule "references/frameworks/code"]
+	path = cli-harnesses/code
+	url = https://github.com/just-every/code
+[submodule "references/frameworks/codex-bridge"]
+	path = frameworks/codex-bridge
+	url = https://github.com/eLyiN/codex-bridge
+[submodule "references/frameworks/crush"]
+	path = cli-harnesses/crush
+	url = https://github.com/charmbracelet/crush
+[submodule "references/frameworks/vibesdk"]
+	path = frameworks/vibesdk
+	url = https://github.com/cloudflare/vibesdk
+[submodule "references/mcp_repos/awesome-mcp-servers-appcypher"]
+	path = misc/awesome-mcp-servers-appcypher
+	url = https://github.com/appcypher/awesome-mcp-servers
+[submodule "references/mcp_repos/awesome-mcp-servers-wong2"]
+	path = misc/awesome-mcp-servers-wong2
+	url = https://github.com/wong2/awesome-mcp-servers
+[submodule "references/mcp_repos/chroma-mcp"]
+	path = mcp-servers/memory/chroma-mcp
+	url = https://github.com/chroma-core/chroma-mcp
+[submodule "references/mcp_repos/chrome-devtools-mcp"]
+	path = mcp-servers/browser/chrome-devtools-mcp
+	url = https://github.com/ChromeDevTools/chrome-devtools-mcp
+[submodule "references/mcp_repos/computer-control-mcp"]
+	path = mcp-servers/browser/computer-control-mcp
+	url = https://github.com/AB498/computer-control-mcp
+[submodule "references/mcp_repos/gemini-mcp-tool"]
+	path = mcp-servers/ai/gemini-mcp-tool
+	url = https://github.com/jamubc/gemini-mcp-tool
+[submodule "references/mcp_repos/inspector"]
+	path = mcp-dev-tools/inspector
+	url = https://github.com/MCPJam/inspector
+[submodule "references/mcp_repos/mcp-context-forge"]
+	path = mcp-servers/memory/mcp-context-forge
+	url = https://github.com/IBM/mcp-context-forge
+[submodule "references/mcp_repos/mcp-easy-installer"]
+	path = mcp-servers/misc/mcp-easy-installer
+	url = https://github.com/onigetoc/mcp-easy-installer
+[submodule "references/mcp_repos/mcp-gearbox"]
+	path = mcp-dev-tools/mcp-gearbox
+	url = https://github.com/rohitsoni007/mcp-gearbox
+[submodule "references/mcp_repos/mcp-gearbox-cli"]
+	path = mcp-dev-tools/mcp-gearbox-cli
+	url = https://github.com/rohitsoni007/mcp-gearbox-cli
+[submodule "references/mcp_repos/mcp-gearbox-js"]
+	path = mcp-dev-tools/mcp-gearbox-js
+	url = https://github.com/rohitsoni007/mcp-gearbox-js
+[submodule "references/mcp_repos/mcp-mem0"]
+	path = mcp-servers/memory/mcp-mem0
+	url = https://github.com/coleam00/mcp-mem0
+[submodule "references/mcp_repos/mcp-proxy"]
+	path = mcp-routers/mcp-proxy
+	url = https://github.com/TBXark/mcp-proxy
+[submodule "references/mcp_repos/mcp-server-deep-research"]
+	path = mcp-servers/ai/mcp-server-deep-research
+	url = https://github.com/reading-plus-ai/mcp-server-deep-research
+[submodule "references/mcp_repos/mcp-server-gemini"]
+	path = mcp-servers/ai/mcp-server-gemini
+	url = https://github.com/aliargun/mcp-server-gemini
+[submodule "references/mcp_repos/mcp-toolz"]
+	path = mcp-servers/misc/mcp-toolz
+	url = https://github.com/taylorleese/mcp-toolz
+[submodule "references/mcp_repos/mcp-use"]
+	path = mcp-frameworks/mcp-use
+	url = https://github.com/mcp-use/mcp-use
+[submodule "references/mcp_repos/mcpproxy"]
+	path = mcp-routers/mcpproxy
+	url = https://github.com/Dumbris/mcpproxy
+[submodule "references/mcp_repos/mem0-mcp"]
+	path = mcp-servers/memory/mem0-mcp
+	url = https://github.com/mem0ai/mem0-mcp
+[submodule "references/mcp_repos/meta-mcp-proxy"]
+	path = mcp-routers/meta-mcp-proxy
+	url = https://github.com/nullplatform/meta-mcp-proxy
+[submodule "references/mcp_repos/playwright-mcp"]
+	path = mcp-servers/browser/playwright-mcp
+	url = https://github.com/microsoft/playwright-mcp
+[submodule "references/mcp_repos/sourcerer-mcp"]
+	path = mcp-servers/search/sourcerer-mcp
+	url = https://github.com/st3v3nmw/sourcerer-mcp
+[submodule "references/mcp_repos/ultra-mcp"]
+	path = mcp-servers/ai/ultra-mcp
+	url = https://github.com/RealMikeChong/ultra-mcp
+[submodule "references/mcp_repos/vibe-check-mcp-server"]
+	path = mcp-servers/oversight/vibe-check-mcp-server
+	url = https://github.com/PV-Bhat/vibe-check-mcp-server
+[submodule "references/mcp_repos/youtube-video-summarizer-mcp"]
+	path = mcp-servers/media/youtube-video-summarizer-mcp
+	url = https://github.com/nabid-pf/youtube-video-summarizer-mcp
+[submodule "references/skills_repos/anthropic-skills"]
+	path = skills/refs-external/anthropic-skills
+	url = https://github.com/anthropics/skills
+[submodule "references/skills_repos/openai-skills"]
+	path = skills/refs-external/openai-skills
+	url = https://github.com/openai/skills
+[submodule "references/tools/autorouter-package"]
+	path = tools/refs/autorouter-package
+	url = https://github.com/Mikethebot44/autorouter-package
+[submodule "references/tools/context-portal"]
+	path = tools/refs/context-portal
+	url = https://github.com/GreatScottyMac/context-portal
+[submodule "submodules/Agent-MCP"]
+	path = submodules/Agent-MCP
+	url = https://github.com/lastmile-ai/mcp-agent
+[submodule "submodules/CLIProxyAPI"]
+	path = submodules/CLIProxyAPI
+	url = https://github.com/router-for-me/CLIProxyAPI
+[submodule "submodules/DesktopCommanderMCP"]
+	path = computer-use/DesktopCommanderMCP
+	url = https://github.com/wonderwhy-er/DesktopCommanderMCP
+[submodule "submodules/Unified-MCP-Tool-Graph"]
+	path = submodules/Unified-MCP-Tool-Graph
+	url = https://github.com/pratikjadhav2726/Unified-MCP-Tool-Graph
+[submodule "submodules/Windows-MCP"]
+	path = submodules/Windows-MCP
+	url = https://github.com/CursorTouch/Windows-MCP
+[submodule "submodules/agent-client-protocol"]
+	path = submodules/agent-client-protocol
+	url = https://github.com/agentclientprotocol/agent-client-protocol
+[submodule "submodules/agentmux"]
+	path = submodules/agentmux
+	url = https://github.com/stevehuang0115/agentmux
+[submodule "submodules/ai-that-works"]
+	path = submodules/ai-that-works
+	url = https://github.com/ai-that-works/ai-that-works
+[submodule "submodules/browser-use"]
+	path = submodules/browser-use
+	url = https://github.com/browser-use/browser-use
+[submodule "submodules/claude-code"]
+	path = submodules/claude-code
+	url = https://github.com/anthropics/claude-code
+[submodule "submodules/copilot-cli"]
+	path = submodules/copilot-cli
+	url = https://github.com/github/copilot-cli
+[submodule "submodules/gemini-bridge"]
+	path = submodules/gemini-bridge
+	url = https://github.com/tkaufmann/claude-gemini-bridge
+[submodule "submodules/mcp-hub"]
+	path = mcp-hubs/mcphub
+	url = https://github.com/samanhappy/mcphub
+[submodule "submodules/mcp-manager"]
+	path = submodules/mcp-manager
+	url = https://github.com/timetime-software/mcp-manager
+[submodule "submodules/mcp-router"]
+	path = mcp-dev-tools/mcp-router
+	url = https://github.com/mcp-router/mcp-router
+[submodule "submodules/mcp-shark"]
+	path = submodules/mcp-shark
+	url = https://github.com/mcp-shark/mcp-shark
+[submodule "submodules/mcp-zen"]
+	path = mcp-servers/ai/mcp-zen
+	url = https://github.com/199-mcp/mcp-zen
+[submodule "submodules/mcpc"]
+	path = submodules/mcpc
+	url = https://github.com/apify/mcpc
+[submodule "submodules/opencode-autopilot"]
+	path = submodules/opencode-autopilot
+	url = https://github.com/robertpelloni/opencode-autopilot-council
+[submodule "submodules/plandex"]
+	path = submodules/plandex
+	url = https://github.com/plandex-ai/plandex
+[submodule "submodules/quotio"]
+	path = submodules/quotio
+	url = https://github.com/nguyenphutrong/quotio
+[submodule "submodules/qwen-code"]
+	path = cli-harnesses/qwen-code
+	url = https://github.com/QwenLM/qwen-code
+[submodule "submodules/software-agent-sdk"]
+	path = submodules/software-agent-sdk
+	url = https://github.com/OpenHands/software-agent-sdk
+[submodule "external/research/OpenQode"]
+	path = research/OpenQode
+	url = https://github.com/roman-ryzenadvanced/OpenQode-Public-Alpha-GooseUltra-
+[submodule "openevolve"]
+	path = openevolve
+	url = https://github.com/codelion/openevolve
+[submodule "web-ui"]
+	path = web-ui
+	url = https://github.com/browser-use/web-ui
+[submodule "OmniParser"]
+	path = OmniParser
+	url = https://github.com/microsoft/OmniParser
+[submodule "kapture"]
+	path = browser-use/kapture
+	url = https://github.com/williamkapke/kapture
+[submodule "submodules/vibe-kanban"]
+	path = submodules/vibe-kanban
+	url = https://github.com/BloopAI/vibe-kanban
+[submodule "submodules/mcp-reticle"]
+	path = submodules/mcp-reticle
+	url = https://github.com/LabTerminal/mcp-reticle
+[submodule "submodules/code-conductor"]
+	path = submodules/code-conductor
+	url = https://github.com/ryanmac/code-conductor
+[submodule "submodules/aichat"]
+	path = submodules/aichat
+	url = https://github.com/sigoden/aichat
+[submodule "submodules/notebooklm-mcp"]
+	path = mcp-servers/ai/notebooklm-mcp
+	url = https://github.com/roomi-fields/notebooklm-mcp
+[submodule "submodules/pluggedin-mcp"]
+	path = mcp-hubs/pluggedin-mcp
+	url = https://github.com/VeriTeknik/pluggedin-mcp
+[submodule "submodules/pctx"]
+	path = submodules/pctx
+	url = https://github.com/portofcontext/pctx
+[submodule "submodules/Puzld.ai"]
+	path = submodules/Puzld.ai
+	url = https://github.com/MedChaouch/Puzld.ai
+[submodule "submodules/mux"]
+	path = agent-tools/mux
+	url = https://github.com/coder/mux
+[submodule "submodules/voicemode"]
+	path = tools/refs/voicemode
+	url = https://github.com/mbailey/voicemode
+[submodule "submodules/superpowers"]
+	path = tools/refs/superpowers
+	url = https://github.com/obra/superpowers
+[submodule "submodules/Super-MCP"]
+	path = mcp-frameworks/Super-MCP
+	url = https://github.com/nspr-io/Super-MCP
+[submodule "submodules/pluggedin-app"]
+	path = tools/refs/pluggedin-app
+	url = https://github.com/VeriTeknik/pluggedin-app
+[submodule "submodules/emdash"]
+	path = submodules/emdash
+	url = https://github.com/generalaction/emdash
+[submodule "submodules/mcpproxy-go"]
+	path = mcp-routers/mcpproxy-go
+	url = https://github.com/smart-mcp-proxy/mcpproxy-go
+[submodule "submodules/smolagents"]
+	path = agents/refs/smolagents
+	url = https://github.com/huggingface/smolagents
+[submodule "submodules/mcp-server-code-execution-mode"]
+	path = mcp-servers/code/mcp-server-code-execution-mode
+	url = https://github.com/elusznik/mcp-server-code-execution-mode
+[submodule "submodules/pal-mcp-server"]
+	path = mcp-frameworks/pal-mcp-server
+	url = https://github.com/BeehiveInnovations/pal-mcp-server
+[submodule "submodules/Polymcp"]
+	path = mcp-frameworks/Polymcp
+	url = https://github.com/poly-mcp/Polymcp
+[submodule "submodules/claude-squad"]
+	path = submodules/claude-squad
+	url = https://github.com/smtg-ai/claude-squad
+[submodule "submodules/lazy-mcp"]
+	path = mcp-frameworks/lazy-mcp
+	url = https://github.com/machjesusmoto/lazy-mcp
+[submodule "submodules/MCP-SuperAssistant"]
+	path = browser-extensions/MCP-SuperAssistant
+	url = https://github.com/robertpelloni/MCP-SuperAssistant
+[submodule "submodules/jules-agent-sdk-python"]
+	path = submodules/jules-agent-sdk-python
+	url = https://github.com/AsyncFuncAI/jules-agent-sdk-python
+[submodule "submodules/magg"]
+	path = tools/refs/magg
+	url = https://github.com/sitbon/magg
+[submodule "submodules/mcp-tool-chainer"]
+	path = mcp-servers/orchestration/mcp-tool-chainer
+	url = https://github.com/thirdstrandstudio/mcp-tool-chainer
+[submodule "submodules/MCP-Zero"]
+	path = research/MCP-Zero
+	url = https://github.com/xfey/MCP-Zero
+[submodule "submodules/claudex"]
+	path = submodules/claudex
+	url = https://github.com/Mng-dev-ai/claudex
+[submodule "submodules/Auditor"]
+	path = submodules/Auditor
+	url = https://github.com/TheAuditorTool/Auditor
+[submodule "submodules/PowerTrader_AI"]
+	path = submodules/PowerTrader_AI
+	url = https://github.com/robertpelloni/PowerTrader_AI
+[submodule "submodules/reag"]
+	path = submodules/reag
+	url = https://github.com/superagent-ai/reag
+[submodule "memory/systems/langmem"]
+	path = memory/systems/langmem
+	url = https://github.com/langchain-ai/langmem
+[submodule "memory/systems/MemoryOS"]
+	path = memory/systems/MemoryOS
+	url = https://github.com/BAI-LAB/MemoryOS
+[submodule "memory/systems/zep"]
+	path = memory/systems/zep
+	url = https://github.com/getzep/zep
+[submodule "memory/systems/supermemory"]
+	path = memory/systems/supermemory
+	url = https://github.com/supermemoryai/supermemory
+[submodule "superai-cli/tools/ccs"]
+	path = superai-cli/tools/ccs
+	url = https://github.com/kaitranntt/ccs
+[submodule "superai-cli/tools/Lynkr"]
+	path = superai-cli/tools/Lynkr
+	url = https://github.com/vishalveerareddy123/Lynkr
+[submodule "superai-cli/tools/cc-switch"]
+	path = superai-cli/tools/cc-switch
+	url = https://github.com/farion1231/cc-switch
+[submodule "superai-cli/tools/code-assistant-manager"]
+	path = superai-cli/tools/code-assistant-manager
+	url = https://github.com/Chat2AnyLLM/code-assistant-manager
+[submodule "superai-cli/proxies/openai-gemini"]
+	path = superai-cli/proxies/openai-gemini
+	url = https://github.com/PublicAffairs/openai-gemini
+[submodule "superai-cli/clis/CodeNomad"]
+	path = superai-cli/clis/CodeNomad
+	url = https://github.com/NeuralNomadsAI/CodeNomad
+[submodule "superai-cli/clis/claude-code-madapp"]
+	path = superai-cli/clis/claude-code-madapp
+	url = https://github.com/MadAppGang/claude-code
+[submodule "superai-cli/proxies/gemini-openai-proxy-zuisong"]
+	path = superai-cli/proxies/gemini-openai-proxy-zuisong
+	url = https://github.com/zuisong/gemini-openai-proxy
+[submodule "superai-cli/proxies/vercel-ai-proxy"]
+	path = superai-cli/proxies/vercel-ai-proxy
+	url = https://github.com/Hk-Gosuto/vercel-ai-proxy
+[submodule "superai-cli/proxies/gemini-openai-proxy-zhu"]
+	path = superai-cli/proxies/gemini-openai-proxy-zhu
+	url = https://github.com/zhu327/gemini-openai-proxy
+[submodule "superai-cli/routers/gemini-cli-router"]
+	path = superai-cli/routers/gemini-cli-router
+	url = https://github.com/Jasonzhangf/gemini-cli-router
+[submodule "superai-cli/routers/gemini-router"]
+	path = superai-cli/routers/gemini-router
+	url = https://github.com/takltc/gemini-router
+[submodule "superai-cli/proxies/ccproxy"]
+	path = superai-cli/proxies/ccproxy
+	url = https://github.com/starbased-co/ccproxy
+[submodule "superai-cli/routers/GoogleGeminiRouter"]
+	path = superai-cli/routers/GoogleGeminiRouter
+	url = https://github.com/Dhatchinamoorthy/GoogleGeminiRouter
+[submodule "superai-cli/extensions/gemini-superclaude-mcp-server"]
+	path = superai-cli/extensions/gemini-superclaude-mcp-server
+	url = https://github.com/Dianel555/gemini-superclaude-mcp-server
+[submodule "superai-cli/harnesses/SuperClaude_Framework"]
+	path = superai-cli/harnesses/SuperClaude_Framework
+	url = https://github.com/SuperClaude-Org/SuperClaude_Framework
+[submodule "superai-cli/tools/cc-switch-cli"]
+	path = superai-cli/tools/cc-switch-cli
+	url = https://github.com/SaladDay/cc-switch-cli
+[submodule "database/mcp-servers/postgres"]
+	path = database/mcp-servers/postgres
+	url = https://github.com/gemini-cli-extensions/postgres
+[submodule "database/mcp-servers/mysql"]
+	path = database/mcp-servers/mysql
+	url = https://github.com/gemini-cli-extensions/mysql
+[submodule "computer-use/examples/claude-quickstarts"]
+	path = computer-use/examples/claude-quickstarts
+	url = https://github.com/anthropics/claude-quickstarts
+[submodule "database/mcp-servers/dbhub"]
+	path = database/mcp-servers/dbhub
+	url = https://github.com/bytebase/dbhub
+[submodule "computer-use/desktop/cua"]
+	path = computer-use/desktop/cua
+	url = https://github.com/trycua/cua
+[submodule "computer-use/browser/algonius-browser"]
+	path = browser-use/algonius-browser
+	url = https://github.com/algonius/algonius-browser
+[submodule "code-sandbox/tools/cohere-terrarium"]
+	path = code-sandbox/tools/cohere-terrarium
+	url = https://github.com/cohere-ai/cohere-terrarium
+[submodule "code-sandbox/tools/e2b-code-interpreter"]
+	path = code-sandbox/tools/e2b-code-interpreter
+	url = https://github.com/e2b-dev/code-interpreter
+[submodule "code-sandbox/tools/open-interpreter"]
+	path = code-sandbox/tools/open-interpreter
+	url = https://github.com/OpenInterpreter/open-interpreter
+[submodule "search/mcp-servers/web-search-mcp"]
+	path = search/mcp-servers/web-search-mcp
+	url = https://github.com/mrkrsl/web-search-mcp
+[submodule "search/mcp-servers/mcp-everything-search"]
+	path = mcp-servers/search/mcp-everything-search
+	url = https://github.com/mamertofabian/mcp-everything-search
+[submodule "financial/mcp-servers/octagon-mcp-server"]
+	path = financial/mcp-servers/octagon-mcp-server
+	url = https://github.com/OctagonAI/octagon-mcp-server
+[submodule "financial/mcp-servers/alpha_vantage_mcp"]
+	path = financial/mcp-servers/alpha_vantage_mcp
+	url = https://github.com/alphavantage/alpha_vantage_mcp
+[submodule "financial/mcp-servers/financial-datasets-mcp"]
+	path = financial/mcp-servers/financial-datasets-mcp
+	url = https://github.com/financial-datasets/mcp-server
+[submodule "financial/trading/trade-agent-mcp"]
+	path = financial/trading/trade-agent-mcp
+	url = https://github.com/Trade-Agent/trade-agent-mcp
+[submodule "financial/crypto/coingecko-mcp"]
+	path = financial/crypto/coingecko-mcp
+	url = https://github.com/coingecko/coingecko-typescript
+[submodule "financial/crypto/coinstats-mcp"]
+	path = financial/crypto/coinstats-mcp
+	url = https://github.com/CoinStatsHQ/coinstats-mcp
+[submodule "financial/crypto/awesome-crypto-mcp"]
+	path = financial/crypto/awesome-crypto-mcp
+	url = https://github.com/badkk/awesome-crypto-mcp-servers
+[submodule "financial/trading/ai-hedge-fund"]
+	path = financial/trading/ai-hedge-fund
+	url = https://github.com/virattt/ai-hedge-fund
+[submodule "RAG/systems/orama"]
+	path = RAG/systems/orama
+	url = https://github.com/oramasearch/orama.git
+[submodule "code-indexing/tools/bloop"]
+	path = code-indexing/tools/bloop
+	url = https://github.com/BloopAI/bloop.git
+[submodule "code-indexing/tools/aider"]
+	path = cli-tools/aider
+	url = https://github.com/aider-ai/aider.git
+[submodule "code-indexing/ast/ast-grep"]
+	path = code-indexing/ast/ast-grep
+	url = https://github.com/ast-grep/ast-grep.git
+[submodule "code-indexing/ast/tree-sitter"]
+	path = code-indexing/ast/tree-sitter
+	url = https://github.com/tree-sitter/tree-sitter.git
+[submodule "skills/prompts/anthropic-quickstarts"]
+	path = skills/prompts/anthropic-quickstarts
+	url = https://github.com/anthropics/anthropic-quickstarts.git
+[submodule "RAG/systems/haystack"]
+	path = RAG/systems/haystack
+	url = https://github.com/deepset-ai/haystack.git
+[submodule "RAG/methods/instructor"]
+	path = RAG/methods/instructor
+	url = https://github.com/jxnl/instructor.git
+[submodule "RAG/systems/qdrant"]
+	path = RAG/systems/qdrant
+	url = https://github.com/qdrant/qdrant.git
+[submodule "RAG/systems/chroma"]
+	path = RAG/systems/chroma
+	url = https://github.com/chroma-core/chroma.git
+[submodule "RAG/systems/langchain"]
+	path = RAG/systems/langchain
+	url = https://github.com/langchain-ai/langchain.git
+[submodule "RAG/systems/weaviate"]
+	path = RAG/systems/weaviate
+	url = https://github.com/weaviate/weaviate.git
+[submodule "RAG/systems/milvus"]
+	path = RAG/systems/milvus
+	url = https://github.com/milvus-io/milvus.git
+[submodule "superai-cli/agents/openhands"]
+	path = superai-cli/agents/openhands
+	url = https://github.com/All-Hands-AI/OpenHands.git
+[submodule "superai-cli/agents/crewai"]
+	path = superai-cli/agents/crewai
+	url = https://github.com/crewAIInc/crewAI.git
+[submodule "computer-use/browser/playwright"]
+	path = browser-use/playwright
+	url = https://github.com/microsoft/playwright.git
+[submodule "computer-use/browser/stagehand"]
+	path = browser-use/stagehand
+	url = https://github.com/browserbase/stagehand.git
+[submodule "code-sandbox/runtimes/dagger"]
+	path = code-sandbox/runtimes/dagger
+	url = https://github.com/dagger/dagger.git
+[submodule "RAG/parsing/docling"]
+	path = RAG/parsing/docling
+	url = https://github.com/DS4SD/docling.git
+[submodule "memory/systems/mem0"]
+	path = memory/systems/mem0
+	url = https://github.com/mem0ai/mem0.git
+[submodule "superai-cli/agents/langgraph"]
+	path = superai-cli/agents/langgraph
+	url = https://github.com/langchain-ai/langgraph.git
+[submodule "superai-cli/mcp-advanced/anthropic-tools"]
+	path = superai-cli/mcp-advanced/anthropic-tools
+	url = https://github.com/anthropics/anthropic-tools.git
+[submodule "superai-cli/mcp-advanced/mcp-servers"]
+	path = superai-cli/mcp-advanced/mcp-servers
+	url = https://github.com/modelcontextprotocol/servers.git
+[submodule "superai-cli/mcp-advanced/awesome-mcp-servers"]
+	path = superai-cli/mcp-advanced/awesome-mcp-servers
+	url = https://github.com/punkpeye/awesome-mcp-servers.git
+[submodule "agents/refs/pydantic-ai"]
+	path = agents/refs/pydantic-ai
+	url = https://github.com/pydantic/pydantic-ai
+[submodule "submodules/mcp-cli"]
+	path = submodules/mcp-cli
+	url = https://github.com/apify/mcp-cli
+[submodule "submodules/mcp-launcher"]
+	path = submodules/mcp-launcher
+	url = https://github.com/moeru-ai/mcp-launcher
+[submodule "submodules/claude-lazy-loading"]
+	path = submodules/claude-lazy-loading
+	url = https://github.com/machjesusmoto/claude-lazy-loading
+[submodule "mcp-servers/memory/vibememo"]
+	path = mcp-servers/memory/vibememo
+	url = https://github.com/vibeforge1111/vibememo
+[submodule "external/plugins/vibeship/vibeship-plugin"]
+	path = external/plugins/vibeship/vibeship-plugin
+	url = https://github.com/vibeforge1111/vibeship-plugin
+[submodule "tools/security/vibeship-scanner"]
+	path = tools/security/vibeship-scanner
+	url = https://github.com/vibeforge1111/vibeship-scanner
+[submodule "agents/orchestration/vibeship-spawner"]
+	path = agents/orchestration/vibeship-spawner
+	url = https://github.com/vibeforge1111/vibeship-spawner
+[submodule "external/skills_repos/vibeship/vibeship-spawner-skills"]
+	path = external/skills_repos/vibeship/vibeship-spawner-skills
+	url = https://github.com/vibeforge1111/vibeship-spawner-skills
+[submodule "tools/misc/vibeship-idearater"]
+	path = tools/misc/vibeship-idearater
+	url = https://github.com/vibeforge1111/vibeship-idearater
+[submodule "research/OpenCoder-llm"]
+	path = research/OpenCoder-llm
+	url = https://github.com/OpenCoder-llm/OpenCoder-llm
+[submodule "memory/mcp-servers/mcp-servers-official"]
+	path = memory/mcp-servers/mcp-servers-official
+	url = https://github.com/modelcontextprotocol/servers
+[submodule "memory/mcp-servers/supermemory-mcp"]
+	path = memory/mcp-servers/supermemory-mcp
+	url = https://github.com/supermemoryai/supermemory-mcp
+[submodule "memory/mcp-servers/qdrant-mcp"]
+	path = memory/mcp-servers/qdrant-mcp
+	url = https://github.com/qdrant/mcp-server-qdrant
+[submodule "memory/systems/beads"]
+	path = memory/systems/beads
+	url = https://github.com/steveyegge/beads
+[submodule "memory/systems/cognee"]
+	path = memory/systems/cognee
+	url = https://github.com/topoteretes/cognee
+[submodule "memory/systems/redplanethq-core"]
+	path = memory/systems/redplanethq-core
+	url = https://github.com/redplanethq/core
+[submodule "memory/systems/txtai"]
+	path = memory/systems/txtai
+	url = https://github.com/neuml/txtai
+[submodule "memory/systems/memai"]
+	path = memory/systems/memai
+	url = https://github.com/KraftyUX/memai
+[submodule "memory/systems/cipher"]
+	path = memory/systems/cipher
+	url = https://github.com/campfirein/cipher
+[submodule "memory/systems/MemMachine"]
+	path = memory/systems/MemMachine
+	url = https://github.com/MemMachine/MemMachine
+[submodule "memory/systems/Long-Term-Memory-API"]
+	path = memory/systems/Long-Term-Memory-API
+	url = https://github.com/jakops88-hub/Long-Term-Memory-API
+[submodule "memory/systems/Mimir"]
+	path = memory/systems/Mimir
+	url = https://github.com/orneryd/Mimir
+[submodule "memory/systems/pieces-cli-agent"]
+	path = memory/systems/pieces-cli-agent
+	url = https://github.com/pieces-app/cli-agent
+[submodule "memory/systems/letta"]
+	path = memory/systems/letta
+	url = https://github.com/letta-ai/letta
+[submodule "memory/systems/context-portal"]
+	path = memory/systems/context-portal
+	url = https://github.com/GreatScottyMac/context-portal
+[submodule "memory/systems/beads_viewer"]
+	path = memory/systems/beads_viewer
+	url = https://github.com/Dicklesworthstone/beads_viewer
+[submodule "memory/systems/sem-mem"]
+	path = memory/systems/sem-mem
+	url = https://github.com/DrDavidL/sem-mem
+[submodule "memory/systems/jean-memory"]
+	path = memory/systems/jean-memory
+	url = https://github.com/jean-technologies/jean-memory
+[submodule "memory/systems/automem"]
+	path = memory/systems/automem
+	url = https://github.com/verygoodplugins/automem
+[submodule "memory/mcp-servers/mcp-automem"]
+	path = memory/mcp-servers/mcp-automem
+	url = https://github.com/verygoodplugins/mcp-automem
+[submodule "memory/systems/Context-Engine"]
+	path = memory/systems/Context-Engine
+	url = https://github.com/zeddy89/Context-Engine
+[submodule "memory/systems/Claude-Matrix"]
+	path = memory/systems/Claude-Matrix
+	url = https://github.com/ojowwalker77/Claude-Matrix
+[submodule "memory/systems/roampal-core"]
+	path = memory/systems/roampal-core
+	url = https://github.com/roampal-ai/roampal-core
+[submodule "memory/systems/Memori"]
+	path = memory/systems/Memori
+	url = https://github.com/MemoriLabs/Memori
+[submodule "memory/systems/hindsight"]
+	path = memory/systems/hindsight
+	url = https://github.com/vectorize-io/hindsight
+[submodule "memory/systems/lifecontext"]
+	path = memory/systems/lifecontext
+	url = https://github.com/LifeContext/lifecontext
+[submodule "memory/systems/memvault-sync"]
+	path = memory/systems/memvault-sync
+	url = https://github.com/jakops88-hub/memvault-sync
+[submodule "memory/plugins/opencode-plugin-simple-memory"]
+	path = memory/plugins/opencode-plugin-simple-memory
+	url = https://github.com/cnicolov/opencode-plugin-simple-memory
+[submodule "memory/vector-stores/pgvector"]
+	path = memory/vector-stores/pgvector
+	url = https://github.com/pgvector/pgvector
+[submodule "memory/systems/letta-code"]
+	path = memory/systems/letta-code
+	url = https://github.com/letta-ai/letta-code
+[submodule "memory/systems/OpenMemory"]
+	path = memory/systems/OpenMemory
+	url = https://github.com/CaviraOSS/OpenMemory
+[submodule "memory/mcp-servers/mcp-memory-service"]
+	path = memory/mcp-servers/mcp-memory-service
+	url = https://github.com/doobidoo/mcp-memory-service
+[submodule "memory/systems/serena"]
+	path = memory/systems/serena
+	url = https://github.com/oraios/serena
+[submodule "memory/systems/octocode"]
+	path = memory/systems/octocode
+	url = https://github.com/Muvon/octocode
+[submodule "memory/systems/probe"]
+	path = memory/systems/probe
+	url = https://github.com/probelabs/probe
+[submodule "memory/mcp-servers/deepcontext-mcp"]
+	path = memory/mcp-servers/deepcontext-mcp
+	url = https://github.com/Wildcard-Official/deepcontext-mcp
+[submodule "memory/systems/code-to-tree"]
+	path = memory/systems/code-to-tree
+	url = https://github.com/micl2e2/code-to-tree
+[submodule "memory/systems/CodeWeaver"]
+	path = memory/systems/CodeWeaver
+	url = https://github.com/tesserato/CodeWeaver
+[submodule "memory/systems/codebase-context"]
+	path = memory/systems/codebase-context
+	url = https://github.com/PatrickSys/codebase-context
+[submodule "mcp-servers/search/mindsdb"]
+	path = mcp-servers/search/mindsdb
+	url = https://github.com/mindsdb/mindsdb
+[submodule "mcp-servers/search/DesktopCommanderMCP"]
+	path = mcp-servers/search/DesktopCommanderMCP
+	url = https://github.com/wonderwhy-er/DesktopCommanderMCP
+[submodule "mcp-servers/search/web-search-mcp"]
+	path = mcp-servers/search/web-search-mcp
+	url = https://github.com/mrkrsl/web-search-mcp
+[submodule "mcp-servers/search/mcp-everything-search"]
+	path = mcp-servers/search/mcp-everything-search
+	url = https://github.com/mamertofabian/mcp-everything-search
+[submodule "mcp-servers/financial/octagon-mcp-server"]
+	path = mcp-servers/financial/octagon-mcp-server
+	url = https://github.com/OctagonAI/octagon-mcp-server
+[submodule "mcp-servers/financial/alpha_vantage_mcp"]
+	path = mcp-servers/financial/alpha_vantage_mcp
+	url = https://github.com/alphavantage/alpha_vantage_mcp
+[submodule "mcp-servers/financial/financial-datasets-mcp"]
+	path = mcp-servers/financial/financial-datasets-mcp
+	url = https://github.com/financial-datasets/mcp-server
+[submodule "mcp-servers/financial/trade-agent-mcp"]
+	path = mcp-servers/financial/trade-agent-mcp
+	url = https://github.com/Trade-Agent/trade-agent-mcp
+[submodule "mcp-servers/financial/coingecko-typescript"]
+	path = mcp-servers/financial/coingecko-typescript
+	url = https://github.com/coingecko/coingecko-typescript
+[submodule "mcp-servers/financial/binance-mcp-server"]
+	path = mcp-servers/financial/binance-mcp-server
+	url = https://github.com/ethancod1ng/binance-mcp-server
+[submodule "mcp-servers/financial/Upsonic"]
+	path = mcp-servers/financial/Upsonic
+	url = https://github.com/Upsonic/Upsonic
+[submodule "mcp-servers/financial/ai-hedge-fund"]
+	path = mcp-servers/financial/ai-hedge-fund
+	url = https://github.com/virattt/ai-hedge-fund
+[submodule "mcp-servers/browser/cua"]
+	path = mcp-servers/browser/cua
+	url = https://github.com/trycua/cua
+[submodule "mcp-servers/browser/spark-mcp"]
+	path = mcp-servers/browser/spark-mcp
+	url = https://github.com/sensuslab/spark-mcp
+[submodule "mcp-servers/browser/clickclickclick"]
+	path = mcp-servers/browser/clickclickclick
+	url = https://github.com/instavm/clickclickclick
+[submodule "mcp-servers/browser/fara"]
+	path = mcp-servers/browser/fara
+	url = https://github.com/microsoft/fara
+[submodule "mcp-servers/browser/generalagents-python"]
+	path = mcp-servers/browser/generalagents-python
+	url = https://github.com/generalagents/generalagents-python
+[submodule "mcp-servers/browser/algonius-browser"]
+	path = mcp-servers/browser/algonius-browser
+	url = https://github.com/algonius/algonius-browser
+[submodule "superai-cli/clis/codebuff"]
+	path = superai-cli/clis/codebuff
+	url = https://github.com/CodebuffAI/codebuff
+[submodule "superai-cli/clis/kimi-cli"]
+	path = superai-cli/clis/kimi-cli
+	url = https://github.com/MoonshotAI/kimi-cli
+[submodule "superai-cli/clis/codex-kaioken"]
+	path = superai-cli/clis/codex-kaioken
+	url = https://github.com/jayasuryajsk/codex-kaioken
+[submodule "tools/security/claude-code-safety-net"]
+	path = tools/security/claude-code-safety-net
+	url = https://github.com/kenryu42/claude-code-safety-net
+[submodule "skills/external/ensue-skill"]
+	path = skills/external/ensue-skill
+	url = https://github.com/mutable-state-inc/ensue-skill
+[submodule "code-sandbox/tools/safeexec"]
+	path = code-sandbox/tools/safeexec
+	url = https://github.com/agentify-sh/safeexec
+[submodule "agents/workty"]
+	path = agents/workty
+	url = https://github.com/brianbandit/workty
+[submodule "tools/github/claude-code-gh-dash"]
+	path = tools/github/claude-code-gh-dash
+	url = https://github.com/jakozloski/claude-code-gh-dash
+[submodule "agents/refs/agentapi"]
+	path = agents/refs/agentapi
+	url = https://github.com/coder/agentapi
+[submodule "superai-cli/tools/gomuxai"]
+	path = superai-cli/tools/gomuxai
+	url = https://github.com/tikimcfee/gomuxai
+[submodule "mcp-servers/ai/consult-llm-mcp"]
+	path = mcp-servers/ai/consult-llm-mcp
+	url = https://github.com/raine/consult-llm-mcp
+[submodule "external/mcp-directories/metamcp"]
+	path = external/mcp-directories/metamcp
+	url = https://github.com/metatool-ai/metamcp
+[submodule "external/mcp-directories/awesome-mcp-servers"]
+	path = external/mcp-directories/awesome-mcp-servers
+	url = https://github.com/punkpeye/awesome-mcp-servers
+[submodule "external/mcp-directories/toolsdk-mcp-registry"]
+	path = external/mcp-directories/toolsdk-mcp-registry
+	url = https://github.com/toolsdk-ai/toolsdk-mcp-registry
+[submodule "external/mcp-directories/awesome-ai-apps"]
+	path = external/mcp-directories/awesome-ai-apps
+	url = https://github.com/Arindam200/awesome-ai-apps
+[submodule "external/skills/dotfiles"]
+	path = external/skills/dotfiles
+	url = https://github.com/TheNoeTrevino/dotfiles
+[submodule "external/skills/skills"]
+	path = external/skills/skills
+	url = https://github.com/anthropics/skills
+[submodule "external/skills/gemini-claude-skills"]
+	path = external/skills/gemini-claude-skills
+	url = https://github.com/stared/gemini-claude-skills
+[submodule "external/skills/claude-code-tips"]
+	path = external/skills/claude-code-tips
+	url = https://github.com/ykdojo/claude-code-tips
+[submodule "external/orchestration/PocketFlow-Tutorial-Cursor"]
+	path = external/orchestration/PocketFlow-Tutorial-Cursor
+	url = https://github.com/The-Pocket/PocketFlow-Tutorial-Cursor
+[submodule "external/orchestration/OpenHands"]
+	path = external/orchestration/OpenHands
+	url = https://github.com/OpenHands/OpenHands
+[submodule "external/orchestration/A2A"]
+	path = external/orchestration/A2A
+	url = https://github.com/a2aproject/A2A
+[submodule "external/orchestration/codev"]
+	path = external/orchestration/codev
+	url = https://github.com/cluesmith/codev
+[submodule "external/orchestration/TaskSync"]
+	path = external/orchestration/TaskSync
+	url = https://github.com/4regab/TaskSync
+[submodule "external/orchestration/tasksync-mcp"]
+	path = external/orchestration/tasksync-mcp
+	url = https://github.com/4regab/tasksync-mcp
+[submodule "external/orchestration/agentic-ray"]
+	path = external/orchestration/agentic-ray
+	url = https://github.com/rayai-labs/agentic-ray
+[submodule "external/orchestration/agentdepot-agents"]
+	path = external/orchestration/agentdepot-agents
+	url = https://github.com/biagruot/agentdepot-agents
+[submodule "external/orchestration/pydantic-deepagents"]
+	path = external/orchestration/pydantic-deepagents
+	url = https://github.com/vstorm-co/pydantic-deepagents
+[submodule "external/orchestration/agentic-playground"]
+	path = external/orchestration/agentic-playground
+	url = https://github.com/denniszielke/agentic-playground
+[submodule "external/orchestration/ag-ui"]
+	path = external/orchestration/ag-ui
+	url = https://github.com/ag-ui-protocol/ag-ui
+[submodule "external/orchestration/CopilotKit"]
+	path = external/orchestration/CopilotKit
+	url = https://github.com/CopilotKit/CopilotKit
+[submodule "external/orchestration/a2a-ui"]
+	path = external/orchestration/a2a-ui
+	url = https://github.com/a2anet/a2a-ui
+[submodule "external/orchestration/Self-Learning-Agents"]
+	path = external/orchestration/Self-Learning-Agents
+	url = https://github.com/omdivyatej/Self-Learning-Agents
+[submodule "external/clis/claude-code-router"]
+	path = external/clis/claude-code-router
+	url = https://github.com/musistudio/claude-code-router
+[submodule "external/clis/ccs"]
+	path = external/clis/ccs
+	url = https://github.com/kaitranntt/ccs
+[submodule "external/clis/cc-switch"]
+	path = external/clis/cc-switch
+	url = https://github.com/farion1231/cc-switch
+[submodule "external/clis/Lynkr"]
+	path = external/clis/Lynkr
+	url = https://github.com/vishalveerareddy123/Lynkr
+[submodule "external/clis/emdash"]
+	path = external/clis/emdash
+	url = https://github.com/generalaction/emdash
+[submodule "external/clis/code-assistant-manager"]
+	path = external/clis/code-assistant-manager
+	url = https://github.com/Chat2AnyLLM/code-assistant-manager
+[submodule "external/clis/CodeNomad"]
+	path = external/clis/CodeNomad
+	url = https://github.com/NeuralNomadsAI/CodeNomad
+[submodule "external/clis/claude-code"]
+	path = external/clis/claude-code
+	url = https://github.com/MadAppGang/claude-code
+[submodule "external/clis/openai-gemini"]
+	path = external/clis/openai-gemini
+	url = https://github.com/PublicAffairs/openai-gemini
+[submodule "external/clis/gemini-openai-proxy"]
+	path = external/clis/gemini-openai-proxy
+	url = https://github.com/zhu327/gemini-openai-proxy
+[submodule "external/clis/vercel-ai-proxy"]
+	path = external/clis/vercel-ai-proxy
+	url = https://github.com/Hk-Gosuto/vercel-ai-proxy
+[submodule "external/clis/gemini-cli-router"]
+	path = external/clis/gemini-cli-router
+	url = https://github.com/Jasonzhangf/gemini-cli-router
+[submodule "external/clis/claude-code-openrouter"]
+	path = external/clis/claude-code-openrouter
+	url = https://github.com/derek-larson14/claude-code-openrouter
+[submodule "external/clis/gemini-router"]
+	path = external/clis/gemini-router
+	url = https://github.com/takltc/gemini-router
+[submodule "external/clis/ccproxy"]
+	path = external/clis/ccproxy
+	url = https://github.com/starbased-co/ccproxy
+[submodule "external/clis/GoogleGeminiRouter"]
+	path = external/clis/GoogleGeminiRouter
+	url = https://github.com/Dhatchinamoorthy/GoogleGeminiRouter
+[submodule "external/clis/cc-switch-cli"]
+	path = external/clis/cc-switch-cli
+	url = https://github.com/SaladDay/cc-switch-cli
+[submodule "external/clis/gemini-superclaude-mcp-server"]
+	path = external/clis/gemini-superclaude-mcp-server
+	url = https://github.com/Dianel555/gemini-superclaude-mcp-server
+[submodule "external/clis/SuperClaude_Framework"]
+	path = external/clis/SuperClaude_Framework
+	url = https://github.com/SuperClaude-Org/SuperClaude_Framework
+[submodule "external/clis/splitrail"]
+	path = external/clis/splitrail
+	url = https://github.com/Piebald-AI/splitrail
+[submodule "external/clis/awesome-opencode"]
+	path = external/clis/awesome-opencode
+	url = https://github.com/awesome-opencode/awesome-opencode
+[submodule "external/clis/awesome-copilot"]
+	path = external/clis/awesome-copilot
+	url = https://github.com/github/awesome-copilot
+[submodule "external/clis/opencode-gui"]
+	path = external/clis/opencode-gui
+	url = https://github.com/milisp/opencode-gui
+[submodule "external/clis/opencode-web"]
+	path = external/clis/opencode-web
+	url = https://github.com/chris-tse/opencode-web
+[submodule "external/clis/amped"]
+	path = external/clis/amped
+	url = https://github.com/slashtechno/amped
+[submodule "external/clis/happy"]
+	path = external/clis/happy
+	url = https://github.com/slopus/happy
+[submodule "external/clis/schaltwerk"]
+	path = external/clis/schaltwerk
+	url = https://github.com/2mawi2/schaltwerk
+[submodule "external/clis/claude-code-mcp"]
+	path = external/clis/claude-code-mcp
+	url = https://github.com/steipete/claude-code-mcp
+[submodule "external/clis/claude-tools-mcp"]
+	path = external/clis/claude-tools-mcp
+	url = https://github.com/brwse/claude-tools-mcp
+[submodule "external/clis/multi-agent-orchestration"]
+	path = external/clis/multi-agent-orchestration
+	url = https://github.com/priyan-coder/multi-agent-orchestration
+[submodule "external/clis/amp-examples-and-guides"]
+	path = external/clis/amp-examples-and-guides
+	url = https://github.com/sourcegraph/amp-examples-and-guides
+[submodule "external/clis/awesome-amp-code"]
+	path = external/clis/awesome-amp-code
+	url = https://github.com/jdorfman/awesome-amp-code
+[submodule "external/clis/oh-my-opencode"]
+	path = external/clis/oh-my-opencode
+	url = https://github.com/code-yeongyu/oh-my-opencode
+[submodule "external/clis/claude-hooks"]
+	path = external/clis/claude-hooks
+	url = https://github.com/TheNoeTrevino/claude-hooks
+[submodule "external/clis/llxprt-code"]
+	path = external/clis/llxprt-code
+	url = https://github.com/vybestack/llxprt-code
+[submodule "external/clis/OpenQode-Public-Alpha-GooseUltra-"]
+	path = external/clis/OpenQode-Public-Alpha-GooseUltra-
+	url = https://github.com/roman-ryzenadvanced/OpenQode-Public-Alpha-GooseUltra-
+[submodule "external/clis/copilot-cli"]
+	path = external/clis/copilot-cli
+	url = https://github.com/github/copilot-cli
+[submodule "external/clis/grok-cli"]
+	path = external/clis/grok-cli
+	url = https://github.com/superagent-ai/grok-cli
+[submodule "external/clis/qwen-code"]
+	path = external/clis/qwen-code
+	url = https://github.com/QwenLM/qwen-code
+[submodule "external/clis/code"]
+	path = external/clis/code
+	url = https://github.com/just-every/code
+[submodule "external/clis/opencode"]
+	path = external/clis/opencode
+	url = https://github.com/sst/opencode
+[submodule "external/clis/crush"]
+	path = external/clis/crush
+	url = https://github.com/charmbracelet/crush
+[submodule "external/clis/factory"]
+	path = external/clis/factory
+	url = https://github.com/factory-ai/factory
+[submodule "external/clis/codebuff"]
+	path = external/clis/codebuff
+	url = https://github.com/CodebuffAI/codebuff
+[submodule "external/clis/CodeMachine-CLI"]
+	path = external/clis/CodeMachine-CLI
+	url = https://github.com/moazbuilds/CodeMachine-CLI
+[submodule "external/clis/codex"]
+	path = external/clis/codex
+	url = https://github.com/openai/codex
+[submodule "external/clis/kimi-cli"]
+	path = external/clis/kimi-cli
+	url = https://github.com/MoonshotAI/kimi-cli
+[submodule "external/clis/goose"]
+	path = external/clis/goose
+	url = https://github.com/block/goose
+[submodule "external/clis/litellm"]
+	path = external/clis/litellm
+	url = https://github.com/BerriAI/litellm
+[submodule "external/clis/aichat"]
+	path = external/clis/aichat
+	url = https://github.com/sigoden/aichat
+[submodule "external/clis/plandex"]
+	path = external/clis/plandex
+	url = https://github.com/plandex-ai/plandex
+[submodule "external/clis/Kode-cli"]
+	path = external/clis/Kode-cli
+	url = https://github.com/shareAI-lab/Kode-cli
+[submodule "external/mcp-servers/workspace"]
+	path = external/mcp-servers/workspace
+	url = https://github.com/gemini-cli-extensions/workspace
+[submodule "external/mcp-servers/firebase"]
+	path = external/mcp-servers/firebase
+	url = https://github.com/gemini-cli-extensions/firebase
+[submodule "external/mcp-servers/cloud-run-mcp"]
+	path = external/mcp-servers/cloud-run-mcp
+	url = https://github.com/GoogleCloudPlatform/cloud-run-mcp
+[submodule "external/mcp-servers/vertex-ai-creative-studio"]
+	path = external/mcp-servers/vertex-ai-creative-studio
+	url = https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio
+[submodule "external/mcp-servers/conductor"]
+	path = external/mcp-servers/conductor
+	url = https://github.com/gemini-cli-extensions/conductor
+[submodule "external/mcp-servers/mcp-toolbox"]
+	path = external/mcp-servers/mcp-toolbox
+	url = https://github.com/gemini-cli-extensions/mcp-toolbox
+[submodule "external/mcp-servers/vertex"]
+	path = external/mcp-servers/vertex
+	url = https://github.com/gemini-cli-extensions/vertex
+[submodule "external/mcp-servers/nanobanana"]
+	path = external/mcp-servers/nanobanana
+	url = https://github.com/gemini-cli-extensions/nanobanana
+[submodule "external/mcp-servers/jules"]
+	path = external/mcp-servers/jules
+	url = https://github.com/gemini-cli-extensions/jules
+[submodule "external/mcp-servers/datacommons"]
+	path = external/mcp-servers/datacommons
+	url = https://github.com/gemini-cli-extensions/datacommons
+[submodule "external/mcp-servers/gcloud"]
+	path = external/mcp-servers/gcloud
+	url = https://github.com/gemini-cli-extensions/gcloud
+[submodule "external/mcp-servers/chgpt-mcp-bridge"]
+	path = external/mcp-servers/chgpt-mcp-bridge
+	url = https://github.com/smonux/chgpt-mcp-bridge
+[submodule "external/mcp-servers/combined-autonomous-coding"]
+	path = external/mcp-servers/combined-autonomous-coding
+	url = https://github.com/process-failed-successfully/combined-autonomous-coding
+[submodule "external/mcp-servers/wot-mcp"]
+	path = external/mcp-servers/wot-mcp
+	url = https://github.com/macc-n/wot-mcp
+[submodule "external/mcp-servers/wot-mcp-cli"]
+	path = external/mcp-servers/wot-mcp-cli
+	url = https://github.com/macc-n/wot-mcp-cli
+[submodule "external/mcp-servers/wot-mcp-examples"]
+	path = external/mcp-servers/wot-mcp-examples
+	url = https://github.com/macc-n/wot-mcp-examples
+[submodule "external/mcp-servers/agent-console"]
+	path = external/mcp-servers/agent-console
+	url = https://github.com/eqtylab/agent-console
+[submodule "external/mcp-servers/resterm"]
+	path = external/mcp-servers/resterm
+	url = https://github.com/unkn0wn-root/resterm
+[submodule "external/mcp-servers/memory-opensource"]
+	path = external/mcp-servers/memory-opensource
+	url = https://github.com/Papr-ai/memory-opensource
+[submodule "external/mcp-servers/adk-js"]
+	path = external/mcp-servers/adk-js
+	url = https://github.com/google/adk-js
+[submodule "external/mcp-servers/inframind"]
+	path = external/mcp-servers/inframind
+	url = https://github.com/saikiranrallabandi/inframind
+[submodule "external/mcp-servers/Tether-Chat"]
+	path = external/mcp-servers/Tether-Chat
+	url = https://github.com/EJ-Tether/Tether-Chat
+[submodule "external/mcp-servers/Andrew6rant"]
+	path = external/mcp-servers/Andrew6rant
+	url = https://github.com/Andrew6rant/Andrew6rant
+[submodule "external/mcp-servers/MZaFaRM"]
+	path = external/mcp-servers/MZaFaRM
+	url = https://github.com/MZaFaRM/MZaFaRM
+[submodule "external/mcp-servers/bilgecan"]
+	path = external/mcp-servers/bilgecan
+	url = https://github.com/mokszr/bilgecan
+[submodule "external/mcp-servers/awesome-llm-services"]
+	path = external/mcp-servers/awesome-llm-services
+	url = https://github.com/av/awesome-llm-services
+[submodule "external/mcp-servers/memora"]
+	path = external/mcp-servers/memora
+	url = https://github.com/agentic-mcp-tools/memora
+[submodule "external/mcp-servers/Claude-Matrix"]
+	path = external/mcp-servers/Claude-Matrix
+	url = https://github.com/ojowwalker77/Claude-Matrix
+[submodule "external/mcp-servers/mcp_obsidian_notes"]
+	path = external/mcp-servers/mcp_obsidian_notes
+	url = https://github.com/digit1024/mcp_obsidian_notes
+[submodule "external/mcp-servers/claude-limitline"]
+	path = external/mcp-servers/claude-limitline
+	url = https://github.com/tylergraydev/claude-limitline
+[submodule "external/mcp-servers/spice"]
+	path = external/mcp-servers/spice
+	url = https://github.com/AbanteAI/spice
+[submodule "external/mcp-servers/party"]
+	path = external/mcp-servers/party
+	url = https://github.com/AbanteAI/party
+[submodule "external/mcp-servers/repo-visualizer"]
+	path = external/mcp-servers/repo-visualizer
+	url = https://github.com/AbanteAI/repo-visualizer
+[submodule "external/mcp-servers/tiktoken"]
+	path = external/mcp-servers/tiktoken
+	url = https://github.com/AbanteAI/tiktoken
+[submodule "external/mcp-servers/gpt-generals"]
+	path = external/mcp-servers/gpt-generals
+	url = https://github.com/AbanteAI/gpt-generals
+[submodule "external/mcp-servers/LoCoDiff-bench"]
+	path = external/mcp-servers/LoCoDiff-bench
+	url = https://github.com/AbanteAI/LoCoDiff-bench
+[submodule "external/mcp-servers/qa-party"]
+	path = external/mcp-servers/qa-party
+	url = https://github.com/AbanteAI/qa-party
+[submodule "external/mcp-servers/mentat-template-js"]
+	path = external/mcp-servers/mentat-template-js
+	url = https://github.com/AbanteAI/mentat-template-js
+[submodule "external/mcp-servers/websocket-demo"]
+	path = external/mcp-servers/websocket-demo
+	url = https://github.com/AbanteAI/websocket-demo
+[submodule "external/mcp-servers/vscode"]
+	path = external/mcp-servers/vscode
+	url = https://github.com/AbanteAI/vscode
+[submodule "external/mcp-servers/experiments"]
+	path = external/mcp-servers/experiments
+	url = https://github.com/AbanteAI/experiments
+[submodule "external/mcp-servers/mcp-chrome"]
+	path = external/mcp-servers/mcp-chrome
+	url = https://github.com/hangwin/mcp-chrome
+[submodule "external/mcp-servers/mcp"]
+	path = external/mcp-servers/mcp
+	url = https://github.com/hyperbrowserai/mcp
+[submodule "external/mcp-servers/mcpo"]
+	path = external/mcp-servers/mcpo
+	url = https://github.com/open-webui/mcpo
+[submodule "external/mcp-servers/browser-tools-mcp"]
+	path = external/mcp-servers/browser-tools-mcp
+	url = https://github.com/AgentDeskAI/browser-tools-mcp
+[submodule "external/mcp-servers/Maestro"]
+	path = external/mcp-servers/Maestro
+	url = https://github.com/pedramamini/Maestro
+[submodule "external/code-indexing/serena"]
+	path = external/code-indexing/serena
+	url = https://github.com/oraios/serena
+[submodule "external/code-indexing/octocode"]
+	path = external/code-indexing/octocode
+	url = https://github.com/Muvon/octocode
+[submodule "external/code-indexing/probe"]
+	path = external/code-indexing/probe
+	url = https://github.com/probelabs/probe
+[submodule "external/code-indexing/deepcontext-mcp"]
+	path = external/code-indexing/deepcontext-mcp
+	url = https://github.com/Wildcard-Official/deepcontext-mcp
+[submodule "external/code-indexing/code-to-tree"]
+	path = external/code-indexing/code-to-tree
+	url = https://github.com/micl2e2/code-to-tree
+[submodule "external/code-indexing/CodeWeaver"]
+	path = external/code-indexing/CodeWeaver
+	url = https://github.com/tesserato/CodeWeaver
+[submodule "external/code-indexing/codebase-context"]
+	path = external/code-indexing/codebase-context
+	url = https://github.com/PatrickSys/codebase-context
+[submodule "external/memory/zep"]
+	path = external/memory/zep
+	url = https://github.com/getzep/zep
+[submodule "external/memory/beads"]
+	path = external/memory/beads
+	url = https://github.com/steveyegge/beads
+[submodule "external/memory/cognee"]
+	path = external/memory/cognee
+	url = https://github.com/topoteretes/cognee
+[submodule "external/memory/langmem"]
+	path = external/memory/langmem
+	url = https://github.com/langchain-ai/langmem
+[submodule "external/memory/core"]
+	path = external/memory/core
+	url = https://github.com/redplanethq/core
+[submodule "external/memory/txtai"]
+	path = external/memory/txtai
+	url = https://github.com/neuml/txtai
+[submodule "external/memory/mcp-server-qdrant"]
+	path = external/memory/mcp-server-qdrant
+	url = https://github.com/qdrant/mcp-server-qdrant
+[submodule "external/memory/memai"]
+	path = external/memory/memai
+	url = https://github.com/KraftyUX/memai
+[submodule "external/memory/mem0"]
+	path = external/memory/mem0
+	url = https://github.com/mem0ai/mem0
+[submodule "external/memory/cipher"]
+	path = external/memory/cipher
+	url = https://github.com/campfirein/cipher
+[submodule "external/memory/MemoryOS"]
+	path = external/memory/MemoryOS
+	url = https://github.com/BAI-LAB/MemoryOS
+[submodule "external/memory/MemMachine"]
+	path = external/memory/MemMachine
+	url = https://github.com/MemMachine/MemMachine
+[submodule "external/memory/supermemory-mcp"]
+	path = external/memory/supermemory-mcp
+	url = https://github.com/supermemoryai/supermemory-mcp
+[submodule "external/memory/Long-Term-Memory-API"]
+	path = external/memory/Long-Term-Memory-API
+	url = https://github.com/jakops88-hub/Long-Term-Memory-API
+[submodule "external/memory/Mimir"]
+	path = external/memory/Mimir
+	url = https://github.com/orneryd/Mimir
+[submodule "external/memory/cli-agent"]
+	path = external/memory/cli-agent
+	url = https://github.com/pieces-app/cli-agent
+[submodule "external/memory/awesome-pieces"]
+	path = external/memory/awesome-pieces
+	url = https://github.com/pieces-app/awesome-pieces
+[submodule "external/memory/letta"]
+	path = external/memory/letta
+	url = https://github.com/letta-ai/letta
+[submodule "external/memory/context-portal"]
+	path = external/memory/context-portal
+	url = https://github.com/GreatScottyMac/context-portal
+[submodule "external/memory/beads_viewer"]
+	path = external/memory/beads_viewer
+	url = https://github.com/Dicklesworthstone/beads_viewer
+[submodule "external/memory/sem-mem"]
+	path = external/memory/sem-mem
+	url = https://github.com/DrDavidL/sem-mem
+[submodule "external/memory/jean-memory"]
+	path = external/memory/jean-memory
+	url = https://github.com/jean-technologies/jean-memory
+[submodule "external/memory/mcp-automem"]
+	path = external/memory/mcp-automem
+	url = https://github.com/verygoodplugins/mcp-automem
+[submodule "external/memory/automem"]
+	path = external/memory/automem
+	url = https://github.com/verygoodplugins/automem
+[submodule "external/memory/Context-Engine"]
+	path = external/memory/Context-Engine
+	url = https://github.com/zeddy89/Context-Engine
+[submodule "external/memory/roampal-core"]
+	path = external/memory/roampal-core
+	url = https://github.com/roampal-ai/roampal-core
+[submodule "external/memory/Memori"]
+	path = external/memory/Memori
+	url = https://github.com/MemoriLabs/Memori
+[submodule "external/memory/hindsight"]
+	path = external/memory/hindsight
+	url = https://github.com/vectorize-io/hindsight
+[submodule "external/memory/lifecontext"]
+	path = external/memory/lifecontext
+	url = https://github.com/LifeContext/lifecontext
+[submodule "external/memory/memvault-sync"]
+	path = external/memory/memvault-sync
+	url = https://github.com/jakops88-hub/memvault-sync
+[submodule "external/memory/opencode-plugin-simple-memory"]
+	path = external/memory/opencode-plugin-simple-memory
+	url = https://github.com/cnicolov/opencode-plugin-simple-memory
+[submodule "external/memory/letta-code"]
+	path = external/memory/letta-code
+	url = https://github.com/letta-ai/letta-code
+[submodule "external/memory/supermemory"]
+	path = external/memory/supermemory
+	url = https://github.com/supermemoryai/supermemory
+[submodule "external/memory/OpenMemory"]
+	path = external/memory/OpenMemory
+	url = https://github.com/CaviraOSS/OpenMemory
+[submodule "external/memory/qdrant"]
+	path = external/memory/qdrant
+	url = https://github.com/qdrant/qdrant
+[submodule "external/memory/chroma"]
+	path = external/memory/chroma
+	url = https://github.com/chroma-core/chroma
+[submodule "external/memory/servers"]
+	path = external/memory/servers
+	url = https://github.com/modelcontextprotocol/servers
+[submodule "external/memory/mcp-memory-service"]
+	path = external/memory/mcp-memory-service
+	url = https://github.com/doobidoo/mcp-memory-service
+[submodule "external/mcp-tooling/mcpproxy"]
+	path = external/mcp-tooling/mcpproxy
+	url = https://github.com/Dumbris/mcpproxy
+[submodule "external/mcp-tooling/meta-mcp-proxy"]
+	path = external/mcp-tooling/meta-mcp-proxy
+	url = https://github.com/nullplatform/meta-mcp-proxy
+[submodule "external/mcp-tooling/lootbox"]
+	path = external/mcp-tooling/lootbox
+	url = https://github.com/jx-codes/lootbox
+[submodule "external/mcp-tooling/claude-lazy-loading"]
+	path = external/mcp-tooling/claude-lazy-loading
+	url = https://github.com/machjesusmoto/claude-lazy-loading
+[submodule "external/mcp-tooling/Switchboard"]
+	path = external/mcp-tooling/Switchboard
+	url = https://github.com/George5562/Switchboard
+[submodule "external/mcp-tooling/code-executor-MCP"]
+	path = external/mcp-tooling/code-executor-MCP
+	url = https://github.com/aberemia24/code-executor-MCP
+[submodule "external/mcp-tooling/lazy-mcp"]
+	path = external/mcp-tooling/lazy-mcp
+	url = https://github.com/voicetreelab/lazy-mcp
+[submodule "external/mcp-tooling/code-mode"]
+	path = external/mcp-tooling/code-mode
+	url = https://github.com/universal-tool-calling-protocol/code-mode
+[submodule "external/mcp-tooling/utcp-mcp"]
+	path = external/mcp-tooling/utcp-mcp
+	url = https://github.com/universal-tool-calling-protocol/utcp-mcp
+[submodule "external/mcp-tooling/codemode-unified"]
+	path = external/mcp-tooling/codemode-unified
+	url = https://github.com/danieliser/codemode-unified
+[submodule "external/mcp-tooling/smolagents"]
+	path = external/mcp-tooling/smolagents
+	url = https://github.com/huggingface/smolagents
+[submodule "external/mcp-tooling/programmatic-tool-calling-ai-sdk"]
+	path = external/mcp-tooling/programmatic-tool-calling-ai-sdk
+	url = https://github.com/cameronking4/programmatic-tool-calling-ai-sdk
+[submodule "external/mcp-tooling/mcp-server-code-execution-mode"]
+	path = external/mcp-tooling/mcp-server-code-execution-mode
+	url = https://github.com/elusznik/mcp-server-code-execution-mode
+[submodule "external/mcp-tooling/Polymcp"]
+	path = external/mcp-tooling/Polymcp
+	url = https://github.com/poly-mcp/Polymcp
+[submodule "external/mcp-tooling/pctx"]
+	path = external/mcp-tooling/pctx
+	url = https://github.com/portofcontext/pctx
+[submodule "external/mcp-tooling/mcp-funnel"]
+	path = external/mcp-tooling/mcp-funnel
+	url = https://github.com/chris-schra/mcp-funnel
+[submodule "external/mcp-tooling/mcp-gateway"]
+	path = external/mcp-tooling/mcp-gateway
+	url = https://github.com/microsoft/mcp-gateway
+[submodule "external/mcp-tooling/agent-mcp-gateway"]
+	path = external/mcp-tooling/agent-mcp-gateway
+	url = https://github.com/roddutra/agent-mcp-gateway
+[submodule "external/mcp-tooling/opus_agents"]
+	path = external/mcp-tooling/opus_agents
+	url = https://github.com/sathish316/opus_agents
+[submodule "external/mcp-tooling/ncp"]
+	path = external/mcp-tooling/ncp
+	url = https://github.com/portel-dev/ncp
+[submodule "external/mcp-tooling/ToolRAG"]
+	path = external/mcp-tooling/ToolRAG
+	url = https://github.com/antl3x/ToolRAG
+[submodule "external/mcp-tooling/code-mode-toon"]
+	path = external/mcp-tooling/code-mode-toon
+	url = https://github.com/ziad-hsn/code-mode-toon
+[submodule "external/mcp-tooling/agents"]
+	path = external/mcp-tooling/agents
+	url = https://github.com/cloudflare/agents
+[submodule "external/mcp-tooling/pluggedin-mcp"]
+	path = external/mcp-tooling/pluggedin-mcp
+	url = https://github.com/VeriTeknik/pluggedin-mcp
+[submodule "external/mcp-tooling/mcpm.sh"]
+	path = external/mcp-tooling/mcpm.sh
+	url = https://github.com/pathintegral-institute/mcpm.sh
+[submodule "external/mcp-tooling/mcp-tool-chainer"]
+	path = external/mcp-tooling/mcp-tool-chainer
+	url = https://github.com/thirdstrandstudio/mcp-tool-chainer
+[submodule "external/mcp-tooling/mcp-json-yaml-toml"]
+	path = external/mcp-tooling/mcp-json-yaml-toml
+	url = https://github.com/bitflight-devops/mcp-json-yaml-toml
+[submodule "external/mcp-tooling/zypher-agent"]
+	path = external/mcp-tooling/zypher-agent
+	url = https://github.com/corespeed-io/zypher-agent
+[submodule "external/mcp-tooling/hypertool-mcp"]
+	path = external/mcp-tooling/hypertool-mcp
+	url = https://github.com/toolprint/hypertool-mcp
+[submodule "external/mcp-tooling/mcp-linker"]
+	path = external/mcp-tooling/mcp-linker
+	url = https://github.com/milisp/mcp-linker
+[submodule "external/mcp-tooling/toolscript"]
+	path = external/mcp-tooling/toolscript
+	url = https://github.com/mKeRix/toolscript
+[submodule "external/rag/llama_index"]
+	path = external/rag/llama_index
+	url = https://github.com/run-llama/llama_index
+[submodule "external/rag/vectorize-ui"]
+	path = external/rag/vectorize-ui
+	url = https://github.com/medright/vectorize-ui
+[submodule "external/rag/PageIndex"]
+	path = external/rag/PageIndex
+	url = https://github.com/VectifyAI/PageIndex
+[submodule "external/rag/WeKnora"]
+	path = external/rag/WeKnora
+	url = https://github.com/Tencent/WeKnora
+[submodule "external/rag/mindsdb"]
+	path = external/rag/mindsdb
+	url = https://github.com/mindsdb/mindsdb
+[submodule "external/database/dbhub"]
+	path = external/database/dbhub
+	url = https://github.com/bytebase/dbhub
+[submodule "external/database/mysql"]
+	path = external/database/mysql
+	url = https://github.com/gemini-cli-extensions/mysql
+[submodule "external/database/postgres"]
+	path = external/database/postgres
+	url = https://github.com/gemini-cli-extensions/postgres
+[submodule "external/database/supabase"]
+	path = external/database/supabase
+	url = https://github.com/supabase/supabase
+[submodule "external/computer-use/cua"]
+	path = external/computer-use/cua
+	url = https://github.com/trycua/cua
+[submodule "external/computer-use/spark-mcp"]
+	path = external/computer-use/spark-mcp
+	url = https://github.com/sensuslab/spark-mcp
+[submodule "external/computer-use/clickclickclick"]
+	path = external/computer-use/clickclickclick
+	url = https://github.com/instavm/clickclickclick
+[submodule "external/computer-use/claude-quickstarts"]
+	path = external/computer-use/claude-quickstarts
+	url = https://github.com/anthropics/claude-quickstarts
+[submodule "external/computer-use/fara"]
+	path = external/computer-use/fara
+	url = https://github.com/microsoft/fara
+[submodule "external/computer-use/magentic-ui"]
+	path = external/computer-use/magentic-ui
+	url = https://github.com/microsoft/magentic-ui
+[submodule "external/computer-use/generalagents-python"]
+	path = external/computer-use/generalagents-python
+	url = https://github.com/generalagents/generalagents-python
+[submodule "external/computer-use/chrome-devtools-mcp"]
+	path = external/computer-use/chrome-devtools-mcp
+	url = https://github.com/ChromeDevTools/chrome-devtools-mcp
+[submodule "external/computer-use/algonius-browser"]
+	path = external/computer-use/algonius-browser
+	url = https://github.com/algonius/algonius-browser
+[submodule "external/computer-use/kapture"]
+	path = external/computer-use/kapture
+	url = https://github.com/williamkapke/kapture
+[submodule "external/computer-use/puppeteer"]
+	path = external/computer-use/puppeteer
+	url = https://github.com/puppeteer/puppeteer
+[submodule "external/sandboxing/piston-mcp"]
+	path = external/sandboxing/piston-mcp
+	url = https://github.com/alvii147/piston-mcp
+[submodule "external/sandboxing/code-sandbox-mcp"]
+	path = external/sandboxing/code-sandbox-mcp
+	url = https://github.com/Automata-Labs-team/code-sandbox-mcp
+[submodule "external/sandboxing/microsandbox"]
+	path = external/sandboxing/microsandbox
+	url = https://github.com/zerocore-ai/microsandbox
+[submodule "external/sandboxing/piston"]
+	path = external/sandboxing/piston
+	url = https://github.com/engineer-man/piston
+[submodule "external/sandboxing/open-interpreter"]
+	path = external/sandboxing/open-interpreter
+	url = https://github.com/OpenInterpreter/open-interpreter
+[submodule "external/sandboxing/code-interpreter"]
+	path = external/sandboxing/code-interpreter
+	url = https://github.com/e2b-dev/code-interpreter
+[submodule "external/sandboxing/cohere-terrarium"]
+	path = external/sandboxing/cohere-terrarium
+	url = https://github.com/cohere-ai/cohere-terrarium
+[submodule "external/search/DesktopCommanderMCP"]
+	path = external/search/DesktopCommanderMCP
+	url = https://github.com/wonderwhy-er/DesktopCommanderMCP
+[submodule "external/search/web-search-mcp"]
+	path = external/search/web-search-mcp
+	url = https://github.com/mrkrsl/web-search-mcp
+[submodule "external/search/mcp-everything-search"]
+	path = external/search/mcp-everything-search
+	url = https://github.com/mamertofabian/mcp-everything-search
+[submodule "external/financial/octagon-mcp-server"]
+	path = external/financial/octagon-mcp-server
+	url = https://github.com/OctagonAI/octagon-mcp-server
+[submodule "external/financial/korea-stock-analyzer-mcp"]
+	path = external/financial/korea-stock-analyzer-mcp
+	url = https://github.com/Mrbaeksang/korea-stock-analyzer-mcp
+[submodule "external/financial/octagon-sec-filings-mcp"]
+	path = external/financial/octagon-sec-filings-mcp
+	url = https://github.com/OctagonAI/octagon-sec-filings-mcp
+[submodule "external/financial/octagon-stock-market-data-mcp"]
+	path = external/financial/octagon-stock-market-data-mcp
+	url = https://github.com/OctagonAI/octagon-stock-market-data-mcp
+[submodule "external/financial/octagon-financials-mcp"]
+	path = external/financial/octagon-financials-mcp
+	url = https://github.com/OctagonAI/octagon-financials-mcp
+[submodule "external/financial/alpha_vantage_mcp"]
+	path = external/financial/alpha_vantage_mcp
+	url = https://github.com/alphavantage/alpha_vantage_mcp
+[submodule "external/financial/octagon-transcripts-mcp"]
+	path = external/financial/octagon-transcripts-mcp
+	url = https://github.com/OctagonAI/octagon-transcripts-mcp
+[submodule "external/financial/mcp-server"]
+	path = external/financial/mcp-server
+	url = https://github.com/financial-datasets/mcp-server
+[submodule "external/financial/octagon-funding-data-mcp"]
+	path = external/financial/octagon-funding-data-mcp
+	url = https://github.com/OctagonAI/octagon-funding-data-mcp
+[submodule "external/financial/trade-agent-mcp"]
+	path = external/financial/trade-agent-mcp
+	url = https://github.com/Trade-Agent/trade-agent-mcp
+[submodule "external/financial/octagon-investors-mcp"]
+	path = external/financial/octagon-investors-mcp
+	url = https://github.com/OctagonAI/octagon-investors-mcp
+[submodule "external/financial/octagon-private-companies-mcp"]
+	path = external/financial/octagon-private-companies-mcp
+	url = https://github.com/OctagonAI/octagon-private-companies-mcp
+[submodule "external/financial/TAM-MCP-Server"]
+	path = external/financial/TAM-MCP-Server
+	url = https://github.com/gvaibhav/TAM-MCP-Server
+[submodule "external/financial/octagon-13f-holdings-mcp"]
+	path = external/financial/octagon-13f-holdings-mcp
+	url = https://github.com/OctagonAI/octagon-13f-holdings-mcp
+[submodule "external/financial/upbit-mcp-server"]
+	path = external/financial/upbit-mcp-server
+	url = https://github.com/solangii/upbit-mcp-server
+[submodule "external/financial/octagon-vc-agents"]
+	path = external/financial/octagon-vc-agents
+	url = https://github.com/OctagonAI/octagon-vc-agents
+[submodule "external/financial/mcp-audiense-insights"]
+	path = external/financial/mcp-audiense-insights
+	url = https://github.com/AudienseCo/mcp-audiense-insights
+[submodule "external/financial/coingecko-typescript"]
+	path = external/financial/coingecko-typescript
+	url = https://github.com/coingecko/coingecko-typescript
+[submodule "external/financial/coinstats-mcp"]
+	path = external/financial/coinstats-mcp
+	url = https://github.com/CoinStatsHQ/coinstats-mcp
+[submodule "external/financial/polymarket-mcp"]
+	path = external/financial/polymarket-mcp
+	url = https://github.com/ozgureyilmaz/polymarket-mcp
+[submodule "external/financial/mcp"]
+	path = external/financial/mcp
+	url = https://github.com/twelvedata/mcp
+[submodule "external/financial/binance-mcp-server"]
+	path = external/financial/binance-mcp-server
+	url = https://github.com/ethancod1ng/binance-mcp-server
+[submodule "external/financial/BinanceMCPServer"]
+	path = external/financial/BinanceMCPServer
+	url = https://github.com/AnalyticAce/BinanceMCPServer
+[submodule "external/financial/bybit-mcp-server"]
+	path = external/financial/bybit-mcp-server
+	url = https://github.com/ethancod1ng/bybit-mcp-server
+[submodule "external/financial/coin_api_mcp"]
+	path = external/financial/coin_api_mcp
+	url = https://github.com/longmans/coin_api_mcp
+[submodule "external/financial/coinmarketcap-mcp"]
+	path = external/financial/coinmarketcap-mcp
+	url = https://github.com/shinzo-labs/coinmarketcap-mcp
+[submodule "external/financial/dappier-mcp"]
+	path = external/financial/dappier-mcp
+	url = https://github.com/DappierAI/dappier-mcp
+[submodule "external/financial/okx-mcp-playground"]
+	path = external/financial/okx-mcp-playground
+	url = https://github.com/memetus/okx-mcp-playground
+[submodule "external/financial/armor-crypto-mcp"]
+	path = external/financial/armor-crypto-mcp
+	url = https://github.com/armorwallet/armor-crypto-mcp
+[submodule "external/financial/hive-crypto-mcp"]
+	path = external/financial/hive-crypto-mcp
+	url = https://github.com/hive-intel/hive-crypto-mcp
+[submodule "external/financial/crypto-feargreed-mcp"]
+	path = external/financial/crypto-feargreed-mcp
+	url = https://github.com/kukapay/crypto-feargreed-mcp
+[submodule "external/financial/crypto-indicators-mcp"]
+	path = external/financial/crypto-indicators-mcp
+	url = https://github.com/kukapay/crypto-indicators-mcp
+[submodule "external/financial/crypto-sentiment-mcp"]
+	path = external/financial/crypto-sentiment-mcp
+	url = https://github.com/kukapay/crypto-sentiment-mcp
+[submodule "external/financial/cryptopanic-mcp-server"]
+	path = external/financial/cryptopanic-mcp-server
+	url = https://github.com/kukapay/cryptopanic-mcp-server
+[submodule "external/financial/freqtrade-mcp"]
+	path = external/financial/freqtrade-mcp
+	url = https://github.com/kukapay/freqtrade-mcp
+[submodule "external/financial/awesome-crypto-mcp-servers"]
+	path = external/financial/awesome-crypto-mcp-servers
+	url = https://github.com/badkk/awesome-crypto-mcp-servers
+[submodule "external/financial/uniswap-poolspy-mcp"]
+	path = external/financial/uniswap-poolspy-mcp
+	url = https://github.com/kukapay/uniswap-poolspy-mcp
+[submodule "external/financial/uniswap-trader-mcp"]
+	path = external/financial/uniswap-trader-mcp
+	url = https://github.com/kukapay/uniswap-trader-mcp
+[submodule "external/financial/Upsonic"]
+	path = external/financial/Upsonic
+	url = https://github.com/Upsonic/Upsonic
+[submodule "external/financial/ai-hedge-fund"]
+	path = external/financial/ai-hedge-fund
+	url = https://github.com/virattt/ai-hedge-fund
+[submodule "external/unsorted/awesome-mcp-servers"]
+	path = external/unsorted/awesome-mcp-servers
+	url = https://github.com/punkpeye/awesome-mcp-servers
+[submodule "external/unsorted/awesome-ai-tools-for-game-dev"]
+	path = external/unsorted/awesome-ai-tools-for-game-dev
+	url = https://github.com/simoninithomas/awesome-ai-tools-for-game-dev
+[submodule "external/unsorted/awesome-llm-apps"]
+	path = external/unsorted/awesome-llm-apps
+	url = https://github.com/Shubhamsaboo/awesome-llm-apps
+[submodule "external/unsorted/OpenHands"]
+	path = external/unsorted/OpenHands
+	url = https://github.com/OpenHands/OpenHands
+[submodule "external/unsorted/refact"]
+	path = external/unsorted/refact
+	url = https://github.com/smallcloudai/refact
+[submodule "external/unsorted/vibesdk"]
+	path = external/unsorted/vibesdk
+	url = https://github.com/cloudflare/vibesdk
+[submodule "external/unsorted/continuous-claude"]
+	path = external/unsorted/continuous-claude
+	url = https://github.com/AnandChowdhary/continuous-claude
+[submodule "external/unsorted/google-jules-mcp"]
+	path = external/unsorted/google-jules-mcp
+	url = https://github.com/samihalawa/google-jules-mcp
+[submodule "external/unsorted/jules-mcp-server"]
+	path = external/unsorted/jules-mcp-server
+	url = https://github.com/CodeAgentBridge/jules-mcp-server
+[submodule "external/unsorted/pktai"]
+	path = external/unsorted/pktai
+	url = https://github.com/kspviswa/pktai
+[submodule "external/unsorted/codex-container"]
+	path = external/unsorted/codex-container
+	url = https://github.com/DeepBlueDynamics/codex-container
+[submodule "external/unsorted/linggen"]
+	path = external/unsorted/linggen
+	url = https://github.com/linggen/linggen
+[submodule "external/unsorted/advanced-tools"]
+	path = external/unsorted/advanced-tools
+	url = https://github.com/hetpatel-11/advanced-tools
+[submodule "external/unsorted/open-skills"]
+	path = external/unsorted/open-skills
+	url = https://github.com/instavm/open-skills
+[submodule "external/unsorted/goto"]
+	path = external/unsorted/goto
+	url = https://github.com/sderosiaux/goto
+[submodule "external/unsorted/claude-code-tools"]
+	path = external/unsorted/claude-code-tools
+	url = https://github.com/pchalasani/claude-code-tools
+[submodule "external/unsorted/agentapi"]
+	path = external/unsorted/agentapi
+	url = https://github.com/coder/agentapi
+[submodule "external/unsorted/gomuxai"]
+	path = external/unsorted/gomuxai
+	url = https://github.com/tikimcfee/gomuxai
+[submodule "external/unsorted/captive-wifi-tool"]
+	path = external/unsorted/captive-wifi-tool
+	url = https://github.com/pjlsergeant/captive-wifi-tool
+[submodule "external/unsorted/consult-llm-mcp"]
+	path = external/unsorted/consult-llm-mcp
+	url = https://github.com/raine/consult-llm-mcp
+[submodule "external/unsorted/llm-council"]
+	path = external/unsorted/llm-council
+	url = https://github.com/karpathy/llm-council
+[submodule "external/unsorted/fcvvdp"]
+	path = external/unsorted/fcvvdp
+	url = https://github.com/halidecx/fcvvdp
+[submodule "external/unsorted/codex-kaioken"]
+	path = external/unsorted/codex-kaioken
+	url = https://github.com/jayasuryajsk/codex-kaioken
+[submodule "external/unsorted/showcode"]
+	path = external/unsorted/showcode
+	url = https://github.com/Parthajeet-Sarmah/showcode
+[submodule "external/unsorted/code-chunk"]
+	path = external/unsorted/code-chunk
+	url = https://github.com/supermemoryai/code-chunk
+[submodule "external/unsorted/vibe-kanban"]
+	path = external/unsorted/vibe-kanban
+	url = https://github.com/BloopAI/vibe-kanban
+[submodule "external/unsorted/mcp-reticle"]
+	path = external/unsorted/mcp-reticle
+	url = https://github.com/LabTerminal/mcp-reticle
+[submodule "external/unsorted/mcp-cli"]
+	path = external/unsorted/mcp-cli
+	url = https://github.com/apify/mcp-cli
+[submodule "external/unsorted/vibesbench"]
+	path = external/unsorted/vibesbench
+	url = https://github.com/firasd/vibesbench
+[submodule "external/unsorted/Charm"]
+	path = external/unsorted/Charm
+	url = https://github.com/CharmAIOS/Charm
+[submodule "external/unsorted/logicstamp-context"]
+	path = external/unsorted/logicstamp-context
+	url = https://github.com/LogicStamp/logicstamp-context
+[submodule "external/unsorted/Crystalline-Protocol"]
+	path = external/unsorted/Crystalline-Protocol
+	url = https://github.com/deramazesaa-web/Crystalline-Protocol
+[submodule "external/unsorted/universal-session-viewer"]
+	path = external/unsorted/universal-session-viewer
+	url = https://github.com/tad-hq/universal-session-viewer
+[submodule "external/unsorted/memex"]
+	path = external/unsorted/memex
+	url = https://github.com/nicosuave/memex
+[submodule "external/unsorted/claude-bootstrap"]
+	path = external/unsorted/claude-bootstrap
+	url = https://github.com/alinaqi/claude-bootstrap
+[submodule "external/unsorted/LLMRouter"]
+	path = external/unsorted/LLMRouter
+	url = https://github.com/ulab-uiuc/LLMRouter
+[submodule "external/unsorted/ticket"]
+	path = external/unsorted/ticket
+	url = https://github.com/wedow/ticket
+[submodule "external/unsorted/ccrider"]
+	path = external/unsorted/ccrider
+	url = https://github.com/neilberkman/ccrider
+[submodule "external/unsorted/misc-text"]
+	path = external/unsorted/misc-text
+	url = https://github.com/oliveigah/misc-text
+[submodule "external/unsorted/notebooklm-kit"]
+	path = external/unsorted/notebooklm-kit
+	url = https://github.com/photon-hq/notebooklm-kit
+[submodule "external/unsorted/clifm"]
+	path = external/unsorted/clifm
+	url = https://github.com/leo-arch/clifm
+[submodule "external/unsorted/sopro"]
+	path = external/unsorted/sopro
+	url = https://github.com/samuel-vitorino/sopro
+[submodule "external/unsorted/Chatterbox-TTS-Server"]
+	path = external/unsorted/Chatterbox-TTS-Server
+	url = https://github.com/devnen/Chatterbox-TTS-Server
+[submodule "external/unsorted/nucleus"]
+	path = external/unsorted/nucleus
+	url = https://github.com/michaelwhitford/nucleus
+[submodule "external/unsorted/memU"]
+	path = external/unsorted/memU
+	url = https://github.com/NevaMind-AI/memU
+[submodule "external/unsorted/mcp-tui-server"]
+	path = external/unsorted/mcp-tui-server
+	url = https://github.com/michaellee8/mcp-tui-server
+[submodule "external/unsorted/webcli"]
+	path = external/unsorted/webcli
+	url = https://github.com/andycufari/webcli
+[submodule "external/unsorted/kreuzberg"]
+	path = external/unsorted/kreuzberg
+	url = https://github.com/kreuzberg-dev/kreuzberg
+[submodule "external/unsorted/human-in-the-loop-nlp"]
+	path = external/unsorted/human-in-the-loop-nlp
+	url = https://github.com/rado-stack/human-in-the-loop-nlp
+[submodule "external/unsorted/tintcd"]
+	path = external/unsorted/tintcd
+	url = https://github.com/ymyke/tintcd
+[submodule "external/unsorted/mcp-tui-driver"]
+	path = external/unsorted/mcp-tui-driver
+	url = https://github.com/michaellee8/mcp-tui-driver
+[submodule "external/unsorted/workty"]
+	path = external/unsorted/workty
+	url = https://github.com/binbandit/workty
+[submodule "external/unsorted/claude-code-gh-dash"]
+	path = external/unsorted/claude-code-gh-dash
+	url = https://github.com/jakozloski/claude-code-gh-dash
+[submodule "external/unsorted/droid-factory"]
+	path = external/unsorted/droid-factory
+	url = https://github.com/iannuttall/droid-factory
+[submodule "external/unsorted/agent-of-empires"]
+	path = external/unsorted/agent-of-empires
+	url = https://github.com/njbrake/agent-of-empires
+[submodule "external/unsorted/thesis"]
+	path = external/unsorted/thesis
+	url = https://github.com/mordechaipotash/thesis
+[submodule "external/unsorted/yolobox"]
+	path = external/unsorted/yolobox
+	url = https://github.com/finbarr/yolobox
+[submodule "external/unsorted/zeroshot"]
+	path = external/unsorted/zeroshot
+	url = https://github.com/covibes/zeroshot
+[submodule "external/unsorted/proofloop"]
+	path = external/unsorted/proofloop
+	url = https://github.com/exiw-ai/proofloop
+[submodule "external/unsorted/selfhosted"]
+	path = external/unsorted/selfhosted
+	url = https://github.com/zdunecki/selfhosted
+[submodule "external/unsorted/awesome-claude-skills"]
+	path = external/unsorted/awesome-claude-skills
+	url = https://github.com/ComposioHQ/awesome-claude-skills
+[submodule "external/unsorted/dev-browser"]
+	path = external/unsorted/dev-browser
+	url = https://github.com/SawyerHood/dev-browser
+[submodule "external/unsorted/playwriter"]
+	path = external/unsorted/playwriter
+	url = https://github.com/remorses/playwriter
+[submodule "external/unsorted/incus-sandbox-sdk"]
+	path = external/unsorted/incus-sandbox-sdk
+	url = https://github.com/divyenduz/incus-sandbox-sdk
+[submodule "external/unsorted/ai-maestro"]
+	path = external/unsorted/ai-maestro
+	url = https://github.com/23blocks-OS/ai-maestro
+[submodule "external/unsorted/skills-supply"]
+	path = external/unsorted/skills-supply
+	url = https://github.com/803/skills-supply
+[submodule "external/unsorted/Droid-CLI-Orchestrator"]
+	path = external/unsorted/Droid-CLI-Orchestrator
+	url = https://github.com/aeitroc/Droid-CLI-Orchestrator
+[submodule "external/unsorted/SpotiFLAC"]
+	path = external/unsorted/SpotiFLAC
+	url = https://github.com/afkarxyz/SpotiFLAC
+[submodule "external/unsorted/ableton-mcp"]
+	path = external/unsorted/ableton-mcp
+	url = https://github.com/ahujasid/ableton-mcp
+[submodule "external/unsorted/metube"]
+	path = external/unsorted/metube
+	url = https://github.com/alexta69/metube
+[submodule "external/unsorted/openevolve"]
+	path = external/unsorted/openevolve
+	url = https://github.com/algorithmicsuperintelligence/openevolve
+[submodule "external/unsorted/opencode-wakatime"]
+	path = external/unsorted/opencode-wakatime
+	url = https://github.com/angristan/opencode-wakatime
+[submodule "external/unsorted/license-generator"]
+	path = external/unsorted/license-generator
+	url = https://github.com/anth0nycodes/license-generator
+[submodule "external/unsorted/interface"]
+	path = external/unsorted/interface
+	url = https://github.com/arctic-cli/interface
+[submodule "external/unsorted/lcpfs"]
+	path = external/unsorted/lcpfs
+	url = https://github.com/artst3in/lcpfs
+[submodule "external/unsorted/jules-agent-sdk-python"]
+	path = external/unsorted/jules-agent-sdk-python
+	url = https://github.com/AsyncFuncAI/jules-agent-sdk-python
+[submodule "external/unsorted/vibeproxy"]
+	path = external/unsorted/vibeproxy
+	url = https://github.com/automazeio/vibeproxy
+[submodule "external/unsorted/basic-memory"]
+	path = external/unsorted/basic-memory
+	url = https://github.com/basicmachines-co/basic-memory
+[submodule "external/unsorted/pal-mcp-server"]
+	path = external/unsorted/pal-mcp-server
+	url = https://github.com/BeehiveInnovations/pal-mcp-server
+[submodule "external/unsorted/ai-sdk-provider-opencode-sdk"]
+	path = external/unsorted/ai-sdk-provider-opencode-sdk
+	url = https://github.com/ben-vargas/ai-sdk-provider-opencode-sdk
+[submodule "external/unsorted/boxlite"]
+	path = external/unsorted/boxlite
+	url = https://github.com/boxlite-labs/boxlite
+[submodule "external/unsorted/interpreter"]
+	path = external/unsorted/interpreter
+	url = https://github.com/bquenin/interpreter
+[submodule "external/unsorted/browser-use"]
+	path = external/unsorted/browser-use
+	url = https://github.com/browser-use/browser-use
+[submodule "external/unsorted/openchamber"]
+	path = external/unsorted/openchamber
+	url = https://github.com/btriapitsyn/openchamber
+[submodule "external/unsorted/quickadd"]
+	path = external/unsorted/quickadd
+	url = https://github.com/chhoumann/quickadd
+[submodule "external/unsorted/agentic"]
+	path = external/unsorted/agentic
+	url = https://github.com/Cluster444/agentic
+[submodule "external/unsorted/cocoindex"]
+	path = external/unsorted/cocoindex
+	url = https://github.com/cocoindex-io/cocoindex
+[submodule "external/unsorted/mux"]
+	path = external/unsorted/mux
+	url = https://github.com/coder/mux
+[submodule "external/unsorted/continue"]
+	path = external/unsorted/continue
+	url = https://github.com/continuedev/continue
+[submodule "external/unsorted/Personal_AI_Infrastructure"]
+	path = external/unsorted/Personal_AI_Infrastructure
+	url = https://github.com/danielmiessler/Personal_AI_Infrastructure
+[submodule "external/unsorted/investbuddy-mcp-server"]
+	path = external/unsorted/investbuddy-mcp-server
+	url = https://github.com/danielrz/investbuddy-mcp-server
+[submodule "external/unsorted/OpenAgents"]
+	path = external/unsorted/OpenAgents
+	url = https://github.com/darrenhinde/OpenAgents
+[submodule "external/unsorted/hello-agents"]
+	path = external/unsorted/hello-agents
+	url = https://github.com/datawhalechina/hello-agents
+[submodule "external/unsorted/Mysti"]
+	path = external/unsorted/Mysti
+	url = https://github.com/DeepMyst/Mysti
+[submodule "external/unsorted/mcpdir"]
+	path = external/unsorted/mcpdir
+	url = https://github.com/eL1fe/mcpdir
+[submodule "external/unsorted/LLM-Providers"]
+	path = external/unsorted/LLM-Providers
+	url = https://github.com/Enconvo/LLM-Providers
+[submodule "external/unsorted/trello-mcp-server"]
+	path = external/unsorted/trello-mcp-server
+	url = https://github.com/Enconvo/trello-mcp-server
+[submodule "external/unsorted/opencode-plugins"]
+	path = external/unsorted/opencode-plugins
+	url = https://github.com/ericc-ch/opencode-plugins
+[submodule "external/unsorted/Lynkr"]
+	path = external/unsorted/Lynkr
+	url = https://github.com/Fast-Editor/Lynkr
+[submodule "external/unsorted/agentic-starter-cli"]
+	path = external/unsorted/agentic-starter-cli
+	url = https://github.com/fDirham/agentic-starter-cli
+[submodule "external/unsorted/zapret-discord-youtube"]
+	path = external/unsorted/zapret-discord-youtube
+	url = https://github.com/Flowseal/zapret-discord-youtube
+[submodule "external/unsorted/opencode-md-table-formatter"]
+	path = external/unsorted/opencode-md-table-formatter
+	url = https://github.com/franlol/opencode-md-table-formatter
+[submodule "external/unsorted/MES-replacement"]
+	path = external/unsorted/MES-replacement
+	url = https://github.com/FransFaase/MES-replacement
+[submodule "external/unsorted/NoteDiscovery"]
+	path = external/unsorted/NoteDiscovery
+	url = https://github.com/gamosoft/NoteDiscovery
+[submodule "external/unsorted/opencode-websearch-cited"]
+	path = external/unsorted/opencode-websearch-cited
+	url = https://github.com/ghoulr/opencode-websearch-cited
+[submodule "external/unsorted/postiz-app"]
+	path = external/unsorted/postiz-app
+	url = https://github.com/gitroomhq/postiz-app
+[submodule "external/unsorted/computer-use-preview"]
+	path = external/unsorted/computer-use-preview
+	url = https://github.com/google-gemini/computer-use-preview
+[submodule "external/unsorted/gopher-mcp"]
+	path = external/unsorted/gopher-mcp
+	url = https://github.com/GopherSecurity/gopher-mcp
+[submodule "external/unsorted/comet-mcp"]
+	path = external/unsorted/comet-mcp
+	url = https://github.com/hanzili/comet-mcp
+[submodule "external/unsorted/Star_Seeker_mcp"]
+	path = external/unsorted/Star_Seeker_mcp
+	url = https://github.com/HikmetCTK/Star_Seeker_mcp
+[submodule "external/unsorted/LlamaFactory"]
+	path = external/unsorted/LlamaFactory
+	url = https://github.com/hiyouga/LlamaFactory
+[submodule "external/unsorted/VideoRAG"]
+	path = external/unsorted/VideoRAG
+	url = https://github.com/HKUDS/VideoRAG
+[submodule "external/unsorted/portal"]
+	path = external/unsorted/portal
+	url = https://github.com/hosenur/portal
+[submodule "external/unsorted/ryot"]
+	path = external/unsorted/ryot
+	url = https://github.com/IgnisDa/ryot
+[submodule "external/unsorted/ragflow"]
+	path = external/unsorted/ragflow
+	url = https://github.com/infiniflow/ragflow
+[submodule "external/unsorted/codex-as-mcp"]
+	path = external/unsorted/codex-as-mcp
+	url = https://github.com/Intelligent-Internet/codex-as-mcp
+[submodule "external/unsorted/gemini-cli"]
+	path = external/unsorted/gemini-cli
+	url = https://github.com/Intelligent-Internet/gemini-cli
+[submodule "external/unsorted/gemini-cli-mcp-openai-bridge"]
+	path = external/unsorted/gemini-cli-mcp-openai-bridge
+	url = https://github.com/Intelligent-Internet/gemini-cli-mcp-openai-bridge
+[submodule "external/unsorted/ii-agent"]
+	path = external/unsorted/ii-agent
+	url = https://github.com/Intelligent-Internet/ii-agent
+[submodule "external/unsorted/quartz"]
+	path = external/unsorted/quartz
+	url = https://github.com/jackyzha0/quartz
+[submodule "external/unsorted/opencode-gemini-auth"]
+	path = external/unsorted/opencode-gemini-auth
+	url = https://github.com/jenslys/opencode-gemini-auth
+[submodule "external/unsorted/mcp-chat-studio"]
+	path = external/unsorted/mcp-chat-studio
+	url = https://github.com/JoeCastrom/mcp-chat-studio
+[submodule "external/unsorted/mcpr"]
+	path = external/unsorted/mcpr
+	url = https://github.com/jrandolf/mcpr
+[submodule "external/unsorted/opencode-morph-fast-apply"]
+	path = external/unsorted/opencode-morph-fast-apply
+	url = https://github.com/JRedeker/opencode-morph-fast-apply
+[submodule "external/unsorted/opencode-shell-strategy"]
+	path = external/unsorted/opencode-shell-strategy
+	url = https://github.com/JRedeker/opencode-shell-strategy
+[submodule "external/unsorted/Mr.-Ranedeer-AI-Tutor"]
+	path = external/unsorted/Mr.-Ranedeer-AI-Tutor
+	url = https://github.com/JushBJJ/Mr.-Ranedeer-AI-Tutor
+[submodule "external/unsorted/khoj"]
+	path = external/unsorted/khoj
+	url = https://github.com/khoj-ai/khoj
+[submodule "external/unsorted/mystats"]
+	path = external/unsorted/mystats
+	url = https://github.com/kks0488/mystats
+[submodule "external/unsorted/awesome-obsidian"]
+	path = external/unsorted/awesome-obsidian
+	url = https://github.com/kmaasrud/awesome-obsidian
+[submodule "external/unsorted/vibora"]
+	path = external/unsorted/vibora
+	url = https://github.com/knowsuchagency/vibora
+[submodule "external/unsorted/langchain"]
+	path = external/unsorted/langchain
+	url = https://github.com/langchain-ai/langchain
+[submodule "external/unsorted/dify"]
+	path = external/unsorted/dify
+	url = https://github.com/langgenius/dify
+[submodule "external/unsorted/Xmas.JS"]
+	path = external/unsorted/Xmas.JS
+	url = https://github.com/LemonHX/Xmas.JS
+[submodule "external/unsorted/ComfyUI-LTXVideo"]
+	path = external/unsorted/ComfyUI-LTXVideo
+	url = https://github.com/Lightricks/ComfyUI-LTXVideo
+[submodule "external/unsorted/web-check"]
+	path = external/unsorted/web-check
+	url = https://github.com/Lissy93/web-check
+[submodule "external/unsorted/julie"]
+	path = external/unsorted/julie
+	url = https://github.com/Luthiraa/julie
+[submodule "external/unsorted/lazy-mcp"]
+	path = external/unsorted/lazy-mcp
+	url = https://github.com/machjesusmoto/lazy-mcp
+[submodule "external/unsorted/opencode-skills"]
+	path = external/unsorted/opencode-skills
+	url = https://github.com/malhashemi/opencode-skills
+[submodule "external/unsorted/voicemode"]
+	path = external/unsorted/voicemode
+	url = https://github.com/mbailey/voicemode
+[submodule "external/unsorted/MCP-Checklists"]
+	path = external/unsorted/MCP-Checklists
+	url = https://github.com/MCP-Manager/MCP-Checklists
+[submodule "external/unsorted/Puzld.ai"]
+	path = external/unsorted/Puzld.ai
+	url = https://github.com/MedChaouch/Puzld.ai
+[submodule "external/unsorted/triton-windowing"]
+	path = external/unsorted/triton-windowing
+	url = https://github.com/mehmetoguzderin/triton-windowing
+[submodule "external/unsorted/nanovg"]
+	path = external/unsorted/nanovg
+	url = https://github.com/memononen/nanovg
+[submodule "external/unsorted/memvid"]
+	path = external/unsorted/memvid
+	url = https://github.com/memvid/memvid
+[submodule "external/unsorted/OmniParser"]
+	path = external/unsorted/OmniParser
+	url = https://github.com/microsoft/OmniParser
+[submodule "external/unsorted/promptflow"]
+	path = external/unsorted/promptflow
+	url = https://github.com/microsoft/promptflow
+[submodule "external/unsorted/claudex"]
+	path = external/unsorted/claudex
+	url = https://github.com/Mng-dev-ai/claudex
+[submodule "external/unsorted/opencode-notifier"]
+	path = external/unsorted/opencode-notifier
+	url = https://github.com/mohak34/opencode-notifier
+[submodule "external/unsorted/brainkernel"]
+	path = external/unsorted/brainkernel
+	url = https://github.com/mprajyothreddy/brainkernel
+[submodule "external/unsorted/BeatDrop"]
+	path = external/unsorted/BeatDrop
+	url = https://github.com/mvsoft74/BeatDrop
+[submodule "external/unsorted/opencode-type-inject"]
+	path = external/unsorted/opencode-type-inject
+	url = https://github.com/nick-vi/opencode-type-inject
+[submodule "external/unsorted/agentexport"]
+	path = external/unsorted/agentexport
+	url = https://github.com/nicosuave/agentexport
+[submodule "external/unsorted/opencode-antigravity-auth"]
+	path = external/unsorted/opencode-antigravity-auth
+	url = https://github.com/NoeFabris/opencode-antigravity-auth
+[submodule "external/unsorted/Super-MCP"]
+	path = external/unsorted/Super-MCP
+	url = https://github.com/nspr-io/Super-MCP
+[submodule "external/unsorted/nuclear"]
+	path = external/unsorted/nuclear
+	url = https://github.com/nukeop/nuclear
+[submodule "external/unsorted/opencode-openai-codex-auth"]
+	path = external/unsorted/opencode-openai-codex-auth
+	url = https://github.com/numman-ali/opencode-openai-codex-auth
+[submodule "external/unsorted/alpasim"]
+	path = external/unsorted/alpasim
+	url = https://github.com/NVlabs/alpasim
+[submodule "external/unsorted/obsidian-releases"]
+	path = external/unsorted/obsidian-releases
+	url = https://github.com/obsidianmd/obsidian-releases
+[submodule "external/unsorted/open-webui"]
+	path = external/unsorted/open-webui
+	url = https://github.com/open-webui/open-webui
+[submodule "external/unsorted/OpenBB"]
+	path = external/unsorted/OpenBB
+	url = https://github.com/OpenBB-finance/OpenBB
+[submodule "external/unsorted/opencode-dynamic-context-pruning"]
+	path = external/unsorted/opencode-dynamic-context-pruning
+	url = https://github.com/Opencode-DCP/opencode-dynamic-context-pruning
+[submodule "external/unsorted/OpenHands-CLI"]
+	path = external/unsorted/OpenHands-CLI
+	url = https://github.com/OpenHands/OpenHands-CLI
+[submodule "external/unsorted/software-agent-sdk"]
+	path = external/unsorted/software-agent-sdk
+	url = https://github.com/OpenHands/software-agent-sdk
+[submodule "external/unsorted/newsnow"]
+	path = external/unsorted/newsnow
+	url = https://github.com/ourongxing/newsnow
+[submodule "external/unsorted/opencode-notificator"]
+	path = external/unsorted/opencode-notificator
+	url = https://github.com/panta82/opencode-notificator
+[submodule "external/unsorted/cosmic-files"]
+	path = external/unsorted/cosmic-files
+	url = https://github.com/pop-os/cosmic-files
+[submodule "external/unsorted/video_explainer"]
+	path = external/unsorted/video_explainer
+	url = https://github.com/prajwal-y/video_explainer
+[submodule "external/unsorted/witr"]
+	path = external/unsorted/witr
+	url = https://github.com/pranshuparmar/witr
+[submodule "external/unsorted/Lean"]
+	path = external/unsorted/Lean
+	url = https://github.com/QuantConnect/Lean
+[submodule "external/unsorted/quivr"]
+	path = external/unsorted/quivr
+	url = https://github.com/QuivrHQ/quivr
+[submodule "external/unsorted/Qwen3"]
+	path = external/unsorted/Qwen3
+	url = https://github.com/QwenLM/Qwen3
+[submodule "external/unsorted/CodeMachine-CLI"]
+	path = external/unsorted/CodeMachine-CLI
+	url = https://github.com/robertpelloni/CodeMachine-CLI
+[submodule "external/unsorted/stabilize"]
+	path = external/unsorted/stabilize
+	url = https://github.com/rodmena-limited/stabilize
+[submodule "external/unsorted/CLIProxyAPIPlus"]
+	path = external/unsorted/CLIProxyAPIPlus
+	url = https://github.com/router-for-me/CLIProxyAPIPlus
+[submodule "external/unsorted/runtm-coding-agent-runtime-control-plane"]
+	path = external/unsorted/runtm-coding-agent-runtime-control-plane
+	url = https://github.com/runtm-ai/runtm-coding-agent-runtime-control-plane
+[submodule "external/unsorted/ryos"]
+	path = external/unsorted/ryos
+	url = https://github.com/ryokun6/ryos
+[submodule "external/unsorted/mcphub"]
+	path = external/unsorted/mcphub
+	url = https://github.com/samanhappy/mcphub
+[submodule "external/unsorted/bonsai"]
+	path = external/unsorted/bonsai
+	url = https://github.com/scallyw4g/bonsai
+[submodule "external/unsorted/learn-claude-code"]
+	path = external/unsorted/learn-claude-code
+	url = https://github.com/shareAI-lab/learn-claude-code
+[submodule "external/unsorted/opencode-google-antigravity-auth"]
+	path = external/unsorted/opencode-google-antigravity-auth
+	url = https://github.com/shekohex/opencode-google-antigravity-auth
+[submodule "external/unsorted/opencode-pty"]
+	path = external/unsorted/opencode-pty
+	url = https://github.com/shekohex/opencode-pty
+[submodule "external/unsorted/documentation"]
+	path = external/unsorted/documentation
+	url = https://github.com/sigmastratum/documentation
+[submodule "external/unsorted/magg"]
+	path = external/unsorted/magg
+	url = https://github.com/sitbon/magg
+[submodule "external/unsorted/siyuan"]
+	path = external/unsorted/siyuan
+	url = https://github.com/siyuan-note/siyuan
+[submodule "external/unsorted/mcpproxy-go"]
+	path = external/unsorted/mcpproxy-go
+	url = https://github.com/smart-mcp-proxy/mcpproxy-go
+[submodule "external/unsorted/claude-squad"]
+	path = external/unsorted/claude-squad
+	url = https://github.com/smtg-ai/claude-squad
+[submodule "external/unsorted/lar"]
+	path = external/unsorted/lar
+	url = https://github.com/snath-ai/lar
+[submodule "external/unsorted/subtask2"]
+	path = external/unsorted/subtask2
+	url = https://github.com/spoons-and-mirrors/subtask2
+[submodule "external/unsorted/Tess"]
+	path = external/unsorted/Tess
+	url = https://github.com/Squitch1/Tess
+[submodule "external/unsorted/agent-pr-replay"]
+	path = external/unsorted/agent-pr-replay
+	url = https://github.com/sshh12/agent-pr-replay
+[submodule "external/unsorted/liballocs"]
+	path = external/unsorted/liballocs
+	url = https://github.com/stephenrkell/liballocs
+[submodule "external/unsorted/ableton-xml-analysis"]
+	path = external/unsorted/ableton-xml-analysis
+	url = https://github.com/stevengt/ableton-xml-analysis
+[submodule "external/unsorted/gastown"]
+	path = external/unsorted/gastown
+	url = https://github.com/steveyegge/gastown
+[submodule "external/unsorted/reag"]
+	path = external/unsorted/reag
+	url = https://github.com/superagent-ai/reag
+[submodule "external/unsorted/vibekit-nextjs-supabase"]
+	path = external/unsorted/vibekit-nextjs-supabase
+	url = https://github.com/superagent-ai/vibekit-nextjs-supabase
+[submodule "external/unsorted/infinite-chat"]
+	path = external/unsorted/infinite-chat
+	url = https://github.com/supermemoryai/infinite-chat
+[submodule "external/unsorted/install-mcp"]
+	path = external/unsorted/install-mcp
+	url = https://github.com/supermemoryai/install-mcp
+[submodule "external/unsorted/llm-bridge"]
+	path = external/unsorted/llm-bridge
+	url = https://github.com/supermemoryai/llm-bridge
+[submodule "external/unsorted/opencode-supermemory"]
+	path = external/unsorted/opencode-supermemory
+	url = https://github.com/supermemoryai/opencode-supermemory
+[submodule "external/unsorted/wip"]
+	path = external/unsorted/wip
+	url = https://github.com/system32-ai/wip
+[submodule "external/unsorted/TradingAgents"]
+	path = external/unsorted/TradingAgents
+	url = https://github.com/TauricResearch/TradingAgents
+[submodule "external/unsorted/Timeseal"]
+	path = external/unsorted/Timeseal
+	url = https://github.com/Teycir/Timeseal
+[submodule "external/unsorted/Auditor"]
+	path = external/unsorted/Auditor
+	url = https://github.com/TheAuditorTool/Auditor
+[submodule "external/unsorted/TidGi-Desktop"]
+	path = external/unsorted/TidGi-Desktop
+	url = https://github.com/tiddly-gittly/TidGi-Desktop
+[submodule "external/unsorted/siara"]
+	path = external/unsorted/siara
+	url = https://github.com/torayeff/siara
+[submodule "external/unsorted/turingmind-code-review"]
+	path = external/unsorted/turingmind-code-review
+	url = https://github.com/turingmindai/turingmind-code-review
+[submodule "external/unsorted/Mole"]
+	path = external/unsorted/Mole
+	url = https://github.com/tw93/Mole
+[submodule "external/unsorted/ai-gateway-kit"]
+	path = external/unsorted/ai-gateway-kit
+	url = https://github.com/ukrocks007/ai-gateway-kit
+[submodule "external/unsorted/memos"]
+	path = external/unsorted/memos
+	url = https://github.com/usememos/memos
+[submodule "external/unsorted/whatthefile"]
+	path = external/unsorted/whatthefile
+	url = https://github.com/UsernameIsNotAvailiable/whatthefile
+[submodule "external/unsorted/pluggedin-app"]
+	path = external/unsorted/pluggedin-app
+	url = https://github.com/VeriTeknik/pluggedin-app
+[submodule "external/unsorted/vibeship-spawner-skills"]
+	path = external/unsorted/vibeship-spawner-skills
+	url = https://github.com/vibeforge1111/vibeship-spawner-skills
+[submodule "external/unsorted/codex-skills"]
+	path = external/unsorted/codex-skills
+	url = https://github.com/vipulgupta2048/codex-skills
+[submodule "external/unsorted/void"]
+	path = external/unsorted/void
+	url = https://github.com/voideditor/void
+[submodule "external/unsorted/live"]
+	path = external/unsorted/live
+	url = https://github.com/vroomai/live
+[submodule "external/unsorted/bitwig-mcp-server"]
+	path = external/unsorted/bitwig-mcp-server
+	url = https://github.com/WeModulate/bitwig-mcp-server
+[submodule "external/unsorted/tui4j"]
+	path = external/unsorted/tui4j
+	url = https://github.com/WilliamAGH/tui4j
+[submodule "external/unsorted/MCP-Zero"]
+	path = external/unsorted/MCP-Zero
+	url = https://github.com/xfey/MCP-Zero
+[submodule "external/unsorted/xpipe"]
+	path = external/unsorted/xpipe
+	url = https://github.com/xpipe-io/xpipe
+[submodule "external/unsorted/opencode-plugin-template"]
+	path = external/unsorted/opencode-plugin-template
+	url = https://github.com/zenobi-us/opencode-plugin-template
+[submodule "external/unsorted/opencode-skillful"]
+	path = external/unsorted/opencode-skillful
+	url = https://github.com/zenobi-us/opencode-skillful
+[submodule "external/orchestration/promptflow"]
+	path = external/orchestration/promptflow
+	url = https://github.com/microsoft/promptflow
+	shallow = true
+[submodule "external/clis/smart-ralph"]
+	path = external/clis/smart-ralph
+	url = https://github.com/tzachbon/smart-ralph
+	shallow = true
+[submodule "external/clis/claude-code-scheduler"]
+	path = external/clis/claude-code-scheduler
+	url = https://github.com/jshchnz/claude-code-scheduler
+	shallow = true
+[submodule "external/computer-use/uPhone"]
+	path = external/computer-use/uPhone
+	url = https://github.com/Jinketomy-Masheldia/uPhone
+	shallow = true
+[submodule "external/computer-use/webctl"]
+	path = external/computer-use/webctl
+	url = https://github.com/cosinusalpha/webctl
+	shallow = true
+[submodule "external/unsorted/call-me"]
+	path = external/unsorted/call-me
+	url = https://github.com/ZeframLou/call-me
+	shallow = true
+[submodule "external/forks/bkircher/skills"]
+	path = external/forks/bkircher/skills
+	url = https://github.com/bkircher/skills
+[submodule "external/forks/finmap-org/mcp-server"]
+	path = external/forks/finmap-org/mcp-server
+	url = https://github.com/finmap-org/mcp-server
+[submodule "external/forks/paperinvest/mcp-server"]
+	path = external/forks/paperinvest/mcp-server
+	url = https://github.com/paperinvest/mcp-server
+[submodule "external/forks/zhifac/gemini-cli-router"]
+	path = external/forks/zhifac/gemini-cli-router
+	url = https://github.com/zhifac/gemini-cli-router
+[submodule "skills/refs/skills-bkircher"]
+	path = skills/refs/skills-bkircher
+	url = https://github.com/bkircher/skills
+[submodule "cli-harnesses/code-assistant-manager"]
+	path = cli-harnesses/code-assistant-manager
+	url = https://github.com/Chat2AnyLLM/code-assistant-manager
+[submodule "superai-cli/proxies/gemini-openai-proxy-2"]
+	path = superai-cli/proxies/gemini-openai-proxy-2
+	url = https://github.com/zuisong/gemini-openai-proxy
+[submodule "cli-harnesses/CodeNomad"]
+	path = cli-harnesses/CodeNomad
+	url = https://github.com/NeuralNomadsAI/CodeNomad
+[submodule "cli-harnesses/claude-code-madapp"]
+	path = cli-harnesses/claude-code-madapp
+	url = https://github.com/MadAppGang/claude-code
+[submodule "superai-cli/proxies/openai-gemini-2"]
+	path = superai-cli/proxies/openai-gemini-2
+	url = https://github.com/PublicAffairs/openai-gemini
+[submodule "external/orchestration/a2a-main"]
+	path = external/orchestration/a2a-main
+	url = https://github.com/a2aproject/A2A
+[submodule "cli-harnesses/devin.cursorrules"]
+	path = cli-harnesses/devin.cursorrules
+	url = https://github.com/grapeot/devin.cursorrules
+[submodule "cli-harnesses/ccs"]
+	path = cli-harnesses/ccs
+	url = https://github.com/kaitranntt/ccs
+[submodule "cli-harnesses/cc-switch"]
+	path = cli-harnesses/cc-switch
+	url = https://github.com/farion1231/cc-switch
+[submodule "cli-harnesses/Lynkr"]
+	path = cli-harnesses/Lynkr
+	url = https://github.com/vishalveerareddy123/Lynkr
+[submodule "cli-harnesses/emdash"]
+	path = cli-harnesses/emdash
+	url = https://github.com/generalaction/emdash
+[submodule "cli-harnesses/kimi-cli"]
+	path = cli-harnesses/kimi-cli
+	url = https://github.com/MoonshotAI/kimi-cli
+[submodule "mcp-servers/browser/algonius-browser-2"]
+	path = mcp-servers/browser/algonius-browser-2
+	url = https://github.com/algonius/algonius-browser
+[submodule "mcp-routers/agent-mcp-gateway"]
+	path = mcp-routers/agent-mcp-gateway
+	url = https://github.com/roddutra/agent-mcp-gateway
+[submodule "mcp-tool-rag/lootbox"]
+	path = mcp-tool-rag/lootbox
+	url = https://github.com/jx-codes/lootbox
+[submodule "mcp-routers/ncp"]
+	path = mcp-routers/ncp
+	url = https://github.com/portel-dev/ncp
+[submodule "multi-agent/opus-agents"]
+	path = multi-agent/opus-agents
+	url = https://github.com/sathish316/opus_agents
+[submodule "frameworks/Kode-cli-2"]
+	path = frameworks/Kode-cli-2
+	url = https://github.com/shareAI-lab/Kode-cli
+[submodule "mcp-routers/microsoft-mcp-gateway-2"]
+	path = mcp-routers/microsoft-mcp-gateway-2
+	url = https://github.com/microsoft/mcp-gateway
+[submodule "mcp-servers/browser/algonius-browser-3"]
+	path = mcp-servers/browser/algonius-browser-3
+	url = https://github.com/algonius/algonius-browser
+[submodule "external/orchestration/ag-ui-protocol"]
+	path = external/orchestration/ag-ui-protocol
+	url = https://github.com/ag-ui-protocol/ag-ui
+[submodule "mcp-servers/misc/wot-mcp"]
+	path = mcp-servers/misc/wot-mcp
+	url = https://github.com/macc-n/wot-mcp
+[submodule "mcp-dev-tools/agent-console"]
+	path = mcp-dev-tools/agent-console
+	url = https://github.com/eqtylab/agent-console
+[submodule "mcp-servers/misc/wot-mcp-cli"]
+	path = mcp-servers/misc/wot-mcp-cli
+	url = https://github.com/macc-n/wot-mcp-cli
+[submodule "mcp-servers/misc/wot-mcp-examples"]
+	path = mcp-servers/misc/wot-mcp-examples
+	url = https://github.com/macc-n/wot-mcp-examples
+[submodule "memory/systems/memory-opensource"]
+	path = memory/systems/memory-opensource
+	url = https://github.com/Papr-ai/memory-opensource
+[submodule "memory/adapters/adk-js"]
+	path = memory/adapters/adk-js
+	url = https://github.com/google/adk-js
+[submodule "mcp-dev-tools/resterm"]
+	path = mcp-dev-tools/resterm
+	url = https://github.com/unkn0wn-root/resterm
+[submodule "mcp-servers/misc/chgpt-mcp-bridge"]
+	path = mcp-servers/misc/chgpt-mcp-bridge
+	url = https://github.com/smonux/chgpt-mcp-bridge
+[submodule "misc/inframind"]
+	path = misc/inframind
+	url = https://github.com/saikiranrallabandi/inframind
+[submodule "misc/tether-chat"]
+	path = misc/tether-chat
+	url = https://github.com/EJ-Tether/Tether-Chat
+[submodule "misc/MZaFaRM"]
+	path = misc/MZaFaRM
+	url = https://github.com/MZaFaRM/MZaFaRM
+[submodule "misc/Andrew6rant"]
+	path = misc/Andrew6rant
+	url = https://github.com/Andrew6rant/Andrew6rant
+[submodule "misc/bilgecan"]
+	path = misc/bilgecan
+	url = https://github.com/mokszr/bilgecan
+[submodule "misc/claude-limitline"]
+	path = misc/claude-limitline
+	url = https://github.com/tylergraydev/claude-limitline
+[submodule "memory/memora"]
+	path = memory/memora
+	url = https://github.com/agentic-mcp-tools/memora
+[submodule "memory/Claude-Matrix"]
+	path = memory/Claude-Matrix
+	url = https://github.com/ojowwalker77/Claude-Matrix
+[submodule "memory/mcp-obsidian-notes"]
+	path = memory/mcp-obsidian-notes
+	url = https://github.com/digit1024/mcp_obsidian_notes
+[submodule "memory/mcp-obsidian-notes-2"]
+	path = memory/mcp-obsidian-notes-2
+	url = https://github.com/digit1024/mcp_obsidian_notes
+[submodule "browsers/browser-tools-mcp"]
+	path = browsers/browser-tools-mcp
+	url = https://github.com/AgentDeskAI/browser-tools-mcp
+[submodule "browsers/mcp-chrome"]
+	path = browsers/mcp-chrome
+	url = https://github.com/hangwin/mcp-chrome
+[submodule "browsers/hyperbrowser-mcp"]
+	path = browsers/hyperbrowser-mcp
+	url = https://github.com/hyperbrowserai/mcp
+[submodule "browsers/mcpo-2"]
+	path = browsers/mcpo-2
+	url = https://github.com/open-webui/mcpo
+[submodule "misc/abanteai/spice"]
+	path = misc/abanteai/spice
+	url = https://github.com/AbanteAI/spice
+[submodule "misc/abanteai/tiktoken"]
+	path = misc/abanteai/tiktoken
+	url = https://github.com/AbanteAI/tiktoken
+[submodule "misc/abanteai/party"]
+	path = misc/abanteai/party
+	url = https://github.com/AbanteAI/party
+[submodule "misc/abanteai/gpt-generals"]
+	path = misc/abanteai/gpt-generals
+	url = https://github.com/AbanteAI/gpt-generals
+[submodule "misc/abanteai/repo-visualizer"]
+	path = misc/abanteai/repo-visualizer
+	url = https://github.com/AbanteAI/repo-visualizer
+[submodule "misc/abanteai/mentat-template-js"]
+	path = misc/abanteai/mentat-template-js
+	url = https://github.com/AbanteAI/mentat-template-js
+[submodule "misc/abanteai/websocket-demo"]
+	path = misc/abanteai/websocket-demo
+	url = https://github.com/AbanteAI/websocket-demo
+[submodule "misc/gemini-extensions/workspace"]
+	path = misc/gemini-extensions/workspace
+	url = https://github.com/gemini-cli-extensions/workspace
+[submodule "misc/gemini-extensions/firebase"]
+	path = misc/gemini-extensions/firebase
+	url = https://github.com/gemini-cli-extensions/firebase
+[submodule "misc/gemini-extensions/cloud-run-mcp"]
+	path = misc/gemini-extensions/cloud-run-mcp
+	url = https://github.com/GoogleCloudPlatform/cloud-run-mcp
+[submodule "misc/abanteai/vscode"]
+	path = misc/abanteai/vscode
+	url = https://github.com/AbanteAI/vscode
+[submodule "multi-agent/a2a-main"]
+	path = multi-agent/a2a-main
+	url = https://github.com/a2aproject/a2a
+[submodule "multi-agent/agentdepot-agents-2"]
+	path = multi-agent/agentdepot-agents-2
+	url = https://github.com/biagruot/agentdepot-agents
+[submodule "multi-agent/pydantic-deepagents-2"]
+	path = multi-agent/pydantic-deepagents-2
+	url = https://github.com/vstorm-co/pydantic-deepagents
+[submodule "mcp-servers/browser/algonius-browser-4"]
+	path = mcp-servers/browser/algonius-browser-4
+	url = https://github.com/algonius/algonius-browser
+[submodule "mcp-tool-rag/mcp-funnel"]
+	path = mcp-tool-rag/mcp-funnel
+	url = https://github.com/chris-schra/mcp-funnel
+[submodule "mcp-servers/orchestration/mcp-tool-chainer"]
+	path = mcp-servers/orchestration/mcp-tool-chainer
+	url = https://github.com/thirdstrandstudio/mcp-tool-chainer
+[submodule "mcp-routers/microsoft-mcp-gateway"]
+	path = mcp-routers/microsoft-mcp-gateway
+	url = https://github.com/microsoft/mcp-gateway
+[submodule "cli-harnesses/aichat"]
+	path = cli-harnesses/aichat
+	url = https://github.com/sigoden/aichat
+[submodule "mcp-hubs/awesome-mcp-servers-punkpeye"]
+	path = mcp-hubs/awesome-mcp-servers-punkpeye
+	url = https://github.com/punkpeye/awesome-mcp-servers
+[submodule "mcp-hubs/awesome-mcp-servers-appcypher"]
+	path = mcp-hubs/awesome-mcp-servers-appcypher
+	url = https://github.com/appcypher/awesome-mcp-servers
+[submodule "mcp-hubs/awesome-mcp-servers-wong2"]
+	path = mcp-hubs/awesome-mcp-servers-wong2
+	url = https://github.com/wong2/awesome-mcp-servers
+[submodule "mcp-hubs/toolsdk-mcp-registry"]
+	path = mcp-hubs/toolsdk-mcp-registry
+	url = https://github.com/toolsdk-ai/toolsdk-mcp-registry
+[submodule "mcp-hubs/awesome-ai-apps"]
+	path = mcp-hubs/awesome-ai-apps
+	url = https://github.com/Arindam200/awesome-ai-apps
+[submodule "skills/anthropics-skills"]
+	path = skills/anthropics-skills
+	url = https://github.com/anthropics/skills
+[submodule "skills/gemini-claude-skills"]
+	path = skills/gemini-claude-skills
+	url = https://github.com/stared/gemini-claude-skills
+[submodule "skills/bkircher-skills"]
+	path = skills/bkircher-skills
+	url = https://github.com/bkircher/skills
+[submodule "skills/ykdojo-claude-code-tips"]
+	path = skills/ykdojo-claude-code-tips
+	url = https://github.com/ykdojo/claude-code-tips
+[submodule "external/TheNoeTrevino-dotfiles"]
+	path = external/TheNoeTrevino-dotfiles
+	url = https://github.com/TheNoeTrevino/dotfiles
+[submodule "multi-agent/TaskSync"]
+	path = multi-agent/TaskSync
+	url = https://github.com/4regab/TaskSync
+[submodule "multi-agent/priyan-coder-multi-agent"]
+	path = multi-agent/priyan-coder-multi-agent
+	url = https://github.com/priyan-coder/multi-agent-orchestration
+[submodule "multi-agent/metamcp"]
+	path = multi-agent/metamcp
+	url = https://github.com/robertpelloni/metamcp
+[submodule "multi-agent/agentic-ray"]
+	path = multi-agent/agentic-ray
+	url = https://github.com/rayai-labs/agentic-ray
+[submodule "multi-agent/A2A"]
+	path = multi-agent/A2A
+	url = https://github.com/a2aproject/A2A
+[submodule "cli-harnesses/claude-code-madappgang"]
+	path = cli-harnesses/claude-code-madappgang
+	url = https://github.com/MadAppGang/claude-code
+[submodule "cli-harnesses/codemachine-cli"]
+	path = cli-harnesses/codemachine-cli
+	url = https://github.com/moazbuilds/CodeMachine-CLI
+[submodule "mcp-hubs/awesome-mcp-servers"]
+	path = mcp-hubs/awesome-mcp-servers
+	url = https://github.com/appcypher/awesome-mcp-servers
+[submodule "mcp-hubs/toolsdk-mcp-registry-toolsdk-ai"]
+	path = mcp-hubs/toolsdk-mcp-registry-toolsdk-ai
+	url = https://github.com/toolsdk-ai/toolsdk-mcp-registry
+[submodule "cli-harnesses/codebuff"]
+	path = cli-harnesses/codebuff
+	url = https://github.com/CodebuffAI/codebuff
+[submodule "multi-agent/OpenHands"]
+	path = multi-agent/OpenHands
+	url = https://github.com/OpenHands/OpenHands
+[submodule "multi-agent/langgraph"]
+	path = multi-agent/langgraph
+	url = https://github.com/langchain-ai/langgraph
+[submodule "mcp-hubs/awesome-ai-apps-Arindam200"]
+	path = mcp-hubs/awesome-ai-apps-Arindam200
+	url = https://github.com/Arindam200/awesome-ai-apps
+[submodule "skills/skills"]
+	path = skills/skills
+	url = https://github.com/anthropics/skills
+[submodule "skills/skills-openai"]
+	path = skills/skills-openai
+	url = https://github.com/openai/skills
+[submodule "skills/gemini-claude-skills-stared"]
+	path = skills/gemini-claude-skills-stared
+	url = https://github.com/stared/gemini-claude-skills
+[submodule "skills/skills-bkircher"]
+	path = skills/skills-bkircher
+	url = https://github.com/bkircher/skills
+[submodule "skills/claude-code-tips"]
+	path = skills/claude-code-tips
+	url = https://github.com/ykdojo/claude-code-tips
+[submodule "multi-agent/metamcp-robertpelloni"]
+	path = multi-agent/metamcp-robertpelloni
+	url = https://github.com/robertpelloni/metamcp
+[submodule "multi-agent/A2A-a2aproject"]
+	path = multi-agent/A2A-a2aproject
+	url = https://github.com/a2aproject/A2A
+[submodule "multi-agent/codev"]
+	path = multi-agent/codev
+	url = https://github.com/cluesmith/codev
+[submodule "multi-agent/1d3eeb46ddfda5257c08744972e0fc4c"]
+	path = multi-agent/1d3eeb46ddfda5257c08744972e0fc4c
+	url = https://gist.github.com/gc-victor/1d3eeb46ddfda5257c08744972e0fc4c
+[submodule "multi-agent/TaskSync-4regab"]
+	path = multi-agent/TaskSync-4regab
+	url = https://github.com/4regab/TaskSync
+[submodule "multi-agent/tasksync-mcp"]
+	path = multi-agent/tasksync-mcp
+	url = https://github.com/4regab/tasksync-mcp
+[submodule "multi-agent/agentic-ray-rayai-labs"]
+	path = multi-agent/agentic-ray-rayai-labs
+	url = https://github.com/rayai-labs/agentic-ray
+[submodule "multi-agent/agentdepot-agents"]
+	path = multi-agent/agentdepot-agents
+	url = https://github.com/biagruot/agentdepot-agents
+[submodule "multi-agent/agentic-playground"]
+	path = multi-agent/agentic-playground
+	url = https://github.com/denniszielke/agentic-playground
+[submodule "multi-agent/ag-ui"]
+	path = multi-agent/ag-ui
+	url = https://github.com/ag-ui-protocol/ag-ui
+[submodule "cli-harnesses/goose"]
+	path = cli-harnesses/goose
+	url = https://github.com/block/goose
+[submodule "multi-agent/CopilotKit"]
+	path = multi-agent/CopilotKit
+	url = https://github.com/CopilotKit/CopilotKit
+[submodule "multi-agent/a2a-ui"]
+	path = multi-agent/a2a-ui
+	url = https://github.com/a2anet/a2a-ui
+[submodule "multi-agent/Self-Learning-Agents"]
+	path = multi-agent/Self-Learning-Agents
+	url = https://github.com/omdivyatej/Self-Learning-Agents
+[submodule "cli-harnesses/claude-code-router"]
+	path = cli-harnesses/claude-code-router
+	url = https://github.com/musistudio/claude-code-router
+[submodule "cli-harnesses/ccs-kaitranntt"]
+	path = cli-harnesses/ccs-kaitranntt
+	url = https://github.com/kaitranntt/ccs
+[submodule "cli-harnesses/cc-switch-farion1231"]
+	path = cli-harnesses/cc-switch-farion1231
+	url = https://github.com/farion1231/cc-switch
+[submodule "cli-harnesses/emdash-generalaction"]
+	path = cli-harnesses/emdash-generalaction
+	url = https://github.com/generalaction/emdash
+[submodule "cli-harnesses/code-assistant-manager-Chat2AnyLLM"]
+	path = cli-harnesses/code-assistant-manager-Chat2AnyLLM
+	url = https://github.com/Chat2AnyLLM/code-assistant-manager
+[submodule "cli-harnesses/CodeNomad-NeuralNomadsAI"]
+	path = cli-harnesses/CodeNomad-NeuralNomadsAI
+	url = https://github.com/NeuralNomadsAI/CodeNomad
+[submodule "cli-harnesses/openai-gemini"]
+	path = cli-harnesses/openai-gemini
+	url = https://github.com/PublicAffairs/openai-gemini
+[submodule "cli-harnesses/gemini-openai-proxy"]
+	path = cli-harnesses/gemini-openai-proxy
+	url = https://github.com/zhu327/gemini-openai-proxy
+[submodule "cli-harnesses/gemini-openai-proxy-zuisong"]
+	path = cli-harnesses/gemini-openai-proxy-zuisong
+	url = https://github.com/zuisong/gemini-openai-proxy
+[submodule "cli-harnesses/vercel-ai-proxy"]
+	path = cli-harnesses/vercel-ai-proxy
+	url = https://github.com/Hk-Gosuto/vercel-ai-proxy
+[submodule "cli-harnesses/gemini-cli-router"]
+	path = cli-harnesses/gemini-cli-router
+	url = https://github.com/Jasonzhangf/gemini-cli-router
+[submodule "cli-harnesses/gemini-cli-router-zhifac"]
+	path = cli-harnesses/gemini-cli-router-zhifac
+	url = https://github.com/zhifac/gemini-cli-router
+[submodule "cli-harnesses/claude-code-openrouter"]
+	path = cli-harnesses/claude-code-openrouter
+	url = https://github.com/derek-larson14/claude-code-openrouter
+[submodule "cli-harnesses/gemini-router"]
+	path = cli-harnesses/gemini-router
+	url = https://github.com/takltc/gemini-router
+[submodule "cli-harnesses/ccproxy"]
+	path = cli-harnesses/ccproxy
+	url = https://github.com/starbased-co/ccproxy
+[submodule "cli-harnesses/GoogleGeminiRouter"]
+	path = cli-harnesses/GoogleGeminiRouter
+	url = https://github.com/Dhatchinamoorthy/GoogleGeminiRouter
+[submodule "cli-harnesses/cc-switch-cli"]
+	path = cli-harnesses/cc-switch-cli
+	url = https://github.com/SaladDay/cc-switch-cli
+[submodule "cli-harnesses/gemini-superclaude-mcp-server"]
+	path = cli-harnesses/gemini-superclaude-mcp-server
+	url = https://github.com/Dianel555/gemini-superclaude-mcp-server
+[submodule "cli-harnesses/splitrail"]
+	path = cli-harnesses/splitrail
+	url = https://github.com/Piebald-AI/splitrail
+[submodule "cli-harnesses/awesome-opencode"]
+	path = cli-harnesses/awesome-opencode
+	url = https://github.com/awesome-opencode/awesome-opencode
+[submodule "cli-harnesses/awesome-copilot"]
+	path = cli-harnesses/awesome-copilot
+	url = https://github.com/github/awesome-copilot
+[submodule "cli-harnesses/opencode-gui"]
+	path = cli-harnesses/opencode-gui
+	url = https://github.com/milisp/opencode-gui
+[submodule "cli-harnesses/opencode-web"]
+	path = cli-harnesses/opencode-web
+	url = https://github.com/chris-tse/opencode-web
+[submodule "cli-harnesses/amped"]
+	path = cli-harnesses/amped
+	url = https://github.com/slashtechno/amped
+[submodule "cli-harnesses/happy"]
+	path = cli-harnesses/happy
+	url = https://github.com/slopus/happy
+[submodule "cli-harnesses/schaltwerk"]
+	path = cli-harnesses/schaltwerk
+	url = https://github.com/2mawi2/schaltwerk
+[submodule "cli-harnesses/claude-code-mcp"]
+	path = cli-harnesses/claude-code-mcp
+	url = https://github.com/steipete/claude-code-mcp
+[submodule "cli-harnesses/claude-tools-mcp"]
+	path = cli-harnesses/claude-tools-mcp
+	url = https://github.com/brwse/claude-tools-mcp
+[submodule "cli-harnesses/multi-agent-orchestration"]
+	path = cli-harnesses/multi-agent-orchestration
+	url = https://github.com/priyan-coder/multi-agent-orchestration
+[submodule "cli-harnesses/amp-examples-and-guides"]
+	path = cli-harnesses/amp-examples-and-guides
+	url = https://github.com/sourcegraph/amp-examples-and-guides
+[submodule "cli-harnesses/awesome-amp-code"]
+	path = cli-harnesses/awesome-amp-code
+	url = https://github.com/jdorfman/awesome-amp-code
+[submodule "cli-harnesses/oh-my-opencode"]
+	path = cli-harnesses/oh-my-opencode
+	url = https://github.com/code-yeongyu/oh-my-opencode
+[submodule "cli-harnesses/claude-hooks"]
+	path = cli-harnesses/claude-hooks
+	url = https://github.com/TheNoeTrevino/claude-hooks
+[submodule "cli-harnesses/llxprt-code"]
+	path = cli-harnesses/llxprt-code
+	url = https://github.com/vybestack/llxprt-code
+[submodule "cli-harnesses/OpenQode-Public-Alpha-GooseUltra-"]
+	path = cli-harnesses/OpenQode-Public-Alpha-GooseUltra-
+	url = https://github.com/roman-ryzenadvanced/OpenQode-Public-Alpha-GooseUltra-
+[submodule "cli-harnesses/grok-cli"]
+	path = cli-harnesses/grok-cli
+	url = https://github.com/superagent-ai/grok-cli
+[submodule "cli-harnesses/qwen-code"]
+	path = cli-harnesses/qwen-code
+	url = https://github.com/QwenLM/qwen-code
+[submodule "cli-harnesses/code"]
+	path = cli-harnesses/code
+	url = https://github.com/just-every/code
+[submodule "cli-harnesses/crush"]
+	path = cli-harnesses/crush
+	url = https://github.com/charmbracelet/crush
+[submodule "cli-harnesses/factory"]
+	path = cli-harnesses/factory
+	url = https://github.com/factory-ai/factory
+[submodule "cli-harnesses/codebuff-CodebuffAI"]
+	path = cli-harnesses/codebuff-CodebuffAI
+	url = https://github.com/CodebuffAI/codebuff
+[submodule "cli-harnesses/CodeMachine-CLI-moazbuilds"]
+	path = cli-harnesses/CodeMachine-CLI-moazbuilds
+	url = https://github.com/moazbuilds/CodeMachine-CLI
+[submodule "cli-harnesses/codex"]
+	path = cli-harnesses/codex
+	url = https://github.com/openai/codex
+[submodule "cli-harnesses/kimi-cli-MoonshotAI"]
+	path = cli-harnesses/kimi-cli-MoonshotAI
+	url = https://github.com/MoonshotAI/kimi-cli
+[submodule "cli-harnesses/goose-block"]
+	path = cli-harnesses/goose-block
+	url = https://github.com/block/goose
+[submodule "agents/refs/smolagents"]
+	path = agents/refs/smolagents
+	url = https://github.com/huggingface/smolagents

@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "outDir": ".",
+    "module": "ESNext",
+    "target": "ES2022",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "types": ["node"]
+  },
+  "include": ["*.ts"],
+  "exclude": ["node_modules"]
+}

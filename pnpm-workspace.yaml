@@ -1,0 +1,8 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+  - 'mcp-servers/*'
+  - 'packages/adapters/*'
+  - 'submodules/mcpenetes'
+  - 'submodules/bobcoin'

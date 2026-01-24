@@ -275,9 +275,9 @@ export class MCPServer {
             }
             else if (name === "native_input") {
                 const keys = args?.keys as string;
-                // Use Direct InputTools
+                // Use Direct InputTools. DON'T FORCE FOCUS by default (let it hit active terminal)
                 try {
-                    const status = await this.inputTools.sendKeys(keys);
+                    const status = await this.inputTools.sendKeys(keys, false);
                     result = { content: [{ type: "text", text: status }] };
                 } catch (e: any) {
                     result = { content: [{ type: "text", text: `Error executing native_input: ${e.message}` }] };

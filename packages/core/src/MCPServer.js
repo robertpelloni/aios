@@ -724,4 +724,8 @@ export class MCPServer {
         if (this.wsServer && this.wssInstance) {
             console.log("[MCPServer] Connecting internal WS transport...");
             const wsTransport = new WebSocketServerTransport(this.wssInstance);
-            await this.wsServer.connect(wsTransport)
+            await this.wsServer.connect(wsTransport);
+        }
+        console.log("[MCPServer] Start Complete.");
+    }
+}

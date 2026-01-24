@@ -254,13 +254,18 @@ class ConversationMonitor {
         if (state === 'NEEDS_APPROVAL') {
             console.error("[Director] 🟢 Auto-Approving (Sending 'y' + Enter + Alt-Enter)...");
 
-            // 1. CLI Terminal Approval (The most likely culprit)
+            // 1. CLI Terminal Approval
             try { await this.server.executeTool('native_input', { keys: 'y' }); } catch (e: any) { console.error(`[Auto-Approve] 'y' failed: ${e.message}`); }
-            await new Promise(r => setTimeout(r, 100));
-            try { await this.server.executeTool('native_input', { keys: 'enter' }); } catch (e: any) { console.error(`[Auto-Approve] 'enter' failed: ${e.message}`); }
+
+            await new Promise(r => setTimeout(r, 500)); // Wait 500ms
+
+            try { await this.server.executeTool('native_input', { keys: 'enter' }); } catch (e: any) { console.error(`[Auto-Approve] 'enter' 1 failed: ${e.message}`); }
+
+            await new Promise(r => setTimeout(r, 500)); // Double Tap
+            try { await this.server.executeTool('native_input', { keys: 'enter' }); } catch (e: any) { console.error(`[Auto-Approve] 'enter' 2 failed: ${e.message}`); }
 
             // 2. VS Code UI Approval (Fallback)
-            await new Promise(r => setTimeout(r, 200));
+            await new Promise(r => setTimeout(r, 500));
             try { await this.server.executeTool('native_input', { keys: 'alt+enter' }); } catch (e: any) { console.error(`[Auto-Approve] 'alt+enter' failed: ${e.message}`); }
 
             // 3. Command Palette / Inline Chat

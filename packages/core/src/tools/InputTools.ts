@@ -10,8 +10,8 @@ import path from 'path';
 import os from 'os';
 
 export class InputTools {
-    async sendKeys(keys: string) {
-        console.error(`[InputTools] ⌨️ Sending keys: ${keys}`);
+    async sendKeys(keys: string, forceFocus: boolean = false) {
+        console.error(`[InputTools] ⌨️ Sending keys: ${keys} (Focus: ${forceFocus})`);
 
         // Map keys to VBScript SendKeys format
         const vbMap: Record<string, string> = {
@@ -29,16 +29,23 @@ export class InputTools {
         const command = vbMap[keys.toLowerCase()] || keys;
 
         // Create VBScript file
+        let focusLogic = "";
+        if (forceFocus) {
+            focusLogic = `
+            ' Try to focus commonly used windows
+            On Error Resume Next
+            WshShell.AppActivate "Code - Insiders"
+            WshShell.AppActivate "Visual Studio Code"
+            WshShell.AppActivate "Code"
+            WshShell.AppActivate "borg"
+            WshShell.AppActivate "Terminal"
+            On Error GoTo 0
+            `;
+        }
+
         const vbsContent = `
 Set WshShell = WScript.CreateObject("WScript.Shell")
-' Try to focus commonly used windows
-On Error Resume Next
-WshShell.AppActivate "Code - Insiders"
-WshShell.AppActivate "Visual Studio Code"
-WshShell.AppActivate "Code"
-WshShell.AppActivate "borg"
-WshShell.AppActivate "Terminal"
-On Error GoTo 0
+${focusLogic}
 WScript.Sleep 100
 WshShell.SendKeys "${command}"
 `;

@@ -77,7 +77,7 @@ export class MCPServer {
     private chainExecutor: ChainExecutor;
     public wssInstance: any; // WebSocket.Server
     private inputTools: InputTools;
-    public lastUserActivityTime: number = 0;
+    public lastUserActivityTime: number = Date.now(); // Start with grace period
     public directorConfig = {
         taskCooldownMs: 10000,
         heartbeatIntervalMs: 30000,

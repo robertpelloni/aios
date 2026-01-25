@@ -6,6 +6,8 @@ let statusBarItem: vscode.StatusBarItem;
 let outputChannel: vscode.OutputChannel;
 let reconnectTimer: NodeJS.Timeout | null = null;
 let lastActivityTime = Date.now();
+let debounceTimer: NodeJS.Timeout | null = null;
+let ignoreNextActivity = false; // Flag to prevent self-lockout
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('Borg Plugin is now active!');
@@ -26,22 +28,20 @@ export function activate(context: vscode.ExtensionContext) {
     connectToHub();
 
     // Track User Activity - Crucial for Anti-Hijack
-    let debounceTimer: NodeJS.Timeout | null = null;
-    const sendActivity = () => {
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({
-                type: 'USER_ACTIVITY',
-                lastActivityTime: Date.now()
-            }));
-        }
-    };
-
     context.subscriptions.push(vscode.window.onDidChangeTextEditorSelection(() => {
+        if (ignoreNextActivity) {
+            // This is a programmatic change (paste), ignore it for activity tracking
+            return;
+        }
         lastActivityTime = Date.now();
         if (debounceTimer) clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(sendActivity, 1000); // Debounce 1s
+        debounceTimer = setTimeout(sendActivity, 1000);
     }));
+
     context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(() => {
+        if (ignoreNextActivity) {
+            return;
+        }
         lastActivityTime = Date.now();
         if (debounceTimer) clearTimeout(debounceTimer);
         debounceTimer = setTimeout(sendActivity, 1000);
@@ -50,6 +50,15 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() {
     disconnectFromHub();
+}
+
+function sendActivity() {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({
+            type: 'USER_ACTIVITY',
+            lastActivityTime: Date.now()
+        }));
+    }
 }
 
 function updateStatusBar(connected: boolean) {
@@ -72,6 +81,7 @@ function log(message: string) {
 function connectToHub() {
     if (socket) return;
 
+    // Standard Borg Core WebSocket Port
     const url = 'ws://localhost:3001';
 
     log(`Connecting to ${url}...`);
@@ -102,6 +112,7 @@ function connectToHub() {
             log('Disconnected');
             updateStatusBar(false);
             socket = null;
+            // Auto reconnect
             reconnectTimer = setTimeout(connectToHub, 5000);
         });
 
@@ -125,6 +136,8 @@ function disconnectFromHub() {
 }
 
 async function handleMessage(msg: any) {
+    // log(`Received: ${JSON.stringify(msg)}`);
+
     if (msg.type === 'GET_USER_ACTIVITY') {
         if (socket) {
             socket.send(JSON.stringify({
@@ -150,12 +163,15 @@ async function handleMessage(msg: any) {
         log(`[PASTE_INTO_CHAT] Received. text=${msg.text?.substring(0, 30)}...`);
         try {
             // Intelligent Interjection Check
-            // We check local activity time first as a fail-safe
-            if ((Date.now() - lastActivityTime) < 2000) {
+            if ((Date.now() - lastActivityTime) < 2000 && !ignoreNextActivity) {
                 log(`[PASTE_ABORT] User active within 2s, aborting paste to prevent hijack.`);
-                // We could queue this, but for now let's just log it. 
-                // The Director should have checked before sending!
+                return; // Abort
             }
+
+            // SET FLAG TO IGNORE SUBSEQUENT ACTIVITY (THE PASTE ITSELF)
+            ignoreNextActivity = true;
+            // Reset flag after 1.5s (enough time for paste + events to fire)
+            setTimeout(() => { ignoreNextActivity = false; }, 1500);
 
             // 1. Write to Clipboard
             await vscode.env.clipboard.writeText(msg.text);
@@ -164,7 +180,7 @@ async function handleMessage(msg: any) {
             await vscode.commands.executeCommand('workbench.action.chat.open');
             await new Promise(r => setTimeout(r, 300));
 
-            // 3. Force Focus Input
+            // 3. Force Focus Input (Crucial)
             await vscode.commands.executeCommand('workbench.action.chat.focusInput');
             await new Promise(r => setTimeout(r, 200));
 
@@ -174,6 +190,7 @@ async function handleMessage(msg: any) {
 
         } catch (e: any) {
             log(`Failed to paste into chat: ${e.message}`);
+            ignoreNextActivity = false;
         }
     }
 

@@ -1,5 +1,5 @@
-import { ModelSelector } from "../ModelSelector.js";
-import { LLMService } from "../ai/LLMService.js";
+import { ModelSelector } from "@borg/ai";
+import { LLMService } from "@borg/ai";
 
 interface CouncilMember {
     name: string;

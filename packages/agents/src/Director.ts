@@ -1,7 +1,7 @@
-import type { IMCPServer } from "../adk/AgentInterfaces.js";
-import { LLMService } from "../ai/LLMService.js";
+import type { IMCPServer } from "@borg/adk";
+import { LLMService } from "@borg/ai";
 import { Council } from "./Council.js";
-import { DIRECTOR_SYSTEM_PROMPT, GEMMA_ENCOURAGEMENT_MESSAGES } from "../prompts/SystemPrompts.js";
+import { DIRECTOR_SYSTEM_PROMPT, GEMMA_ENCOURAGEMENT_MESSAGES } from "@borg/ai";
 
 interface AgentContext {
     goal: string;

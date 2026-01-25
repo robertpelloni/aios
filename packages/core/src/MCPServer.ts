@@ -18,7 +18,7 @@ console.log("[MCPServer] ✓ path/url");
 import { Router } from "./Router.js";
 console.log("[MCPServer] ✓ Router");
 
-import { ModelSelector } from './ModelSelector.js';
+import { ModelSelector } from "@borg/ai";
 console.log("[MCPServer] ✓ ModelSelector");
 
 import { WebSocketServer } from 'ws';
@@ -43,10 +43,9 @@ console.log("[MCPServer] ✓ All Tools");
 import { ChainExecutor, ChainRequest } from "./tools/ChainExecutor.js";
 console.log("[MCPServer] ✓ ChainExecutor");
 
-import { Director } from "./agents/Director.js";
-console.log("[MCPServer] ✓ Director");
-
-import { Council } from "./agents/Council.js";
+import { Director } from "@borg/agents";
+// @ts-ignore
+import { Council } from "@borg/agents";
 console.log("[MCPServer] ✓ Council");
 
 import { PermissionManager, AutonomyLevel } from "./security/PermissionManager.js";
@@ -811,3 +810,4 @@ export class MCPServer {
     }
 }
 
+          

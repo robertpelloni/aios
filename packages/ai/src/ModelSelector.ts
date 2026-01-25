@@ -39,7 +39,9 @@ export class ModelSelector {
     private configPath: string;
 
     constructor() {
-        // Assume running fro dist/ so go up to config
+        // Assume running from dist/ so go up to config
+        // In @borg/ai, we need to locate the config relative to the workspace root or injected config
+        // For now, let's look for it in the standard location relative to CWD
         this.configPath = path.resolve(process.cwd(), 'packages/core/config/council.json');
         console.log("ModelSelector initialized. Config Path:", this.configPath);
     }

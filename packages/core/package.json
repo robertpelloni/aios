@@ -29,8 +29,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.71.2",
-    "@google/generative-ai": "^0.24.1",
+    "@borg/ai": "workspace:*",
+    "@borg/adk": "workspace:*",
+    "@borg/agents": "workspace:*",
     "@lancedb/lancedb": "^0.23.0",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "@modelcontextprotocol/server-filesystem": "^2026.1.14",
@@ -50,7 +51,6 @@
     "gray-matter": "^4.0.3",
     "ignore": "^7.0.5",
     "jsdom": "^27.4.0",
-    "openai": "^6.16.0",
     "sharp": "^0.34.5",
     "turndown": "^7.2.2",
     "untun": "^0.1.3",

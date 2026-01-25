@@ -43,6 +43,14 @@ export interface IPermissionManager {
 export interface IMCPServer {
     modelSelector: IModelSelector;
     permissionManager: IPermissionManager;
+    directorConfig?: {
+        taskCooldownMs: number;
+        heartbeatIntervalMs: number;
+        periodicSummaryMs: number;
+        pasteToSubmitDelayMs: number;
+        acceptDetectionMode: 'state' | 'polling';
+        pollingIntervalMs: number;
+    };
     executeTool(name: string, args: any): Promise<any>;
 }
 

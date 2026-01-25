@@ -137,6 +137,44 @@ export const appRouter = t.router({
             throw new Error("MCPServer instance not found");
         })
     }),
+    directorConfig: t.router({
+        get: t.procedure.query(async () => {
+            // @ts-ignore
+            if (global.mcpServerInstance?.directorConfig) {
+                // @ts-ignore
+                return global.mcpServerInstance.directorConfig;
+            }
+            // Default config
+            return {
+                taskCooldownMs: 10000,
+                heartbeatIntervalMs: 30000,
+                periodicSummaryMs: 120000,
+                pasteToSubmitDelayMs: 1000,
+                acceptDetectionMode: 'polling' as const,
+                pollingIntervalMs: 30000
+            };
+        }),
+        update: t.procedure.input(z.object({
+            taskCooldownMs: z.number().optional(),
+            heartbeatIntervalMs: z.number().optional(),
+            periodicSummaryMs: z.number().optional(),
+            pasteToSubmitDelayMs: z.number().optional(),
+            acceptDetectionMode: z.enum(['state', 'polling']).optional(),
+            pollingIntervalMs: z.number().optional()
+        })).mutation(async ({ input }) => {
+            // @ts-ignore
+            if (global.mcpServerInstance) {
+                // @ts-ignore
+                const current = global.mcpServerInstance.directorConfig || {};
+                // @ts-ignore
+                global.mcpServerInstance.directorConfig = { ...current, ...input };
+                console.log('[tRPC] Director config updated:', input);
+                // @ts-ignore
+                return global.mcpServerInstance.directorConfig;
+            }
+            throw new Error("MCPServer instance not found");
+        })
+    }),
     council: t.router({
         startDebate: t.procedure.input(z.object({ proposal: z.string() })).mutation(async ({ input }) => {
             // @ts-ignore

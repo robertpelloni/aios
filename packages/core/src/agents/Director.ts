@@ -229,16 +229,26 @@ class ConversationMonitor {
     }
 
     start() {
+        // Get config from server (with defaults)
+        // @ts-ignore
+        const config = this.server.directorConfig || {
+            heartbeatIntervalMs: 30000,
+            periodicSummaryMs: 120000,
+            pollingIntervalMs: 30000
+        };
+
         if (this.interval) clearInterval(this.interval);
         this.interval = setInterval(async () => {
             await this.checkAndAct();
-        }, 30000); // Changed from 5s to 30s - less aggressive
+        }, config.heartbeatIntervalMs || 30000);
 
-        // Periodic Summary: Every 2 minutes, read context and post to chat
+        // Periodic Summary: Read config for interval
         if (this.summaryInterval) clearInterval(this.summaryInterval);
         this.summaryInterval = setInterval(async () => {
             await this.postPeriodicSummary();
-        }, 120000); // 2 minutes
+        }, config.periodicSummaryMs || 120000);
+
+        console.log(`[ConversationMonitor] Started with heartbeat=${config.heartbeatIntervalMs}ms, summary=${config.periodicSummaryMs}ms`);
     }
 
     stop() {
@@ -466,10 +476,12 @@ class ConversationMonitor {
         } catch (e: any) {
             console.error("Council Error:", e);
         } finally {
-            // COOLDOWN: Wait 60 seconds before allowing next Council meeting
-            // This prevents runaway loops where tasks complete instantly
-            console.error("[Director] ⏸️ Cooldown: 60 seconds before next Council meeting...");
-            await new Promise(r => setTimeout(r, 60000)); // 60 second cooldown
+            // COOLDOWN: Use config (default 10 seconds)
+            // @ts-ignore
+            const config = this.server.directorConfig || { taskCooldownMs: 10000 };
+            const cooldown = config.taskCooldownMs || 10000;
+            console.error(`[Director] ⏸️ Cooldown: ${cooldown / 1000} seconds before next Council meeting...`);
+            await new Promise(r => setTimeout(r, cooldown));
             this.isRunningTask = false;
         }
     }

@@ -77,6 +77,14 @@ export class MCPServer {
     private chainExecutor: ChainExecutor;
     public wssInstance: any; // WebSocket.Server
     private inputTools: InputTools;
+    public directorConfig = {
+        taskCooldownMs: 10000,
+        heartbeatIntervalMs: 30000,
+        periodicSummaryMs: 120000,
+        pasteToSubmitDelayMs: 1000,
+        acceptDetectionMode: 'polling' as const, // Polling is robust!
+        pollingIntervalMs: 30000
+    };
 
     constructor(options: { skipWebsocket?: boolean } = {}) {
         this.router = new Router();

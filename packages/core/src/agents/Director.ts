@@ -340,6 +340,15 @@ class ConversationMonitor {
             if (/(?:approve\?|continue\?|\[y\/n\])/i.test(content)) return 'NEEDS_APPROVAL';
         } catch (e) { }
 
+        // 0. Check User Activity (Anti-Hijack)
+        // @ts-ignore
+        const lastUserActive = this.server.lastUserActivityTime || 0;
+        if (Date.now() - lastUserActive < 5000) {
+            // User is typing/clicking. Agent must wait.
+            // console.error("[Monitor] User Active - Agent Yielding");
+            return 'BUSY';
+        }
+
         // 2. Check Time
         const idleTime = Date.now() - this.lastActivityTime;
 
@@ -397,7 +406,11 @@ class ConversationMonitor {
 
             const prompt = `You are the Supervisor Council. The agent is IDLE.
             Personas: [Architect], [Product], [Critic].
-            Review 'task.md' conceptually.
+            
+            Current Goal: "Autonomous Development"
+            
+            DIRECTIVE: "Please continue to proceed as you recommend based on the current state and roadmap."
+            
             Output a dialogue followed by a DIRECTIVE line.
             
             Format:

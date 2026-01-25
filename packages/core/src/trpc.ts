@@ -151,7 +151,11 @@ export const appRouter = t.router({
                 periodicSummaryMs: 120000,
                 pasteToSubmitDelayMs: 1000,
                 acceptDetectionMode: 'polling' as const,
-                pollingIntervalMs: 30000
+                pollingIntervalMs: 30000,
+                council: {
+                    personas: ['Architect', 'Product', 'Critic'],
+                    contextFiles: ['README.md', 'docs/ROADMAP.md', 'task.md']
+                }
             };
         }),
         update: t.procedure.input(z.object({
@@ -160,14 +164,30 @@ export const appRouter = t.router({
             periodicSummaryMs: z.number().optional(),
             pasteToSubmitDelayMs: z.number().optional(),
             acceptDetectionMode: z.enum(['state', 'polling']).optional(),
-            pollingIntervalMs: z.number().optional()
+            pollingIntervalMs: z.number().optional(),
+            council: z.object({
+                personas: z.array(z.string()).optional(),
+                contextFiles: z.array(z.string()).optional()
+            }).optional()
         })).mutation(async ({ input }) => {
             // @ts-ignore
             if (global.mcpServerInstance) {
                 // @ts-ignore
                 const current = global.mcpServerInstance.directorConfig || {};
+
+                // Merge nested council config
+                const council = {
+                    ...(current.council || {}),
+                    ...(input.council || {})
+                };
+
                 // @ts-ignore
-                global.mcpServerInstance.directorConfig = { ...current, ...input };
+                global.mcpServerInstance.directorConfig = {
+                    ...current,
+                    ...input,
+                    council
+                };
+
                 console.log('[tRPC] Director config updated:', input);
                 // @ts-ignore
                 return global.mcpServerInstance.directorConfig;

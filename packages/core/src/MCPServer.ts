@@ -77,13 +77,18 @@ export class MCPServer {
     private chainExecutor: ChainExecutor;
     public wssInstance: any; // WebSocket.Server
     private inputTools: InputTools;
+    public lastUserActivityTime: number = 0;
     public directorConfig = {
         taskCooldownMs: 10000,
         heartbeatIntervalMs: 30000,
         periodicSummaryMs: 120000,
         pasteToSubmitDelayMs: 1000,
         acceptDetectionMode: 'polling' as const, // Polling is robust!
-        pollingIntervalMs: 30000
+        pollingIntervalMs: 30000,
+        council: {
+            personas: ['Architect', 'Product', 'Critic'],
+            contextFiles: ['README.md', 'docs/ROADMAP.md']
+        }
     };
 
     constructor(options: { skipWebsocket?: boolean } = {}) {
@@ -749,6 +754,10 @@ export class MCPServer {
                                 resolve(msg.status);
                                 this.pendingRequests.delete(msg.requestId);
                             }
+                        }
+                        if (msg.type === 'USER_ACTIVITY') {
+                            // Track global user activity
+                            this.lastUserActivityTime = Math.max(this.lastUserActivityTime, msg.lastActivityTime);
                         }
                     } catch (e) {
                         // Ignore non-JSON

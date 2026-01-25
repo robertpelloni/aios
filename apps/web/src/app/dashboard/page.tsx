@@ -3,6 +3,7 @@
 import { trpc } from "@/utils/trpc";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import DirectorConfig from "@/components/DirectorConfig";
 
 export default function DashboardHome() {
     const { data: health } = trpc.health.useQuery();
@@ -62,6 +63,9 @@ export default function DashboardHome() {
                     )}
                 </div>
             </div>
+
+            {/* Director Configuration */}
+            <DirectorConfig />
 
             {/* Quick Actions Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

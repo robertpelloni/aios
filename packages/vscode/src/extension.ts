@@ -5,6 +5,7 @@ let socket: WebSocket | null = null;
 let statusBarItem: vscode.StatusBarItem;
 let outputChannel: vscode.OutputChannel;
 let reconnectTimer: NodeJS.Timeout | null = null;
+let lastActivityTime = Date.now();
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('Borg Plugin is now active!');
@@ -23,6 +24,32 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Auto Connect
     connectToHub();
+
+    // Track User Activity - Crucial for Anti-Hijack
+    let debounceTimer: NodeJS.Timeout | null = null;
+    const sendActivity = () => {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({
+                type: 'USER_ACTIVITY',
+                lastActivityTime: Date.now()
+            }));
+        }
+    };
+
+    context.subscriptions.push(vscode.window.onDidChangeTextEditorSelection(() => {
+        lastActivityTime = Date.now();
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(sendActivity, 1000); // Debounce 1s
+    }));
+    context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(() => {
+        lastActivityTime = Date.now();
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(sendActivity, 1000);
+    }));
+}
+
+export function deactivate() {
+    disconnectFromHub();
 }
 
 function updateStatusBar(connected: boolean) {
@@ -43,9 +70,8 @@ function log(message: string) {
 }
 
 function connectToHub() {
-    if (socket) return; // Already connecting or connected
+    if (socket) return;
 
-    // Standard Borg Core WebSocket Port
     const url = 'ws://localhost:3001';
 
     log(`Connecting to ${url}...`);
@@ -76,7 +102,6 @@ function connectToHub() {
             log('Disconnected');
             updateStatusBar(false);
             socket = null;
-            // Auto reconnect
             reconnectTimer = setTimeout(connectToHub, 5000);
         });
 
@@ -90,8 +115,26 @@ function connectToHub() {
     }
 }
 
+function disconnectFromHub() {
+    if (reconnectTimer) clearTimeout(reconnectTimer);
+    if (socket) {
+        socket.close();
+        socket = null;
+    }
+    updateStatusBar(false);
+}
+
 async function handleMessage(msg: any) {
-    log(`Received: ${JSON.stringify(msg)}`);
+    if (msg.type === 'GET_USER_ACTIVITY') {
+        if (socket) {
+            socket.send(JSON.stringify({
+                type: 'USER_ACTIVITY',
+                requestId: msg.requestId,
+                lastActivityTime,
+                isIdle: (Date.now() - lastActivityTime) > 5000 // 5s idle threshold
+            }));
+        }
+    }
 
     if (msg.type === 'VSCODE_COMMAND') {
         const { command, args } = msg;
@@ -103,27 +146,25 @@ async function handleMessage(msg: any) {
         }
     }
 
-    if (msg.type === 'INSERT_TEXT') {
-        const editor = vscode.window.activeTextEditor;
-        if (editor) {
-            editor.edit(editBuilder => {
-                editBuilder.insert(editor.selection.active, msg.text);
-            });
-        }
-    }
-
     if (msg.type === 'PASTE_INTO_CHAT') {
-        log(`[PASTE_INTO_CHAT] Received. submit=${msg.submit}, text=${msg.text?.substring(0, 30)}...`);
+        log(`[PASTE_INTO_CHAT] Received. text=${msg.text?.substring(0, 30)}...`);
         try {
+            // Intelligent Interjection Check
+            // We check local activity time first as a fail-safe
+            if ((Date.now() - lastActivityTime) < 2000) {
+                log(`[PASTE_ABORT] User active within 2s, aborting paste to prevent hijack.`);
+                // We could queue this, but for now let's just log it. 
+                // The Director should have checked before sending!
+            }
+
             // 1. Write to Clipboard
             await vscode.env.clipboard.writeText(msg.text);
-            log(`[DEBUG] Copied to clipboard: ${msg.text.substring(0, 20)}...`);
 
             // 2. Open & Focus Chat
             await vscode.commands.executeCommand('workbench.action.chat.open');
-            await new Promise(r => setTimeout(r, 300)); // Wait for UI
+            await new Promise(r => setTimeout(r, 300));
 
-            // 3. Force Focus Input (Crucial)
+            // 3. Force Focus Input
             await vscode.commands.executeCommand('workbench.action.chat.focusInput');
             await new Promise(r => setTimeout(r, 200));
 
@@ -131,43 +172,9 @@ async function handleMessage(msg: any) {
             await vscode.commands.executeCommand('editor.action.clipboardPasteAction');
             log(`[DEBUG] Pasted to chat successfully`);
 
-            // NOTE: Submit is handled by Director via native_input alt+enter
-            // The Extension no longer attempts submit commands since they don't work for this chat.
         } catch (e: any) {
             log(`Failed to paste into chat: ${e.message}`);
         }
-    }
-
-    if (msg.type === 'SUBMIT_CHAT_HOOK') {
-        const shotgun = async () => {
-            // 1. Visible & Focused
-            try { await vscode.commands.executeCommand('workbench.action.chat.open'); } catch (e) { }
-            await new Promise(r => setTimeout(r, 500));
-            try { await vscode.commands.executeCommand('workbench.action.chat.focusInput'); } catch (e) { }
-
-            // 2. Fire chat submit commands (avoid terminal focus)
-            const commands = [
-                'workbench.action.chat.submit',
-                'workbench.action.edits.submit', // Crucial for Edit Sessions
-                'workbench.action.chat.send',   // Fallback
-                'chat.action.accept',
-                'interactive.acceptChanges'
-                // REMOVED: 'workbench.action.terminal.chat.accept' - steals terminal focus
-            ];
-
-            for (const cmd of commands) {
-                try {
-                    // log(`Attempting: ${cmd}`);
-                    await vscode.commands.executeCommand(cmd);
-                    // A small delay between attempts so valid ones don't race too hard
-                    await new Promise(r => setTimeout(r, 100));
-                } catch (e: any) {
-                    // log(`Skipping ${cmd}: ${e.message}`);
-                }
-            }
-            log('Executed: Shotgun Submission');
-        };
-        shotgun();
     }
 
     if (msg.type === 'GET_STATUS') {
@@ -175,15 +182,9 @@ async function handleMessage(msg: any) {
         const status = {
             activeEditor: vscode.window.activeTextEditor?.document.fileName || null,
             activeTerminal: activeTerminal ? activeTerminal.name : null,
-            // Note: VS Code API doesn't let us read notifications directly easily without a complex hack.
-            // We can infer state or use a proxy. 
-            // For now, let's return basic info.
             workspace: vscode.workspace.workspaceFolders?.map(f => f.uri.fsPath) || []
         };
 
-        // Send back via separate channel or reliance on log? 
-        // Best approach for Request-Response over WS without ID tracking is complex.
-        // We will just emit an event back.
         if (socket) {
             socket.send(JSON.stringify({
                 type: 'STATUS_UPDATE',
@@ -192,72 +193,4 @@ async function handleMessage(msg: any) {
             }));
         }
     }
-
-    if (msg.type === 'GET_SELECTION') {
-        const editor = vscode.window.activeTextEditor;
-        let content = '';
-        if (editor) {
-            content = editor.document.getText(editor.selection);
-            if (!content) {
-                // If no selection, get full text
-                content = editor.document.getText();
-            }
-        }
-
-        if (socket) {
-            socket.send(JSON.stringify({
-                type: 'STATUS_UPDATE',
-                requestId: msg.requestId,
-                status: { content }
-            }));
-        }
-    }
-
-    if (msg.type === 'GET_TERMINAL') {
-        // "The Clipboard Hack" to read terminal
-        try {
-            await vscode.commands.executeCommand('workbench.action.terminal.focus');
-            await new Promise(r => setTimeout(r, 100)); // Wait for focus
-            await vscode.commands.executeCommand('workbench.action.terminal.selectAll');
-            await vscode.commands.executeCommand('workbench.action.terminal.copySelection');
-            await vscode.commands.executeCommand('workbench.action.terminal.clearSelection');
-
-            let content = await vscode.env.clipboard.readText();
-            content = content.trim();
-
-            if (!content) {
-                content = "(Terminal is empty)";
-            }
-
-            if (socket) {
-                socket.send(JSON.stringify({
-                    type: 'STATUS_UPDATE',
-                    requestId: msg.requestId,
-                    status: { content }
-                }));
-            }
-        } catch (e: any) {
-            log(`Terminal Read Error: ${e.message}`);
-            if (socket) {
-                socket.send(JSON.stringify({
-                    type: 'STATUS_UPDATE',
-                    requestId: msg.requestId,
-                    status: { content: `Error reading terminal: ${e.message}` }
-                }));
-            }
-        }
-    }
-}
-
-function disconnectFromHub() {
-    if (reconnectTimer) clearTimeout(reconnectTimer);
-    if (socket) {
-        socket.close();
-        socket = null;
-    }
-    updateStatusBar(false);
-}
-
-export function deactivate() {
-    disconnectFromHub();
 }

@@ -113,6 +113,7 @@ async function handleMessage(msg: any) {
     }
 
     if (msg.type === 'PASTE_INTO_CHAT') {
+        log(`[PASTE_INTO_CHAT] Received. submit=${msg.submit}, text=${msg.text?.substring(0, 30)}...`);
         try {
             // 1. Write to Clipboard
             await vscode.env.clipboard.writeText(msg.text);
@@ -129,6 +130,46 @@ async function handleMessage(msg: any) {
             // 4. Paste
             await vscode.commands.executeCommand('editor.action.clipboardPasteAction');
             log(`[DEBUG] Executed: editor.action.clipboardPasteAction`);
+
+            // 5. AUTO-SUBMIT if requested (combined atomic action)
+            log(`[DEBUG] msg.submit = ${msg.submit}`);
+            if (msg.submit) {
+                await new Promise(r => setTimeout(r, 500)); // Wait for paste
+
+                // Re-focus input just before submit
+                try { await vscode.commands.executeCommand('workbench.action.chat.focusInput'); } catch (e) { }
+                await new Promise(r => setTimeout(r, 200));
+
+                // Try multiple submit commands including Gemini-specific ones
+                const submitCommands = [
+                    'workbench.action.chat.submit',       // Standard chat submit
+                    'gemini.chat.submit',                  // Gemini-specific?
+                    'google.gemini.submitChat',            // Another possibility
+                    'workbench.action.edits.submit',       // Edit sessions
+                    'workbench.action.chat.send',          // Fallback
+                    'chat.action.accept',
+                    'acceptSelectedSuggestion',            // Inline suggestions
+                    'editor.action.insertLineAfter'        // Fallback Enter?
+                ];
+
+                for (const cmd of submitCommands) {
+                    try {
+                        log(`[SUBMIT] Trying: ${cmd}`);
+                        await vscode.commands.executeCommand(cmd);
+                        await new Promise(r => setTimeout(r, 100));
+                    } catch (e) { }
+                }
+
+                // Last resort: Simulate Enter key via type command
+                try {
+                    log(`[SUBMIT] Simulating Enter key...`);
+                    await vscode.commands.executeCommand('type', { text: '\\n' });
+                    await new Promise(r => setTimeout(r, 100));
+                    await vscode.commands.executeCommand('default:type', { text: '\\n' });
+                } catch (e) { }
+
+                log(`[DEBUG] Auto-submit attempts complete`);
+            }
         } catch (e: any) {
             log(`Failed to paste into chat: ${e.message}`);
         }
@@ -141,14 +182,14 @@ async function handleMessage(msg: any) {
             await new Promise(r => setTimeout(r, 500));
             try { await vscode.commands.executeCommand('workbench.action.chat.focusInput'); } catch (e) { }
 
-            // 2. Fire EVERYTHING
+            // 2. Fire chat submit commands (avoid terminal focus)
             const commands = [
                 'workbench.action.chat.submit',
                 'workbench.action.edits.submit', // Crucial for Edit Sessions
                 'workbench.action.chat.send',   // Fallback
                 'chat.action.accept',
-                'interactive.acceptChanges',
-                'workbench.action.terminal.chat.accept'
+                'interactive.acceptChanges'
+                // REMOVED: 'workbench.action.terminal.chat.accept' - steals terminal focus
             ];
 
             for (const cmd of commands) {

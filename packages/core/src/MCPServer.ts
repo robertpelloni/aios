@@ -232,19 +232,21 @@ export class MCPServer {
             }
             else if (name === "chat_reply") {
                 const text = args?.text as string;
-                console.log(`[Borg Core] Chat Reply Requested: ${text}`);
+                const submit = args?.submit as boolean ?? true; // Default to auto-submit
+                console.log(`[Borg Core] Chat Reply Requested: ${text} (submit: ${submit})`);
 
                 if (this.wssInstance) {
                     this.wssInstance.clients.forEach((client: any) => {
                         if (client.readyState === 1) { // OPEN
                             client.send(JSON.stringify({
                                 type: 'PASTE_INTO_CHAT',
-                                text: text
+                                text: text,
+                                submit: submit // Include submit flag for atomic paste+submit
                             }));
                         }
                     });
                     result = {
-                        content: [{ type: "text", text: `Sent to browser/IDE: "${text}"` }]
+                        content: [{ type: "text", text: `Sent to browser/IDE: "${text}" (submit: ${submit})` }]
                     };
                 } else {
                     result = {

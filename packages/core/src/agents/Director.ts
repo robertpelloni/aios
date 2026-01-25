@@ -146,14 +146,23 @@ export class Director {
             fs.appendFileSync(feedPath, logEntry);
         } catch (e) { }
 
-        // LIVE FEED: Paste to Chat Window (User Request)
-        // This utilizes the VS Code Extension Bridge via 'chat_reply'
+        // LIVE FEED: Paste to Chat Window and auto-submit
         try {
+            console.error(`[Director] 📤 Broadcasting to chat: ${message.substring(0, 50)}...`);
+            // Paste to chat (Extension focuses chat window)
             await this.server.executeTool('chat_reply', { text: `[Director]: ${message}` });
-            // Auto-Submit: Press Enter to send the message
-            await new Promise(r => setTimeout(r, 500)); // Wait for paste to complete
-            await this.server.executeTool('vscode_submit_chat', {});
-        } catch (e) { }
+
+            // Wait for paste to complete and chat to be focused
+            await new Promise(r => setTimeout(r, 1000));
+
+            // Alt+Enter to submit (KNOWN WORKING METHOD)
+            console.error(`[Director] ⏎ Pressing Alt+Enter to submit...`);
+            await this.server.executeTool('native_input', { keys: 'alt+enter' });
+
+            console.error(`[Director] ✅ Broadcast complete`);
+        } catch (e: any) {
+            console.error(`[Director] ❌ Broadcast Error: ${e.message}`);
+        }
     }
 
     private async think(context: AgentContext): Promise<any> {
@@ -223,7 +232,7 @@ class ConversationMonitor {
         if (this.interval) clearInterval(this.interval);
         this.interval = setInterval(async () => {
             await this.checkAndAct();
-        }, 5000);
+        }, 30000); // Changed from 5s to 30s - less aggressive
 
         // Periodic Summary: Every 2 minutes, read context and post to chat
         if (this.summaryInterval) clearInterval(this.summaryInterval);
@@ -296,9 +305,9 @@ class ConversationMonitor {
 
         // Accept pending changes via Extension (Safe, no terminal spam)
         // Only uses WebSocket bridge to VS Code Extension
+        // REMOVED terminal.chat.accept as it steals terminal focus
         try { await this.server.executeTool('vscode_execute_command', { command: 'interactive.acceptChanges' }); } catch (e) { }
-        try { await this.server.executeTool('vscode_execute_command', { command: 'workbench.action.terminal.chat.accept' }); } catch (e) { }
-        // REMOVED: native_input causes terminal spam. Alt-Enter handled by vscode_submit_chat instead.
+        // REMOVED: native_input and terminal.chat.accept cause focus issues.
 
         // If Director is busy executing a task, don't interrupt (unless stuck?)
         if (this.isRunningTask) {
@@ -421,6 +430,10 @@ class ConversationMonitor {
         } catch (e: any) {
             console.error("Council Error:", e);
         } finally {
+            // COOLDOWN: Wait 60 seconds before allowing next Council meeting
+            // This prevents runaway loops where tasks complete instantly
+            console.error("[Director] ⏸️ Cooldown: 60 seconds before next Council meeting...");
+            await new Promise(r => setTimeout(r, 60000)); // 60 second cooldown
             this.isRunningTask = false;
         }
     }

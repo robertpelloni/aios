@@ -1,11 +1,15 @@
 
+import { PolicyEngine } from './PolicyEngine.js';
+
 export type AutonomyLevel = 'low' | 'medium' | 'high';
 
 export class PermissionManager {
     public autonomyLevel: AutonomyLevel;
+    private policyEngine: PolicyEngine;
 
     constructor(autonomyLevel: AutonomyLevel = 'high') {
         this.autonomyLevel = autonomyLevel;
+        this.policyEngine = new PolicyEngine(process.cwd());
     }
 
     setAutonomyLevel(level: AutonomyLevel) {
@@ -20,7 +24,14 @@ export class PermissionManager {
      * Determines if a tool call requires user approval.
      */
     checkPermission(toolName: string, args: any): 'APPROVED' | 'DENIED' | 'NEEDS_CONSULTATION' {
-        // High Autonomy: Trust completely
+        // 1. Policy Check (Hard Guardrails)
+        const policyResult = this.policyEngine.check(toolName, args);
+        if (!policyResult.allowed) {
+            console.warn(`[PermissionManager] Access Denied by Policy: ${policyResult.reason}`);
+            return 'DENIED';
+        }
+
+        // High Autonomy: Trust completely (if Policy allows)
         if (this.autonomyLevel === 'high') {
             return 'APPROVED';
         }
@@ -45,14 +56,11 @@ export class PermissionManager {
             toolName.includes('execute_command') ||
             toolName.includes('install') ||
             toolName.includes('git_push')) {
-
-            // Nuance: 'ls' or 'echo' via execute_command might be low risk, 
-            // but for now, we treat shell exec as high risk in low-autonomy mode.
             return 'high';
         }
 
         // Medium Risk (Read-only but potentially sensitive, or minor mods)
-        if (toolName.includes('read_file') || toolName.includes('list_directory') || toolName.includes('read_page')) {
+        if (toolName.includes('read_file') || toolName.includes('list_dir') || toolName.includes('read_page')) {
             return 'medium';
         }
 
@@ -62,6 +70,9 @@ export class PermissionManager {
         }
 
         // Default to high risk for unknown tools
+        // But let's be nicer to harmless internal tools
+        if (toolName.startsWith('vscode_')) return 'medium';
+
         return 'high';
     }
 }

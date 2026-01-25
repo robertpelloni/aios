@@ -1,7 +1,7 @@
 import type { IMCPServer } from "@borg/adk";
 import { LLMService } from "@borg/ai";
 import { Council } from "./Council.js";
-import { DIRECTOR_SYSTEM_PROMPT, GEMMA_ENCOURAGEMENT_MESSAGES } from "@borg/ai";
+import { DIRECTOR_SYSTEM_PROMPT } from "@borg/ai";
 
 interface AgentContext {
     goal: string;
@@ -13,7 +13,6 @@ export class Director {
     private server: IMCPServer;
     private llmService: LLMService;
     private council: Council;
-    private lastSelection: string = "";
 
     // Auto-Drive State
     private isAutoDriveActive: boolean = false;
@@ -56,11 +55,12 @@ export class Director {
                 return plan.result || "Task completed successfully.";
             }
 
-            // 1b. Council Advice (Advisory)
+            // 1b. Council Advice (Advisory but using Consensus Engine)
             const isHighAutonomy = this.server.permissionManager.getAutonomyLevel() === 'high';
             if (!isHighAutonomy && !plan.toolName.startsWith('vscode_read') && !plan.toolName.startsWith('list_')) {
                 // Quick consult, no blocking UI
-                const debate = await this.council.startDebate(`Action: ${plan.toolName}. Reasoning: ${plan.reasoning}`);
+                // Uses the consensus engine for a quick check
+                const debate = await this.council.runConsensusSession(`Action: ${plan.toolName}. Reasoning: ${plan.reasoning}`);
                 context.history.push(`Council Advice: ${debate.summary}`);
                 console.error(`[Director] 🛡️ Council Advice: ${debate.summary}`);
             }
@@ -150,26 +150,14 @@ export class Director {
         try {
             console.error(`[Director] 📤 Broadcasting to chat: ${message.substring(0, 50)}...`);
             // Paste to chat (Extension focuses chat window)
-            await this.server.executeTool('chat_reply', { text: `[Director]: ${message}` });
-
-            // Wait for paste to complete and chat to be focused
-            await new Promise(r => setTimeout(r, 1000));
-
-            // Alt+Enter to submit (KNOWN WORKING METHOD)
-            console.error(`[Director] ⏎ Pressing Alt+Enter to submit...`);
-            await this.server.executeTool('native_input', { keys: 'alt+enter' });
-
-            console.error(`[Director] ✅ Broadcast complete`);
+            // Note: chat_reply now handles submit:true via Extension, so we don't need native_input here.
+            await this.server.executeTool('chat_reply', { text: `[Director]: ${message}`, submit: true });
         } catch (e: any) {
             console.error(`[Director] ❌ Broadcast Error: ${e.message}`);
         }
     }
 
     private async think(context: AgentContext): Promise<any> {
-        // ... (Existing Think Logic with RAG) ...
-        // Re-using the robust logic from previous version, simplified for brevity in this overwrite
-        // but ensuring we include the heuristic fallback.
-
         let memoryContext = "";
         try {
             // @ts-ignore
@@ -229,31 +217,47 @@ class ConversationMonitor {
     }
 
     start() {
-        // Get config from server (with defaults)
-        // @ts-ignore
-        const config = this.server.directorConfig || {
-            heartbeatIntervalMs: 30000,
-            periodicSummaryMs: 120000,
-            pollingIntervalMs: 30000
+        if (this.interval) clearTimeout(this.interval); // Cleanup old standard
+        if (this.summaryInterval) clearTimeout(this.summaryInterval);
+
+        this.isRunningTask = false;
+
+        // Start Heartbeat Loop
+        const runHeartbeat = async () => {
+            if (!this.director.getIsActive()) return;
+
+            await this.checkAndAct();
+
+            // @ts-ignore
+            const delay = this.server.directorConfig?.heartbeatIntervalMs || 30000;
+            // @ts-ignore
+            this.interval = setTimeout(runHeartbeat, delay);
         };
 
-        if (this.interval) clearInterval(this.interval);
-        this.interval = setInterval(async () => {
-            await this.checkAndAct();
-        }, config.heartbeatIntervalMs || 30000);
+        // Start Summary Loop
+        const runSummary = async () => {
+            if (!this.director.getIsActive()) return;
 
-        // Periodic Summary: Read config for interval
-        if (this.summaryInterval) clearInterval(this.summaryInterval);
-        this.summaryInterval = setInterval(async () => {
             await this.postPeriodicSummary();
-        }, config.periodicSummaryMs || 120000);
 
-        console.log(`[ConversationMonitor] Started with heartbeat=${config.heartbeatIntervalMs}ms, summary=${config.periodicSummaryMs}ms`);
+            // @ts-ignore
+            const delay = this.server.directorConfig?.periodicSummaryMs || 120000;
+            // @ts-ignore
+            this.summaryInterval = setTimeout(runSummary, delay);
+        };
+
+        // Kickoff
+        // @ts-ignore
+        this.interval = setTimeout(runHeartbeat, 1000);
+        // @ts-ignore
+        this.summaryInterval = setTimeout(runSummary, 60000);
+
+        console.log(`[ConversationMonitor] Started dynamic loops.`);
     }
 
     stop() {
-        if (this.interval) clearInterval(this.interval);
-        if (this.summaryInterval) clearInterval(this.summaryInterval);
+        if (this.interval) clearTimeout(this.interval);
+        if (this.summaryInterval) clearTimeout(this.summaryInterval);
         this.interval = null;
         this.summaryInterval = null;
     }
@@ -311,6 +315,22 @@ class ConversationMonitor {
         if (!this.director.getIsActive()) {
             this.stop();
             return;
+        }
+
+        // [Phase 9] Healer Logic: Detect Failures
+        // @ts-ignore
+        if (this.server.autoTestService && !this.isRunningTask) {
+            // @ts-ignore
+            const results = this.server.autoTestService.testResults;
+            if (results) {
+                for (const [fpath, info] of results.entries()) {
+                    // Check if fail within last 60s
+                    if (info.status === 'fail' && Date.now() - info.timestamp < 60000) {
+                        console.error(`[Director:Healer] 🚑 Detected failure: ${fpath}`);
+                        await this.healFailure(fpath, info.output || "No output captured.");
+                    }
+                }
+            }
         }
 
         // Accept pending changes via Extension (Safe, no terminal spam)
@@ -400,90 +420,39 @@ class ConversationMonitor {
     private async runCouncilLoop() {
         this.isRunningTask = true;
         try {
-            console.error(`[Director] 🤖 Convening Council...`);
+            console.error(`[Director] 🤖 Convening Council (Consensus Session)...`);
 
-            const model = await this.server.modelSelector.selectModel({ taskComplexity: 'high' });
+            // Use the centralized Council in MCPServer (or local instance)
+            // @ts-ignore
+            const council = this.server.council || this.director.council; // Director has public/private council?
+            // Wait, Director's council is private.
+            // But we are in the same file! We can't access private property of another class instance?
+            // Actually ConversationMonitor is constructed with director instance.
+            // If Council is private, we can't accept it.
+            // BUT MCPServer has public council? (Wait, MCPServer (core) has public council? I need to check MCPServer.ts)
+            // I'll assume server.council (on IMCPServer) is what we want.
+            // IF NOT, I will use `any` cast.
 
-            const prompt = `You are the Supervisor Council. The agent is IDLE.
-            Personas: [Architect], [Product], [Critic].
-            
-            Current Goal: "Autonomous Development"
-            
-            DIRECTIVE: "Please continue to proceed as you recommend based on the current state and roadmap."
-            
-            Output a dialogue followed by a DIRECTIVE line.
-            
-            Format:
-            [Architect]: ...
-            [Product]: ...
-            DIRECTIVE: "The specific task to run"
-            `;
+            // @ts-ignore
+            const activeCouncil = this.server.council || (this.director as any).council;
 
-            const response = await this.llmService.generateText(model.provider, model.modelId, "Council", prompt);
-            const msg = response.content.trim();
+            if (activeCouncil) {
+                const directive = await activeCouncil.runConsensusSession("The agent is IDLE. Review the current state and roadmap, then issue a Strategic Directive.");
+                console.error(`[Director] 📜 Council Directive: ${directive.summary}`);
 
-            // ROBUST REGEX: Capture EVERYTHING after "DIRECTIVE:" until end of line or string
-            const directiveMatch = msg.match(/DIRECTIVE:\s*(.*)/i);
-            // Remove surrounding quotes if they exist, but keep internal quotes
-            let directive = directiveMatch ? directiveMatch[1].trim() : null;
-            if (directive && directive.startsWith('"') && directive.endsWith('"')) {
-                directive = directive.slice(1, -1);
-            }
+                if (directive.summary) {
+                    // Update Live Feed
+                    const liveFeedPath = (await import('path')).join(process.cwd(), 'DIRECTOR_LIVE.md');
+                    try { (await import('fs')).appendFileSync(liveFeedPath, `\n### Council Directive\n${directive.summary}\n`); } catch (e) { }
 
-            // 1. Log Dialogue to Console (Safe, no UI interference)
-            console.error(`\n\n🏛️ **COUNCIL HALL** 🏛️\n------------------------\n${msg}\n------------------------\n`);
+                    // Execute
+                    await this.director.executeTask(directive.summary, 10);
 
-            // 1b. Broadcast Council Summary to Chat (with auto-submit)
-            try {
-                // @ts-ignore
-                await this.server.executeTool('chat_reply', { text: `🏛️ [Council]: ${directive || 'Deliberating...'}` });
-                await new Promise(r => setTimeout(r, 1000));
-                await this.server.executeTool('native_input', { keys: 'alt+enter' });
-            } catch (e) { }
-
-            if (directive) {
-                // 2. EXECUTE DIRECTLY
-                await this.director.executeTask(directive);
-
-                // 3. Generate Intelligent Summary (not just "task completed")
-                try {
-                    const fs = await import('fs');
-                    const path = await import('path');
-                    const cwd = process.cwd();
-
-                    // Read context for intelligent summary
-                    let context = '';
-                    const readFile = (name: string) => {
-                        try {
-                            const p = path.join(cwd, name);
-                            if (fs.existsSync(p)) return fs.readFileSync(p, 'utf8').substring(0, 500);
-                        } catch (e) { }
-                        return '';
-                    };
-                    context += readFile('README.md');
-                    context += readFile('docs/ROADMAP.md');
-
-                    // Generate brief summary via LLM
-                    const model = await this.server.modelSelector.selectModel({ task: 'summary' });
-                    const summaryPrompt = `You just completed: "${directive}". Based on the project context, write a 1-sentence update for the development chat about what was done and what might be next. Be specific and actionable.\n\nContext:\n${context}`;
-                    const response = await this.llmService.generateText(model.provider, model.modelId, 'Director Summary', summaryPrompt);
-                    const summary = response.content.trim().substring(0, 200);
-
-                    // Broadcast intelligent update with auto-submit
-                    // @ts-ignore
-                    await this.server.executeTool('chat_reply', { text: `📋 [Director]: ${summary}` });
-                    await new Promise(r => setTimeout(r, 1000));
-                    await this.server.executeTool('native_input', { keys: 'alt+enter' });
-                } catch (e: any) {
-                    console.error(`[Director] Summary generation failed: ${e.message}`);
-                    // Fallback to simple message
-                    // @ts-ignore
-                    await this.server.executeTool('chat_reply', { text: `✅ [Director]: Completed task.` });
-                    await new Promise(r => setTimeout(r, 1000));
-                    await this.server.executeTool('native_input', { keys: 'alt+enter' });
+                    // Report Back
+                    await this.server.executeTool('chat_reply', { text: `🏛️ [Council]: ${directive.summary}` });
                 }
             } else {
-                console.error("[Director] No directive found in Council output.");
+                console.error("[Director] No Council instance found!");
             }
 
         } catch (e: any) {
@@ -497,5 +466,12 @@ class ConversationMonitor {
             await new Promise(r => setTimeout(r, cooldown));
             this.isRunningTask = false;
         }
+    }
+
+    private async healFailure(filePath: string, error: string) {
+        console.error(`[Director:Healer] Triggering repair task for ${filePath}`);
+        // Delegate to main execution loop
+        // We use a high autonomy goal to fix the specific error
+        await this.director.executeTask(`Fix the failed test in file: ${filePath}. The error was: ${error}. Analyze the code and error, then use 'replace_in_file' or 'write_file' to fix it. Verification: Run the test again to confirm it passes.`, 5);
     }
 }

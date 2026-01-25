@@ -15,85 +15,90 @@ interface DebateResult {
 
 export class Council {
     private members: CouncilMember[] = [
-        { name: "The Architect", role: "System Design", personality: "Focuses on scalability, clean code, and patterns. Strict." },
-        { name: "The Guardian", role: "Security", personality: "Paranoid about system modifications (writes, execution, network). Permissive for reading project files (md, ts, json) to enable learning." },
-        { name: "The Optimizer", role: "Performance", personality: "Obsessed with speed and resource usage. Pragmatic." }
+        { name: "Product Manager", role: "Strategy & Value", personality: "Focuses on user value, roadmap alignment, pragmatic utility, and efficient delivery." },
+        { name: "The Architect", role: "System Design", personality: "Focuses on clean code, modularity, scalability, and technical elegance. Strict." },
+        { name: "The Critic", role: "Quality Assurance", personality: "Focuses on edge cases, bugs, security risks, and potential failures. Pessimistic." }
     ];
 
     private llmService: LLMService;
+    public lastResult: DebateResult | null = null;
 
     constructor(private modelSelector: ModelSelector) {
         this.llmService = new LLMService();
     }
 
-    async startDebate(proposal: string): Promise<DebateResult> {
-        console.log(`[Council] 🏛️ Session started for: "${proposal}"`);
+    async runConsensusSession(topic: string): Promise<DebateResult> {
+        console.log(`[Council] 🏛️ Convening Consensus Session on: "${topic}"`);
         const transcripts: { speaker: string, text: string }[] = [];
+        let context = `Topic: "${topic}"\n\n`;
 
-        // Parallel Consultation
-        const consultations = this.members.map(member => this.consultMember(member, proposal));
-        const results = await Promise.all(consultations);
+        // 1. Product Manager Proposal
+        const product = this.members[0];
+        const proposal = await this.consultMember(product, context, "Propose a high-level direction/task based on this topic. Be concrete.");
+        context += `[${product.name}]: ${proposal.response}\n\n`;
+        transcripts.push({ speaker: product.name, text: proposal.response });
 
-        for (const res of results) {
-            transcripts.push({
-                speaker: res.member.name,
-                text: res.response
-            });
+        // 2. Architect Critique
+        const architect = this.members[1];
+        const archCritique = await this.consultMember(architect, context, "Critique the proposal for technical feasibility, structural elegance, and maintainability.");
+        context += `[${architect.name}]: ${archCritique.response}\n\n`;
+        transcripts.push({ speaker: architect.name, text: archCritique.response });
+
+        // 3. Critic Review
+        const critic = this.members[2];
+        const securityReview = await this.consultMember(critic, context, "Identify risks, edge cases, or security flaws in the architecture proposal.");
+        context += `[${critic.name}]: ${securityReview.response}\n\n`;
+        transcripts.push({ speaker: critic.name, text: securityReview.response });
+
+        // 4. Product Manager Synthesis (Final Directive)
+        const directive = await this.consultMember(product, context, "Synthesize the feedback into a single, actionable DIRECTIVE for the Agent. Start your response with 'DIRECTIVE: ...'");
+        transcripts.push({ speaker: "Final Directive", text: directive.response });
+
+        // Extract directive text
+        let finalDirective = directive.response;
+        const match = finalDirective.match(/DIRECTIVE:\s*(.*)/i);
+        if (match) {
+            finalDirective = match[1].trim();
         }
 
-        // Decision Logic: Create a summary of the advice.
-        // We no longer calculate votes or enforce vetos. The Council is ADVISORY.
-        const summary = `Council Advice: ${results.map(r => `${r.member.name}: ${r.shortAdvice}`).join(' | ')}`;
+        console.log(`[Council] 🏁 Consensus Reached: ${finalDirective.substring(0, 100)}...`);
 
-        console.log(`[Council] 🏁 Consensus: ${summary}`);
-        return {
-            approved: true, // ALWAYS approved now. Council is advisory.
+        const result: DebateResult = {
+            approved: true,
             transcripts,
-            summary
+            summary: finalDirective
         };
+
+        this.lastResult = result;
+        return result;
     }
 
-    private async consultMember(member: CouncilMember, proposal: string): Promise<{ member: CouncilMember, response: string, shortAdvice: string }> {
-        // Select a smart model for the Council
+    private async consultMember(member: CouncilMember, context: string, instruction: string): Promise<{ member: CouncilMember, response: string, shortAdvice: string }> {
         const model = await this.modelSelector.selectModel({ taskComplexity: 'medium', taskType: 'supervisor' });
 
         const systemPrompt = `You are ${member.name}, a member of the AI Council.
 Role: ${member.role}
 Personality: ${member.personality}
 
-Your task is to review the following technical proposal/action given by an autonomous agent.
-You must provide constructive criticism, strategic advice, or alternative suggestions.
-You are NOT a gatekeeper. You are a collaborator.
+Context of Debate:
+${context}
 
-RESPONSE FORMAT:
-Start your response with a concise 1-sentence summary of your advice (max 15 words).
-Then provide a detailed explanation or suggestion in the following paragraph.
-`;
-
-        const userPrompt = `PROPOSAL: "${proposal}"\n\nWhat is your advice?`;
+Task: ${instruction}
+Keep your response concise (under 4 sentences).`;
 
         try {
-            const response = await this.llmService.generateText(model.provider, model.modelId, systemPrompt, userPrompt);
+            const response = await this.llmService.generateText(model.provider, model.modelId, systemPrompt, "Your turn.");
             const content = response.content.trim();
-
             console.log(`[Council] 👤 ${member.name}: ${content}`);
-
-            // Extract first sentence as short advice
-            const firstLine = content.split('\n')[0] || "No advice.";
 
             return {
                 member,
                 response: content,
-                shortAdvice: firstLine
+                shortAdvice: content
             };
-
         } catch (e: any) {
             console.error(`[Council] Error consulting ${member.name}:`, e.message);
-            return {
-                member,
-                response: `[Error: ${e.message}] Abstained.`,
-                shortAdvice: "Abstained."
-            };
+            return { member, response: "Abstained.", shortAdvice: "Abstained." };
         }
     }
 }

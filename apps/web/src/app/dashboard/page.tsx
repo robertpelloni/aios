@@ -4,6 +4,10 @@ import { trpc } from "@/utils/trpc";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import DirectorConfig from "@/components/DirectorConfig";
+import SystemStatus from "@/components/SystemStatus";
+import CouncilConfig from "@/components/CouncilConfig";
+import CouncilVisualizer from "@/components/CouncilVisualizer";
+import CommandCenter from "@/components/CommandCenter";
 
 export default function DashboardHome() {
     const { data: health } = trpc.health.useQuery();
@@ -64,46 +68,31 @@ export default function DashboardHome() {
                 </div>
             </div>
 
-            {/* Director Configuration */}
-            <DirectorConfig />
+            {/* COMMAND CENTER (Voice/Text Input) */}
+            <CommandCenter />
+
+            {/* Main Intelligence Grid */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                {/* Left Column: System & Config */}
+                <div className="space-y-6">
+                    <SystemStatus />
+                    <DirectorConfig />
+                    <CouncilConfig />
+                </div>
+
+                {/* Right Column: Live Council Visualizer (Spans 2 cols) */}
+                <div className="xl:col-span-2">
+                    <CouncilVisualizer />
+                </div>
+            </div>
 
             {/* Quick Actions Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <ShortcutCard
-                    title="Skills Library"
-                    desc="Inspect available capabilities"
-                    href="/dashboard/skills"
-                    icon="⚡"
-                    color="text-yellow-400"
-                />
-                <ShortcutCard
-                    title="Page Reader"
-                    desc="Scrape & convert web content"
-                    href="/dashboard/reader"
-                    icon="📖"
-                    color="text-orange-400"
-                />
-                <ShortcutCard
-                    title="Config Editor"
-                    desc="Manage system settings"
-                    href="/dashboard/config"
-                    icon="⚙️"
-                    color="text-zinc-400"
-                />
-                <ShortcutCard
-                    title="System Logs"
-                    desc="View live stream (Coming Soon)"
-                    href="/dashboard/logs"
-                    icon="terminal"
-                    color="text-green-400"
-                />
-                <ShortcutCard
-                    title="Traffic Inspector"
-                    desc="Real-time MCP packet capture"
-                    href="/dashboard/inspector"
-                    icon="📡"
-                    color="text-green-400"
-                />
+                <ShortcutCard title="Skills Library" desc="Inspect available capabilities" href="/dashboard/skills" icon="⚡" color="text-yellow-400" />
+                <ShortcutCard title="Architecture" desc="View dependency graph" href="/dashboard/architecture" icon="🏗️" color="text-purple-400" />
+                <ShortcutCard title="Page Reader" desc="Scrape & convert web content" href="/dashboard/reader" icon="📖" color="text-orange-400" />
+                <ShortcutCard title="Config Editor" desc="Manage system settings" href="/dashboard/config" icon="⚙️" color="text-zinc-400" />
+                <ShortcutCard title="Traffic Inspector" desc="Real-time MCP packet capture" href="/dashboard/inspector" icon="📡" color="text-green-400" />
             </div>
 
             {/* Recent Activity / Context (Placeholder) */}

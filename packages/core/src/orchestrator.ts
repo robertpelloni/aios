@@ -11,6 +11,7 @@ import { createExpressMiddleware } from '@trpc/server/adapters/express';
 console.log("[Core:Orchestrator] ✓ @trpc/server/adapters/express");
 import { appRouter } from './trpc.js';
 console.log("[Core:Orchestrator] ✓ trpc.js");
+import { InputTools, SystemStatusTool } from '@borg/tools';
 import { MCPServer } from './MCPServer.js';
 console.log("[Core:Orchestrator] ✓ MCPServer.js");
 
@@ -54,7 +55,9 @@ export async function startOrchestrator() {
     // 2. Start MCP Server (Bridged: Stdio + WebSocket)
     try {
         console.log("[Core] 2. Instantiating MCPServer...");
-        const mcp = new MCPServer();
+        const inputTools = new InputTools();
+        const systemStatusTool = new SystemStatusTool();
+        const mcp = new MCPServer({ inputTools, systemStatusTool });
 
         console.log("[Core] 3. Starting MCPServer...");
         await mcp.start();

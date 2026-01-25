@@ -4,11 +4,26 @@ import { z } from 'zod';
 
 export const t = initTRPC.create();
 
+// Mock RBAC Middleware
+const isAdmin = t.middleware(async ({ next, ctx }) => {
+    // In a real app, check ctx.user.role via JWT/Session
+    // For local desktop app, we default to ADMIN unless config says 'demo_mode'
+    // @ts-ignore
+    const config = global.mcpServerInstance?.directorConfig;
+    if (config?.demo_mode) {
+        throw new Error("UNAUTHORIZED: Demo Mode enabled. Action restricted.");
+    }
+    return next();
+});
+
+export const publicProcedure = t.procedure;
+export const adminProcedure = t.procedure.use(isAdmin);
+
 export const appRouter = t.router({
-    health: t.procedure.query(() => {
+    health: publicProcedure.query(() => {
         return { status: 'running', service: '@borg/core' };
     }),
-    getTaskStatus: t.procedure
+    getTaskStatus: publicProcedure
         .input(z.object({ taskId: z.string().optional() }))
         .query(({ input }) => {
             return {
@@ -96,6 +111,19 @@ export const appRouter = t.router({
         })
     }),
     director: t.router({
+        memorize: t.procedure.input(z.object({ content: z.string(), source: z.string() })).mutation(async ({ input }) => {
+            // @ts-ignore
+            if (global.mcpServerInstance && global.mcpServerInstance.vectorStore) {
+                // @ts-ignore
+                await global.mcpServerInstance.vectorStore.addDocuments([{
+                    id: `web-${Date.now()}`,
+                    text: input.content,
+                    metadata: { source: input.source }
+                }]);
+                return "Memorized.";
+            }
+            return "Vector Store not ready.";
+        }),
         chat: t.procedure.input(z.object({ message: z.string() })).mutation(async ({ input }) => {
             // @ts-ignore
             if (global.mcpServerInstance) {
@@ -115,7 +143,7 @@ export const appRouter = t.router({
             }
             return { active: false, status: 'UNKNOWN' };
         }),
-        stopAutoDrive: t.procedure.mutation(async () => {
+        stopAutoDrive: adminProcedure.mutation(async () => {
             // @ts-ignore
             if (global.mcpServerInstance) {
                 // @ts-ignore
@@ -124,7 +152,7 @@ export const appRouter = t.router({
             }
             throw new Error("MCPServer instance not found");
         }),
-        startAutoDrive: t.procedure.mutation(async () => {
+        startAutoDrive: adminProcedure.mutation(async () => {
             // @ts-ignore
             if (global.mcpServerInstance) {
                 // @ts-ignore
@@ -182,13 +210,13 @@ export const appRouter = t.router({
                 };
 
                 // @ts-ignore
-                global.mcpServerInstance.directorConfig = {
+                global.mcpServerInstance.updateDirectorConfig({
                     ...current,
                     ...input,
                     council
-                };
+                });
 
-                console.log('[tRPC] Director config updated:', input);
+                console.log('[tRPC] Director config updated & saved:', input);
                 // @ts-ignore
                 return global.mcpServerInstance.directorConfig;
             }
@@ -196,22 +224,35 @@ export const appRouter = t.router({
         })
     }),
     council: t.router({
-        startDebate: t.procedure.input(z.object({ proposal: z.string() })).mutation(async ({ input }) => {
+        runSession: t.procedure.input(z.object({ proposal: z.string() })).mutation(async ({ input }) => {
             // @ts-ignore
             if (global.mcpServerInstance) {
                 // @ts-ignore
-                const result = await global.mcpServerInstance.council.startDebate(input.proposal);
+                const result = await global.mcpServerInstance.council.runConsensusSession(input.proposal);
                 return result;
             }
             throw new Error("MCPServer instance not found");
+        }),
+        getLatestSession: t.procedure.query(async () => {
+            // @ts-ignore
+            if (global.mcpServerInstance) {
+                // @ts-ignore
+                return global.mcpServerInstance.council.lastResult || null;
+            }
+            return null;
         })
     }),
-    runCommand: t.procedure.input(z.object({ command: z.string() })).mutation(async ({ input }) => {
-        const { TerminalTools } = await import('@borg/tools');
+    runCommand: adminProcedure.input(z.object({ command: z.string() })).mutation(async ({ input }) => {
         // @ts-ignore
-        // @ts-ignore
-        const result = await TerminalTools[0].handler({ command: input.command, cwd: process.cwd() }) as any;
-        return result.content[0].text;
+        if (global.mcpServerInstance) {
+            // @ts-ignore
+            const result = await global.mcpServerInstance.executeTool('execute_command', { command: input.command, cwd: process.cwd() });
+            // @ts-ignore
+            if (result.isError) throw new Error(result.content[0].text);
+            // @ts-ignore
+            return result.content[0].text;
+        }
+        throw new Error("MCPServer instance not found");
     }),
     skills: t.router({
         list: t.procedure.query(async () => {
@@ -234,7 +275,7 @@ export const appRouter = t.router({
             return { content: [{ type: "text", text: "Error: No Server" }] };
         })
     }),
-    executeTool: t.procedure.input(z.object({
+    executeTool: adminProcedure.input(z.object({
         name: z.string(),
         args: z.any()
     })).mutation(async ({ input }) => {
@@ -249,6 +290,28 @@ export const appRouter = t.router({
             return result.content[0].text;
         }
         throw new Error("MCPServer not found");
+    }),
+    repoGraph: t.router({
+        get: t.procedure.query(async () => {
+            // @ts-ignore
+            if (global.mcpServerInstance && global.mcpServerInstance.autoTestService) {
+                // @ts-ignore
+                return global.mcpServerInstance.autoTestService.repoGraph.toJSON();
+            }
+            return { consumers: {}, dependencies: {} };
+            return { consumers: {}, dependencies: {} };
+        })
+    }),
+    autoTest: t.router({
+        getResults: t.procedure.query(async () => {
+            // @ts-ignore
+            if (global.mcpServerInstance && global.mcpServerInstance.autoTestService) {
+                // @ts-ignore
+                const results = global.mcpServerInstance.autoTestService.testResults;
+                return Object.fromEntries(results);
+            }
+            return {};
+        })
     }),
     git: t.router({
         getSubmodules: t.procedure.query(async () => {
@@ -305,6 +368,22 @@ export const appRouter = t.router({
             };
 
             return { keys, usage };
+        })
+    }),
+    system: t.router({
+        stats: t.procedure.query(async () => {
+            // @ts-ignore
+            if (global.mcpServerInstance) {
+                // @ts-ignore
+                const result = await global.mcpServerInstance.executeTool('system_status', {});
+                // @ts-ignore
+                // Handle potential error response from executeTool wrapper logic we added in runCommand? 
+                // But wait, executeTool returns standard content.
+                if (result.isError) return { error: result.content[0].text, platform: 'Error' };
+
+                return JSON.parse(result.content[0].text);
+            }
+            return { error: "No Server", platform: 'Unknown' };
         })
     })
 });

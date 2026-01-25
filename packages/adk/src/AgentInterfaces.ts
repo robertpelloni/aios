@@ -51,6 +51,7 @@ export interface IMCPServer {
         acceptDetectionMode: 'state' | 'polling';
         pollingIntervalMs: number;
     };
+    autoTestService?: any; // Loose typing to avoid cycle with Core
     executeTool(name: string, args: any): Promise<any>;
 }
 

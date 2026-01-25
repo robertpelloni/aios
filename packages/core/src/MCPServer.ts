@@ -26,12 +26,19 @@ import { WebSocketServerTransport } from './transports/WebSocketServerTransport.
 import http from 'http';
 console.log("[MCPServer] ✓ ws/http");
 
+import { McpmInstaller } from "./skills/McpmInstaller.js";
+import { ConfigManager } from "./config/ConfigManager.js";
+import { AutoTestService } from "./services/AutoTestService.js";
+import { SandboxService } from "./security/SandboxService.js";
+import { SquadService } from "./orchestrator/SquadService.js";
+import { AuditService } from "./security/AuditService.js";
 import { SkillRegistry } from "./skills/SkillRegistry.js";
 console.log("[MCPServer] ✓ SkillRegistry");
 
 import {
     FileSystemTools,
-    TerminalTools,
+    TerminalService, /// New class
+    ProcessRegistry, /// New class
     MemoryTools,
     TunnelTools,
     ConfigTools,
@@ -39,6 +46,8 @@ import {
     SearchTools,
     ReaderTools,
     InputTools,
+    WorktreeTools,
+    SystemStatusTool,
     ChainExecutor,
     type ChainRequest
 } from "@borg/tools";
@@ -70,6 +79,7 @@ export class MCPServer {
     private director: Director;
     private council: Council;
     public permissionManager: PermissionManager;
+    private auditService: AuditService;
     private vectorStore: any; // Lazy loaded
     private indexer: any; // Lazy loaded
     private memoryInitialized: boolean = false;
@@ -78,6 +88,14 @@ export class MCPServer {
     public wssInstance: any; // WebSocket.Server
     private inputTools: InputTools;
     public lastUserActivityTime: number = Date.now(); // Start with grace period
+    private systemStatusTool: SystemStatusTool;
+    private terminalService: TerminalService;
+    private processRegistry: ProcessRegistry;
+    private mcpmInstaller: McpmInstaller;
+    private configManager: ConfigManager;
+    public autoTestService: AutoTestService;
+    public sandboxService: SandboxService;
+    public squadService: SquadService;
     public directorConfig = {
         taskCooldownMs: 10000,
         heartbeatIntervalMs: 30000,
@@ -91,7 +109,7 @@ export class MCPServer {
         }
     };
 
-    constructor(options: { skipWebsocket?: boolean } = {}) {
+    constructor(options: { skipWebsocket?: boolean, inputTools?: InputTools, systemStatusTool?: SystemStatusTool, processRegistry?: ProcessRegistry } = {}) {
         this.router = new Router();
         this.modelSelector = new ModelSelector();
         this.skillRegistry = new SkillRegistry([
@@ -101,13 +119,34 @@ export class MCPServer {
         this.director = new Director(this);
         this.council = new Council(this.modelSelector);
         this.permissionManager = new PermissionManager('high'); // Default to HIGH AUTONOMY as requested
+        this.auditService = new AuditService(process.cwd());
         this.chainExecutor = new ChainExecutor(this);
-        this.inputTools = new InputTools();
+        this.inputTools = options.inputTools || new InputTools();
+        this.systemStatusTool = options.systemStatusTool || new SystemStatusTool();
+        this.processRegistry = options.processRegistry || new ProcessRegistry();
+        this.terminalService = new TerminalService(this.processRegistry);
+        this.mcpmInstaller = new McpmInstaller(path.join(process.cwd(), '.borg', 'skills'));
+        this.configManager = new ConfigManager();
+        this.autoTestService = new AutoTestService(process.cwd());
+        this.sandboxService = new SandboxService();
+
+        // Load persistent config
+        const savedConfig = this.configManager.loadConfig();
+        if (savedConfig) {
+            console.log("[MCPServer] Loaded persistent config.");
+            this.directorConfig = { ...this.directorConfig, ...savedConfig };
+            // Ensure nested merge for council
+            if (savedConfig.council) {
+                this.directorConfig.council = { ...this.directorConfig.council, ...savedConfig.council };
+            }
+        }
 
         // Memory System - LAZY LOADED on first use to speed up startup
         // VectorStore and Indexer are created in initializeMemorySystem()
         this.vectorStore = null;
         this.indexer = null;
+
+        this.squadService = new SquadService(this);
 
         // @ts-ignore
         global.mcpServerInstance = this;
@@ -194,6 +233,11 @@ export class MCPServer {
         });
     }
 
+    public updateDirectorConfig(newConfig: any) {
+        this.directorConfig = newConfig;
+        this.configManager.saveConfig(newConfig);
+    }
+
     public async executeTool(name: string, args: any): Promise<any> {
         const callId = Math.random().toString(36).substring(7);
         const startTime = Date.now();
@@ -215,12 +259,14 @@ export class MCPServer {
             const permission = this.permissionManager.checkPermission(name, args);
 
             if (permission === 'DENIED') {
+                this.auditService.log('TOOL_DENIED', { tool: name, args, reason: 'Policy/Permission' }, 'WARN');
                 throw new Error(`Permission Denied for tool '${name}' (Risk Level High). Autonomy Level is '${this.permissionManager.autonomyLevel}'.`);
             }
 
             if (permission === 'NEEDS_CONSULTATION') {
                 console.log(`[Borg Core] Consulting Council for: ${name}`);
-                const debate = await this.council.startDebate(`Execute tool '${name}' with args: ${JSON.stringify(args)}`);
+                this.auditService.log('TOOL_CONSULTATION', { tool: name, args }, 'WARN');
+                const debate = await this.council.runConsensusSession(`Execute tool '${name}' with args: ${JSON.stringify(args)}`);
 
                 if (!debate.approved) {
                     throw new Error(`Council Denied Execution: ${debate.summary}`);
@@ -428,6 +474,54 @@ export class MCPServer {
             else if (name === "read_skill") {
                 result = this.skillRegistry.readSkill(args?.skillName as string);
             }
+            else if (name === "mcpm_search") {
+                result = {
+                    content: [{ type: "text", text: JSON.stringify(await this.mcpmInstaller.search(args?.query as string), null, 2) }]
+                };
+            }
+            else if (name === "mcpm_install") {
+                const msg = await this.mcpmInstaller.install(args?.name as string);
+                result = {
+                    content: [{ type: "text", text: msg }]
+                };
+            }
+            else if (name === "start_autotest") {
+                this.autoTestService.start();
+                result = { content: [{ type: "text", text: "Auto-Test Watcher Started." }] };
+            }
+            else if (name === "stop_autotest") {
+                this.autoTestService.stop();
+                result = { content: [{ type: "text", text: "Auto-Test Watcher Stopped." }] };
+            }
+            else if (name === "start_squad") {
+                const branch = args?.branch as string;
+                const goal = args?.goal as string;
+                const msg = await this.squadService.spawnMember(branch, goal);
+                result = { content: [{ type: "text", text: msg }] };
+            }
+            else if (name === "list_squads") {
+                const squads = this.squadService.listMembers();
+                result = { content: [{ type: "text", text: JSON.stringify(squads, null, 2) }] };
+            }
+            else if (name === "kill_squad") {
+                const branch = args?.branch as string;
+                const msg = await this.squadService.killMember(branch);
+                result = { content: [{ type: "text", text: msg }] };
+            }
+            else if (name === "merge_squad") {
+                const { MergeService } = await import('./orchestrator/MergeService.js');
+                const merger = new MergeService(process.cwd());
+                const branch = args?.branch as string;
+                const res = await merger.mergeBranch(branch);
+                result = { content: [{ type: "text", text: JSON.stringify(res) }] };
+            }
+            else if (name === "execute_sandbox") {
+                const lang = args?.language as 'python' | 'node';
+                const code = args?.code as string;
+                result = {
+                    content: [{ type: "text", text: JSON.stringify(await this.sandboxService.execute(lang, code), null, 2) }]
+                };
+            }
             else if (name === "index_codebase") {
                 await this.initializeMemorySystem(); // Lazy load memory system
                 const dir = args?.path || process.cwd();
@@ -452,6 +546,12 @@ export class MCPServer {
                     content: [{ type: "text", text: text }]
                 };
             }
+            else if (name === "system_status") {
+                const status = await this.systemStatusTool.getSystemStatus();
+                result = {
+                    content: [{ type: "text", text: JSON.stringify(status, null, 2) }]
+                };
+            }
             else if (name === "chain_tools") {
                 result = {
                     content: [{ type: "text", text: JSON.stringify(await this.chainExecutor.executeChain(args as unknown as ChainRequest), null, 2) }]
@@ -459,7 +559,8 @@ export class MCPServer {
             }
             else {
                 // Check Standard Library
-                const standardTool = [...FileSystemTools, ...TerminalTools, ...MemoryTools, ...TunnelTools, ...LogTools, ...ConfigTools, ...SearchTools, ...ReaderTools].find(t => t.name === name);
+                const terminalTools = this.terminalService.getTools();
+                const standardTool = [...FileSystemTools, ...terminalTools, ...MemoryTools, ...TunnelTools, ...LogTools, ...ConfigTools, ...SearchTools, ...ReaderTools, ...WorktreeTools].find(t => t.name === name);
                 if (standardTool) {
                     // @ts-ignore
                     result = await standardTool.handler(args);
@@ -519,6 +620,33 @@ export class MCPServer {
                     inputSchema: { type: "object", properties: {} },
                 },
                 {
+                    name: "mcpm_search",
+                    description: "Search for skills in the module registry",
+                    inputSchema: {
+                        type: "object",
+                        properties: {
+                            query: { type: "string" }
+                        },
+                        required: ["query"]
+                    },
+                },
+                {
+                    name: "mcpm_install",
+                    description: "Install a skill from the registry (via git)",
+                    inputSchema: {
+                        type: "object",
+                        properties: {
+                            name: { type: "string" }
+                        },
+                        required: ["name"]
+                    },
+                },
+                {
+                    name: "system_status",
+                    description: "Get current system metrics (CPU, Memory, Uptime)",
+                    inputSchema: { type: "object", properties: {} },
+                },
+                {
                     name: "start_task",
                     description: "Start an autonomous task with the Director Agent",
                     inputSchema: {
@@ -528,6 +656,28 @@ export class MCPServer {
                             maxSteps: { type: "number" }
                         },
                         required: ["goal"]
+                    }
+                },
+                {
+                    name: "start_autotest",
+                    description: "Start the Auto-Test Watcher (runs tests on file save)",
+                    inputSchema: { type: "object", properties: {} },
+                },
+                {
+                    name: "stop_autotest",
+                    description: "Stop the Auto-Test Watcher",
+                    inputSchema: { type: "object", properties: {} },
+                },
+                {
+                    name: "execute_sandbox",
+                    description: "Execute code in a secure Docker container (Python/Node)",
+                    inputSchema: {
+                        type: "object",
+                        properties: {
+                            language: { type: "string", enum: ["python", "node"] },
+                            code: { type: "string" }
+                        },
+                        required: ["language", "code"]
                     }
                 },
                 {
@@ -686,7 +836,8 @@ export class MCPServer {
             ];
 
             // Standard Library Tools
-            const standardTools = [...FileSystemTools, ...TerminalTools, ...MemoryTools, ...TunnelTools, ...LogTools, ...ConfigTools, ...SearchTools, ...ReaderTools].map(t => ({
+            const terminalTools = this.terminalService.getTools();
+            const standardTools = [...FileSystemTools, ...terminalTools, ...MemoryTools, ...TunnelTools, ...LogTools, ...ConfigTools, ...SearchTools, ...ReaderTools, ...WorktreeTools].map(t => ({
                 name: t.name,
                 description: t.description,
                 inputSchema: t.inputSchema

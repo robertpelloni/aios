@@ -16,6 +16,8 @@ A unified operating system for PC-based local AI tools. Manage everything from t
 - **Auto-Drive:** Fully autonomous development loop that reads `task.md`, plans next steps, and executes them.
 - **Council Consensus:** Multi-persona LLM debate engine (Architect, Guardian, Optimizer) that reviews high-stakes decisions.
 - **Memory RAG:** Vector-based code indexing and semantic search for context-aware coding.
+- **Skill Installer:** Dynamic capability expansion via `mcpm_install` (Git-based skills).
+- **Configurable Control:** Real-time settings adjustment and persistence via Dashboard.
 
 ### 🔌 Universal MCP Control Plane
 - **Core Server:** Central orchestrator connecting Native IDE, Web Dashboard, and Browser Extension.
@@ -27,6 +29,8 @@ A unified operating system for PC-based local AI tools. Manage everything from t
 - **Skills UI:** Browse and manage installed capabilities.
 - **Reader UI:** Test the web scraper/page reader.
 - **Submodule Manager:** Visual git submodule health check and healing.
+- **Council Config:** Manage personas and context files.
+- **System Status:** Live metrics widget (CPU/RAM).
 
 ## 📦 Installation
 ```bash

@@ -2,6 +2,11 @@
 import fs from 'fs/promises';
 import path from 'path';
 
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export interface RegistryItem {
     name: string;
     url: string;
@@ -13,7 +18,8 @@ export class McpmRegistry {
     private cache: any = null;
 
     constructor() {
-        this.dataPath = path.join(__dirname, '../data/mcp_registry.json');
+        // Point to skills_registry.json in ../data
+        this.dataPath = path.join(__dirname, '../../data/skills_registry.json');
     }
 
     async load(): Promise<any> {

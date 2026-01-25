@@ -188,6 +188,22 @@ async function handleMessage(msg: any) {
             await vscode.commands.executeCommand('editor.action.clipboardPasteAction');
             log(`[DEBUG] Pasted to chat successfully`);
 
+            if (msg.submit) {
+                await new Promise(r => setTimeout(r, 800)); // Delay for clipboard paste to complete
+                log(`[SUBMIT] Attempting extension-side submit...`);
+                // Try multiple submit commands
+                const commands = [
+                    'workbench.action.chat.submit',
+                    'workbench.action.chat.send',
+                    'interactive.acceptChanges'
+                ];
+                for (const cmd of commands) {
+                    try {
+                        await vscode.commands.executeCommand(cmd);
+                    } catch (e) { }
+                }
+            }
+
         } catch (e: any) {
             log(`Failed to paste into chat: ${e.message}`);
             ignoreNextActivity = false;

@@ -1,3 +1,5 @@
+export * from './SystemStatusTool.js';
+export * from './os/ProcessRegistry.js';
 export * from './ChainExecutor.js';
 export * from './ConfigTools.js';
 export * from './FileSystemTools.js';
@@ -9,3 +11,4 @@ export * from './ReaderTools.js';
 export * from './SearchTools.js';
 export * from './TerminalTools.js';
 export * from './TunnelTools.js';
+export * from './WorktreeTools.js';

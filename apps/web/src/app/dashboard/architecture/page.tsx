@@ -64,7 +64,90 @@ export default function ArchitecturePage() {
                         </table>
                     </div>
                 </div>
+                {/* Dependency Graph */}
+                <div className="p-6 border rounded-lg bg-zinc-900 border-zinc-700">
+                    <h2 className="text-xl font-semibold mb-4 text-purple-400">Deep Code Intelligence Graph</h2>
+
+                    <GraphVisualizer />
+                </div>
+
+                {/* Auto-Test Health */}
+                <div className="p-6 border rounded-lg bg-zinc-900 border-zinc-700">
+                    <h2 className="text-xl font-semibold mb-4 text-rose-400">Auto-Test Health</h2>
+                    <AutoTestWidget />
+                </div>
             </div>
+        </div>
+    );
+}
+
+import Mermaid from '@/components/Mermaid';
+
+function GraphVisualizer() {
+    const { data: graph, isLoading } = trpc.repoGraph.get.useQuery();
+    const [mermaidSrc, setMermaidSrc] = React.useState('');
+
+    React.useEffect(() => {
+        if (!graph) return;
+
+        let src = 'graph TD\n';
+        // Limit nodes for performance/visual clarity
+        const nodes = Object.keys(graph.dependencies).slice(0, 50); // Top 50 modules
+
+        nodes.forEach(node => {
+            const cleanNode = node.replace(/[^a-zA-Z0-9]/g, '_');
+            src += `    ${cleanNode}["${node.split('/').pop()}"]\n`;
+
+            const deps = graph.dependencies[node] || [];
+            deps.forEach((dep: string) => {
+                if (nodes.includes(dep)) {
+                    const cleanDep = dep.replace(/[^a-zA-Z0-9]/g, '_');
+                    src += `    ${cleanNode} --> ${cleanDep}\n`;
+                }
+            });
+        });
+
+        if (nodes.length === 0) src += '    Start --> End\n';
+
+        setMermaidSrc(src);
+    }, [graph]);
+
+    if (isLoading) return <div className="text-zinc-500">Loading Intelligence Graph...</div>;
+
+    return (
+        <div className="w-full">
+            <Mermaid chart={mermaidSrc} />
+        </div>
+    );
+}
+
+function AutoTestWidget() {
+    const { data: results, isLoading } = trpc.autoTest.getResults.useQuery(undefined, { refetchInterval: 2000 });
+
+    if (isLoading) return <div className="text-zinc-500">Loading Test Results...</div>;
+
+    // Sort: Failures first
+    const sorted = Object.entries(results || {}).sort((a: any, b: any) => {
+        if (a[1].status === 'fail' && b[1].status !== 'fail') return -1;
+        if (b[1].status === 'fail' && a[1].status !== 'fail') return 1;
+        return b[1].timestamp - a[1].timestamp;
+    });
+
+    if (sorted.length === 0) return <div className="text-zinc-500 italic">No tests have run yet. Save a file to trigger.</div>;
+
+    return (
+        <div className="space-y-2 max-h-60 overflow-y-auto">
+            {sorted.map(([path, info]: any) => (
+                <div key={path} className="flex justify-between items-center bg-black/20 p-2 rounded text-xs">
+                    <span className="truncate max-w-[70%] font-mono text-zinc-300">{path.split('\\').pop()?.split('/').pop()}</span>
+                    <span className={`px-2 py-1 rounded font-bold ${info.status === 'pass' ? 'bg-emerald-900 text-emerald-300' :
+                        info.status === 'fail' ? 'bg-rose-900 text-rose-300' :
+                            'bg-blue-900 text-blue-300 animate-pulse'
+                        }`}>
+                        {info.status.toUpperCase()}
+                    </span>
+                </div>
+            ))}
         </div>
     );
 }

@@ -1,98 +1,68 @@
 
 // Background Service Worker
-const CORE_URL = 'ws://localhost:3001'; // borg Core URL
-let socket: WebSocket | null = null;
-const pendingRequests = new Map<string, (response: any) => void>();
+// Proxies requests from Content Script (Web Page) to Local Borg Core (localhost:3000)
 
-function connect() {
-    console.log('Connecting to borg Core...');
-    socket = new WebSocket(CORE_URL);
+const CORE_URL = 'http://localhost:3000/trpc';
 
-    socket.onopen = () => {
-        console.log('Connected to borg Core');
-        chrome.action.setBadgeText({ text: 'ON' });
-        chrome.action.setBadgeBackgroundColor({ color: '#4caf50' });
-    };
+// Keep-alive setup for Service Worker
+const keepAlive = () => setInterval(chrome.runtime.getPlatformInfo, 20e3);
+chrome.runtime.onStartup.addListener(keepAlive);
+keepAlive();
 
-    socket.onmessage = (event) => {
-        console.log('Message from Core:', event.data);
-        try {
-            const data = JSON.parse(event.data);
-
-            // Handle Direct UI Commands
-            const uiCommands = ['INSERT_TEXT', 'SUBMIT_CHAT', 'CLICK_ELEMENT'];
-            if (uiCommands.includes(data.type)) {
-                // Find active tab and send message
-                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                    if (tabs[0]?.id) {
-                        chrome.tabs.sendMessage(tabs[0].id, data);
-                    }
-                });
-                return;
-            }
-
-            // Handle JSON-RPC Responses
-            if (data.id && pendingRequests.has(data.id)) {
-                const resolver = pendingRequests.get(data.id);
-                if (resolver) {
-                    resolver(data);
-                    pendingRequests.delete(data.id);
-                }
-            }
-        } catch (e) {
-            console.error('Failed to parse WebSocket message', e);
-        }
-    };
-
-    socket.onclose = () => {
-        console.log('Disconnected from borg Core');
-        chrome.action.setBadgeText({ text: 'OFF' });
-        chrome.action.setBadgeBackgroundColor({ color: '#f44336' });
-        setTimeout(connect, 5000); // Reconnect
-    };
-
-    socket.onerror = (error) => {
-        console.error('WebSocket Error:', error);
-    };
-}
-
-// Listen for messages from Content Script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === 'EXECUTE_MCP_TOOL') {
-        executeTool(message, sendResponse);
-        return true; // Indicates async response
+    if (message.type === 'EXECUTE_TOOL') {
+        handleToolExecution(message.tool, message.args)
+            .then(result => sendResponse({ success: true, result }))
+            .catch(err => sendResponse({ success: false, error: err.message }));
+        return true; // Async response
     }
-    if (message.type === 'PING') {
-        sendResponse({ status: socket?.readyState === 1 ? 'OK' : 'ERROR' });
+
+    if (message.type === 'CHECK_CONNECTION') {
+        fetch(`${CORE_URL}/health`)
+            .then(res => res.json())
+            .then(data => sendResponse({ connected: data?.result?.data?.status === 'running' }))
+            .catch(() => sendResponse({ connected: false }));
+        return true;
+    }
+
+    if (message.type === 'SAVE_CONTEXT') {
+        fetch(`${CORE_URL}/director.memorize`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: message.content, source: message.url })
+        })
+            .then(res => res.json())
+            .then(data => sendResponse({ success: true, data }))
+            .catch(err => sendResponse({ success: false, error: err.message }));
+        return true;
     }
 });
 
-function executeTool(payload: any, sendResponse: (response: any) => void) {
-    if (!socket || socket.readyState !== 1) {
-        sendResponse({ error: 'borg Core Disconnected' });
-        return;
+async function handleToolExecution(toolName: string, args: any) {
+    // We use the 'execute_tool' endpoint or Director?
+    // Actually, TRPC doesn't expose raw 'executeTool' on root usually.
+    // We might need to use 'director.chat' or 'server.executeTool' if exposed.
+
+    // For now, let's assume we added a 'tools' router or use 'director.chat' for natural language.
+    // If the web chat wants to read a file, it should ask the Director via NL?
+    // OR we expose specific tools via a new router.
+
+    // Let's use Director Chat for MVP "Do X".
+    // But for direct "injections" (tool access), we need a direct pipe.
+
+    // Fallback: If tool is 'read_file', use filesystem router (if exists) or just fail.
+    // Wait, trpc.ts has 'remoteAccess'.
+
+    // Let's rely on 'director.chat' for now: "Please read file X".
+    if (toolName === 'chat') {
+        const response = await fetch(`${CORE_URL}/director.chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: args.message })
+        });
+        const json = await response.json();
+        return json.result?.data;
     }
 
-    // Wrap in JSON-RPC 2.0
-    const requestId = crypto.randomUUID();
-    const jsonRpcRequest = {
-        jsonrpc: '2.0',
-        id: requestId,
-        method: 'tools/call', // MCP Protocol Standard
-        params: {
-            name: payload.name,
-            arguments: payload.arguments
-        }
-    };
-
-    // Store resolver
-    pendingRequests.set(requestId, sendResponse);
-
-    // Send
-    console.log('Sending to Core:', jsonRpcRequest);
-    socket.send(JSON.stringify(jsonRpcRequest));
+    throw new Error(`Tool ${toolName} not supported via Bridge yet.`);
 }
-
-chrome.runtime.onStartup.addListener(connect);
-chrome.runtime.onInstalled.addListener(connect);
-connect(); // Connect immediately

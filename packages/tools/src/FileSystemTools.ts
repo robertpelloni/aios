@@ -70,5 +70,31 @@ export const FileSystemTools = [
                 return { content: [{ type: "text", text: `Error: ${err.message}` }] };
             }
         }
+    },
+    {
+        name: "replace_in_file",
+        description: "Replace a string in a file with another string",
+        inputSchema: {
+            type: "object",
+            properties: {
+                path: { type: "string", description: "Path to modify" },
+                oldText: { type: "string", description: "Exact text to replace" },
+                newText: { type: "string", description: "New text to insert" }
+            },
+            required: ["path", "oldText", "newText"]
+        },
+        handler: async (args: { path: string, oldText: string, newText: string }) => {
+            try {
+                const content = await fs.readFile(args.path, "utf-8");
+                if (!content.includes(args.oldText)) {
+                    return { content: [{ type: "text", text: `Error: oldText not found in file.` }] };
+                }
+                const newContent = content.replace(args.oldText, args.newText);
+                await fs.writeFile(args.path, newContent, "utf-8");
+                return { content: [{ type: "text", text: `Successfully replaced text in ${args.path}` }] };
+            } catch (err: any) {
+                return { content: [{ type: "text", text: `Error: ${err.message}` }] };
+            }
+        }
     }
 ];

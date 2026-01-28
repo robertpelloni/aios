@@ -62,9 +62,23 @@ export default function DirectorConfig() {
                     />
                 </div>
 
+
+
                 {/* Features */}
                 <div className="space-y-4">
                     <h3 className="text-gray-400 font-medium border-b border-gray-800 pb-2">Behavior</h3>
+
+                    <div className="space-y-1">
+                        <label className="text-sm text-gray-300">Default Focus (Standing Order)</label>
+                        <input
+                            type="text"
+                            value={formState.defaultTopic || ''}
+                            onChange={(e) => handleChange('defaultTopic', e.target.value)}
+                            placeholder="e.g. Implement Roadmap Features"
+                            className="w-full bg-gray-800 rounded px-3 py-2 text-sm text-white focus:ring-1 focus:ring-blue-500 border border-gray-700 placeholder-gray-600"
+                        />
+                        <p className="text-xs text-gray-500">The Supervisor will focus on this if no other command is active.</p>
+                    </div>
 
                     <ConfigSlider
                         label="Periodic Summary"
@@ -101,14 +115,14 @@ export default function DirectorConfig() {
                     onClick={handleSave}
                     disabled={!isEditing || updateMutation.isLoading}
                     className={`px-4 py-2 rounded font-medium transition-colors ${isEditing
-                            ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20'
-                            : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                        ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20'
+                        : 'bg-gray-800 text-gray-500 cursor-not-allowed'
                         }`}
                 >
                     {updateMutation.isLoading ? 'Saving...' : 'Apply Changes'}
                 </button>
             </div>
-        </div>
+        </div >
     );
 }
 

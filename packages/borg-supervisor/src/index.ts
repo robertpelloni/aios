@@ -75,6 +75,10 @@ class SupervisorServer {
                                 keys: {
                                     type: "string",
                                     description: "Keys to send (e.g. 'ctrl+r', 'f5')"
+                                },
+                                windowTitle: {
+                                    type: "string",
+                                    description: "Exact window title to focus before sending keys (Recommended)"
                                 }
                             },
                             required: ["keys"]
@@ -116,7 +120,8 @@ class SupervisorServer {
 
                 if (request.params.name === "simulate_input") {
                     const keys = request.params.arguments?.keys as string;
-                    const result = await this.inputManager.sendKeys(keys);
+                    const windowTitle = request.params.arguments?.windowTitle as string | undefined;
+                    const result = await this.inputManager.sendKeys(keys, windowTitle);
                     logger.info("Input Simulated", { keys, result });
                     return {
                         content: [{ type: "text", text: result }]

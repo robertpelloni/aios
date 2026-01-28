@@ -1,17 +1,25 @@
 # borg Roadmap: The Ultimate SuperAI
 
-## Phase 13: Local AI Tool Governance (In Progress)
-- [x] **Tool Spreadsheet:** Dashboard inventory of local tools (Docker, Redis, etc.).
+## Phase 13: Local AI Tool Governance (COMPLETED)
+- [x] **Tool Spreadsheet:** Dashboard inventory of local tools.
 - [x] **Status Detection:** Auto-discovery of installed CLI tools.
 - [x] **Process Monitor:** Watchdog for background services.
 - [x] **Hardware Stats:** Real-time resource monitoring.
 - [x] **Ecosystem Dashboard:** Auto-generated `SUBMODULES.md` tracking 200+ integrated tools.
-- [x] **Massive Submodule Integration:** Import and categorize 100+ external tools into `external/`.
-- [x] **Resource Indexing:** `FEATURES_CATALOG.md` created with research status.
-- [ ] **Unified Dashboarding:** Create UI pages for Jules, Opencode, and General Tool management.
+- [x] **Massive Submodule Integration:** Import and categorize 100+ external tools.
+- [x] **Resource Indexing:** `FEATURES_CATALOG.md` created.
+- [x] **Unified Dashboarding:** Consolidated "Mission Control" UI established.
 
-## Phase X: Deep Research & Absorption (Continuous)
-**Goal:** Achieve feature parity with the "Definitive Borg Resource Index" (432 tools).
+## Phase 14: System Polish & Core UX (CURRENT FOCUS)
+**Goal:** Streamline existing systems. Fix "interrupting" bugs. Enhance Dashboard utility.
+- [x] **Governance:** Establish `RULES.md` and `DESIGN_STANDARDS.md`.
+- [x] **Supervisor Repair:** Fix `InputManager` typing interruptions (Added window target logic).
+- [x] **Dashboard Config:** Added `DirectorStatusWidget` and consolidated UI.
+- [x] **Documentation:** Sync all docs with actual codebase state.
+- [x] **Roadmap Sync:** Verify `ROADMAP.md` is the source of truth.
+
+## Phase 15: Deep Research & Absorption (Continuous)
+**Goal:** Achieve feature parity with the "Definitive Borg Resource Index".
 - [ ] **Ingest:** Process `reference/aios_master_index.csv`.
 - [ ] **Analyze:** Sub-agents to scrape and summarize every tool.
 - [ ] **Absorb:** Re-implement key features into Borg Core.

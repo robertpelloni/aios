@@ -1,4 +1,18 @@
 # Changelog
+## [1.5.0] - 2026-01-28
+### Added
+- **Supervisor Personality:** Configurable "Default Topic" (Standing Order) effectively curing "awaiting instructions" spam.
+- **Dashboard:**
+  - Integrated `DirectorStatusWidget` for real-time detailed status.
+  - Added "Default Focus" configuration field.
+- **Inbox Processing:**
+  - Processed `INBOX_LINKS.md` and extracted high-value tools.
+  - Added submodules: `awesome-mcp-servers`, `humanizer`, `anthropic-skills`, `openai-skills`, `metamcp`.
+
+### Fixed
+- **Input Manager:** Implemented targeted window focus for `sendKeys` to prevent typing interruptions.
+- **Director:** Refactored state management and centralized configuration.
+
 ## [1.4.0] - 2026-01-24
 ### Added
 - **Submodules:** Integrated `jules-autopilot`, `opencode-autopilot`, and `awesome-mcp-servers`.

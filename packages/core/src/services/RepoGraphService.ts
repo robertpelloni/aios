@@ -104,13 +104,21 @@ export class RepoGraphService {
         return results;
     }
     toJSON() {
+        const nodes = new Set<string>();
+        const links: { source: string; target: string }[] = [];
+
+        // Collect all nodes from dependencies
+        for (const [source, targets] of this.dependencies.entries()) {
+            nodes.add(source);
+            for (const target of targets) {
+                nodes.add(target);
+                links.push({ source, target });
+            }
+        }
+
         return {
-            consumers: Object.fromEntries(
-                Array.from(this.consumers.entries()).map(([k, v]) => [k, Array.from(v)])
-            ),
-            dependencies: Object.fromEntries(
-                Array.from(this.dependencies.entries()).map(([k, v]) => [k, Array.from(v)])
-            )
+            nodes: Array.from(nodes).map(id => ({ id, name: path.basename(id) })),
+            links
         };
     }
 }

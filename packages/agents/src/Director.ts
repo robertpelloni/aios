@@ -19,6 +19,12 @@ export class Director {
     private currentStatus: 'IDLE' | 'THINKING' | 'DRIVING' = 'IDLE';
     private monitor: ConversationMonitor | null = null; // Smart Supervisor
 
+    // Execution State
+    private activeGoal: string | null = null;
+    private currentStep: number = 0;
+    private maxSteps: number = 0;
+    private history: string[] = [];
+
     constructor(server: IMCPServer) {
         this.server = server;
         this.llmService = new LLMService();
@@ -26,13 +32,53 @@ export class Director {
         this.council = new Council(server.modelSelector);
     }
 
+    // Configuration
+    private config = {
+        defaultTopic: "Implement Roadmap Features",
+        taskCooldownMs: 10000,
+        heartbeatIntervalMs: 30000,
+        periodicSummaryMs: 120000,
+        pasteToSubmitDelayMs: 1000,
+        acceptDetectionMode: 'polling' as 'polling' | 'state',
+        pollingIntervalMs: 30000
+    };
+
+    public getConfig() {
+        return { ...this.config };
+    }
+
+    public updateConfig(newConfig: Partial<typeof this.config>) {
+        this.config = { ...this.config, ...newConfig };
+        // Trigger any side effects (e.g. restarting timers) if necessary
+        if (this.monitor) {
+            // this.monitor.updateConfig(this.config); // TODO: Implement if monitor needs it
+        }
+    }
+
+    public getStatus() {
+        return {
+            active: this.isAutoDriveActive,
+            status: this.currentStatus,
+            goal: this.activeGoal,
+            step: this.currentStep,
+            totalSteps: this.maxSteps,
+            lastHistory: this.history.slice(-3),
+            config: this.config
+        };
+    }
+
     /**
      * Executes a single goal using the Director's reasoning loop.
      */
     async executeTask(goal: string, maxSteps: number = 10): Promise<string> {
+        this.activeGoal = goal;
+        this.maxSteps = maxSteps;
+        this.history = [];
+        this.currentStatus = 'DRIVING';
+
         const context: AgentContext = {
             goal,
-            history: [],
+            history: this.history,
             maxSteps
         };
 
@@ -40,6 +86,7 @@ export class Director {
         await this.broadcast(`🎬 **Director Action**: ${goal}`);
 
         for (let step = 1; step <= maxSteps; step++) {
+            this.currentStep = step;
             if (!this.isAutoDriveActive && step > 1) { // Allow single run, but check auto flag if in loop
                 // pass
             }
@@ -52,6 +99,8 @@ export class Director {
 
             if (plan.action === 'FINISH') {
                 console.error("[Director] Task Completed.");
+                this.activeGoal = null;
+                this.currentStatus = this.isAutoDriveActive ? 'IDLE' : 'IDLE';
                 return plan.result || "Task completed successfully.";
             }
 
@@ -133,9 +182,8 @@ export class Director {
     // --- Helpers ---
 
     public async broadcast(message: string) {
-        // SAFE MODE: Console Log for Terminal
-        console.error(`\n📢 [Director]: ${message}\n`);
-
+        // In a real system, this would push to the UI via WebSocket
+        console.log(`\n📢 [DIRECTOR BROADCAST]: ${message}\n`);
         // LIVE FEED: Write to DIRECTOR_LIVE.md for IDE Visibility
         try {
             const fs = await import('fs');
@@ -172,8 +220,26 @@ export class Director {
         } catch (e) { }
 
         const model = await this.server.modelSelector.selectModel({ taskComplexity: 'medium' });
+
+        // Pinned Context Injection
+        // @ts-ignore
+        const pinnedContext = this.server.contextManager ? this.server.contextManager.getContextPrompt() : "";
+
+        // Shell History Injection
+        let shellContext = "";
+        try {
+            // @ts-ignore
+            if (this.server.shellService) {
+                // @ts-ignore
+                const history = await this.server.shellService.getHistory(10); // Get last 10 commands
+                if (history && history.length > 0) {
+                    shellContext = `\nRECENT SHELL HISTORY:\n${history.join('\n')}\n`;
+                }
+            }
+        } catch (e) { }
+
         const systemPrompt = DIRECTOR_SYSTEM_PROMPT;
-        const userPrompt = `GOAL: ${context.goal}\n${memoryContext}\nHISTORY:\n${context.history.join('\n')}\nWhat is the next step?`;
+        const userPrompt = `GOAL: ${context.goal}\n${memoryContext}\n${pinnedContext}\n${shellContext}\nHISTORY:\n${context.history.join('\n')}\nWhat is the next step?`;
 
         try {
             const response = await this.llmService.generateText(model.provider, model.modelId, systemPrompt, userPrompt);
@@ -231,7 +297,8 @@ class ConversationMonitor {
             await this.checkAndAct();
 
             // @ts-ignore
-            const delay = this.server.directorConfig?.heartbeatIntervalMs || 30000;
+            const config = this.director.getConfig();
+            const delay = config.heartbeatIntervalMs || 30000;
             // @ts-ignore
             this.interval = setTimeout(runHeartbeat, delay);
         };
@@ -243,7 +310,8 @@ class ConversationMonitor {
             await this.postPeriodicSummary();
 
             // @ts-ignore
-            const delay = this.server.directorConfig?.periodicSummaryMs || 120000;
+            const config = this.director.getConfig();
+            const delay = config.periodicSummaryMs || 120000;
             // @ts-ignore
             this.summaryInterval = setTimeout(runSummary, delay);
         };
@@ -263,6 +331,8 @@ class ConversationMonitor {
         this.interval = null;
         this.summaryInterval = null;
     }
+
+    private lastSummary: string = "";
 
     /**
      * Posts a periodic summary to the chat to keep the development loop alive.
@@ -296,10 +366,29 @@ class ConversationMonitor {
             context += readFile('DIRECTOR_LIVE.md');
 
             // Generate brief summary via LLM
-            const prompt = `You are the Director. Based on the following context, write a 1-2 sentence status update for the development chat. Keep it brief and actionable.\n\n${context}`;
+            // Generate brief summary via LLM
+            const config = this.director.getConfig();
+            const prompt = `You are the Director. Based on the following context, write a 1-sentence status update for the development chat. 
+            
+            Current Default Focus: "${config.defaultTopic}"
+            
+            Crucial: If the system is waiting for the Council or User, say exactly what you are waiting for, but add an encouraging remark about the Default Focus.
+            Example: "Standing by for user input. Ready to proceed with Roadmap features."
+            
+            If nothing has changed, output "SAME".
+            Tone: Brief, actionable, and encouraging.
+            \n\n${context}`;
+
             const model = await this.server.modelSelector.selectModel({ task: 'summary' });
             const response = await this.llmService.generateText(model.provider, model.modelId, 'Director Status', prompt);
-            const summary = response.content.trim().substring(0, 200);
+            let summary = response.content.trim().substring(0, 200);
+
+            if (summary === "SAME" || summary === this.lastSummary) {
+                console.log("[Director] Status unchanged, skipping broadcast.");
+                return;
+            }
+
+            this.lastSummary = summary;
 
             // Broadcast to chat with Alt-Enter submit
             await this.server.executeTool('chat_reply', { text: `📊 [Director Status]: ${summary}` });
@@ -462,7 +551,7 @@ class ConversationMonitor {
         } finally {
             // COOLDOWN: Use config (default 10 seconds)
             // @ts-ignore
-            const config = this.server.directorConfig || { taskCooldownMs: 10000 };
+            const config = this.director.getConfig();
             const cooldown = config.taskCooldownMs || 10000;
             console.error(`[Director] ⏸️ Cooldown: ${cooldown / 1000} seconds before next Council meeting...`);
             await new Promise(r => setTimeout(r, cooldown));

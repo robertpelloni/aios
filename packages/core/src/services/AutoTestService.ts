@@ -7,10 +7,10 @@ import { RepoGraphService } from './RepoGraphService.js';
 export class AutoTestService {
     private watcher: fs.FSWatcher | null = null;
     private rootDir: string;
-    private isRunning: boolean = false;
     private processingParams: Set<string> = new Set();
-    private repoGraph: RepoGraphService;
+    public repoGraph: RepoGraphService;
     public testResults: Map<string, { status: 'pass' | 'fail' | 'running', timestamp: number, output?: string }> = new Map();
+    public isRunning: boolean = false;
 
     constructor(rootDir: string) {
         this.rootDir = rootDir;

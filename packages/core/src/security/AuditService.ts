@@ -42,4 +42,28 @@ export class AuditService {
             console.error("[AuditService] Failed to write log:", e);
         }
     }
+
+    getLogs(limit: number = 50): AuditEntry[] {
+        if (!fs.existsSync(this.logPath)) return [];
+
+        try {
+            const content = fs.readFileSync(this.logPath, 'utf-8');
+            const lines = content.trim().split('\n');
+            // Parse backwards to get latest first
+            const entries: AuditEntry[] = [];
+            for (let i = lines.length - 1; i >= 0 && entries.length < limit; i--) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                try {
+                    entries.push(JSON.parse(line));
+                } catch (e) {
+                    // Ignore corrupted lines
+                }
+            }
+            return entries;
+        } catch (e) {
+            console.error("[AuditService] Failed to read logs:", e);
+            return [];
+        }
+    }
 }

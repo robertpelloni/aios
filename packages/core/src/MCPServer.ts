@@ -29,6 +29,7 @@ console.log("[MCPServer] ✓ ws/http");
 import { McpmInstaller } from "./skills/McpmInstaller.js";
 import { ConfigManager } from "./config/ConfigManager.js";
 import { AutoTestService } from "./services/AutoTestService.js";
+import { ShellService } from "./services/ShellService.js";
 import { SandboxService } from "./security/SandboxService.js";
 import { SquadService } from "./orchestrator/SquadService.js";
 import { AuditService } from "./security/AuditService.js";
@@ -59,6 +60,15 @@ import { Director } from "@borg/agents";
 import { Council } from "@borg/agents";
 console.log("[MCPServer] ✓ Council");
 
+import { CommandRegistry } from "./commands/CommandRegistry.js";
+import { GitCommand } from "./commands/lib/GitCommands.js";
+import { HelpCommand, VersionCommand, DirectorCommand } from "./commands/lib/SystemCommands.js";
+import { ContextCommand } from "./commands/lib/ContextCommands.js";
+console.log("[MCPServer] ✓ Commands");
+
+import { ContextManager } from "./context/ContextManager.js";
+
+
 import { PermissionManager, AutonomyLevel } from "./security/PermissionManager.js";
 console.log("[MCPServer] ✓ PermissionManager");
 
@@ -68,19 +78,31 @@ const __dirname = path.dirname(__filename);
 
 // LAZY: VectorStore and Indexer are imported dynamically when needed
 // import { VectorStore } from './memory/VectorStore.js';
-// import { Indexer } from './memory/Indexer.js';
+// import { ShellService } from "./services/ShellService.js";
+import { AgentAdapter } from "./orchestrator/AgentAdapter.js";
+import { ClaudeAdapter } from "./orchestrator/adapters/ClaudeAdapter.js";
+import { GeminiAdapter } from "./orchestrator/adapters/GeminiAdapter.js";
+
+interface ToolRequest {
+    params: {
+        name: string;
+        arguments: Record<string, any>;
+    };
+}
+
 console.log("[MCPServer] All imports complete!");
 
 export class MCPServer {
     private server: Server; // Stdio Server
-    private wsServer: Server; // WebSocket Server
+    private wsServer: Server | null; // WebSocket Server
     private router: Router;
     public modelSelector: ModelSelector;
     private skillRegistry: SkillRegistry;
     private director: Director;
     private council: Council;
     public permissionManager: PermissionManager;
-    private auditService: AuditService;
+    public auditService: AuditService;
+    public shellService: ShellService;
     private vectorStore: any; // Lazy loaded
     private indexer: any; // Lazy loaded
     private memoryInitialized: boolean = false;
@@ -98,6 +120,9 @@ export class MCPServer {
     public autoTestService: AutoTestService;
     public sandboxService: SandboxService;
     public squadService: SquadService;
+    public commandRegistry: CommandRegistry;
+    public contextManager: ContextManager;
+    private activeAgents: Map<string, AgentAdapter> = new Map();
     public directorConfig = {
         taskCooldownMs: 10000,
         heartbeatIntervalMs: 30000,
@@ -144,6 +169,16 @@ export class MCPServer {
         }
 
         this.suggestionService = new SuggestionService(undefined, this.director);
+
+        // Context Manager
+        this.contextManager = new ContextManager();
+        this.shellService = new ShellService(); // Added this line
+        this.commandRegistry = new CommandRegistry(); // Corrected typo from instruction
+        this.commandRegistry.register(new GitCommand());
+        this.commandRegistry.register(new HelpCommand(this.commandRegistry));
+        this.commandRegistry.register(new VersionCommand());
+        this.commandRegistry.register(new DirectorCommand(() => this.director));
+        this.commandRegistry.register(new ContextCommand(this.contextManager));
 
         // Memory System - LAZY LOADED on first use to speed up startup
         // VectorStore and Indexer are created in initializeMemorySystem()
@@ -459,6 +494,79 @@ export class MCPServer {
                     content: [{ type: "text", text: resultStr }]
                 };
             }
+            else if (name === "read_page") {
+                if (!this.wssInstance || this.wssInstance.clients.size === 0) {
+                    result = { content: [{ type: "text", text: "Error: No Browser Extension connected." }] };
+                } else {
+                    result = await new Promise((resolve) => {
+                        const requestId = `req_${Date.now()}_${Math.random()}`;
+                        const timeout = setTimeout(() => {
+                            this.pendingRequests.delete(requestId);
+                            resolve({ content: [{ type: "text", text: "Error: Browser timed out." }] });
+                        }, 5000);
+
+                        this.pendingRequests.set(requestId, (data: any) => {
+                            clearTimeout(timeout);
+                            // Expect data to have { url, title, content }
+                            const text = `URL: ${data.url}\nTitle: ${data.title}\n\n${data.content.substring(0, 5000)}...`;
+                            resolve({ content: [{ type: "text", text: text }] });
+                        });
+
+                        this.wssInstance.clients.forEach((client: any) => {
+                            if (client.readyState === 1) {
+                                client.send(JSON.stringify({ type: 'read_page', requestId }));
+                            }
+                        });
+                    });
+                }
+            }
+            else if (name === "use_agent") {
+                const agentName = args.name as string;
+                const prompt = args.prompt as string;
+                let agent = this.activeAgents.get(agentName);
+
+                if (!agent) {
+                    if (agentName === 'claude') agent = new ClaudeAdapter();
+                    else if (agentName === 'gemini') agent = new GeminiAdapter();
+                    else return { content: [{ type: "text", text: `Unknown agent: ${agentName}` }] };
+
+                    await agent.start();
+                    this.activeAgents.set(agentName, agent);
+                }
+
+                if (!agent.isActive()) {
+                    await agent.start();
+                }
+
+                // Send prompt and wait for response (simple timeout-based aggregation)
+                const responsePromise = new Promise<string>((resolve) => {
+                    let buffer = '';
+                    let timer: any;
+
+                    const onData = (data: string) => {
+                        buffer += data;
+                        clearTimeout(timer);
+                        // Debounce: Wait 2s for more data, else assume done
+                        timer = setTimeout(() => {
+                            cleanup();
+                            resolve(buffer);
+                        }, 2000);
+                    };
+
+                    const cleanup = () => {
+                        agent!.removeListener('output', onData);
+                    };
+
+                    agent!.on('output', onData);
+                    agent!.send(prompt).catch((err: any) => {
+                        cleanup();
+                        resolve(`Error sending to agent: ${err.message}`);
+                    });
+                });
+
+                const output = await responsePromise;
+                result = { content: [{ type: "text", text: output }] };
+            }
             // Removed obsolete start_watchdog and start_chat_daemon handlers
             else if (name === "start_auto_drive") {
                 this.director.startAutoDrive();
@@ -519,7 +627,21 @@ export class MCPServer {
                 const res = await merger.mergeBranch(branch);
                 result = { content: [{ type: "text", text: JSON.stringify(res) }] };
             }
-            else if (name === "execute_sandbox") {
+            // 2. Intercept File Reading for Suggestions (Engagement Module)
+            if (name === "read_file" || name === "view_file") {
+                const filePath = args.path || args.AbsolutePath;
+                if (!filePath) {
+                    // Fallthrough to standard handler which will likely error
+                } else {
+                    // Fire and forget suggestion analysis
+                    // We don't read content here to avoid double-read cost; 
+                    // ideally we'd tap into the result, but that requires waiting for the real tool.
+                    // For now, let's just log intent or trigger analysis if we can get content cheaply later.
+                    // Actually, let's tap the result AFTER execution.
+                }
+            }
+
+            if (name === "execute_sandbox") {
                 const lang = args?.language as 'python' | 'node';
                 const code = args?.code as string;
                 result = {
@@ -591,6 +713,20 @@ export class MCPServer {
                     }));
                 });
             }
+
+            // ENGAGEMENT MODULE: Suggestion Trigger
+            if ((name === "read_file" || name === "view_file") && result) {
+                const resAny = result as any;
+                if (resAny.content && resAny.content[0] && resAny.content[0].text) {
+                    const filePath = args.path || args.AbsolutePath;
+                    this.suggestionService.processContext({
+                        type: 'file_read',
+                        path: filePath,
+                        content: resAny.content[0].text
+                    }).catch(e => console.error("[SuggestionService] Trigger failed:", e));
+                }
+            }
+
             return result;
 
         } catch (e: any) {
@@ -768,6 +904,23 @@ export class MCPServer {
                             args: { type: "array", description: "Optional arguments", items: { type: "string" } }
                         },
                         required: ["command"]
+                    }
+                },
+                {
+                    name: "read_page",
+                    description: "Read the text content of the active browser tab",
+                    inputSchema: { type: "object", properties: {} }
+                },
+                {
+                    name: "use_agent",
+                    description: "Delegate a task to an external AI Agent (Claude, Gemini)",
+                    inputSchema: {
+                        type: "object",
+                        properties: {
+                            name: { type: "string", enum: ["claude", "gemini"], description: "Name of the agent to use" },
+                            prompt: { type: "string", description: "The task or prompt to send to the agent" }
+                        },
+                        required: ["name", "prompt"]
                     }
                 },
                 {

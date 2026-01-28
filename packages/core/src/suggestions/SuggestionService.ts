@@ -140,9 +140,13 @@ export class SuggestionService {
             Do not suggest generic things like 'Add comments'. Only actionable, high-value tasks.
             `;
 
-            // Simplified LLM call (assuming LLMService has a generateJson or similar, using generateText for now)
-            // Ideally we'd use a structure-enforcing mode.
-            const response = await this.llmService.generateText(prompt);
+            // Simplified LLM call using defaults
+            const response = await this.llmService.generateText(
+                'openai',
+                'gpt-4o',
+                'You are an expert pair programmer analyzing code context.',
+                prompt
+            );
             const textContent = typeof response === 'string' ? response : ((response as any).text || "");
             const jsonStart = textContent.indexOf('{');
             const jsonEnd = textContent.lastIndexOf('}');

@@ -33,6 +33,7 @@ import { SandboxService } from "./security/SandboxService.js";
 import { SquadService } from "./orchestrator/SquadService.js";
 import { AuditService } from "./security/AuditService.js";
 import { SkillRegistry } from "./skills/SkillRegistry.js";
+import { SuggestionService } from "./suggestions/SuggestionService.js";
 console.log("[MCPServer] ✓ SkillRegistry");
 
 import {
@@ -84,6 +85,7 @@ export class MCPServer {
     private indexer: any; // Lazy loaded
     private memoryInitialized: boolean = false;
     private pendingRequests: Map<string, (response: any) => void> = new Map();
+    public suggestionService: SuggestionService;
     private chainExecutor: ChainExecutor;
     public wssInstance: any; // WebSocket.Server
     private inputTools: InputTools;
@@ -140,6 +142,8 @@ export class MCPServer {
                 this.directorConfig.council = { ...this.directorConfig.council, ...savedConfig.council };
             }
         }
+
+        this.suggestionService = new SuggestionService(undefined, this.director);
 
         // Memory System - LAZY LOADED on first use to speed up startup
         // VectorStore and Indexer are created in initializeMemorySystem()
@@ -908,6 +912,14 @@ export class MCPServer {
                         if (msg.type === 'USER_ACTIVITY') {
                             // Track global user activity
                             this.lastUserActivityTime = Math.max(this.lastUserActivityTime, msg.lastActivityTime);
+                            // Feed into Suggestion Engine
+                            if (msg.activeEditor) {
+                                this.suggestionService.processContext({
+                                    type: 'editor',
+                                    path: msg.activeEditor.uri,
+                                    content: '' // Could retrieve content if needed
+                                });
+                            }
                         }
                     } catch (e) {
                         // Ignore non-JSON

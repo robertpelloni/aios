@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 
 import { TRPCProvider } from "../utils/TRPCProvider";
 import { Navigation } from "../components/Navigation";
+import { ToastProvider } from "../components/ui/Toast";
 
 export default function RootLayout({
   children,
@@ -31,8 +32,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <TRPCProvider>
-          <Navigation />
-          {children}
+          <ToastProvider>
+            <Navigation />
+            {children}
+          </ToastProvider>
         </TRPCProvider>
       </body>
     </html>

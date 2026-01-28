@@ -74,6 +74,33 @@ export const appRouter = t.router({
             return result.content[0].text;
         })
     }),
+    suggestions: t.router({
+        list: publicProcedure.query(() => {
+            // @ts-ignore
+            if (global.mcpServerInstance) {
+                // @ts-ignore
+                return global.mcpServerInstance.suggestionService.getPendingSuggestions();
+            }
+            return [];
+        }),
+        resolve: publicProcedure.input(z.object({ id: z.string(), status: z.enum(['APPROVED', 'REJECTED']) })).mutation(async ({ input }) => {
+            // @ts-ignore
+            if (global.mcpServerInstance) {
+                // @ts-ignore
+                const suggestion = global.mcpServerInstance.suggestionService.resolveSuggestion(input.id, input.status);
+
+                // EXECUTION LOGIC
+                if (suggestion && input.status === 'APPROVED' && suggestion.payload?.tool) {
+                    // @ts-ignore
+                    const result = await global.mcpServerInstance.executeTool(suggestion.payload.tool, suggestion.payload.args);
+                    // Optional: Broadcast result?
+                }
+
+                return { success: true };
+            }
+            return { success: false };
+        })
+    }),
     autonomy: t.router({
         setLevel: t.procedure.input(z.object({ level: z.enum(['low', 'medium', 'high']) })).mutation(async ({ input }) => {
             // @ts-ignore
@@ -128,9 +155,26 @@ export const appRouter = t.router({
             // @ts-ignore
             if (global.mcpServerInstance) {
                 // @ts-ignore
-                // Director.executeTask is basically "Run this goal".
-                // In a chat UI, user says "Do X". Director does X and returns summary.
-                const result = await global.mcpServerInstance.director.executeTask(input.message);
+                // @ts-ignore
+                const server = global.mcpServerInstance;
+
+                // 1. Intercept "Yes" / "Approve" for Suggestions
+                const pending = server.suggestionService.getPendingSuggestions();
+                if (pending.length > 0 && /^(yes|approve|do it|confirm|ok)$/i.test(input.message.trim())) {
+                    const latest = pending[0];
+                    const suggestion = server.suggestionService.resolveSuggestion(latest.id, 'APPROVED');
+
+                    if (suggestion && suggestion.payload?.tool) {
+                        server.director.broadcast(`✅ Approved: **${latest.title}**. Executing ${suggestion.payload.tool}...`);
+                        const result = await server.executeTool(suggestion.payload.tool, suggestion.payload.args);
+                        return `✅ Execution Complete.\n\nResult:\n${JSON.stringify(result)?.substring(0, 200)}...`;
+                    }
+
+                    return `✅ Approved suggestion: **${latest.title}**. (No tool attached)`;
+                }
+
+                // 2. Default: Director Execution
+                const result = await server.director.executeTask(input.message);
                 return result;
             }
             throw new Error("MCPServer instance not found");
@@ -384,6 +428,74 @@ export const appRouter = t.router({
                 return JSON.parse(result.content[0].text);
             }
             return { error: "No Server", platform: 'Unknown' };
+        }),
+        info: t.procedure.query(async () => {
+            const fs = await import('fs/promises');
+            const path = await import('path');
+            const { exec } = await import('child_process');
+            const util = await import('util');
+            const execAsync = util.promisify(exec);
+
+            let rootVersion = '0.0.0';
+            try {
+                rootVersion = (await fs.readFile(path.join(process.cwd(), 'VERSION'), 'utf-8')).trim();
+            } catch (e) { /* ignore */ }
+
+            let submodules: any[] = [];
+            try {
+                const { stdout } = await execAsync('git submodule status');
+                // Format: -hash path (describe)
+                submodules = stdout.trim().split('\n').map(line => {
+                    const parts = line.trim().split(' ');
+                    const commit = parts[0].replace(/^[+-]/, ''); // Remove status chars
+                    const path = parts[1];
+                    // Status logic
+                    let status = 'Clean';
+                    if (line.trim().startsWith('-')) status = 'Uninitialized';
+                    if (line.trim().startsWith('+')) status = 'Modified';
+
+                    return {
+                        name: path.split('/').pop() || path,
+                        path: path,
+                        commit: commit,
+                        branch: 'HEAD', // Expensive to get real branch for all, default to HEAD for now
+                        date: new Date().toISOString().split('T')[0], // Placeholder, real date requires git log per module
+                        status: status
+                    };
+                });
+            } catch (e) {
+                console.error("Failed to read submodules", e);
+            }
+
+            return {
+                rootVersion,
+                submodules,
+                structure: [
+                    { path: 'apps/web', description: 'Next.js Dashboard & Mission Control Interface' },
+                    { path: 'packages/core', description: 'Central Intelligence: Orchestrator, MCPServer, tRPC' },
+                    { path: 'packages/borg-supervisor', description: 'Autonomous Agent Logic & Input Management' },
+                    { path: 'packages/ui', description: 'Shared Design System & Feature Widgets' }
+                ]
+            };
+        })
+    }),
+    roadmap: t.router({
+        get: t.procedure.query(async () => {
+            const fs = await import('fs/promises');
+            const path = await import('path');
+            try {
+                // Try root first
+                const rootCookie = path.join(process.cwd(), 'ROADMAP.md');
+                return await fs.readFile(rootCookie, 'utf-8');
+            } catch (e) {
+                try {
+                    // Try docs/
+                    const docsCookie = path.join(process.cwd(), 'docs', 'ROADMAP.md');
+                    return await fs.readFile(docsCookie, 'utf-8');
+                } catch (e2) {
+                    return "# Roadmap\n\nCould not load ROADMAP.md";
+                }
+            }
         })
     })
 });

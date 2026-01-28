@@ -130,7 +130,9 @@ export class Director {
 
     // --- Helpers ---
 
-    private async broadcast(message: string) {
+    // --- Helpers ---
+
+    public async broadcast(message: string) {
         // SAFE MODE: Console Log for Terminal
         console.error(`\n📢 [Director]: ${message}\n`);
 

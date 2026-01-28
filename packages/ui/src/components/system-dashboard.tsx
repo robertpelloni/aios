@@ -1,13 +1,9 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { FolderTree, GitBranch, Clock, Hash, Server, Layout, Box } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+import { FolderTree, GitBranch, Clock, Hash, Layout, Box } from 'lucide-react';
 
-interface SubmoduleInfo {
+export interface SubmoduleInfo {
   name: string;
   path: string;
   commit: string;
@@ -16,36 +12,23 @@ interface SubmoduleInfo {
   status: string;
 }
 
-interface StructureInfo {
+export interface StructureInfo {
   path: string;
   description: string;
 }
 
-interface SystemInfo {
+export interface SystemInfo {
   submodules: SubmoduleInfo[];
   structure: StructureInfo[];
   rootVersion: string;
 }
 
-export function SystemDashboard() {
-  const [info, setInfo] = useState<SystemInfo | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface SystemDashboardProps {
+  info: SystemInfo | null | undefined;
+}
 
-  useEffect(() => {
-    fetch('/api/system')
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch system info');
-        return res.json();
-      })
-      .then(data => setInfo(data))
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) return <div className="p-8 text-center text-white/40">Loading system information...</div>;
-  if (error) return <div className="p-8 text-center text-red-400">Error: {error}</div>;
-  if (!info) return null;
+export function SystemDashboard({ info }: SystemDashboardProps) {
+  if (!info) return <div className="p-8 text-center text-white/40">Loading system information...</div>;
 
   return (
     <div className="p-6 space-y-6 max-w-6xl mx-auto text-white">
@@ -81,9 +64,8 @@ export function SystemDashboard() {
                         <FolderTree className="h-4 w-4 text-white/40" />
                         {sub.name}
                       </div>
-                      <Badge className={`${
-                        sub.status === 'Clean' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
-                      } border-0`}>
+                      <Badge className={`${sub.status === 'Clean' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
+                        } border-0`}>
                         {sub.status}
                       </Badge>
                     </div>
@@ -137,7 +119,7 @@ export function SystemDashboard() {
                       <div className="absolute left-[11px] top-2 bottom-0 w-px bg-white/10" />
                     )}
                     <div className="absolute left-0 top-2 h-2 w-2 rounded-full bg-white/20" />
-                    
+
                     <div className="space-y-1">
                       <div className="font-mono text-sm font-bold text-blue-300">
                         {item.path}

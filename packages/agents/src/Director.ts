@@ -15,12 +15,14 @@ export class Director {
     private council: Council;
 
     // Auto-Drive State
-    private isAutoDriveActive: boolean = false;
+    private isAutoDriveActive: boolean = false; // SAFE START: Default to false
     private currentStatus: 'IDLE' | 'THINKING' | 'DRIVING' = 'IDLE';
     private monitor: ConversationMonitor | null = null; // Smart Supervisor
 
     // Execution State
     private activeGoal: string | null = null;
+    private lastGoal: string | null = null;
+    private lastGoalTime: number = 0;
     private currentStep: number = 0;
     private maxSteps: number = 0;
     private history: string[] = [];
@@ -30,6 +32,9 @@ export class Director {
         this.llmService = new LLMService();
         // @ts-ignore
         this.council = new Council(server.modelSelector);
+
+        // SAFE MODE: Do not auto-start monitor
+        console.log("[Director] 🛡️ Initialized in SAFE MODE. Auto-Drive is OFF.");
     }
 
     // Configuration
@@ -40,7 +45,10 @@ export class Director {
         periodicSummaryMs: 120000,
         pasteToSubmitDelayMs: 1000,
         acceptDetectionMode: 'polling' as 'polling' | 'state',
-        pollingIntervalMs: 30000
+        pollingIntervalMs: 30000,
+        // Personality & Custom Instructions
+        persona: 'default' as 'default' | 'homie' | 'professional' | 'chaos',
+        customInstructions: "" // User-defined hints/themes
     };
 
     public getConfig() {
@@ -71,6 +79,14 @@ export class Director {
      * Executes a single goal using the Director's reasoning loop.
      */
     async executeTask(goal: string, maxSteps: number = 10): Promise<string> {
+        // Prevent Spam: If exact same goal as last time and finished recently, skip.
+        if (this.activeGoal === goal || (this.history.length > 0 && this.lastGoal === goal && Date.now() - this.lastGoalTime < 60000)) {
+            console.error(`[Director] 🚫 Skipping duplicate goal: "${goal}"`);
+            return "Skipped duplicate goal.";
+        }
+
+        this.lastGoal = goal;
+        this.lastGoalTime = Date.now();
         this.activeGoal = goal;
         this.maxSteps = maxSteps;
         this.history = [];
@@ -200,8 +216,9 @@ export class Director {
         try {
             console.error(`[Director] 📤 Broadcasting to chat: ${message.substring(0, 50)}...`);
             // Paste to chat (Extension focuses chat window)
-            // Note: chat_reply now handles submit:true via Extension, so we don't need native_input here.
-            await this.server.executeTool('chat_reply', { text: `[Director]: ${message}`, submit: true });
+            // Note: We DO NOT submit status updates automatically, as this causes a feedback loop
+            // where the Agent treats its own status message as a new User Command.
+            await this.server.executeTool('chat_reply', { text: `[Director]: ${message}`, submit: false });
         } catch (e: any) {
             console.error(`[Director] ❌ Broadcast Error: ${e.message}`);
         }
@@ -238,7 +255,22 @@ export class Director {
             }
         } catch (e) { }
 
-        const systemPrompt = DIRECTOR_SYSTEM_PROMPT;
+        let systemPrompt = DIRECTOR_SYSTEM_PROMPT;
+
+        // Inject Personality
+        if (this.config.persona === 'homie') {
+            systemPrompt += "\n\nSTYLE: Informal, friendly, use emojis (🤙, 🚀). concise.";
+        } else if (this.config.persona === 'professional') {
+            systemPrompt += "\n\nSTYLE: Formal, precise, no emojis. Focus on business value.";
+        } else if (this.config.persona === 'chaos') {
+            systemPrompt += "\n\nSTYLE: Chaotic goodness. Maximally creative. Unpredictable but functional.";
+        }
+
+        // Inject User Custom Instructions
+        if (this.config.customInstructions && this.config.customInstructions.trim().length > 0) {
+            systemPrompt += `\n\nUSER OVERRIDE INSTRUCTIONS:\n${this.config.customInstructions}\n(You MUST prioritize these instructions over default styles)`;
+        }
+
         const userPrompt = `GOAL: ${context.goal}\n${memoryContext}\n${pinnedContext}\n${shellContext}\nHISTORY:\n${context.history.join('\n')}\nWhat is the next step?`;
 
         try {
@@ -391,9 +423,9 @@ class ConversationMonitor {
             this.lastSummary = summary;
 
             // Broadcast to chat with Alt-Enter submit
-            await this.server.executeTool('chat_reply', { text: `📊 [Director Status]: ${summary}` });
-            await new Promise(r => setTimeout(r, 500));
-            await this.server.executeTool('vscode_submit_chat', {});
+            await this.server.executeTool('chat_reply', { text: `📊 [Director Status]: ${summary}`, submit: false });
+            // await new Promise(r => setTimeout(r, 500));
+            // await this.server.executeTool('vscode_submit_chat', {});
 
             console.error(`[Director] 📊 Posted periodic summary.`);
         } catch (e: any) {
@@ -508,39 +540,40 @@ class ConversationMonitor {
         }
     }
 
+    private lastDirective: string | null = null;
+
     private async runCouncilLoop() {
         this.isRunningTask = true;
         try {
             console.error(`[Director] 🤖 Convening Council (Consensus Session)...`);
 
-            // Use the centralized Council in MCPServer (or local instance)
-            // @ts-ignore
-            const council = this.server.council || this.director.council; // Director has public/private council?
-            // Wait, Director's council is private.
-            // But we are in the same file! We can't access private property of another class instance?
-            // Actually ConversationMonitor is constructed with director instance.
-            // If Council is private, we can't accept it.
-            // BUT MCPServer has public council? (Wait, MCPServer (core) has public council? I need to check MCPServer.ts)
-            // I'll assume server.council (on IMCPServer) is what we want.
-            // IF NOT, I will use `any` cast.
-
             // @ts-ignore
             const activeCouncil = this.server.council || (this.director as any).council;
 
             if (activeCouncil) {
-                const directive = await activeCouncil.runConsensusSession("The agent is IDLE. Review the current state and roadmap, then issue a Strategic Directive.");
+                const previousContext = this.lastDirective ? `Previous Directive was: "${this.lastDirective}". The Director just finished this or is IDLE.` : "";
+                const prompt = `The agent is IDLE. ${previousContext} Review state. If the previous directive was just completed or failed, provide a NEW directive. If no work is needed, reply 'DIRECTIVE: STANDBY'.`;
+
+                const directive = await activeCouncil.runConsensusSession(prompt);
                 console.error(`[Director] 📜 Council Directive: ${directive.summary}`);
 
-                if (directive.summary) {
-                    // Update Live Feed
-                    const liveFeedPath = (await import('path')).join(process.cwd(), 'DIRECTOR_LIVE.md');
-                    try { (await import('fs')).appendFileSync(liveFeedPath, `\n### Council Directive\n${directive.summary}\n`); } catch (e) { }
+                if (directive.summary && !directive.summary.includes("STANDBY")) {
+                    // Prevent Loop at the Source
+                    if (directive.summary === this.lastDirective) {
+                        console.error("[Director] 🛑 Council repeated same directive. Sleeping.");
+                    } else {
+                        this.lastDirective = directive.summary;
 
-                    // Execute
-                    await this.director.executeTask(directive.summary, 10);
+                        // Update Live Feed
+                        const liveFeedPath = (await import('path')).join(process.cwd(), 'DIRECTOR_LIVE.md');
+                        try { (await import('fs')).appendFileSync(liveFeedPath, `\n### Council Directive\n${directive.summary}\n`); } catch (e) { }
 
-                    // Report Back
-                    await this.server.executeTool('chat_reply', { text: `🏛️ [Council]: ${directive.summary}` });
+                        // Execute
+                        await this.director.executeTask(directive.summary, 10);
+
+                        // Report Back
+                        await this.server.executeTool('chat_reply', { text: `🏛️ [Council]: ${directive.summary}`, submit: false });
+                    }
                 }
             } else {
                 console.error("[Director] No Council instance found!");

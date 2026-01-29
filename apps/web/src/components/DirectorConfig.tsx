@@ -108,25 +108,78 @@ export default function DirectorConfig() {
                         </select>
                     </div>
                 </div>
+
+                {/* Personalization */}
+                <div className="space-y-4">
+                    <h3 className="text-gray-400 font-medium border-b border-gray-800 pb-2">Personalization</h3>
+
+                    <div className="bg-gray-800/50 p-3 rounded border border-gray-700/50">
+                        <label className="block text-sm text-gray-300 mb-1">Director Persona</label>
+                        <select
+                            className="w-full bg-gray-800 border-none rounded px-2 py-1 text-sm text-white focus:ring-1 focus:ring-blue-500"
+                            value={formState.persona || 'default'}
+                            onChange={(e) => handleChange('persona', e.target.value)}
+                        >
+                            <option value="default">Default (Balanced)</option>
+                            <option value="homie">Homie (Friendly & Concise)</option>
+                            <option value="professional">Professional (Corporate)</option>
+                            <option value="chaos">Chaos Mode (Creative/Wild)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm text-gray-300 mb-1">Custom Instructions / Theme</label>
+                        <textarea
+                            value={formState.customInstructions || ''}
+                            onChange={(e) => handleChange('customInstructions', e.target.value)}
+                            placeholder="e.g. Always use TypeScript. Prefer functional programming. Speak like a pirate."
+                            className="w-full bg-gray-800 rounded px-3 py-2 text-sm text-white focus:ring-1 focus:ring-blue-500 border border-gray-700 placeholder-gray-600 h-24 resize-none"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">These instructions override the default persona.</p>
+                    </div>
+                </div>
+
+                {/* Diagnostics */}
+                <div className="space-y-4">
+                    <h3 className="text-gray-400 font-medium border-b border-gray-800 pb-2">Diagnostics</h3>
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => window.open('http://localhost:1234', '_blank')}
+                            className="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 text-xs text-white rounded border border-zinc-700"
+                        >
+                            Open LMStudio Web UI
+                        </button>
+                        {/* TODO: Add actual tRPC test endpoint */}
+                    </div>
+                </div>
+
             </div>
 
             <div className="flex justify-end pt-4 border-t border-gray-800">
                 <button
                     onClick={handleSave}
-                    disabled={!isEditing || updateMutation.isLoading}
+                    disabled={!isEditing || updateMutation.isPending}
                     className={`px-4 py-2 rounded font-medium transition-colors ${isEditing
                         ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20'
                         : 'bg-gray-800 text-gray-500 cursor-not-allowed'
                         }`}
                 >
-                    {updateMutation.isLoading ? 'Saving...' : 'Apply Changes'}
+                    {updateMutation.isPending ? 'Saving...' : 'Apply Changes'}
                 </button>
             </div>
         </div >
     );
 }
 
-function ConfigSlider({ label, value, onChange, min, max, step, unit }: any) {
+function ConfigSlider({ label, value, onChange, min, max, step, unit }: {
+    label: string,
+    value: number,
+    onChange: (v: number) => void,
+    min: number,
+    max: number,
+    step: number,
+    unit: string
+}) {
     return (
         <div className="space-y-1">
             <div className="flex justify-between text-sm">
@@ -142,4 +195,8 @@ function ConfigSlider({ label, value, onChange, min, max, step, unit }: any) {
             />
         </div>
     );
+}
+
+function SectionHeader({ title }: { title: string }) {
+    return <h3 className="text-gray-400 font-medium border-b border-gray-800 pb-2 pt-2">{title}</h3>;
 }

@@ -3,7 +3,8 @@ import { CouncilWidget } from "../components/CouncilWidget"; // Import CouncilWi
 import ConnectionStatus from "../components/ConnectionStatus";
 import IndexingStatus from "../components/IndexingStatus";
 import RemoteAccessCard from "../components/RemoteAccessCard";
-import ConfigEditor from "../components/ConfigEditor";
+// import ConfigEditor from "../components/ConfigEditor";
+import DirectorConfig from "../components/DirectorConfig";
 import { TraceViewer } from "../components/TraceViewer";
 import { CommandRunner } from "../components/CommandRunner";
 import { AutonomyControl } from "../components/AutonomyControl";
@@ -78,7 +79,11 @@ export default function Home() {
           <GraphWidget />
         </div>
 
-        <ConfigEditor />
+        <div className="w-full h-80">
+          <GraphWidget />
+        </div>
+
+        <DirectorConfig />
         <CommandRunner />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
           <TraceViewer />

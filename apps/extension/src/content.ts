@@ -33,6 +33,34 @@ window.addEventListener("message", (event) => {
 console.log("[Borg Bridge] Content Script Loaded.");
 
 // Inject the API
-// We can't inject complex objects easily, but we can define a window property via a script.
-// Or we just rely on the user knowing `window.postMessage`.
-// For simplicity, let's just log availability.
+const injectAPI = () => {
+    const script = document.createElement('script');
+    script.textContent = `
+    console.log("[Borg Bridge] API Injected");
+    `;
+    (document.head || document.documentElement).appendChild(script);
+};
+injectAPI();
+
+// Listen for messages from Background (WebSocket events)
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === 'PASTE_INTO_CHAT') {
+        console.log("[Borg Bridge] Received Paste Request:", message.text);
+
+        // Inject script to call window.injectDirectorMessage
+        // We escape the text carefully to avoid syntax errors
+        const safeText = JSON.stringify(message.text);
+        const autoSubmit = message.submit ? 'true' : 'false';
+
+        const script = document.createElement('script');
+        script.textContent = `
+            if (window.injectDirectorMessage) {
+                window.injectDirectorMessage(${safeText}, ${autoSubmit});
+            } else {
+                console.warn("[Borg Bridge] window.injectDirectorMessage not found! Is DirectorChat mounted?");
+            }
+        `;
+        (document.head || document.documentElement).appendChild(script);
+        script.remove(); // Cleanup
+    }
+});

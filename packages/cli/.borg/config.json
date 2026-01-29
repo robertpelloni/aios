@@ -1,0 +1,19 @@
+{
+  "taskCooldownMs": 10000,
+  "heartbeatIntervalMs": 30000,
+  "periodicSummaryMs": 120000,
+  "pasteToSubmitDelayMs": 1000,
+  "acceptDetectionMode": "state",
+  "pollingIntervalMs": 30000,
+  "council": {
+    "personas": [
+      "Architect",
+      "Product",
+      "Critic"
+    ],
+    "contextFiles": [
+      "README.md",
+      "docs/ROADMAP.md"
+    ]
+  }
+}

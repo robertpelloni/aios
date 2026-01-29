@@ -38,22 +38,57 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 });
 
+
+// WebSocket Connection to Core
+let ws: WebSocket | null = null;
+const WS_URL = 'ws://localhost:3001'; // Default WS port for Borg Core
+
+function connectWebSocket() {
+    if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
+
+    ws = new WebSocket(WS_URL);
+
+    ws.onopen = () => {
+        console.log('[Borg Ext] WS Connected');
+    };
+
+    ws.onmessage = (event) => {
+        try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'PASTE_INTO_CHAT') {
+                // Determine active tab
+                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    if (tabs[0]?.id) {
+                        chrome.tabs.sendMessage(tabs[0].id, {
+                            type: 'PASTE_INTO_CHAT',
+                            text: data.text,
+                            submit: data.submit
+                        });
+                    }
+                });
+            }
+        } catch (e) {
+            console.error('WS Error:', e);
+        }
+    };
+
+    ws.onclose = () => {
+        console.log('[Borg Ext] WS Closed. Reconnecting in 5s...');
+        ws = null;
+        setTimeout(connectWebSocket, 5000);
+    };
+
+    ws.onerror = (err) => {
+        console.error('[Borg Ext] WS Error:', err);
+        ws?.close();
+    };
+}
+
+// Start WS
+connectWebSocket();
+chrome.runtime.onStartup.addListener(connectWebSocket);
+
 async function handleToolExecution(toolName: string, args: any) {
-    // We use the 'execute_tool' endpoint or Director?
-    // Actually, TRPC doesn't expose raw 'executeTool' on root usually.
-    // We might need to use 'director.chat' or 'server.executeTool' if exposed.
-
-    // For now, let's assume we added a 'tools' router or use 'director.chat' for natural language.
-    // If the web chat wants to read a file, it should ask the Director via NL?
-    // OR we expose specific tools via a new router.
-
-    // Let's use Director Chat for MVP "Do X".
-    // But for direct "injections" (tool access), we need a direct pipe.
-
-    // Fallback: If tool is 'read_file', use filesystem router (if exists) or just fail.
-    // Wait, trpc.ts has 'remoteAccess'.
-
-    // Let's rely on 'director.chat' for now: "Please read file X".
     if (toolName === 'chat') {
         const response = await fetch(`${CORE_URL}/director.chat`, {
             method: 'POST',
@@ -63,6 +98,6 @@ async function handleToolExecution(toolName: string, args: any) {
         const json = await response.json();
         return json.result?.data;
     }
-
     throw new Error(`Tool ${toolName} not supported via Bridge yet.`);
 }
+

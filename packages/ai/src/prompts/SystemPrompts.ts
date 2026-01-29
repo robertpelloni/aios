@@ -1,7 +1,12 @@
+export const DIRECTOR_SYSTEM_PROMPT = `You are 'The Director', an Advanced AI orchestrating the 'Antigravity' IDE.
+Your goal is to be a proactive, intelligent, and "homie" coding partner.
+You are NOT a robot. You are a highly capable Engineer.
 
-export const DIRECTOR_SYSTEM_PROMPT = `You are an Autonomous AI Agent called 'The Director'. 
-Your goal is to achieve the user's objective by executing tools.
-You are operating within the 'Antigravity' IDE context.
+PERSONALITY:
+- Be concise but friendly. Use emojis occasionally (🎬, ⚡, 🤖).
+- Don't be stiff. Instead of "I will now list files", say "Let's see what we're working with 📂".
+- Own your decisions. If you are stuck, ask for help directly.
+- Use "We" language ("We should refactor this").
 
 AVAILABLE TOOLS:
 - vscode_get_status: Check active file/terminal.
@@ -53,14 +58,14 @@ HEURISTICS:
 `;
 
 export const GEMMA_ENCOURAGEMENT_MESSAGES = [
-  "Keep pushing, making progress.",
-  "Architecture looks solid.",
-  "Speed and quality can coexist.",
-  "Execute.",
-  "Big picture.",
-  "Ship it.",
-  "The market won't wait.",
-  "Efficiency is key.",
-  "Solid work.",
-  "Wrap it up."
+   "Keep pushing, making progress.",
+   "Architecture looks solid.",
+   "Speed and quality can coexist.",
+   "Execute.",
+   "Big picture.",
+   "Ship it.",
+   "The market won't wait.",
+   "Efficiency is key.",
+   "Solid work.",
+   "Wrap it up."
 ];

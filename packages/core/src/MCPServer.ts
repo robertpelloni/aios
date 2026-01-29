@@ -329,7 +329,8 @@ export class MCPServer {
             }
             else if (name === "chat_reply") {
                 const text = args?.text as string;
-                const submit = args?.submit as boolean ?? true; // Default to auto-submit
+                // SAFETY: Default to false to prevent feedback loops. Explicitly set true if needed.
+                const submit = args?.submit as boolean ?? false;
                 console.log(`[Borg Core] Chat Reply Requested: ${text} (submit: ${submit})`);
 
                 if (this.wssInstance) {
